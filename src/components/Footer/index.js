@@ -7,21 +7,21 @@ export default function Footer(props) {
     return (
         <ContainerFooter>
             <FooterButton>
-                <Icon name="home" size={30} color={gold} />
+                <Icon name="home" size={20} color={gold} />
             </FooterButton>
             <FooterButton>
-                <Icon name="local-offer" size={30} color={white} />
+                <Icon name="local-offer" size={20} color={white} />
             </FooterButton>
             <FooterButton>
                 <ItemRounded backColor={white}>
-                    <Icon name="favorite" size={30} color={purple} />
+                    <Icon name="favorite" size={14} color={purple} style={{ alignSelf: 'center' }} />
                 </ItemRounded>
             </FooterButton>
             <FooterButton>
-                <Icon name="gavel" size={30} color={white} />
+                <Icon name="gavel" size={20} color={white} />
             </FooterButton>
             <FooterButton>
-                <Icon name="person-outline" size={30} color={white} />
+                <Icon name="person-outline" size={20} color={white} />
             </FooterButton>
         </ContainerFooter>
     )

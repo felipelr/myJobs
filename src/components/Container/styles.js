@@ -4,4 +4,5 @@ import { lightgray } from '../common/util/colors'
 export const ContainerGray = styled.View`
     background-color: ${lightgray};
     flex: 1;
+    position: absolute;
 `

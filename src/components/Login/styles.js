@@ -16,12 +16,14 @@ export const LoginTitle = styled.Text`
     color: ${purple};
     text-align: center;
     padding-bottom: 25px;
+    font-family: 'SF-Pro-Text-Regular';
 `
 
 export const LoginTextInput = styled.TextInput`
     font-size: 14px;
     color: #000000;
     padding-bottom: 16px;
+    font-family: 'SF-Pro-Text-Regular';
 `
 
 export const ContainerTextInput = styled.View`
@@ -46,6 +48,7 @@ export const NewUserText = styled.Text`
     font-size: 12px;
     flex: 1;
     text-align: right;
+    font-family: 'SF-Pro-Text-Regular';
 `
 
 export const NewUserButton = styled.TouchableOpacity`
@@ -57,4 +60,5 @@ export const NewUserButtonText = styled.Text`
     color: ${purple};
     font-size: 12px;
     text-align: left;
+    font-family: 'SF-Pro-Text-Regular';
 `

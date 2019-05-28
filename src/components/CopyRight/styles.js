@@ -1,5 +1,5 @@
 import styled from 'styled-components/native'
-import { purple, lightgray } from '../../components/common/util/colors'
+import { purple, lightgray } from '../common/util/colors'
 
 export const ContainerFooter = styled.View`
     background-color: ${lightgray};

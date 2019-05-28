@@ -14,8 +14,10 @@ export const FooterButton = styled.TouchableOpacity`
 `
 
 export const ItemRounded = styled.View`
+    justify-content: center;
+    width: 30px;
+    height: 30px;
     border-radius: 50px;
-    padding: 2px;
     background-color: ${props => `${props.backColor}`};
 `
 

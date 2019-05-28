@@ -1,10 +1,11 @@
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import LoginScreen from './src/screens/LoginScreen/index'
-import ProfessionalSearch from './src/components/ProfessionalSearch/index'
+import ProfessionalsScreen from './src/screens/ProfessionalsScreen/index'
 
 const MainNavigator = createStackNavigator({
-  Login: { screen: ProfessionalSearch }
-}, { initialRouteName: 'Login' }); 
+  Login: { screen: LoginScreen },
+  Professionals: { screen: ProfessionalsScreen }
+}, { initialRouteName: 'Professionals' }); 
 
 const App = createAppContainer(MainNavigator);
 

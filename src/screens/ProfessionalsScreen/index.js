@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, KeyboardAvoidingView, Platform, Keyboard, Text } from 'react-native'
-
+import { ContainerProfessionals } from './styles'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 
@@ -24,9 +24,10 @@ export default function ProfessionalsScreen() {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <Container>
-                <Text>Teste</Text>
-            </Container>
+            <Container />
+            <ContainerProfessionals>
+
+            </ContainerProfessionals>
             <Footer />
         </KeyboardAvoidingView>
     )

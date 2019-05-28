@@ -1,5 +1,6 @@
 import React from 'react'
-import PrimaryButton from '../PrimaryButton/index'
+import { purple } from '../common/util/colors'
+import { Button } from 'react-native-elements'
 import {
     Card, LoginTitle, ContainerTextInput, LoginTextInput, LoginButtonContainer,
     ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText
@@ -16,7 +17,7 @@ export default function Login(props) {
                 <LoginTextInput placeholder='Senha' textContentType='password' secureTextEntry={true}></LoginTextInput>
             </ContainerTextInput>
             <LoginButtonContainer>
-                <PrimaryButton text='Entrar' />
+                <Button title="Entrar" buttonStyle={{ backgroundColor: purple }} />
             </LoginButtonContainer>
             <ContainerNewUser>
                 <NewUserText>Novo por aqui?</NewUserText>

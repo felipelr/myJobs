@@ -14,7 +14,7 @@ export default function Footer(props) {
             </FooterButton>
             <FooterButton>
                 <ItemRounded backColor={white}>
-                    <Icon name="favorite" size={30} color={purple} />
+                    <Icon name="favorite" size={22} color={purple} style={{ alignSelf: 'center' }} />
                 </ItemRounded>
             </FooterButton>
             <FooterButton>

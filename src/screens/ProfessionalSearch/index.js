@@ -1,17 +1,14 @@
 import React from 'react'
-import { View, Header } from 'react-native'
+import { View } from 'react-native'
 
 import Container from '../../components/Container/index'
+import HeaderJobs from '../../components/HeaderJobs/index'
 
 export default function ProfessionalSearch(props) {
     return (
         <React.Fragment>
+            <HeaderJobs />
             <Container />
-            <Header
-                leftComponent={{ icon: 'menu', color: '#fff' }}
-                centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
-                rightComponent={{ icon: 'home', color: '#fff' }}
-            />
         </React.Fragment> 
     )
 }

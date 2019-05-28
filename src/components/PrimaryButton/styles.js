@@ -1,9 +1,9 @@
 import styled from 'styled-components/native'
-import { purple } from '../util/styles'
+import { purple, white } from '../common/util/colors'
 
-export const PrimaryButton = styled.Text`
+export const PrimaryButtonText = styled.Text`
     padding: 8px;
-    color: #FFFFFF;
+    color: ${white};
     font-size: 14px;
     background-color: ${purple};
     text-align: center;

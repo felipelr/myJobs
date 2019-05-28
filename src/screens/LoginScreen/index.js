@@ -3,7 +3,7 @@ import { View, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
 import Background from '../../components/Background/index'
 import Login from '../../components/Login/index'
 import SocialMidia from '../../components/SocialMidia/index'
-import LoginFooter from '../../components/LoginFooter/index'
+import CopyRight from '../../components/CopyRight/index'
 
 import { Container, ContainerContent, SocialMidiaText } from './styles'
 
@@ -22,7 +22,7 @@ export default function LoginScreen() {
             this.kbShow.remove()
             this.kbShow.remove()
         }
-    }, []);
+    }, [])
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
@@ -38,7 +38,7 @@ export default function LoginScreen() {
                             <SocialMidia />
                         </View>
                     </ContainerContent>
-                    <LoginFooter />
+                    <CopyRight />
                 </View>
             </Container>
         </KeyboardAvoidingView>

@@ -8,7 +8,7 @@ export const ContainerContent = styled.View`
     height: 150px; 
 `
 export const Title = styled.Text`
-    font-size: 12px;
+    font-size: 14px;
     color: ${purple};
     font-family: 'SF-Pro-Text-Bold';
     margin-bottom: 5px;

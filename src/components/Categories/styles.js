@@ -3,7 +3,7 @@ import { purple, white } from '../common/util/colors'
 
 export const ContainerContent = styled.View`
     padding: 5px; 
-    height: 90px;
+    height: 120px;
     background-color: white;
     margin-top: 2px; 
 `

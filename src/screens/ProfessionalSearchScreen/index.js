@@ -53,7 +53,7 @@ export default function ProfessionalSearchScreen(props) {
             <ContainerCategorias>
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories /> 
-                <View style={{ flex: 2.8, marginTop: 2, backgroundColor:'white' }}>
+                <View style={{ flex: 2, marginTop: 2, backgroundColor:'white' }}>
                     <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')}/>
                 </View>
             </ContainerCategorias>

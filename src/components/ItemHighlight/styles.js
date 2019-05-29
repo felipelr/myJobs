@@ -22,14 +22,14 @@ export const BodyItem = styled.View`
 `
 
 export const TitleItem = styled.Text`
-    font-size: 16px;
+    font-size: 18px;
     color: ${white};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;
     margin-bottom: 5px;
 `
 export const DescriptionItem = styled.Text`
-    font-size: 11px;
+    font-size: 14px;
     font-family: 'SF-Pro-Text-Regular';
     color: ${white};
     flex: 1;

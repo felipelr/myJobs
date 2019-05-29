@@ -5,7 +5,7 @@ import ItemHighlight from '../ItemHighlight/index'
 export default function Highlights(props) {
     const { categoria } = props.destaques
     const { profissionais } = props.destaques
-    const { titulo } = props.destaques
+    const { titulo } = props
     return (
         <ContainerContent>
             <Title>{titulo}</Title>

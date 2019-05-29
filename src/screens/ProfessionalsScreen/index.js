@@ -44,7 +44,7 @@ export default function ProfessionalsScreen() {
             <Container />
             <HeaderJobs back={true} filter={true} />
             <ContainerProfessionals>
-                <Highlights destaques={{ categoria, profissionais, titulo: 'Destaque da Categoria PetShop' }} />
+                <Highlights titulo='Destaque da Categoria PetShop 2' destaques={{ categoria, profissionais }} />
                 <View style={{ flex: 4, backgroundColor: 'white', marginTop: 2 }}>
 
                 </View>

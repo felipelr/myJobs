@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
-import { ContainerProfessionals } from './styles'
+import {  KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+
+import { ContainerProfessionals, ContainerList } from './styles'
 import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -50,9 +51,9 @@ export default function ProfessionalsScreen() {
             <HeaderJobs back={true} filter={true} />
             <ContainerProfessionals>
                 <Highlights titulo='Destaque da Categoria PetShop 2' destaques={{ categoria, profissionais }} />
-                <View style={{ flex: 4, backgroundColor: 'white', marginTop: 2 }}>
+                <ContainerList>
                     <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} />
-                </View>
+                </ContainerList>
             </ContainerProfessionals>
             <Footer />
         </KeyboardAvoidingView>

@@ -16,7 +16,7 @@ const CategorieItem = (props) => {
                     overlayContainerStyle={styles.overlayContainerStyle}
                     rounded
                     icon={{ name: categoria.icon, type: 'material-icons' }}
-                    size={60} />
+                    size={80} />
             </TouchableOpacity>
         </ContainerBody>
     )

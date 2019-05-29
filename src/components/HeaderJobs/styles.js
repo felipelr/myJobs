@@ -3,7 +3,8 @@ import { purple } from '../common/util/colors'
 
 export default styles = StyleSheet.create({
     headerContainerStyle: {
-        backgroundColor: purple,
+        height: 45,
+        backgroundColor: purple, 
         justifyContent: 'space-between',
         paddingTop: 0
     }

@@ -17,7 +17,7 @@ export default function HeaderJobs(props) {
             containerStyle={styles.headerContainerStyle}
             centerComponent={title != null ? <Title imagem={props.imagem} title={props.title}/> : <Search />}
             rightComponent={filter ? <Filter /> : chat ? <Chat /> : null}
-            leftComponent={back && <Back />}
+            leftComponent={back && <Back />} 
         >
         </Header>
     )

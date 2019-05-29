@@ -5,7 +5,7 @@ export const ContainerContent = styled.View`
     padding: 5px;
     flex: 1;
     background-color: ${white};
-    margin-top: 5px;
+    margin-top: 2px;
 `
 export const Title = styled.Text`
     font-size: 12px;

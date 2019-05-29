@@ -1,8 +1,9 @@
 import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
-import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, RatingText } from './styles'
-import { white } from '../common/util/colors'
+
+import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo } from './styles'
+import { white, purple } from '../common/util/colors'
 import RatingJobs from '../RatingJobs/index'
 
 export default function ItemHighlight(props) {
@@ -11,7 +12,7 @@ export default function ItemHighlight(props) {
         <ContainerItem>
             <BodyItem>
                 <Avatar
-                    containerStyle={{ alignSelf: 'center' }}
+                    containerStyle={{ alignSelf: 'center', borderColor: purple}}
                     rounded
                     size={55}
                     source={{

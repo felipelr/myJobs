@@ -1,7 +1,7 @@
 import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Avatar, Rating } from 'react-native-elements'
-import { ContainerItem, BodyItem, FooterItem, TitleItem, DescriptionItem, ContentInfo, RatingText } from './styles'
+import { Avatar } from 'react-native-elements'
+import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, RatingText } from './styles'
 import { white } from '../common/util/colors'
 import RatingJobs from '../RatingJobs/index'
 
@@ -13,7 +13,7 @@ export default function ItemHighlight(props) {
                 <Avatar
                     containerStyle={{ alignSelf: 'center' }}
                     rounded
-                    size={60}
+                    size={55}
                     source={{
                         uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
                     }} />
@@ -23,7 +23,7 @@ export default function ItemHighlight(props) {
                 </ContentInfo>
                 <Icon name="chevron-right" size={30} color={white} style={{ alignSelf: 'center' }} />
             </BodyItem>
-            <RatingJobs avaliacao={profissional.avaliacao} qtdeAvaliacoes={profissional.qtdeAvaliacoes} />
+            <RatingJobs avaliacao={profissional.avaliacao} qtdeAvaliacoes={profissional.qtdeAvaliacoes} backPurple={true}/>
         </ContainerItem>
     )
 }

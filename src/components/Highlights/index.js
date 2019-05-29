@@ -14,7 +14,6 @@ export default function Highlights(props) {
                     profissionais.map((item, index) => <ItemHighlight key={index} profissional={item} />)
                 }
             </ContainerItems>
-
         </ContainerContent>
     )
 }

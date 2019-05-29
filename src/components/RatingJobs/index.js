@@ -1,6 +1,7 @@
 import React from 'react'
 import { Rating } from 'react-native-elements'
 import { ContainerRating, RatingText } from './styles'
+import { white, black } from '../common/util/colors'
 import assets from './assets'
 
 export default function RatingJobs(props) {
@@ -22,13 +23,15 @@ export default function RatingJobs(props) {
         return number;
     }
 
+    const { backPurple } = props
     const { avaliacao } = props
     const { qtdeAvaliacoes } = props
     const qtdeAvaliacoesAbbr = abbrNum(qtdeAvaliacoes, 2)
     return (
         <ContainerRating>
-            <Rating readonly type='custom' imageSize={10} fractions={1} ratingImage={assets.star} startingValue={avaliacao} />
-            <RatingText>{qtdeAvaliacoesAbbr}</RatingText>
+            {backPurple && <Rating readonly type='custom' imageSize={10} fractions={1} ratingImage={assets.star} startingValue={avaliacao} />}
+            {!backPurple && <Rating readonly type='custom' imageSize={10} fractions={1} startingValue={avaliacao} ratingBackgroundColor='#F5F5F5'/>}
+            <RatingText color={backPurple ? white : black}>{qtdeAvaliacoesAbbr}</RatingText>
         </ContainerRating>
     )
 }

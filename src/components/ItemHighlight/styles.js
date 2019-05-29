@@ -1,10 +1,10 @@
 import styled from 'styled-components/native'
 import { purple, white } from '../common/util/colors'
 
-export const ContainerItem = styled.View`
+export const ContainerItem = styled.TouchableOpacity`
     background-color: ${purple};
     border-radius: 2px;
-    padding: 8px 0px 8px 8px;
+    padding: 8px 0px 4px 8px;
     margin-right: 10px;
     flex: 1;
     width: 300px;

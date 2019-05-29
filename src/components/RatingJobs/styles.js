@@ -6,7 +6,7 @@ export const ContainerRating = styled.View`
 `
 
 export const RatingText = styled.Text`
-    color: ${white};
+    color: ${props => `${props.color}`};
     font-size: 9px;
     font-family: 'SF-Pro-Text-Regular';
     padding-left: 5px;

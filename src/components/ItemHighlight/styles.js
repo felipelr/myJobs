@@ -4,8 +4,10 @@ import { purple, white } from '../common/util/colors'
 export const ContainerItem = styled.View`
     background-color: ${purple};
     border-radius: 2px;
-    padding: 8px;
+    padding: 8px 0px 8px 8px;
+    margin-right: 10px;
     flex: 1;
+    width: 300px;
     elevation: 1;
 `
 
@@ -32,7 +34,13 @@ export const DescriptionItem = styled.Text`
     color: ${white};
     flex: 1;
 `
-
 export const FooterItem = styled.View`
     flex-direction: row;
+`
+
+export const RatingText = styled.Text`
+    color: ${white};
+    font-size: 11px;
+    font-family: 'SF-Pro-Text-Regular';
+    padding-left: 5px;
 `

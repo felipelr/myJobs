@@ -8,7 +8,16 @@ import Highlights from '../../components/Highlights/index'
 export default function ProfessionalsScreen() {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
-    const [profissionais, setProfissionais] = useState([{ nome: 'Finos e Cheirosos', descricao: 'Banho e Tosa de animais de pequeno e médio porte.' }])
+    const [profissionais, setProfissionais] = useState([
+        {
+            nome: 'Finos e Cheirosos',
+            descricao: 'Banho e Tosa de animais de pequeno e médio porte.'
+        },
+        {
+            nome: 'Finos e Cheirosos',
+            descricao: 'Banho e Tosa de animais de pequeno e médio porte.'
+        }
+    ])
 
     useEffect(() => {
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {

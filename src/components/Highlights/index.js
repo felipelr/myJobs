@@ -1,5 +1,5 @@
 import React from 'react'
-import { ContainerContent, Title } from './styles'
+import { ContainerContent, Title, ContainerItems } from './styles'
 import ItemHighlight from '../ItemHighlight/index'
 
 export default function Highlights(props) {

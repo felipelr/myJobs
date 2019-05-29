@@ -2,7 +2,7 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar, Rating } from 'react-native-elements'
 import { ContainerItem, BodyItem, FooterItem, TitleItem, DescriptionItem, ContentInfo, RatingText } from './styles'
-import { white } from '../common/util/colors'
+import { white, purple } from '../common/util/colors'
 import RatingJobs from '../RatingJobs/index'
 
 export default function ItemHighlight(props) {
@@ -11,7 +11,7 @@ export default function ItemHighlight(props) {
         <ContainerItem>
             <BodyItem>
                 <Avatar
-                    containerStyle={{ alignSelf: 'center' }}
+                    containerStyle={{ alignSelf: 'center', borderColor: purple}}
                     rounded
                     size={60}
                     source={{

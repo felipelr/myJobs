@@ -15,7 +15,7 @@ export default function List(props) {
                     itens &&
                     itens.map((item, index) => {
                         if (tipo === 'professional') {
-                            return <ListItemProfessional key={index} profissional={item} />
+                            return <ListItemProfessional key={index} profissional={item} itemOnPress={props.itemOnPress}/>
                         }
                         return <ListItem key={index} />
                     })

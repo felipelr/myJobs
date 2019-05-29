@@ -9,7 +9,7 @@ import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 
-export default function ProfessionalSearchScreen() {
+export default function ProfessionalSearchScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
     const [profissionais, setProfissionais] = useState([
@@ -54,7 +54,7 @@ export default function ProfessionalSearchScreen() {
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories /> 
                 <View style={{ flex: 2.8, marginTop: 2, backgroundColor:'white' }}>
-                    <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} />
+                    <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')}/>
                 </View>
             </ContainerCategorias>
             <Footer />

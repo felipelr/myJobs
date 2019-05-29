@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { View, KeyboardAvoidingView, Platform, Keyboard, Text } from 'react-native'
-import { ContainerProfessionals } from './styles'
+import { ContainerCategorias } from './styles'
 
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import Highlights from '../../components/Highlights/index'
 import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
+import List from '../../components/List/index'
 
 export default function ProfessionalSearch() {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
@@ -16,19 +17,17 @@ export default function ProfessionalSearch() {
             nome: 'Finos e Cheirosos',
             descricao: 'Banho e Tosa de animais de pequeno e médio porte.',
             avaliacao: 3,
-            qtdeAvaliacoes: 143000
+            qtdeAvaliacoes: 143000,
+            info: '245 Atendimentos realizados,  0,6km de você',
+            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         },
         {
             nome: 'CatDog',
             descricao: 'Vacinação e cuidados médicos.',
             avaliacao: 3.5,
-            qtdeAvaliacoes: 76000
-        },
-        {
-            nome: 'Love Cats',
-            descricao: 'Vacinação e cuidados médicos.',
-            avaliacao: 4.5,
-            qtdeAvaliacoes: 76000
+            qtdeAvaliacoes: 76000,
+            info: '87 Atendimentos realizados,  0,82km de você',
+            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         }
     ])
 
@@ -51,13 +50,13 @@ export default function ProfessionalSearch() {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJob filter={true}/>
-            <ContainerProfessionals>
+            <ContainerCategorias>
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories /> 
-                <View style={{ flex: 4, marginTop: 2 }}>
-                
+                <View style={{ flex: 3, marginTop: 2, backgroundColor:'white' }}>
+                    <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} />
                 </View>
-            </ContainerProfessionals>
+            </ContainerCategorias>
             <Footer />
         </KeyboardAvoidingView>
     )

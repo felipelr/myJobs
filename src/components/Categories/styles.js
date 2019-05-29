@@ -2,10 +2,10 @@ import styled from 'styled-components/native'
 import { purple, white } from '../common/util/colors'
 
 export const ContainerContent = styled.View`
-    padding: 5px;
-    flex: 1;
+    padding: 5px; 
+    height: 90px;
     background-color: white;
-    margin-top: 5px; 
+    margin-top: 2px; 
 `
 export const ContainerItems = styled.ScrollView.attrs({
     horizontal: true,

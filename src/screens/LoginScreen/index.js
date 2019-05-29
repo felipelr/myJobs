@@ -7,7 +7,7 @@ import CopyRight from '../../components/CopyRight/index'
 
 import { Container, ContainerContent, SocialMidiaText } from './styles'
 
-export default function LoginScreen() {
+export default function LoginScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function LoginScreen() {
                     <ContainerContent>
                         <View style={{ flex: 1 }}></View>
                         <View style={{ flex: 3 }}>
-                            <Login />
+                            <Login loginOnPress={() => props.navigation.navigate('ProfessionalSearch')}/>
                             <SocialMidiaText>Entrar com</SocialMidiaText>
                             <SocialMidia />
                         </View>

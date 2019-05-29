@@ -9,7 +9,7 @@ import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 
-export default function ProfessionalSearch() {
+export default function ProfessionalSearchScreen() {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
     const [profissionais, setProfissionais] = useState([
@@ -53,7 +53,7 @@ export default function ProfessionalSearch() {
             <ContainerCategorias>
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories /> 
-                <View style={{ flex: 3, marginTop: 2, backgroundColor:'white' }}>
+                <View style={{ flex: 2.8, marginTop: 2, backgroundColor:'white' }}>
                     <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} />
                 </View>
             </ContainerCategorias>
@@ -62,6 +62,6 @@ export default function ProfessionalSearch() {
     )
 }
 
-ProfessionalSearch.navigationOptions = {
+ProfessionalSearchScreen.navigationOptions = {
     header: null
 }

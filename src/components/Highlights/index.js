@@ -7,7 +7,7 @@ export default function Highlights(props) {
     const { profissionais } = props.destaques
     return (
         <ContainerContent>
-            <Title>Destaques da Categoria {categoria.descricao}</Title>
+            <Title>{categoria.descricao}</Title>
             <ContainerItems>
                 {
                     profissionais.map((item, index) => <ItemHighlight key={index} profissional={item} />)

@@ -9,6 +9,7 @@ export default function ListItemProfessional(props) {
     const { profissional } = props
     return (
         <ListItem
+            itemOnPress={props.itemOnPress}
             leftContent={
                 <Avatar
                     rounded

@@ -10,17 +10,13 @@ import CardJobs from '../CardJobs/index'
 import { white } from '../common/util/colors'
 
 export default function Login(props) {
-    const pressLogin = () => {
-        props.loginOnPress()
-    }
-
     return (
         <CardJobs backColor={white} width='300' height='330' opacity={1}>
             <LoginTitle>Login</LoginTitle>
             <TextInputJobs placeholder='Usuário' />
             <TextInputJobs placeholder='Senha' textContentType='password' secureTextEntry={true} />
             <LoginButtonContainer>
-                <Button title="Entrar" buttonStyle={{ backgroundColor: purple }} onPress={pressLogin}/>
+                <Button title="Entrar" buttonStyle={{ backgroundColor: purple }} onPress={props.loginOnPress}/>
             </LoginButtonContainer>
             <ContainerNewUser>
                 <NewUserText>Novo por aqui?</NewUserText>

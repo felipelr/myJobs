@@ -6,7 +6,7 @@ export default function ListItem(props) {
     const { centerContent } = props
     const { rightContent } = props
     return (
-        <ContainerListItem>
+        <ContainerListItem onPress={props.itemOnPress}>
             <LeftContainerItem>{leftContent ? leftContent : null}</LeftContainerItem>
             <CenterContainerItem>{centerContent ? centerContent : null}</CenterContainerItem>
             <RightContainerItem>{rightContent ? rightContent : null}</RightContainerItem>

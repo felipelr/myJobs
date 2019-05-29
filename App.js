@@ -5,8 +5,9 @@ import ProfessionalSearch from './src/screens/ProfessionalSearch/index'
 
 const MainNavigator = createStackNavigator({
   Login: { screen: LoginScreen },
-  Professionals: { screen: ProfessionalsScreen }
-}, { initialRouteName: 'Professionals' }); 
+  Professionals: { screen: ProfessionalsScreen },
+  ProfessionalSearch: {screen: ProfessionalSearch},
+}, { initialRouteName: 'ProfessionalSearch' }); 
 
 const App = createAppContainer(MainNavigator);
 

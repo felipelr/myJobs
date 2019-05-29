@@ -2,7 +2,7 @@ import styled from 'styled-components/native'
 import { purple } from '../common/util/colors'
 
 export const ContainerFooter = styled.View`
-    padding: 8px;
+    padding: 10px;
     background-color: ${purple};
     flex-direction: row;
 `
@@ -15,8 +15,8 @@ export const FooterButton = styled.TouchableOpacity`
 
 export const ItemRounded = styled.View`
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     border-radius: 50px;
     background-color: ${props => `${props.backColor}`};
 `

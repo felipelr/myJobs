@@ -11,11 +11,15 @@ export default function ProfessionalsScreen() {
     const [profissionais, setProfissionais] = useState([
         {
             nome: 'Finos e Cheirosos',
-            descricao: 'Banho e Tosa de animais de pequeno e médio porte.'
+            descricao: 'Banho e Tosa de animais de pequeno e médio porte.',
+            avaliacao: 3,
+            qtdeAvaliacoes: 143000
         },
         {
-            nome: 'Finos e Cheirosos',
-            descricao: 'Banho e Tosa de animais de pequeno e médio porte.'
+            nome: 'CatDog',
+            descricao: 'Vacinação e cuidados médicos.',
+            avaliacao: 3.5,
+            qtdeAvaliacoes: 76000
         }
     ])
 

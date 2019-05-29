@@ -34,13 +34,3 @@ export const DescriptionItem = styled.Text`
     color: ${white};
     flex: 1;
 `
-export const FooterItem = styled.View`
-    flex-direction: row;
-`
-
-export const RatingText = styled.Text`
-    color: ${white};
-    font-size: 11px;
-    font-family: 'SF-Pro-Text-Regular';
-    padding-left: 5px;
-`

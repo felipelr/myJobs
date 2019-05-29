@@ -2,7 +2,7 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar, Rating } from 'react-native-elements'
 import { ContainerItem, BodyItem, FooterItem, TitleItem, DescriptionItem, ContentInfo } from './styles'
-import { white, purple } from '../common/util/colors'
+import { white } from '../common/util/colors'
 import assets from './assets'
 
 export default function ItemHighlight(props) {

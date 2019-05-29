@@ -8,9 +8,12 @@ export default function Highlights(props) {
     return (
         <ContainerContent>
             <Title>Destaques da Categoria {categoria.descricao}</Title>
-            {
-                profissionais.map((item, index) => <ItemHighlight key={index} item={item} />)
-            }
+            <ContainerItems>
+                {
+                    profissionais.map((item, index) => <ItemHighlight key={index} item={item} />)
+                }
+            </ContainerItems>
+
         </ContainerContent>
     )
 }

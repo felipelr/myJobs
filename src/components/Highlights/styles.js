@@ -14,3 +14,9 @@ export const Title = styled.Text`
     margin-bottom: 5px;
     font-weight: bold;
 `
+
+export const ContainerItems = styled.ScrollView.attrs({
+    horizontal: true,
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
+    showHorizontalScrollIndicator: false
+})``

@@ -7,7 +7,7 @@ const MainNavigator = createStackNavigator({
   Login: { screen: LoginScreen },
   Professionals: { screen: ProfessionalsScreen },
   ProfessionalSearch: {screen: ProfessionalSearch},
-}, { initialRouteName: 'ProfessionalSearch' }); 
+}, { initialRouteName: 'Professionals' }); 
 
 const App = createAppContainer(MainNavigator);
 

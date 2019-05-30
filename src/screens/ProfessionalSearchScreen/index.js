@@ -9,8 +9,7 @@ import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 
-export default function ProfessionalSearchScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
+export default function ProfessionalSearchScreen(props) { 
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
     const [profissionais, setProfissionais] = useState([
         {

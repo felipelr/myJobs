@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {
     Container, ContainerContent, Space, ContainerTitle, Title,
-    ContainerLista,ContainerAvatar, styles
+    ContainerLista, ContainerAvatar, styles
 } from './styles'
 import Background from '../../components/Background/index'
 import Footer from '../../components/Footer/index'
@@ -51,12 +51,23 @@ export default function PerfilScreen(props) {
             <View style={{ flex: 1 }}>
                 <Background />
                 <ContainerContent>
-                    <Space />
-                    <ContainerTitle>
-                        <Title>
-                            Tia da Amazonia
-                        </Title>
-                    </ContainerTitle>
+                    <View style={{flex:1.5}}>
+                        <Space />
+                        <ContainerTitle>
+                            <Title>
+                                Tia da Amazonia
+                            </Title>
+                        </ContainerTitle>
+                        <ContainerAvatar>
+                            <Avatar
+                                rounded
+                                avatarStyle={styles.shadow}
+                                source={{
+                                    uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                                }}
+                                size={140} />
+                        </ContainerAvatar>
+                    </View>
                     <ContainerLista>
                         {
                             list.map((item, i) => (
@@ -64,8 +75,8 @@ export default function PerfilScreen(props) {
                                     <ListItem
                                         key={i}
                                         containerStyle={{ marginBottom: 0.5 }}
-                                        title={item.title} 
-                                        rightIcon={<Icon name="chevron-right" size={20} color={purple}  />                                    }
+                                        title={item.title}
+                                        rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                         leftIcon={{ name: item.icon }}
                                     />
                                 </TouchableOpacity>
@@ -74,15 +85,6 @@ export default function PerfilScreen(props) {
                         }
                     </ContainerLista>
                 </ContainerContent>
-                <ContainerAvatar>
-                    <Avatar
-                        rounded
-                        avatarStyle={styles.shadow}
-                        source={{
-                            uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                        }}
-                        size={140} />
-                </ContainerAvatar> 
                 <Footer />
             </View>
         </Container>

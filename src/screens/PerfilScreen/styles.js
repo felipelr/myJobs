@@ -13,10 +13,10 @@ export const ContainerContent = styled.View`
     flex: 1;
 `
 export const Space = styled.View`
-    flex:0.9;
+    flex:1;
 `
 export const ContainerTitle = styled.View`
-    flex: 0.6;
+    flex: 0.8;
     background-color: white;
     border-top-right-radius: 20; 
     border-top-left-radius: 20;
@@ -36,11 +36,11 @@ export const ContainerLista = styled.View`
 `
 export const ContainerAvatar = styled.View`
     flex: 1;
-    position: absolute;
-    top: 50;
-    right: 0;
+    position: absolute; 
+    right: 0;  
     left: 0;
     align-items: center;
+    top:40;
 `
 export const styles = StyleSheet.create({
     shadow: {
@@ -51,5 +51,5 @@ export const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84
-    }
+    } 
 })

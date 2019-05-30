@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Platform, Text } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import actualDimensions from '../../components/common/util/dimensions'
 
 import {
     Container, ContainerContent, Space, ContainerTitle, Title,
@@ -56,6 +57,7 @@ export default function PerfilScreen(props) {
                         <ContainerTitle>
                             <Title>
                                 Tia da Amazonia
+                                {JSON.stringify(actualDimensions)}
                             </Title>
                         </ContainerTitle>
                         <ContainerAvatar>

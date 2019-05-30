@@ -56,8 +56,7 @@ export default function PerfilScreen(props) {
                         <Space />
                         <ContainerTitle>
                             <Title>
-                                Tia da Amazonia
-                                {JSON.stringify(actualDimensions)}
+                                Tia da Amazonia 
                             </Title>
                         </ContainerTitle>
                         <ContainerAvatar>

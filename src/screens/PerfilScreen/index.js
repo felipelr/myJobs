@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Platform, Text } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {
     Container, ContainerContent, Space, ContainerTitle, Title,
@@ -9,6 +10,7 @@ import {
 import Background from '../../components/Background/index'
 import Footer from '../../components/Footer/index'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { purple } from '../../components/common/util/colors';
 
 export default function PerfilScreen(props) {
 
@@ -62,8 +64,8 @@ export default function PerfilScreen(props) {
                                     <ListItem
                                         key={i}
                                         containerStyle={{ marginBottom: 0.5 }}
-                                        title={item.title}
-                                        chevron={true}
+                                        title={item.title} 
+                                        rightIcon={<Icon name="chevron-right" size={20} color={purple}  />                                    }
                                         leftIcon={{ name: item.icon }}
                                     />
                                 </TouchableOpacity>

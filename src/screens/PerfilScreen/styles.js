@@ -41,7 +41,7 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top:80;
+    top: ${((actualDimensions.height - 640) * 0.23 + 40)};
 `
 export const styles = StyleSheet.create({
     shadow: {

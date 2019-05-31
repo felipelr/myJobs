@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native'
 
 export default styles = StyleSheet.create({ 
     title: {
-        fontSize: 24,
+        fontSize: 20,
         color: 'white',
         textAlign: 'center',
         justifyContent: 'space-between',

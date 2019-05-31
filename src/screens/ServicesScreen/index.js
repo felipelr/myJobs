@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { lightgray } from '../../components/common/util/colors'
 import styles, { ContainerServices, ContainerList, ContainerSearch } from './styles'
 import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
@@ -50,12 +49,12 @@ export default function ServicesScreen() {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back={true} title='Buscar Serviço'/>
+            <HeaderJobs back title='Buscar Serviço' chat/>
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'
-                    inputContainerStyle={styles.searchInputContainerStyle}
-                    inputStyle={{ color: 'white' }}
+                    inputContainerStyle={styles.searchInputContainerStyle}                                    
+                    inputStyle={{ color: 'white', marginTop: 7 }}
                     containerStyle={styles.searchContainerStyle}
                     onChangeText={(e) => setSearch(e)}
                     value={search}

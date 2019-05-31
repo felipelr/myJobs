@@ -17,7 +17,7 @@ export default function Footer(props) {
                     <Icon name="favorite" size={15} color={purple} style={{ alignSelf: 'center' }} />
                 </ItemRounded>
             </FooterButton>
-            <FooterButton>
+            <FooterButton onPress={props.servicesOnPress}>
                 <Icon name="gavel" size={25} color={white} />
             </FooterButton>
             <FooterButton>

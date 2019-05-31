@@ -10,6 +10,7 @@ import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 
 export default function ProfessionalSearchScreen(props) { 
+    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
     const [profissionais, setProfissionais] = useState([
         {
@@ -56,7 +57,7 @@ export default function ProfessionalSearchScreen(props) {
                     <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')}/>
                 </View>
             </ContainerCategorias>
-            <Footer />
+            <Footer servicesOnPress={() => props.navigation.navigate('Services')}/>
         </KeyboardAvoidingView>
     )
 }

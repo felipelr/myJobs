@@ -2,6 +2,7 @@ import React from 'react'
 import { TitleList, ContainerList } from './styles'
 import ListItem from '../ListItem/index'
 import ListItemProfessional from '../ListItem/ListItemProfessional/index'
+import ListItemService from '../ListItem/LisItemService'
 
 export default function List(props) {
     const { titulo } = props
@@ -16,6 +17,9 @@ export default function List(props) {
                     itens.map((item, index) => {
                         if (tipo === 'professional') {
                             return <ListItemProfessional key={index} profissional={item} itemOnPress={props.itemOnPress}/>
+                        }
+                        else if (tipo === 'service') {
+                            return <ListItemService key={index} servico={item} itemOnPress={props.itemOnPress}/>
                         }
                         return <ListItem key={index} />
                     })

@@ -1,14 +1,14 @@
 import styled from 'styled-components'
-import { black } from '../../../common/util/colors'
+import { black } from '../../common/util/colors'
 
-export const TitleProfessional = styled.Text`
+export const TitleService = styled.Text`
     color: ${black};
     font-size: 14px;
     font-family: 'SF-Pro-Text-regular';
     flex: 1;
 `
 
-export const InfoProfessional = styled.Text`
+export const InfoService = styled.Text`
     color: ${black};
     font-size: 10px;
     font-family: 'SF-Pro-Text-Regular';

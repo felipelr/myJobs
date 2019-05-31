@@ -5,11 +5,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
 
 import { purple } from '../../../components/common/util/colors'
-import { TitleProfessional, InfoProfessional } from './styles'
-import RatingJobs from '../../RatingJobs/index'
+import { TitleService, InfoService } from './styles'
 
-export default function ListItemProfessional(props) {
-    const { profissional } = props
+export default function ListItemService(props) {
+    const { servico } = props
     return (
         <ListItem
             itemOnPress={props.itemOnPress}
@@ -18,14 +17,13 @@ export default function ListItemProfessional(props) {
                     rounded
                     containerStyle={{ alignSelf: 'center' }}
                     size={40}
-                    source={{ uri: profissional.imagem, }}
+                    source={{ uri: servico.imagem, }}
                 />
             }
             centerContent={
                 <View>
-                    <TitleProfessional>{profissional.nome}</TitleProfessional>
-                    <InfoProfessional>{profissional.info}</InfoProfessional>
-                    <RatingJobs avaliacao={profissional.avaliacao} qtdeAvaliacoes={profissional.qtdeAvaliacoes} />
+                    <TitleService>{servico.descricao}</TitleService>
+                    <InfoService>{servico.info}</InfoService>
                 </View>
             }
             rightContent={

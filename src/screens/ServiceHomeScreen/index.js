@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'react-native'
-import { SearchBar } from 'react-native-elements'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import styles, { ContainerList, ContainerSearch } from './styles'
-import HeaderJobs from '../../components/HeaderJobs'
-import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
+import HeaderJobs from '../../components/HeaderJobs/index'
 import List from '../../components/List/index'
-import Categories from '../../components/Categories'
+import Footer from '../../components/Footer/index'
+import ServicesSolicitation from '../../components/ServicesSolicitation/index'
+import { ContainerList } from './styles'
 
-export default function ServicesScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
-    const [search, setSearch] = useState('')
+export default function ServiceHomeScreen(props) {
+    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
+    const [categoria, setCategoria] = useState({
+        descricao: 'Manicure'
+    })
     const [servicos, setServicos] = useState([
         {
             descricao: 'PetShop',
@@ -30,6 +30,11 @@ export default function ServicesScreen(props) {
             imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         }
     ])
+    const [solicitacoes, setSolicitacoes] = useState({
+        abertas: 10,
+        andamento: 2,
+        finalizadas: 52
+    })
 
     useEffect(() => {
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -49,31 +54,16 @@ export default function ServicesScreen(props) {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back title='Buscar Serviço' chat />
-            <ContainerSearch>
-                <SearchBar placeholder="Oque você está procurando?"
-                    placeholderTextColor='white'
-                    inputContainerStyle={styles.searchInputContainerStyle}
-                    inputStyle={{ color: 'white', marginTop: 7 }}
-                    containerStyle={styles.searchContainerStyle}
-                    onChangeText={(e) => setSearch(e)}
-                    value={search}
-                    searchIcon={<Icon name='search' size={24} color='white' />}
-                    clearIcon={search != '' &&
-                        <TouchableOpacity onPress={() => setSearch('')}>
-                            <Icon name='close' size={24} color='white' />
-                        </TouchableOpacity>}
-                />
-            </ContainerSearch>
-            <Categories />
+            <HeaderJobs back title={categoria.descricao} />
+            <ServicesSolicitation solicitacoes={solicitacoes} />
             <ContainerList>
-                <List tipo='service' titulo='Serviços' itens={servicos} itemOnPress={() => props.navigation.navigate('ServiceHome')}/>
+                <List tipo='service' titulo='Serviços' itens={servicos} />
             </ContainerList>
             <Footer />
         </KeyboardAvoidingView>
     )
 }
 
-ServicesScreen.navigationOptions = {
+ServiceHomeScreen.navigationOptions = {
     header: null
 }

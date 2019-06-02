@@ -9,7 +9,7 @@ import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 
-export default function ProfessionalSearchScreen(props) {  
+export default function ProfessionalSearchScreen(props) {
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
     const [profissionais, setProfissionais] = useState([
         {
@@ -28,21 +28,24 @@ export default function ProfessionalSearchScreen(props) {
             info: '87 Atendimentos realizados,  0,82km de você',
             imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         }
-    ]) 
+    ])
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJob filter={true}/>
+            <HeaderJob filter={true} />
             <ContainerCategorias>
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
-                <Categories /> 
-                <View style={{ flex: 2, marginTop: 2, backgroundColor:'white' }}>
-                    <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')}/>
+                <Categories />
+                <View style={{ flex: 2, marginTop: 2, backgroundColor: 'white' }}>
+                    <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')} />
                 </View>
             </ContainerCategorias>
-            <Footer servicesOnPress={() => props.navigation.navigate('Services')}/>
+            <Footer
+                servicesOnPress={() => props.navigation.navigate('Services')}
+                perfilOnPress={() => props.navigation.navigate('Perfil')}
+            />
         </View>
     )
 }

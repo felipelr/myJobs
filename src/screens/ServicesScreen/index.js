@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'reac
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import styles, { ContainerServices, ContainerList, ContainerSearch } from './styles'
+import styles, { ContainerList, ContainerSearch } from './styles'
 import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -49,11 +49,11 @@ export default function ServicesScreen() {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back title='Buscar Serviço' chat/>
+            <HeaderJobs back title='Buscar Serviço' chat />
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'
-                    inputContainerStyle={styles.searchInputContainerStyle}                                    
+                    inputContainerStyle={styles.searchInputContainerStyle}
                     inputStyle={{ color: 'white', marginTop: 7 }}
                     containerStyle={styles.searchContainerStyle}
                     onChangeText={(e) => setSearch(e)}
@@ -66,11 +66,9 @@ export default function ServicesScreen() {
                 />
             </ContainerSearch>
             <Categories />
-            <ContainerServices>
-                <ContainerList>
-                    <List tipo='service' titulo='Serviços' itens={servicos} />
-                </ContainerList>
-            </ContainerServices>
+            <ContainerList>
+                <List tipo='service' titulo='Serviços' itens={servicos} />
+            </ContainerList>
             <Footer />
         </KeyboardAvoidingView>
     )

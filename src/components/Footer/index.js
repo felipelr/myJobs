@@ -20,7 +20,7 @@ export default function Footer(props) {
             <FooterButton onPress={props.servicesOnPress}>
                 <Icon name="gavel" size={25} color={white} />
             </FooterButton>
-            <FooterButton>
+            <FooterButton onPress={props.perfilOnPress}>
                 <Icon name="person-outline" size={25} color={white} />
             </FooterButton>
         </ContainerFooter>

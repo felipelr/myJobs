@@ -10,7 +10,7 @@ import Container from '../../components/Container/index'
 import List from '../../components/List/index'
 import Categories from '../../components/Categories'
 
-export default function ServicesScreen() {
+export default function ServicesScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [search, setSearch] = useState('')
     const [servicos, setServicos] = useState([
@@ -67,7 +67,7 @@ export default function ServicesScreen() {
             </ContainerSearch>
             <Categories />
             <ContainerList>
-                <List tipo='service' titulo='Serviços' itens={servicos} />
+                <List tipo='service' titulo='Serviços' itens={servicos} itemOnPress={() => props.navigation.navigate('ServiceHome')}/>
             </ContainerList>
             <Footer />
         </KeyboardAvoidingView>

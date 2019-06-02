@@ -15,7 +15,7 @@ const MainNavigator = createStackNavigator({
   Services: { screen: ServicesScreen },
   ServiceHome: { screen: ServiceHomeScreen },
   ProfessionalHome: { screen: ProfessionalHomeScreen }
-}, { initialRouteName: 'ServiceHome' });
+}, { initialRouteName: 'Login' });
 
 const App = createAppContainer(MainNavigator);
 

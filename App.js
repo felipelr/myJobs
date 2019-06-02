@@ -1,4 +1,4 @@
-import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator, createAppContainer } from 'react-navigation'
 import LoginScreen from './src/screens/LoginScreen/index'
 import ProfessionalsScreen from './src/screens/ProfessionalsScreen/index'
 import ProfessionalSearchScreen from './src/screens/ProfessionalSearchScreen/index'
@@ -6,7 +6,8 @@ import PerfilScreen from './src/screens/PerfilScreen/index'
 import ServicesScreen from './src/screens/ServicesScreen'
 import ServiceHomeScreen from './src/screens/ServiceHomeScreen'
 import ProfessionalHomeScreen from './src/screens/ProfessionalHomeScreen/index'
-import HireServiceScreen from './src/screens/HireServiceScreen'
+import ServiceHireScreen from './src/screens/ServiceHireScreen'
+import ProfessionalChatScreen from './src/screens/ProfessionalChatScreen/index'
 
 const MainNavigator = createStackNavigator({
   Login: { screen: LoginScreen },
@@ -16,9 +17,10 @@ const MainNavigator = createStackNavigator({
   Services: { screen: ServicesScreen },
   ServiceHome: { screen: ServiceHomeScreen },
   ProfessionalHome: { screen: ProfessionalHomeScreen },
-  HireService: { screen: HireServiceScreen }
-}, { initialRouteName: 'ServiceHome' });
+  ServiceHire: { screen: ServiceHireScreen },
+  ProfessionalChat: { screen: ProfessionalChatScreen }
+}, { initialRouteName: 'ProfessionalChat' });
 
-const App = createAppContainer(MainNavigator);
+const App = createAppContainer(MainNavigator)
 
-export default App;
+export default App

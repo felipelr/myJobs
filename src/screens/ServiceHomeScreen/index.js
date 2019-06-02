@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'react-native'
+import { KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
 
 import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'

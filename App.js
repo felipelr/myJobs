@@ -6,6 +6,7 @@ import PerfilScreen from './src/screens/PerfilScreen/index'
 import ServicesScreen from './src/screens/ServicesScreen'
 import ServiceHomeScreen from './src/screens/ServiceHomeScreen'
 import ProfessionalHomeScreen from './src/screens/ProfessionalHomeScreen/index'
+import HireServiceScreen from './src/screens/HireServiceScreen'
 
 const MainNavigator = createStackNavigator({
   Login: { screen: LoginScreen },
@@ -14,8 +15,9 @@ const MainNavigator = createStackNavigator({
   Perfil: { screen: PerfilScreen },
   Services: { screen: ServicesScreen },
   ServiceHome: { screen: ServiceHomeScreen },
-  ProfessionalHome: { screen: ProfessionalHomeScreen }
-}, { initialRouteName: 'Login' });
+  ProfessionalHome: { screen: ProfessionalHomeScreen },
+  HireService: { screen: HireServiceScreen }
+}, { initialRouteName: 'ServiceHome' });
 
 const App = createAppContainer(MainNavigator);
 

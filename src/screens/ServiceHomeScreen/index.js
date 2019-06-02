@@ -5,53 +5,8 @@ import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import List from '../../components/List/index'
 import Footer from '../../components/Footer/index'
+import ServicesSolicitation from '../../components/ServicesSolicitation/index'
 import { ContainerList } from './styles'
-
-
-import { ServicesSolicitationContainer, ServicesSolicitationText } from './styles'
-
-
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import CardJobs from '../../components/CardJobs/index'
-import { SolicitationStatusContainer, CardStatusContainer, CardStatusText } from './styles'
-import { orange, purple, green } from '../../components/common/util/colors'
-
-function ServicesSolicition(props) {
-    return (
-        <ServicesSolicitationContainer>
-            <ServicesSolicitationText>Solicitações de Profissionais</ServicesSolicitationText>
-            <SolicitationStatus />
-        </ServicesSolicitationContainer>
-    )
-}
-
-function SolicitationStatus(props) {
-    return (
-        <SolicitationStatusContainer>
-            <CardJobs backColor={orange} width='105' height='130' paddingCard='2' borderRadius='5'>
-                <CardStatusContainer>
-                    <Icon name='alarm' size={40} color={orange} />
-                    <CardStatusText textColor={orange}>10</CardStatusText>
-                    <CardStatusText textColor={orange}>Abertas</CardStatusText>
-                </CardStatusContainer>
-            </CardJobs>
-            <CardJobs backColor={purple} width='105' height='130' paddingCard='2' borderRadius='5'>
-                <CardStatusContainer>
-                    <Icon name='hourglass-empty' size={40} color={purple} />
-                    <CardStatusText textColor={purple}>10</CardStatusText>
-                    <CardStatusText textColor={purple}>Andamento</CardStatusText>
-                </CardStatusContainer>
-            </CardJobs>
-            <CardJobs backColor={green} width='105' height='130' paddingCard='2' borderRadius='5'>
-                <CardStatusContainer>
-                    <Icon name='check' size={40} color={green} />
-                    <CardStatusText textColor={green}>10</CardStatusText>
-                    <CardStatusText textColor={green}>Finalizadas</CardStatusText>
-                </CardStatusContainer>
-            </CardJobs>
-        </SolicitationStatusContainer>
-    )
-}
 
 export default function ServiceHomeScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
@@ -75,6 +30,11 @@ export default function ServiceHomeScreen(props) {
             imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         }
     ])
+    const [solicitacoes, setSolicitacoes] = useState({
+        abertas: 10,
+        andamento: 2,
+        finalizadas: 52
+    })
 
     useEffect(() => {
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -95,7 +55,7 @@ export default function ServiceHomeScreen(props) {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJobs back title={categoria.descricao} />
-            <ServicesSolicition />
+            <ServicesSolicitation solicitacoes={solicitacoes} />
             <ContainerList>
                 <List tipo='service' titulo='Serviços' itens={servicos} />
             </ContainerList>

@@ -31,7 +31,7 @@ export default function ServiceHireScreen(props) {
                 <View style={{ flex: 1 }}>
                     <TextHireService>Falta pouco...</TextHireService>
                     <ViewCardContainer>
-                        <CardJobs backColor='white' width='300' height='450' paddingCard='20'>
+                        <CardJobs backColor='white' width='360' height='470' paddingCard='20'>
                             <ViewCardContent>
                                 <TextInputJobs placeholder='Nome completo' />
                                 <TextInputJobs placeholder='Telefone para contato' />

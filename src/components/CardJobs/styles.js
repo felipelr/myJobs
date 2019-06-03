@@ -8,5 +8,10 @@ export const ContainerCard = styled.View`
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
     opacity: ${props => `${props.opacity}`};
+    border-width: ${props => `${props.borderWidth}`};
+    border-top-color: ${props => `${props.boderColor}`};
+    border-bottom-color: ${props => `${props.boderColor}`};
+    border-left-color: ${props => `${props.boderColor}`};
+    border-right-color: ${props => `${props.boderColor}`};
     elevation: 1;
 `

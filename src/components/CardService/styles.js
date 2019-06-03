@@ -4,8 +4,7 @@ import { purple, lightgray, white, black } from '../common/util/colors'
 
 export const VwContainerCard = styled.View`
     elevation: 1;
-    width: 200;
-    height: 80;
+    width: 200; 
     margin-left: 2;
     border-radius: 10;
     border-width: 1;

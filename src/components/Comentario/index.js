@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
-import { VwContainerComentario, TxtTitle } from './styles'
+import { VwContainerComentario, TxtTitle,VwContentComentario } from './styles'
 import { black } from '../../components/common/util/colors'
 import RatingJobs from '../../components/RatingJobs'
 
@@ -27,7 +27,9 @@ const Comentario = (props) => {
                 <TxtTitle size={9} color={black}>
                     "{comentario}"
                 </TxtTitle>
-                <RatingJobs avaliacao={avaliacao} />
+                <VwContentComentario> 
+                    <RatingJobs avaliacao={avaliacao} />
+                </VwContentComentario>
             </View>
         </VwContainerComentario>
     )
@@ -36,7 +38,7 @@ const Comentario = (props) => {
 Comentario.propTypes = {
     comentario: PropTypes.string.isRequired,
     usuarioImagem: PropTypes.string.isRequired,
-    avaliacao: PropTypes.number.isRequired, 
+    avaliacao: PropTypes.number.isRequired,
     usuarioNome: PropTypes.string.isRequired
 }
 

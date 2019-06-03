@@ -6,4 +6,5 @@ export const VwContainerServices = styled.ScrollView.attrs({
     showHorizontalScrollIndicator: false
 })` 
     flex-direction: row;
+    margin-bottom: 5;
 `

@@ -3,10 +3,10 @@ import {purple} from '../../components/common/util/colors'
 
 export const SvwContainerStories = styled.ScrollView.attrs({
     horizontal: true,
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2, height:173 },
     showHorizontalScrollIndicator: false
 })` 
-    flex-direction: row;
+    flex-direction: row; 
 `
 
 export const VwContainerStorieItem = styled.View`

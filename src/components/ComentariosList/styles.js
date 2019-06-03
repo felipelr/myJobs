@@ -6,4 +6,5 @@ export const SvwContainerComentarios = styled.ScrollView.attrs({
     showHorizontalScrollIndicator: false
 })` 
     flex-direction: row;
+    margin-bottom: 5;
 `

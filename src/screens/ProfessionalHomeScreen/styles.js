@@ -6,11 +6,11 @@ export const Capa = styled.Image.attrs(props => ({
     source: props.imagem
 }))`
     width:100%;
-    height:100%;
+    height:130; 
 `
 
 export const VwContainerTitle = styled.View`
-    flex: 0.7;
+    height:20%;
     background-color: white;
     border-radius: 10;
     align-items: center;
@@ -37,19 +37,19 @@ export const VwContainerContent = styled.View`
 `
 
 export const VwContainerServices = styled.View`
-    flex: 1.9;
+    height: 120;
     background-color: ${white};
     margin-top: 2;
 `
 
-export const VwContainerServicesTitle = styled.View`
-    flex: 3.3;
+export const VwContainerStories = styled.View`
+    height: 200;
     background-color: ${white};
     margin-top: 2; 
 ` 
 
 export const VwContainerRatingComentario = styled.View`
-    flex: 1;
+    height:200;
     justify-content:flex-end;
     margin-left:5;
 ` 
@@ -60,5 +60,12 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${((actualDimensions.height - 500) * 0.23 + 40)};
+    top: ${((actualDimensions.height - 692) * 0.23 + 40)};
+`
+
+export const ContentComentarios = styled.View`
+    flex: 1.5;
+    background-color: ${white};
+    margin-top: 2;
+    justify-content: flex-end; 
 `

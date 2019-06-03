@@ -1,11 +1,11 @@
 import React from 'react'
-import { View, Platform, TouchableOpacity, Text } from 'react-native'
+import { View, Platform, TouchableOpacity, Text, ScrollView } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
 import {
     Capa, VwContainerTitle, TxtTitle, VwContainerRating,
-    VwContainerContent, VwContainerServices, VwContainerServicesTitle,
-    ContainerAvatar
+    VwContainerContent, VwContainerServices, VwContainerStories,
+    ContainerAvatar, ContentComentarios
 } from './styles'
 import assets from '../../screens/ProfessionalHomeScreen/assets';
 import RatingJobs from '../../components/RatingJobs/index'
@@ -14,6 +14,7 @@ import Stories from '../../components/Stories/index'
 import CardsServices from '../../components/CardsServices/index';
 import ComentariosList from '../../components/ComentariosList';
 import { lightgray } from '../../components/common/util/colors';
+import Footer from '../../components/Footer/index'
 
 export default function ProfessionalHomeScreen(props) {
 
@@ -90,50 +91,53 @@ export default function ProfessionalHomeScreen(props) {
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <View style={{ flex: 1 }} behavior={behavior}>
+        <React.Fragment>
             <HeaderJobs back />
-            <View style={{ flex: 1 }}>
-                <Capa imagem={assets.capa} />
-            </View>
-            <VwContainerTitle>
-                <VwContainerRating>
-                    <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
-                </VwContainerRating>
-                <TxtTitle size={20}>
-                    {empresa.nome}
-                </TxtTitle>
-            </VwContainerTitle>
-            <VwContainerContent>
-                <VwContainerServicesTitle>
-                    <TxtTitle size={10}>
-                        Stories
-                    </TxtTitle>
-                    <Stories novaImagem stories={stories} />
-                </VwContainerServicesTitle>
-                <VwContainerServices>
-                    <TxtTitle size={10}>
-                        Serviços
-                    </TxtTitle>
-                    <CardsServices servicos={servicos} />
-                </VwContainerServices>
-                <View style={{ flex: 1.5, backgroundColor: 'white', marginTop: 2, justifyContent: 'flex-end' }}>
-                    <TxtTitle size={10}>
-                        Comentários do Serviço: Banho e Tosa
-                    </TxtTitle>
-                    <ComentariosList comentarios={comentarios} />
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={{ flex: 1 }} behavior={behavior}>
+                    <Capa imagem={assets.capa} />
+                    <VwContainerTitle>
+                        <VwContainerRating>
+                            <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
+                        </VwContainerRating>
+                        <TxtTitle size={20}>
+                            {empresa.nome}
+                        </TxtTitle>
+                    </VwContainerTitle>
+                    <VwContainerContent>
+                        <VwContainerStories>
+                            <TxtTitle size={10}>
+                                Stories
+                        </TxtTitle>
+                            <Stories novaImagem stories={stories} />
+                        </VwContainerStories>
+                        <VwContainerServices>
+                            <TxtTitle size={10}>
+                                Serviços
+                        </TxtTitle>
+                            <CardsServices servicos={servicos} />
+                        </VwContainerServices>
+                        <ContentComentarios> 
+                            <TxtTitle size={10}>
+                                Comentários do Serviço: Banho e Tosa
+                            </TxtTitle>
+                            <ComentariosList comentarios={comentarios} />
+                        </ContentComentarios> 
+                    </VwContainerContent>
+                    <ContainerAvatar>
+                        <Avatar
+                            rounded
+                            containerStyle={{ borderWidth: 0.5, borderColor: lightgray, elevation: 1 }}
+                            avatarStyle={styles.shadow}
+                            source={{
+                                uri: empresa.imagem,
+                            }}
+                            size={140} />
+                    </ContainerAvatar>
                 </View>
-            </VwContainerContent>
-            <ContainerAvatar>
-                <Avatar
-                    rounded
-                    containerStyle={{ borderWidth: 0.5, borderColor: lightgray, elevation: 1 }}
-                    avatarStyle={styles.shadow}
-                    source={{
-                        uri: empresa.imagem,
-                    }}
-                    size={140} />
-            </ContainerAvatar>
-        </View>
+            </ScrollView>
+            <Footer />
+        </React.Fragment>
     )
 }
 

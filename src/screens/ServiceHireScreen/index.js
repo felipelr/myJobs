@@ -7,7 +7,7 @@ import CardJobs from '../../components/CardJobs/index'
 import TextInputJobs from '../../components/TextInputJobs/index'
 import { purple } from '../../components/common/util/colors'
 
-export default function HireServiceScreen(props) {
+export default function ServiceHireScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
 
     useEffect(() => {
@@ -50,6 +50,6 @@ export default function HireServiceScreen(props) {
     )
 }
 
-HireServiceScreen.navigationOptions = {
+ServiceHireScreen.navigationOptions = {
     header: null
 }

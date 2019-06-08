@@ -13,7 +13,7 @@ const Comentario = (props) => {
 
     return (
         <VwContainerComentario>
-            <View style={{ flex: 1 }}>
+            <View>
                 <Avatar
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={styles.overlayContainerStyle}
@@ -23,8 +23,8 @@ const Comentario = (props) => {
                     }}
                     size={60} />
             </View>
-            <View style={{ flex: 2 }}>
-                <TxtTitle size={9} color={black}>
+            <View style={{ flex: 1 }}>
+                <TxtTitle size={10} color={black}>
                     "{comentario}"
                 </TxtTitle>
                 <VwContentComentario> 

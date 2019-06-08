@@ -1,11 +1,12 @@
 import styled from 'styled-components'
 import { purple, lightgray, white, black } from '../common/util/colors' 
+import actualDimensions, {widthPercentageToDP, heightPercentageToDP }  from '../../components/common/util/dimensions'
 
 
 export const VwContainerCard = styled.View`
     elevation: 1;
-    width: 200; 
-    margin-left: 2;
+    width: ${widthPercentageToDP('60%')}; 
+    margin-right:5;
     border-radius: 10;
     border-width: 1;
     border-color: ${lightgray};

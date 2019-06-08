@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import { purple } from '../../components/common/util/colors'
-import { StyleSheet } from 'react-native'
-import actualDimensions from '../../components/common/util/dimensions'
+import { StyleSheet } from 'react-native' 
+import actualDimensions, {widthPercentageToDP, heightPercentageToDP }  from '../../components/common/util/dimensions'
+
 
 export const Container = styled.ScrollView`
     flex: 1;
@@ -17,7 +18,7 @@ export const Space = styled.View`
     flex:1;
 `
 export const ContainerTitle = styled.View`
-    flex: 0.8;
+    height:${heightPercentageToDP('13%')};
     background-color: white;
     border-top-right-radius: 20; 
     border-top-left-radius: 20;
@@ -26,7 +27,7 @@ export const ContainerTitle = styled.View`
 `
 
 export const Title = styled.Text`
-    font-size: 18;
+    font-size: 24;
     color: ${purple};
     margin-bottom: 5px;
     font-weight: bold;
@@ -41,7 +42,7 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${((actualDimensions.height - 692) * 0.23 + 40)};
+    top: ${heightPercentageToDP('12%')};
 `
 export const styles = StyleSheet.create({
     shadow: {

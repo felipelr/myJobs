@@ -100,25 +100,25 @@ export default function ProfessionalHomeScreen(props) {
                         <VwContainerRating>
                             <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
                         </VwContainerRating>
-                        <TxtTitle size={20}>
+                        <TxtTitle size={24}>
                             {empresa.nome}
                         </TxtTitle>
                     </VwContainerTitle>
                     <VwContainerContent>
                         <VwContainerStories>
-                            <TxtTitle size={10}>
+                            <TxtTitle size={14}>
                                 Stories
-                        </TxtTitle>
+                            </TxtTitle>
                             <Stories novaImagem stories={stories} />
                         </VwContainerStories>
                         <VwContainerServices>
-                            <TxtTitle size={10}>
+                            <TxtTitle size={14}>
                                 Serviços
-                        </TxtTitle>
+                            </TxtTitle>
                             <CardsServices servicos={servicos} />
                         </VwContainerServices>
                         <ContentComentarios> 
-                            <TxtTitle size={10}>
+                            <TxtTitle size={14}>
                                 Comentários do Serviço: Banho e Tosa
                             </TxtTitle>
                             <ComentariosList comentarios={comentarios} />

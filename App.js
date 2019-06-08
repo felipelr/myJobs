@@ -19,7 +19,7 @@ const MainNavigator = createStackNavigator({
   ProfessionalHome: { screen: ProfessionalHomeScreen }, 
   ServiceHire: { screen: ServiceHireScreen },
   ProfessionalChat: { screen: ProfessionalChatScreen }
-}, { initialRouteName: 'ProfessionalHome' }); 
+}, { initialRouteName: 'Login' }); 
 
 const App = createAppContainer(MainNavigator)
 

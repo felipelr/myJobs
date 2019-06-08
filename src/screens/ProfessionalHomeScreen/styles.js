@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import {purple, lightgray, white} from '../../components/common/util/colors'
-import actualDimensions from '../../components/common/util/dimensions'
+import actualDimensions, {widthPercentageToDP, heightPercentageToDP }  from '../../components/common/util/dimensions'
 
 export const Capa = styled.Image.attrs(props => ({
     source: props.imagem
@@ -9,8 +9,7 @@ export const Capa = styled.Image.attrs(props => ({
     height:130; 
 `
 
-export const VwContainerTitle = styled.View`
-    height:20%;
+export const VwContainerTitle = styled.View` 
     background-color: white;
     border-radius: 10;
     align-items: center;
@@ -37,21 +36,22 @@ export const VwContainerContent = styled.View`
 `
 
 export const VwContainerServices = styled.View`
-    height: 120;
+    height: ${heightPercentageToDP('22%')};
     background-color: ${white};
     margin-top: 2;
+    padding: 5px; 
 `
 
 export const VwContainerStories = styled.View`
-    height: 200;
     background-color: ${white};
-    margin-top: 2; 
+    margin-top: 2;
+    padding: 5px; 
 ` 
 
 export const VwContainerRatingComentario = styled.View`
-    height:200;
+    height:${heightPercentageToDP('15%')};
     justify-content:flex-end;
-    margin-left:5;
+    margin-left:5; 
 ` 
 
 export const ContainerAvatar = styled.View`
@@ -60,12 +60,12 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${((actualDimensions.height - 692) * 0.23 + 40)};
+    top: ${heightPercentageToDP('6%')};
 `
 
-export const ContentComentarios = styled.View`
-    flex: 1.5;
+export const ContentComentarios = styled.View` 
     background-color: ${white};
     margin-top: 2;
     justify-content: flex-end; 
+    padding: 5px; 
 `

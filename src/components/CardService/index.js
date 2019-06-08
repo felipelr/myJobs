@@ -11,12 +11,12 @@ export default CardService = (props) => {
     return (
         <VwContainerCard>
             <VwTitleCard select={select}>
-                <TxtTitle size={12} select={select} bold texto>
+                <TxtTitle size={14} select={select} bold texto>
                     {titulo}
                 </TxtTitle>
             </VwTitleCard>
             <VwSubTitle>
-                <TxtTitle size={10} texto>
+                <TxtTitle size={12} texto>
                     {descricao}
                 </TxtTitle>
             </VwSubTitle>
@@ -24,7 +24,7 @@ export default CardService = (props) => {
                 <VwRodapeContent >
                     <RatingJobs avaliacao={avaliacao} qtdeAvaliacoes={qtdeAvaliacoes} />
                     <TouchableOpacity>
-                        <TxtTitle size={10} bold>
+                        <TxtTitle size={12} bold>
                             Ver comentários
                         </TxtTitle>
                     </TouchableOpacity> 

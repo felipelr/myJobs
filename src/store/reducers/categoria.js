@@ -31,10 +31,10 @@ export const categoriasLoadError = (state = INITIAL_STATE, action) => {
     }
 }
 
-export const HANDLERS = {
+export const HANDLES = {
     [Types.CATEGORIAS_LOAD_REQUEST]: categoriasLoadRequest,
     [Types.CATEGORIAS_LOAD_SUCCESS]: categoriasLoadSuccess,
     [Types.CATEGORIAS_LOAD_ERROR]: categoriasLoadError
 }
 
-export default createReducer(INITIAL_STATE, HANDLERS)
+export default createReducer(INITIAL_STATE, HANDLES)

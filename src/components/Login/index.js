@@ -33,6 +33,15 @@ function Login(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
+            Alert.alert(
+                'Atenção',
+                JSON.stringify(props.auth),
+                [
+                    { text: 'OK', onPress: () => console.log(props.auth.errorMessage) },
+                ],
+                { cancelable: false },
+            )
+
             props.ownProps.navigation.navigate('ProfessionalSearch')
         }
     }, [props.auth.isAuth])

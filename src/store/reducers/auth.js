@@ -7,7 +7,8 @@ export const INITIAL_STATE = {
     isLogingin: false,
     user: {},
     error: false,
-    errorMessage: ''
+    errorMessage: '',
+    token: ''
 }
 
 export const loginRequest = (state = INITIAL_STATE, action) => {
@@ -24,7 +25,8 @@ export const loginSuccess = (state = INITIAL_STATE, action) => {
         ...state,
         isLogingin: false,
         isAuth: true,
-        user: action.user
+        user: action.user,
+        token: action.token
     }
 }
 
@@ -33,7 +35,9 @@ export const loginError = (state = INITIAL_STATE, action) => {
         ...state,
         isLogingin: false,
         error: true,
-        errorMessage: action.error
+        errorMessage: action.error,
+        user: {},
+        token: ''
     }
 }
 

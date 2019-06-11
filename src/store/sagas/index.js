@@ -14,7 +14,7 @@ function* login(action) {
     if (login.data.data.token) {
         token = login.data.data.token
         const user = jwtDecode(token)
-        yield put(ActionCreator.loginSuccess(user))
+        yield put(ActionCreator.loginSuccess({ user, token }))
     }
     else {
         const messageError = login.data.message ? login.data.message : 'Erro Desconhecido'

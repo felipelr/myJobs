@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+
 import Background from '../../components/Background/index'
 import Login from '../../components/Login/index'
 import SocialMidia from '../../components/SocialMidia/index'
@@ -8,7 +9,7 @@ import CopyRight from '../../components/CopyRight/index'
 import { Container, ContainerContent, SocialMidiaText } from './styles'
 
 export default function LoginScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
+    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
 
     useEffect(() => {
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -33,7 +34,7 @@ export default function LoginScreen(props) {
                     <ContainerContent>
                         <View style={{ flex: 1 }}></View>
                         <View style={{ flex: 3 }}>
-                            <Login loginOnPress={() => props.navigation.navigate('ProfessionalSearch')}/>
+                            <Login loginOnPress={() => props.navigation.navigate('ProfessionalSearch')} />
                             <SocialMidiaText>Entrar com</SocialMidiaText>
                             <SocialMidia />
                         </View>

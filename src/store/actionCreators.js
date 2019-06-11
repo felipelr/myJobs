@@ -1,7 +1,15 @@
 import { createActions } from 'reduxsauce'
 
 export const {  Types, Creators } = createActions({
-    //Actions de Categorias
+    //Auth Actions
+    loginRequest: ['email', 'password'],
+    loginSuccess: ['user'],
+    loginError: ['error'],
+    authRequest: null,
+    authSuccess: ['user'],
+    authError: null,
+
+    //Actions de Categorias 
     categoriasLoadRequest: ['token'],
     categoriasLoadSuccess: ['data'],
     categoriasLoadError: ['error']

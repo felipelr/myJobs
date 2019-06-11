@@ -11,6 +11,7 @@ import ServiceHomeScreen from './src/screens/ServiceHomeScreen'
 import ProfessionalHomeScreen from './src/screens/ProfessionalHomeScreen/index'
 import ServiceHireScreen from './src/screens/ServiceHireScreen'
 import ProfessionalChatScreen from './src/screens/ProfessionalChatScreen/index'
+
 import store from './src/store'
 
 const MainNavigator = createStackNavigator({

@@ -62,7 +62,7 @@ function Login(props) {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.reducers.auth,
+        auth: state.auth,
         ownProps: ownProps
     }
 }

@@ -34,7 +34,7 @@ export default function LoginScreen(props) {
                     <ContainerContent>
                         <View style={{ flex: 1 }}></View>
                         <View style={{ flex: 3 }}>
-                            <Login loginOnPress={() => props.navigation.navigate('ProfessionalSearch')} />
+                            <Login navigation={props.navigation} />
                             <SocialMidiaText>Entrar com</SocialMidiaText>
                             <SocialMidia />
                         </View>

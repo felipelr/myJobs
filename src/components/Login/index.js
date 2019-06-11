@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Alert } from 'react-native'
 import { connect } from 'react-redux'
+
 import ActionCreators from '../../store/actionCreators'
 
 import { purple } from '../common/util/colors'
@@ -13,43 +14,36 @@ import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
 import { white } from '../common/util/colors'
 
-import store from '../../store/index';
-
 function Login(props) {
     const [email, setEmail] = useState('root@email.tld')
     const [password, setPassword] = useState('rootroot')
 
-    const state = store.getState()
-
-    const handleClickLogin = () => {
-        props.login(email, password)
-
-        /*
-        if (props.auth.user) {
+    useEffect(() => {
+        if (props.auth.error) {
             Alert.alert(
-                'Alert Title',
-                'user: ' + JSON.stringify(props.auth.user),
+                'Atenção',
+                props.auth.errorMessage,
                 [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    { text: 'OK', onPress: () => console.log(props.auth.errorMessage) },
                 ],
                 { cancelable: false },
             )
         }
-        else {
-            Alert.alert(
-                'Alert Title',
-                '',
-                [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: false },
-            )
-        } */
+    }, [props.auth.error]);
+
+    useEffect(() => {
+        if (props.auth.isAuth) {
+            props.ownProps.navigation.navigate('ProfessionalSearch')
+        }
+    }, [props.auth.isAuth])
+
+    const handleClickLogin = () => {
+        props.login(email, password)
     }
 
     return (
         <CardJobs backColor={white} width='300' height='330' opacity={1}>
-            <LoginTitle>Login {JSON.stringify(state.reducers.auth.isAuth)}</LoginTitle>
+            <LoginTitle>Login</LoginTitle>
             <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
             <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
             <LoginButtonContainer>
@@ -65,9 +59,10 @@ function Login(props) {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.auth
+        auth: state.reducers.auth,
+        ownProps: ownProps
     }
 }
 

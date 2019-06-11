@@ -15,7 +15,7 @@ import CardJobs from '../CardJobs/index'
 import { white } from '../common/util/colors'
 
 function Login(props) {
-    const [email, setEmail] = useState('root@email.tld')
+    const [email, setEmail] = useState('root@email.tld2')
     const [password, setPassword] = useState('rootroot')
 
     useEffect(() => {
@@ -33,15 +33,7 @@ function Login(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            Alert.alert(
-                'Atenção',
-                JSON.stringify(props.auth),
-                [
-                    { text: 'OK', onPress: () => console.log(props.auth.errorMessage) },
-                ],
-                { cancelable: false },
-            )
-
+            console.log(props.auth)
             props.ownProps.navigation.navigate('ProfessionalSearch')
         }
     }, [props.auth.isAuth])

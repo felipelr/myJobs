@@ -25,8 +25,8 @@ export const loginSuccess = (state = INITIAL_STATE, action) => {
         ...state,
         isLogingin: false,
         isAuth: true,
-        user: action.user,
-        token: action.token
+        user: action.data.user,
+        token: action.data.token
     }
 }
 

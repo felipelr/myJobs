@@ -15,7 +15,7 @@ import CardJobs from '../CardJobs/index'
 import { white } from '../common/util/colors'
 
 function Login(props) {
-    const [email, setEmail] = useState('root@email.tld2')
+    const [email, setEmail] = useState('root@email.tld')
     const [password, setPassword] = useState('rootroot')
 
     useEffect(() => {
@@ -33,7 +33,6 @@ function Login(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            console.log(props.auth)
             props.ownProps.navigation.navigate('ProfessionalSearch')
         }
     }, [props.auth.isAuth])

@@ -1,6 +1,7 @@
 import { put, takeLatest, all } from 'redux-saga/effects'
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { Types } from '../actionCreators'
 import ActionCreator from '../actionCreators'
@@ -16,6 +17,15 @@ function* login(action) {
         const { data } = login.data
         token = data.token
         const user = jwtDecode(token)
+
+        //salvar token
+        setValue = async () => {
+            try {
+                yield AsyncStorage.setItem('@token', token)
+            } catch (e) {                
+            }
+        }
+
         yield put(ActionCreator.loginSuccess({ user, token }))
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'

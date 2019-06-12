@@ -8,9 +8,7 @@ import { ViewContainer } from './styles'
 function SplashScreen(props) {
 
     useEffect(() => {
-        setTimeout(() => {
-            props.authRequest()
-        }, 2000)
+        props.authRequest()
     }, [])
 
     useEffect(() => {

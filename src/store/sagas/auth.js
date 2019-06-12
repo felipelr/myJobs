@@ -46,7 +46,6 @@ function* auth(action) {
     else {
         yield put(ActionCreator.authError())
     }
-    yield put(ActionCreator.authError())
 }
 
 export default function* rootAuth() {

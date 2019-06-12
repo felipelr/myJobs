@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard } from 'react-native' 
+import { View, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
 
 import Background from '../../components/Background/index'
 import Login from '../../components/Login/index'
@@ -12,7 +12,6 @@ export default function LoginScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
 
     useEffect(() => {
-        console.log(props)
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
             setKeyboardIsVisible(true)
         })
@@ -46,7 +45,6 @@ export default function LoginScreen(props) {
         </KeyboardAvoidingView>
     )
 }
-  
 
 LoginScreen.navigationOptions = {
     header: null

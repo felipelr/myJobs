@@ -10,9 +10,9 @@ export const {  Types, Creators } = createActions({
     authError: null,
 
     //Actions de Categorias 
-    categoriasLoadRequest: ['token'],
-    categoriasLoadSuccess: ['data'],
-    categoriasLoadError: ['error']
+    categoriesLoadRequest: ['token'],
+    categoriesLoadSuccess: ['data'],
+    categoriesLoadError: ['error']
 })
 
 export default Creators

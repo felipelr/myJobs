@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { View, KeyboardAvoidingView, Platform, Keyboard, Text } from 'react-native'
 import { ContainerCategorias } from './styles'
+import { connect } from 'react-redux'
 
+import ActionCreators from '../../store/actionCreators'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import Highlights from '../../components/Highlights/index'
@@ -30,6 +32,11 @@ export default function ProfessionalSearchScreen(props) {
         }
     ])
 
+    useEffect(() => {
+        console.log('Teste sistema = ' + JSON.stringify(props.data));
+        props.getCategories();
+    }, [props.data]);
+
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <View style={{ flex: 1 }} behavior={behavior}>
@@ -48,8 +55,25 @@ export default function ProfessionalSearchScreen(props) {
             />
         </View>
     )
+} 
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        token: state.auth.token,
+        data: state.categoria.data,
+        ownProps: ownProps
+    }
 }
 
+const mapDispatchToProps = dispatch => {
+    return {
+        getCategories: (token) => dispatch(ActionCreators.categoriesLoadRequest(token))
+    }
+}
+ 
 ProfessionalSearchScreen.navigationOptions = {
     header: null
 }
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalSearchScreen)

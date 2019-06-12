@@ -10,9 +10,9 @@ import ServicesScreen from './src/screens/ServicesScreen'
 import ServiceHomeScreen from './src/screens/ServiceHomeScreen'
 import ProfessionalHomeScreen from './src/screens/ProfessionalHomeScreen/index'
 import ServiceHireScreen from './src/screens/ServiceHireScreen'
-import ProfessionalChatScreen from './src/screens/ProfessionalChatScreen/index'
+import ProfessionalChatScreen from './src/screens/ProfessionalChatScreen/index' 
 
-import store from './src/store'
+import store from './src/store' 
 
 const MainNavigator = createStackNavigator({
   Login: { screen: LoginScreen },
@@ -28,7 +28,8 @@ const MainNavigator = createStackNavigator({
 
 let Navigation = createAppContainer(MainNavigator)
 
-export default class App extends Component {
+
+export default class App extends Component { 
   render() {
     return (
       <Provider store={store}>

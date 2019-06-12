@@ -6,7 +6,7 @@ export const {  Types, Creators } = createActions({
     loginSuccess: ['data'],
     loginError: ['error'],
     authRequest: null,
-    authSuccess: ['user'],
+    authSuccess: ['data'],
     authError: null,
 
     //Actions de Categorias 

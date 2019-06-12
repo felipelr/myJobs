@@ -1,0 +1,1 @@
+export const urlMyJobsAPI = 'http://myjobs.servicos.ws/api';

@@ -4,10 +4,11 @@ import jwtDecode from 'jwt-decode'
 
 import { Types } from '../actionCreators'
 import ActionCreator from '../actionCreators'
+import { urlMyJobsAPI } from '../../config/config'
 
 function* login(action) {
     try {
-        const login = yield axios.post('http://myjobs.servicos.ws/api/users/login.json', {
+        const login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
             email: action.email,
             password: action.password
         })

@@ -1,6 +1,6 @@
 import { createActions } from 'reduxsauce'
 
-export const {  Types, Creators } = createActions({
+export const { Types, Creators } = createActions({
     //Auth Actions
     loginRequest: ['email', 'password'],
     loginSuccess: ['data'],
@@ -10,9 +10,9 @@ export const {  Types, Creators } = createActions({
     authError: null,
 
     //Actions de Categorias 
-    categoriesLoadRequest: ['token'],
-    categoriesLoadSuccess: ['data'],
-    categoriesLoadError: ['error']
+    categoriasLoadRequest: ['token'],
+    categoriasLoadSuccess: ['data'],
+    categoriasLoadError: ['error']
 })
 
 export default Creators

@@ -11,7 +11,7 @@ import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 
-export default function ProfessionalSearchScreen(props) {
+function ProfessionalSearchScreen(props) {
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
     const [profissionais, setProfissionais] = useState([
         {
@@ -33,8 +33,8 @@ export default function ProfessionalSearchScreen(props) {
     ])
 
     useEffect(() => {
-        console.log('Teste sistema = ' + JSON.stringify(props.data));
-        props.getCategories();
+        console.log('Teste sistema = ' + JSON.stringify(props.data))
+        props.getCategories()
     }, [props.data]);
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -67,7 +67,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getCategories: (token) => dispatch(ActionCreators.categoriesLoadRequest(token))
+        getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token))
     }
 }
  

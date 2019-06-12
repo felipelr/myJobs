@@ -1,31 +1,31 @@
 import { createReducer } from 'reduxsauce'
-import {Types} from '../actionCreators'
+import { Types } from '../actionCreators'
 
-export const INITIAL_STATE={
+export const INITIAL_STATE = {
     loading: false,
     data: [],
     error: false,
     errorMessage: ''
 }
 
-export const categoriasLoadRequest = (state = INITIAL_STATE, action) => { 
+export const categoriasLoadRequest = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         loading: true
     }
 }
 
-export const categoriasLoadSuccess = (state = INITIAL_STATE, action) => { 
+export const categoriasLoadSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         data: action.data,
         loading: false
     }
 }
- 
-export const categoriasLoadError = (state = INITIAL_STATE, action) => { 
+
+export const categoriasLoadError = (state = INITIAL_STATE, action) => {
     return {
-        ...state, 
+        ...state,
         error: true,
         errorMessage: action.error
     }

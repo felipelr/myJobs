@@ -9,7 +9,7 @@ const CategorieItem = (props) => {
 
     return (
         <ContainerBody>
-            <Title>{categoria.descricao}</Title>
+            <Title>{categoria.description}</Title>
             <TouchableOpacity>
                 <Avatar
                     containerStyle={styles.containerStyle}

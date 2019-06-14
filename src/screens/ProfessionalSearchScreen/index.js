@@ -32,10 +32,9 @@ function ProfessionalSearchScreen(props) {
         }
     ])
 
-    useEffect(() => {
-        console.log('Teste sistema = ' + JSON.stringify(props.data))
-        props.getCategories()
-    }, [props.data]);
+    useEffect(() => { 
+        props.getCategories(props.token)
+    }, []);
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
@@ -76,4 +75,4 @@ ProfessionalSearchScreen.navigationOptions = {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalSearchScreen)
+export default connect(mapStateToProps,mapDispatchToProps)(ProfessionalSearchScreen)

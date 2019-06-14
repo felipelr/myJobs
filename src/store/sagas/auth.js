@@ -38,12 +38,16 @@ setUserData = async (userData) => {
 }
 
 function* auth(action) {
-    let userData = yield AsyncStorage.getItem('@userData')
-    if (userData) {
-        let parsed = JSON.parse(userData)
-        yield put(ActionCreator.authSuccess(parsed))
-    }
-    else {
+    try {
+        let userData = yield AsyncStorage.getItem('@userData')
+        if (userData) {
+            let parsed = JSON.parse(userData)
+            yield put(ActionCreator.authSuccess(parsed))
+        }
+        else {
+            yield put(ActionCreator.authError())
+        }
+    } catch (e) {
         yield put(ActionCreator.authError())
     }
 }

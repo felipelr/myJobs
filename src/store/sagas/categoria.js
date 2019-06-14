@@ -7,23 +7,20 @@ import { urlMyJobsAPI } from '../../config/config'
 
 function* getCategories(action) {
     try {
-        let data = yield axios.post(`${urlMyJobsAPI}/categories/index.json`, {
+        let data = yield axios.get(`${urlMyJobsAPI}/categories/index.json`, {
             headers: {
                 Authorization: 'Bearer ' + action.token
             }
-        })
+        }) 
+        let { categories } = data.data  
 
-        console.log(JSON.stringify(data))
-
-        yield put(ActionCreator.categoriasLoadSuccess(data))
+        yield put(ActionCreator.categoriasLoadSuccess(categories))
     } catch (ex) {
-        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-        yield put(ActionCreator.categoriasLoadError(messageError))
+        console.log('xabuzao = ' + JSON.stringify(ex))
     }
 }
 
 export default function* rootCategories() {
-    console.log('rootCategories')
     yield all([
         takeLatest(Types.CATEGORIAS_LOAD_REQUEST, getCategories)
     ])

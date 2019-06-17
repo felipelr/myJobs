@@ -9,10 +9,11 @@ export default styles = StyleSheet.create({
         borderBottomWidth: 0,
         padding: 0,
         margin:0,
+        borderRadius: 20
     },
     searchInputContainerStyle: {
         backgroundColor: lightpurple,
-        borderRadius: 15,
-        height: 30
+        borderRadius: 20,
+        height: 35
     } 
 })

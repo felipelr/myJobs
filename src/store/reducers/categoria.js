@@ -27,6 +27,7 @@ export const categoriasLoadError = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         error: true,
+        loading: false,
         errorMessage: action.error
     }
 }

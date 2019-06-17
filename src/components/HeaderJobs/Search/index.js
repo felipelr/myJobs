@@ -22,13 +22,12 @@ export default Search = () => {
         <SearchBar placeholder="Pesquisar "
             placeholderTextColor={lightgray}
             inputContainerStyle={styles.searchInputContainerStyle}
-            inputStyle={{ color: 'white' }}
+            inputStyle={{ color: 'white', marginTop: 7 }}
             containerStyle={styles.searchContainerStyle}
             onChangeText={(e) => setSearch(e)}
             value={search}
             searchIcon={<Icon name='search' size={24} color='white' />}
             clearIcon={search != '' && <ClearButton />}
         />
-
     )
 }

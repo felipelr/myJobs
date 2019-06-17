@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard, Text } from 'react-native'
+import { View, KeyboardAvoidingView, Keyboard, Platform, BackHandler } from 'react-native'
 import { ContainerCategorias } from './styles'
 import { connect } from 'react-redux'
 
@@ -32,9 +32,25 @@ function ProfessionalSearchScreen(props) {
         }
     ])
 
-    useEffect(() => { 
+    useEffect(() => {
         props.getCategories(props.token)
-    }, []);
+
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        return () => {
+            this.backHandler.remove()
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!props.isAuth) {
+            props.ownProps.navigation.navigate('Login')
+        }
+    }, [props.isAuth])
+
+    handleBackPress = () => {
+        props.logout()
+        return true
+    }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
@@ -54,11 +70,12 @@ function ProfessionalSearchScreen(props) {
             />
         </View>
     )
-} 
+}
 
 const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
+        isAuth: state.auth.isAuth,
         data: state.categoria.data,
         ownProps: ownProps
     }
@@ -66,13 +83,14 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token))
+        getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
+        logout: () => dispatch(ActionCreators.logoutRequest())
     }
 }
- 
+
 ProfessionalSearchScreen.navigationOptions = {
     header: null
 }
 
 
-export default connect(mapStateToProps,mapDispatchToProps)(ProfessionalSearchScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalSearchScreen)

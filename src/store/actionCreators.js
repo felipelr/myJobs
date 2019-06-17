@@ -8,6 +8,9 @@ export const { Types, Creators } = createActions({
     authRequest: null,
     authSuccess: ['data'],
     authError: null,
+    logoutRequest: null,
+    logoutSuccess: null,
+    logoutError: ['error'],
 
     //Actions de Categorias 
     categoriasLoadRequest: ['token'],

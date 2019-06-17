@@ -7,16 +7,24 @@ import { Types } from '../actionCreators'
 import ActionCreator from '../actionCreators'
 import { urlMyJobsAPI } from '../../config/config'
 
+setUserData = async (userData) => {
+    try {
+        await AsyncStorage.setItem('@userData', JSON.stringify(userData))
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 function* login(action) {
     try {
-        const login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
+        let login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
             email: action.email,
             password: action.password
         })
 
-        const { data } = login.data
+        let { data } = login.data
         token = data.token
-        const user = jwtDecode(token)
+        let user = jwtDecode(token)
 
         //salvar token
         let userData = { user, token }
@@ -24,16 +32,8 @@ function* login(action) {
 
         yield put(ActionCreator.loginSuccess({ user, token }))
     } catch (ex) {
-        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.loginError(messageError))
-    }
-}
-
-setUserData = async (userData) => {
-    try {
-        await AsyncStorage.setItem('@userData', JSON.stringify(userData))
-    } catch (e) {
-        console.log(e)
     }
 }
 
@@ -47,8 +47,17 @@ function* auth(action) {
         else {
             yield put(ActionCreator.authError())
         }
-    } catch (e) {
+    } catch (ex) {
         yield put(ActionCreator.authError())
+    }
+}
+
+function* logout(action){
+    try {
+        yield AsyncStorage.removeItem('@userData')    
+        yield put(ActionCreator.logoutSuccess())    
+    } catch (ex) {
+        yield put(ActionCreator.logoutError(ex.message))
     }
 }
 
@@ -56,6 +65,7 @@ export default function* rootAuth() {
     console.log('rootAuth')
     yield all([
         takeLatest(Types.LOGIN_REQUEST, login),
-        takeLatest(Types.AUTH_REQUEST, auth)
+        takeLatest(Types.AUTH_REQUEST, auth),
+        takeLatest(Types.LOGOUT_REQUEST, logout)
     ])
 }

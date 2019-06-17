@@ -72,13 +72,41 @@ export const authError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const logoutRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        error: false,
+        errorMessage: ''
+    }
+}
+
+export const logoutSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isAuth: false,
+        error: false,
+        errorMessage: ''
+    }
+}
+
+export const logoutError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        error: true,
+        errorMessage: action.error
+    }
+}
+
 export const HANDLERS = {
     [Types.LOGIN_REQUEST]: loginRequest,
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
     [Types.AUTH_REQUEST]: authRequest,
     [Types.AUTH_SUCCESS]: authSuccess,
-    [Types.AUTH_ERROR]: authError
+    [Types.AUTH_ERROR]: authError,
+    [Types.LOGOUT_REQUEST]: logoutRequest,
+    [Types.LOGOUT_SUCCESS]: logoutSuccess,
+    [Types.LOGOUT_ERROR]: logoutError
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

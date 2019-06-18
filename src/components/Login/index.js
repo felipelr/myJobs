@@ -4,15 +4,15 @@ import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { purple } from '../common/util/colors'
-import { Button } from 'react-native-elements'
+import { white } from '../common/util/colors'
+
 import {
     LoginTitle, LoginButtonContainer,
-    ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText
+    ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText,
+    ButtonPurple, TextButtonPurple
 } from './styles'
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
-import { white } from '../common/util/colors'
 
 function Login(props) {
     const [email, setEmail] = useState('root@email.tld')
@@ -47,11 +47,13 @@ function Login(props) {
             <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
             <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
             <LoginButtonContainer>
-                <Button title="Entrar" buttonStyle={{ backgroundColor: purple }} onPress={handleClickLogin} />
+                <ButtonPurple onPress={handleClickLogin}>
+                    <TextButtonPurple>Entrar</TextButtonPurple>
+                </ButtonPurple>
             </LoginButtonContainer>
             <ContainerNewUser>
                 <NewUserText>Novo por aqui?</NewUserText>
-                <NewUserButton>
+                <NewUserButton onPress={props.ownProps.onPressSignup}>
                     <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
                 </NewUserButton>
             </ContainerNewUser>

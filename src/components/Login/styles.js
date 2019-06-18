@@ -1,5 +1,5 @@
 import styled from 'styled-components/native'
-import { purple, black } from '../../components/common/util/colors'
+import { purple, black, white } from '../../components/common/util/colors'
 
 export const LoginTitle = styled.Text`
     font-size: 24px;
@@ -38,4 +38,18 @@ export const NewUserButtonText = styled.Text`
     font-size: 12px;
     text-align: left;
     font-family: 'SF-Pro-Text-Regular';
+`
+
+export const ButtonPurple = styled.TouchableOpacity`
+    padding: 10px;
+    background-color: ${purple};
+    border-radius: 5px;
+    justify-content: space-evenly;
+`
+export const TextButtonPurple = styled.Text`
+    color: ${white};
+    font-family: 'SF-Pro-Text-Regular';
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
 `

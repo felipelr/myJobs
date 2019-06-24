@@ -9,7 +9,7 @@ import SignUp from '../../components/SignUp/index'
 
 import {
     Container, ContainerContent, SocialMidiaText,
-    ViewContainerLogin, ViewContainerSignup
+    ViewContainerLogin, ViewContainerSignup, TextLogoTipo
 } from './styles'
 
 export default function LoginScreen(props) {
@@ -37,6 +37,7 @@ export default function LoginScreen(props) {
                 <View style={{ flex: 1 }}>
                     <Background />
                     <ContainerContent>
+                        <TextLogoTipo>Logo</TextLogoTipo>
                         {
                             showLogin &&
                             <ViewContainerLogin>

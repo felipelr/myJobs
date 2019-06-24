@@ -1,6 +1,12 @@
 import styled from 'styled-components'
 import { purple, black, white } from '../common/util/colors'
 
+export const ScrollViewContainerForm = styled.ScrollView.attrs({
+    horizontal: false,
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
+    showHorizontalScrollIndicator: false
+})``
+
 export const TextSignUpTitle = styled.Text`
     font-size: 24px;
     color: ${purple};
@@ -12,7 +18,7 @@ export const TextSignUpTitle = styled.Text`
 export const ViewContainerGotoLogin = styled.View`
     padding-top: 25px;
     padding-left: 20px;
-    flex: 1;
+    width: 100%;
     flex-direction: row;
 `
 
@@ -49,7 +55,7 @@ export const ButtonPurple = styled.TouchableOpacity`
     padding: 10px;
     background-color: ${purple};
     border-radius: 5px;
-    flex: 1;
+    width: 150px;
 `
 export const TextButtonPurple = styled.Text`
     color: ${white};

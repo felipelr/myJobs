@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { StyleSheet } from 'react-native'
 import { purple, black, white } from '../common/util/colors'
 
 export const ScrollViewContainerForm = styled.ScrollView.attrs({
@@ -46,7 +47,7 @@ export const ViewFixedContainer = styled.View`
     height: ${props => `${props.height}px`};
 `
 
-export const ViewContainerButtons = styled.View`
+export const ViewContainerRow = styled.View`
     flex-direction: row;
     justify-content: space-around;
 `
@@ -65,16 +66,16 @@ export const TextButtonPurple = styled.Text`
     font-weight: bold;
 `
 
-export const ButtonWhite = styled.TouchableOpacity`
-    padding: 10px;
-    background-color: ${white};
-    border-radius: 5px;
-    flex: 1;
-`
-export const TextButtonWhite = styled.Text`
+export const PickerGenre = styled.Picker`
+    font-size: 14px;
     color: ${black};
+    padding-bottom: 16px;
     font-family: 'SF-Pro-Text-Regular';
-    font-size: 16px;
-    text-align: center;
-    font-weight: bold;
 `
+
+export const styleSheets = StyleSheet.create({
+    containerCheck: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 0
+    }
+})

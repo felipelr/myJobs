@@ -13,5 +13,5 @@ export const ContainerCard = styled.View`
     border-bottom-color: ${props => `${props.boderColor}`};
     border-left-color: ${props => `${props.boderColor}`};
     border-right-color: ${props => `${props.boderColor}`};
-    elevation: 1;
+    elevation: 2;
 `

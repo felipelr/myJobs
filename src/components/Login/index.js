@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { white } from '../common/util/colors'
+import { white, purple } from '../common/util/colors'
 
 import {
     LoginTitle, LoginButtonContainer,
@@ -13,6 +13,7 @@ import {
 } from './styles'
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
+import Loading from '../Loading/index'
 
 function Login(props) {
     const [email, setEmail] = useState('root@email.tld')
@@ -42,22 +43,28 @@ function Login(props) {
     }
 
     return (
-        <CardJobs backColor={white} width='300' height='330' opacity={1}>
-            <LoginTitle>Login</LoginTitle>
-            <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
-            <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
-            <LoginButtonContainer>
-                <ButtonPurple onPress={handleClickLogin}>
-                    <TextButtonPurple>Entrar</TextButtonPurple>
-                </ButtonPurple>
-            </LoginButtonContainer>
-            <ContainerNewUser>
-                <NewUserText>Novo por aqui?</NewUserText>
-                <NewUserButton onPress={props.ownProps.onPressSignup}>
-                    <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
-                </NewUserButton>
-            </ContainerNewUser>
-        </CardJobs>
+        <React.Fragment>
+            {props.auth.isLogingin && <Loading size='large' color={purple} height='330'/>}
+            {!props.auth.isLogingin && (
+                <CardJobs backColor={white} width='300' height='330' opacity={1}>
+                    <LoginTitle>Login</LoginTitle>
+                    <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
+                    <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
+                    <LoginButtonContainer>
+                        <ButtonPurple onPress={handleClickLogin}>
+                            <TextButtonPurple>Entrar</TextButtonPurple>
+                        </ButtonPurple>
+                    </LoginButtonContainer>
+                    <ContainerNewUser>
+                        <NewUserText>Novo por aqui?</NewUserText>
+                        <NewUserButton onPress={props.ownProps.onPressSignup}>
+                            <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
+                        </NewUserButton>
+                    </ContainerNewUser>
+                </CardJobs>
+            )}
+
+        </React.Fragment>
     )
 }
 

@@ -7,6 +7,8 @@ export default function TextInputJobs(props) {
     const { secureTextEntry } = props
     const { value } = props
     const { onChangeText } = props
+    const { keyboardType } = props
+
     return (
         <ContainerTextInput>
             <TextInputCustom
@@ -14,7 +16,8 @@ export default function TextInputJobs(props) {
                 textContentType={textContentType ? textContentType : 'none'}
                 secureTextEntry={secureTextEntry ? secureTextEntry : false}
                 value={value}
-                onChangeText={onChangeText}>
+                onChangeText={onChangeText}
+                keyboardType={keyboardType ? keyboardType : 'default'}>
             </TextInputCustom>
         </ContainerTextInput>
     )

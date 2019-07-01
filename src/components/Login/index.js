@@ -9,17 +9,18 @@ import { white, purple } from '../common/util/colors'
 import {
     LoginTitle, LoginButtonContainer,
     ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText,
-    ButtonPurple, TextButtonPurple
+    ButtonPurple, TextButtonPurple, ViewContainerFields
 } from './styles'
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
 import Loading from '../Loading/index'
+import TextError from '../TextError/index'
 
 function Login(props) {
     const [email, setEmail] = useState('root@email.tld')
     const [password, setPassword] = useState('rootroot')
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (props.auth.error) {
             Alert.alert(
                 'Atenção',
@@ -30,7 +31,7 @@ function Login(props) {
                 { cancelable: false },
             )
         }
-    }, [props.auth.error]);
+    }, [props.auth.error]); */
 
     useEffect(() => {
         if (props.auth.isAuth) {
@@ -44,23 +45,30 @@ function Login(props) {
 
     return (
         <React.Fragment>
-            {props.auth.isLogingin && <Loading size='large' color={purple} height='330'/>}
+            {props.auth.isLogingin && <Loading size='large' color={purple} height='330' />}
             {!props.auth.isLogingin && (
                 <CardJobs backColor={white} width='300' height='330' opacity={1}>
                     <LoginTitle>Login</LoginTitle>
-                    <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
-                    <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
-                    <LoginButtonContainer>
-                        <ButtonPurple onPress={handleClickLogin}>
-                            <TextButtonPurple>Entrar</TextButtonPurple>
-                        </ButtonPurple>
-                    </LoginButtonContainer>
-                    <ContainerNewUser>
-                        <NewUserText>Novo por aqui?</NewUserText>
-                        <NewUserButton onPress={props.ownProps.onPressSignup}>
-                            <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
-                        </NewUserButton>
-                    </ContainerNewUser>
+                    {
+                        props.auth.error && <TextError>{props.auth.errorMessage}</TextError>
+                    }
+                    <ViewContainerFields>
+                        <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
+                        <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
+
+                        <LoginButtonContainer>
+                            <ButtonPurple onPress={handleClickLogin}>
+                                <TextButtonPurple>Entrar</TextButtonPurple>
+                            </ButtonPurple>
+                        </LoginButtonContainer>
+                        <ContainerNewUser>
+                            <NewUserText>Novo por aqui?</NewUserText>
+                            <NewUserButton onPress={props.ownProps.onPressSignup}>
+                                <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
+                            </NewUserButton>
+                        </ContainerNewUser>
+                    </ViewContainerFields>
+
                 </CardJobs>
             )}
 

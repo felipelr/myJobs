@@ -48,9 +48,19 @@ function SignUp(props) {
 
     useEffect(() => {
         if (dateBirth.length > 0) {
-            setDateBirth(dateBirth.split('/').join(''))
-            let formatted = dateBirth.replace(/^(\d{2})(\d{2})(\d{4}).*/, '$1/$2/$3')
-            setDateBirth(formatted)
+            let replaced = dateBirth.split('/').join('')
+            if (replaced.length > 4) {
+                let formatted = replaced.replace(/^(\d{2})(\d{0,2})(\d{0,4}).*/, '$1/$2/$3')
+                setDateBirth(formatted)
+            }
+            else if (replaced.length === 4) {
+                let formatted = replaced.replace(/^(\d{2})(\d{0,2}).*/, '$1/$2/')
+                setDateBirth(formatted)
+            }
+            else if (replaced.length === 2) {
+                let formatted = replaced.replace(/^(\d*)/, '$1/')
+                setDateBirth(formatted)
+            }
         }
     }, [dateBirth])
 

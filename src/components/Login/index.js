@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Alert } from 'react-native'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
@@ -20,19 +19,6 @@ function Login(props) {
     const [email, setEmail] = useState('root@email.tld')
     const [password, setPassword] = useState('rootroot')
 
-    /* useEffect(() => {
-        if (props.auth.error) {
-            Alert.alert(
-                'Atenção',
-                props.auth.errorMessage,
-                [
-                    { text: 'OK', onPress: () => console.log(props.auth.errorMessage) },
-                ],
-                { cancelable: false },
-            )
-        }
-    }, [props.auth.error]); */
-
     useEffect(() => {
         if (props.auth.isAuth) {
             props.ownProps.navigation.navigate('ProfessionalSearch')
@@ -47,7 +33,7 @@ function Login(props) {
         <React.Fragment>
             {props.auth.isLogingin && <Loading size='large' color={purple} height='330' />}
             {!props.auth.isLogingin && (
-                <CardJobs backColor={white} width='300' height='330' opacity={1}>
+                <CardJobs backColor={white} width='80' height='55' opacity={1}>
                     <LoginTitle>Login</LoginTitle>
                     {
                         props.auth.error && <TextError>{props.auth.errorMessage}</TextError>

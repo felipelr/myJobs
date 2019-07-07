@@ -1,6 +1,6 @@
 import styled from 'styled-components/native'
 import { purple, white } from '../../components/common/util/colors'
-import actualDimensions, { widthPercentageToDP, heightPercentageToDP } from '../../components/common/util/dimensions'
+import { widthPercentageToDP, heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const Container = styled.ScrollView`
     flex: 1;

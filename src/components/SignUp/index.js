@@ -17,7 +17,6 @@ import {
 import { styleSheets } from './styles'
 
 function SignUp(props) {
-    const [viewVisible, setViewVisible] = useState(1)
     const [userType, setUserType] = useState(1)
     const [genreList, setGenreList] = useState([
         {
@@ -70,39 +69,42 @@ function SignUp(props) {
 
     return (
         <ScrollViewContainerForm>
-            <CardJobs backColor={white} width='300' height='800' opacity={1}>
-                <TextSignUpTitle>Sign Up</TextSignUpTitle>
-                <ViewFixedContainer height='330'>
-                    <View>
-                        <ViewContainerRow>
-                            <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
-                            <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
-                        </ViewContainerRow>
-                        <TextInputJobs value={name} onChangeText={(text) => setName(text)} placeholder='Nome' />
-                        <TextInputJobs value={phone} onChangeText={(text) => setPhone(text)} placeholder='Telefone' textContentType='telephoneNumber' keyboardType='phone-pad' />
-                        <TextInputJobs value={document_number} onChangeText={(text) => setDocumentNumber(text)} placeholder='CPF' />
-                        <TextInputJobs value={dateBirth} onChangeText={(text) => setDateBirth(text)} placeholder='Data de Nascimento' keyboardType='number-pad' />
-                        <PickerJobs selectedValue={genre} onValueChange={(itemValue, itemIndex) => setGenre(itemValue)} itemsList={genreList} />
+            <View style={{ paddingBottom: 50 }}>
+                <CardJobs backColor={white} width='80' height='140' opacity={1}>
+                    <TextSignUpTitle>Sign Up</TextSignUpTitle>
+                    <ViewFixedContainer height='330'>
+                        <View>
+                            <ViewContainerRow>
+                                <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
+                                <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
+                            </ViewContainerRow>
+                            <TextInputJobs value={name} onChangeText={(text) => setName(text)} placeholder='Nome' />
+                            <TextInputJobs value={phone} onChangeText={(text) => setPhone(text)} placeholder='Telefone' textContentType='telephoneNumber' keyboardType='phone-pad' />
+                            <TextInputJobs value={document_number} onChangeText={(text) => setDocumentNumber(text)} placeholder='CPF' />
+                            <TextInputJobs value={dateBirth} onChangeText={(text) => setDateBirth(text)} placeholder='Data de Nascimento' keyboardType='number-pad' />
+                            <PickerJobs selectedValue={genre} onValueChange={(itemValue, itemIndex) => setGenre(itemValue)} itemsList={genreList} />
 
-                        <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Email' textContentType='emailAddress' keyboardType='email-address' />
-                        <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
-                        <TextInputJobs value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} placeholder='Confirme a Senha' textContentType='password' secureTextEntry={true} />
+                            <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Email' textContentType='emailAddress' keyboardType='email-address' />
+                            <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
+                            <TextInputJobs value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} placeholder='Confirme a Senha' textContentType='password' secureTextEntry={true} />
 
-                        <ViewContainerRow>
-                            <ButtonPurple>
-                                <TextButtonPurple>Confirmar</TextButtonPurple>
-                            </ButtonPurple>
-                        </ViewContainerRow>
+                            <ViewContainerRow>
+                                <ButtonPurple onPress={handleClickSignUp}>
+                                    <TextButtonPurple>Confirmar</TextButtonPurple>
+                                </ButtonPurple>
+                            </ViewContainerRow>
 
-                        <ViewContainerGotoLogin>
-                            <TextGotoLogin>Já possui cadastro?</TextGotoLogin>
-                            <ButtonGotoLogin onPress={props.ownProps.onPressLogin}>
-                                <TextGotoLoginButton>Fazer Login</TextGotoLoginButton>
-                            </ButtonGotoLogin>
-                        </ViewContainerGotoLogin>
-                    </View>
-                </ViewFixedContainer>
-            </CardJobs>
+                            <ViewContainerGotoLogin>
+                                <TextGotoLogin>Já possui cadastro?</TextGotoLogin>
+                                <ButtonGotoLogin onPress={props.ownProps.onPressLogin}>
+                                    <TextGotoLoginButton>Fazer Login</TextGotoLoginButton>
+                                </ButtonGotoLogin>
+                            </ViewContainerGotoLogin>
+                        </View>
+                    </ViewFixedContainer>
+                </CardJobs>
+            </View>
+
         </ScrollViewContainerForm>
     )
 }

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black } from '../common/util/colors'
+import { black, red } from '../common/util/colors'
 
 export const TextInputCustom = styled.TextInput`
     font-size: 14px;
@@ -9,7 +9,7 @@ export const TextInputCustom = styled.TextInput`
 `
 
 export const ContainerTextInput = styled.View`
-    border-bottom-color: ${black};
+    border-bottom-color: ${props => props.invalidValue ? red : black};
     border-bottom-width: 1px;
     margin-bottom: 25px;
 `

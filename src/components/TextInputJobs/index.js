@@ -1,5 +1,5 @@
 import React from 'react'
-import { ContainerTextInput, TextInputCustom } from './styles'
+import { ContainerTextInput, TextInputCustom, ViewRed, ViewBlack } from './styles'
 
 export default function TextInputJobs(props) {
     const { placeholder } = props
@@ -9,6 +9,7 @@ export default function TextInputJobs(props) {
     const { onChangeText } = props
     const { keyboardType } = props
     const { invalidValue } = props
+    const { nameField } = props
 
     return (
         <ContainerTextInput>
@@ -18,9 +19,10 @@ export default function TextInputJobs(props) {
                 secureTextEntry={secureTextEntry ? secureTextEntry : false}
                 value={value}
                 onChangeText={onChangeText}
-                keyboardType={keyboardType ? keyboardType : 'default'}
-                invalidValue={invalidValue ? true : false}>
+                keyboardType={keyboardType ? keyboardType : 'default'}>
             </TextInputCustom>
+            {(nameField === invalidValue && nameField) && <ViewRed />}
+            {(nameField !== invalidValue || !nameField) && <ViewBlack />}
         </ContainerTextInput>
     )
 }

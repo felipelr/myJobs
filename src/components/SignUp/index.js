@@ -20,7 +20,7 @@ import { styleSheets } from './styles'
 
 function SignUp(props) {
     const [userType, setUserType] = useState(1)
-    const [invalidField, setInvalidField] = useState('name')
+    const [invalidField, setInvalidField] = useState('')
     const [genreList, setGenreList] = useState([
         {
             label: 'Masculino',
@@ -92,10 +92,20 @@ function SignUp(props) {
     }, [phone])
 
     const handleClickSignUp = () => {
-        if (!validateField('name', name)) {
-            setInvalidField('name')
+        if (!validateField('name', name))
             return
-        }
+        else if (!validateField('phone', phone))
+            return
+        else if (!validateField('documentNumber', documentNumber))
+            return
+        else if (!validateField('dateBirth', dateBirth))
+            return
+        else if (!validateField('email', email))
+            return
+        else if (!validateField('password', password))
+            return
+        else if (!validateField('confirmPassword', confirmPassword))
+            return
 
         let date = dateBirth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
@@ -111,6 +121,39 @@ function SignUp(props) {
             password: password
         }
         props.signup(user)
+    }
+
+    handleOnChange = (field, text) => {
+        switch (field) {
+            case 'name':
+                setName(text)
+                break
+            case 'phone':
+                setPhone(text)
+                break
+            case 'documentNumber':
+                setDocumentNumber(text)
+                break
+            case 'dateBirth':
+                setDateBirth(text)
+                break
+            case 'email':
+                setEmail(text)
+                break
+            case 'password':
+                setPassword(text)
+                break
+            case 'confirmPassword':
+                setConfirmPassword(text)
+                break
+            default:
+                break
+        }
+
+        if (!validateField(field, text))
+            setInvalidField(field)
+        else
+            setInvalidField('')
     }
 
     validateField = (field, value) => {
@@ -143,7 +186,6 @@ function SignUp(props) {
             default:
                 break
         }
-        console.log('valido')
         return true
     }
 
@@ -158,15 +200,68 @@ function SignUp(props) {
                                 <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
                                 <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
                             </ViewContainerRow>
-                            <TextInputJobs invalidValue={invalidField === 'name'} value={name} onChangeText={(text) => setName(text)} placeholder='Nome' />
-                            <TextInputJobs value={phone} onChangeText={(text) => setPhone(text)} placeholder='Telefone' textContentType='telephoneNumber' keyboardType='phone-pad' />
-                            <TextInputJobs value={documentNumber} onChangeText={(text) => setDocumentNumber(text)} placeholder='CPF' />
-                            <TextInputJobs value={dateBirth} onChangeText={(text) => setDateBirth(text)} placeholder='Data de Nascimento' keyboardType='number-pad' />
-                            <PickerJobs selectedValue={genre} onValueChange={(itemValue, itemIndex) => setGenre(itemValue)} itemsList={genreList} />
+                            <TextInputJobs
+                                value={name}
+                                onChangeText={(text) => handleOnChange('name', text)}
+                                placeholder='Nome'
+                                invalidValue={invalidField}
+                                nameField='name' />
 
-                            <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Email' textContentType='emailAddress' keyboardType='email-address' />
-                            <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
-                            <TextInputJobs value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} placeholder='Confirme a Senha' textContentType='password' secureTextEntry={true} />
+                            <TextInputJobs
+                                value={phone}
+                                onChangeText={(text) => handleOnChange('phone', text)}
+                                placeholder='Telefone'
+                                textContentType='telephoneNumber'
+                                keyboardType='phone-pad'
+                                invalidValue={invalidField}
+                                nameField='phone' />
+
+                            <TextInputJobs
+                                value={documentNumber}
+                                onChangeText={(text) => handleOnChange('documentNumber', text)}
+                                placeholder='CPF'
+                                invalidValue={invalidField}
+                                nameField='documentNumber' />
+
+                            <TextInputJobs
+                                value={dateBirth}
+                                onChangeText={(text) => handleOnChange('dateBirth', text)}
+                                placeholder='Data de Nascimento'
+                                keyboardType='number-pad'
+                                invalidValue={invalidField}
+                                nameField='dateBirth' />
+
+                            <PickerJobs
+                                selectedValue={genre}
+                                onValueChange={(itemValue, itemIndex) => setGenre(itemValue)}
+                                itemsList={genreList} />
+
+                            <TextInputJobs
+                                value={email}
+                                onChangeText={(text) => handleOnChange('email', text)}
+                                placeholder='Email'
+                                textContentType='emailAddress'
+                                keyboardType='email-address'
+                                invalidValue={invalidField}
+                                nameField='email' />
+
+                            <TextInputJobs
+                                value={password}
+                                onChangeText={(text) => handleOnChange('password', text)}
+                                placeholder='Senha'
+                                textContentType='password'
+                                secureTextEntry={true}
+                                invalidValue={invalidField}
+                                nameField='password' />
+
+                            <TextInputJobs
+                                value={confirmPassword}
+                                onChangeText={(text) => handleOnChange('confirmPassword', text)}
+                                placeholder='Confirme a Senha'
+                                textContentType='password'
+                                secureTextEntry={true}
+                                invalidValue={invalidField}
+                                nameField='confirmPassword' />
 
                             <ViewContainerRow>
                                 <ButtonPurple onPress={handleClickSignUp}>

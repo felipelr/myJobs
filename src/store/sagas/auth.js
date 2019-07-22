@@ -62,7 +62,6 @@ function* logout(action){
 }
 
 export default function* rootAuth() {
-    console.log('rootAuth')
     yield all([
         takeLatest(Types.LOGIN_REQUEST, login),
         takeLatest(Types.AUTH_REQUEST, auth),

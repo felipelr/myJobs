@@ -12,6 +12,11 @@ export const { Types, Creators } = createActions({
     logoutSuccess: null,
     logoutError: ['error'],
 
+    //SignUp Actions
+    signupRequest: ['data'],
+    signupSuccess: ['data'],
+    signupError: ['error'],
+
     //Actions de Categorias 
     categoriasLoadRequest: ['token'],
     categoriasLoadSuccess: ['data'],

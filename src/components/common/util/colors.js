@@ -7,3 +7,5 @@ export const gold = '#FFB300';
 export const lightpurple = '#7476c2'
 export const orange = '#DC8503'
 export const green = '#28A745'
+export const red = '#c62828'
+export const lightred = '#ffebee'

@@ -5,11 +5,16 @@ import Background from '../../components/Background/index'
 import Login from '../../components/Login/index'
 import SocialMidia from '../../components/SocialMidia/index'
 import CopyRight from '../../components/CopyRight/index'
+import SignUp from '../../components/SignUp/index'
 
-import { Container, ContainerContent, SocialMidiaText } from './styles'
+import {
+    Container, ContainerContent, SocialMidiaText,
+    ViewContainerLogin, ViewContainerSignup, TextLogoTipo
+} from './styles'
 
 export default function LoginScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
+    const [showLogin, setShowLogin] = useState(true)
 
     useEffect(() => {
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -32,12 +37,21 @@ export default function LoginScreen(props) {
                 <View style={{ flex: 1 }}>
                     <Background />
                     <ContainerContent>
-                        <View style={{ flex: 1 }}></View>
-                        <View style={{ flex: 3 }}>
-                            <Login navigation={props.navigation} />
-                            <SocialMidiaText>Entrar com</SocialMidiaText>
-                            <SocialMidia />
-                        </View>
+                        <TextLogoTipo>Logo</TextLogoTipo>
+                        {
+                            showLogin &&
+                            <ViewContainerLogin>
+                                <Login navigation={props.navigation} onPressSignup={() => setShowLogin(false)} />
+                                <SocialMidiaText>Entrar com</SocialMidiaText>
+                                <SocialMidia />
+                            </ViewContainerLogin>
+                        }
+                        {
+                            !showLogin &&
+                            <ViewContainerSignup>
+                                <SignUp navigation={props.navigation} onPressLogin={() => setShowLogin(true)} />
+                            </ViewContainerSignup>
+                        }
                     </ContainerContent>
                     <CopyRight />
                 </View>

@@ -1,35 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { Alert } from 'react-native'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { purple } from '../common/util/colors'
-import { Button } from 'react-native-elements'
+import { white, purple } from '../common/util/colors'
+
 import {
     LoginTitle, LoginButtonContainer,
-    ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText
+    ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText,
+    ButtonPurple, TextButtonPurple, ViewContainerFields
 } from './styles'
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
-import { white } from '../common/util/colors'
+import Loading from '../Loading/index'
+import TextError from '../TextError/index'
 
 function Login(props) {
     const [email, setEmail] = useState('root@email.tld')
     const [password, setPassword] = useState('rootroot')
-
-    useEffect(() => {
-        if (props.auth.error) {
-            Alert.alert(
-                'Atenção',
-                props.auth.errorMessage,
-                [
-                    { text: 'OK', onPress: () => console.log(props.auth.errorMessage) },
-                ],
-                { cancelable: false },
-            )
-        }
-    }, [props.auth.error]);
 
     useEffect(() => {
         if (props.auth.isAuth) {
@@ -42,20 +30,35 @@ function Login(props) {
     }
 
     return (
-        <CardJobs backColor={white} width='300' height='330' opacity={1}>
-            <LoginTitle>Login</LoginTitle>
-            <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
-            <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
-            <LoginButtonContainer>
-                <Button title="Entrar" buttonStyle={{ backgroundColor: purple }} onPress={handleClickLogin} />
-            </LoginButtonContainer>
-            <ContainerNewUser>
-                <NewUserText>Novo por aqui?</NewUserText>
-                <NewUserButton>
-                    <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
-                </NewUserButton>
-            </ContainerNewUser>
-        </CardJobs>
+        <React.Fragment>
+            {props.auth.isLogingin && <Loading size='large' color={purple} height='330' />}
+            {!props.auth.isLogingin && (
+                <CardJobs backColor={white} width='80' height='55' opacity={1}>
+                    <LoginTitle>Login</LoginTitle>
+                    {
+                        props.auth.error && <TextError>{props.auth.errorMessage}</TextError>
+                    }
+                    <ViewContainerFields>
+                        <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
+                        <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
+
+                        <LoginButtonContainer>
+                            <ButtonPurple onPress={handleClickLogin}>
+                                <TextButtonPurple>Entrar</TextButtonPurple>
+                            </ButtonPurple>
+                        </LoginButtonContainer>
+                        <ContainerNewUser>
+                            <NewUserText>Novo por aqui?</NewUserText>
+                            <NewUserButton onPress={props.ownProps.onPressSignup}>
+                                <NewUserButtonText>Faça seu cadastro</NewUserButtonText>
+                            </NewUserButton>
+                        </ContainerNewUser>
+                    </ViewContainerFields>
+
+                </CardJobs>
+            )}
+
+        </React.Fragment>
     )
 }
 

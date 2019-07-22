@@ -10,7 +10,7 @@ const CategorieItem = (props) => {
     return (
         <ContainerBody>
             <Title>{categoria.description}</Title>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={}>
                 <Avatar
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={styles.overlayContainerStyle}
@@ -21,5 +21,6 @@ const CategorieItem = (props) => {
         </ContainerBody>
     )
 }
+
 
 export default CategorieItem;

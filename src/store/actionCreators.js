@@ -15,7 +15,8 @@ export const { Types, Creators } = createActions({
     //Actions de Categorias 
     categoriasLoadRequest: ['token'],
     categoriasLoadSuccess: ['data'],
-    categoriasLoadError: ['error']
+    categoriasLoadError: ['error'],
+    categoriasSelected: ['data']
 })
 
 export default Creators

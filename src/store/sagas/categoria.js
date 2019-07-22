@@ -16,7 +16,24 @@ function* getCategories(action) {
 
         yield put(ActionCreator.categoriasLoadSuccess(categories))
     } catch (ex) {
-        console.log('xabuzao = ' + JSON.stringify(ex))
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.categoriasLoadError(messageError))
+    }
+}
+
+function* getSubCategories(action) {
+    try {
+        let data = yield axios.get(`${urlMyJobsAPI}/subcategorias/index.json`, {
+            headers: {
+                Authorization: 'Bearer ' + action.token
+            }
+        }) 
+        let { categories } = data.data  
+
+        yield put(ActionCreator.categoriasLoadSuccess(categories))
+    } catch (ex) {
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.categoriasLoadError(messageError))
     }
 }
 

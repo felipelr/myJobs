@@ -10,8 +10,6 @@ export const LoginTitle = styled.Text`
 `
 
 export const ViewContainerFields = styled.View`
-    flex: 1;
-    flex-direction: column;
     justify-content: space-between;
     margin-top: 8px;
 `
@@ -23,7 +21,6 @@ export const LoginButtonContainer = styled.View`
 
 export const ContainerNewUser = styled.View`
     padding-top: 16px;
-    flex: 1;
     flex-direction: row;
 `
 

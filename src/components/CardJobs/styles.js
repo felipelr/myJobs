@@ -7,7 +7,6 @@ export const ContainerCard = styled.View`
     padding: ${props => `${props.paddingCard}px`};
     border-radius: ${props => `${props.borderRadius}px`};
     width: ${props => widthPercentageToDP(props.width + '%')};
-    height: ${props => heightPercentageToDP(props.height + '%')};
     opacity: ${props => `${props.opacity}`};
     border-width: ${props => `${props.borderWidth}`};
     border-top-color: ${props => `${props.boderColor}`};

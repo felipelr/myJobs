@@ -15,7 +15,6 @@ export default function CardJobs(props) {
         <ContainerCard
             backColor={backColor ? backColor : white}
             width={width ? width : 300}
-            height={height ? height : 300}
             opacity={opacity ? opacity : 1}
             paddingCard={paddingCard ? paddingCard : 16}
             borderRadius={borderRadius ? borderRadius : 10}

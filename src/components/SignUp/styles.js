@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native'
 import { purple, black, white } from '../common/util/colors'
 
 export const ScrollViewContainerForm = styled.ScrollView.attrs({
-    horizontal: false,
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
     showHorizontalScrollIndicator: false
 })``

@@ -5,7 +5,8 @@ export const INITIAL_STATE = {
     loading: false,
     data: [],
     error: false,
-    errorMessage: ''
+    errorMessage: '',
+    selected: {}
 }
 
 export const categoriasLoadRequest = (state = INITIAL_STATE, action) => {
@@ -32,10 +33,19 @@ export const categoriasLoadError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const categoriasSelected = (state = INITIAL_STATE, action) => {
+    console.log(  JSON.stringify( action.data))
+    return {
+        ...state,
+        selected: action.data
+    }
+}
+
 export const HANDLES = {
     [Types.CATEGORIAS_LOAD_REQUEST]: categoriasLoadRequest,
     [Types.CATEGORIAS_LOAD_SUCCESS]: categoriasLoadSuccess,
-    [Types.CATEGORIAS_LOAD_ERROR]: categoriasLoadError
+    [Types.CATEGORIAS_LOAD_ERROR]: categoriasLoadError,
+    [Types.CATEGORIAS_SELECTED]: categoriasSelected,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

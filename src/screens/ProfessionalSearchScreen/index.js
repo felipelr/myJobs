@@ -3,6 +3,7 @@ import { View, KeyboardAvoidingView, Keyboard, Platform, BackHandler } from 'rea
 import { ContainerCategorias } from './styles'
 import { connect } from 'react-redux'
 
+import {Text} from 'react-native'
 import ActionCreators from '../../store/actionCreators'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -64,6 +65,9 @@ function ProfessionalSearchScreen(props) {
                     <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')} />
                 </View>
             </ContainerCategorias>
+            {
+            props.selectedCategorie &&  <Text>teste = {props.selectedCategorie.description}</Text>
+            }
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
@@ -77,6 +81,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
         data: state.categoria.data,
+        selectedCategorie: state.categoria.selected,
         ownProps: ownProps
     }
 }

@@ -34,6 +34,7 @@ export const categoriasLoadError = (state = INITIAL_STATE, action) => {
 }
 
 export const categoriasSelected = (state = INITIAL_STATE, action) => {
+    console.log(  JSON.stringify( action.data))
     return {
         ...state,
         selected: action.data

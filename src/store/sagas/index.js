@@ -1,11 +1,13 @@
 import { all, fork } from 'redux-saga/effects'
- 
-import * as authSagas from './auth' 
+
+import * as authSagas from './auth'
 import * as categoriaSagas from './categoria'
- 
-export default function* rootSaga() { 
-    yield all([   
+import * as signupSagas from './signup'
+
+export default function* rootSaga() {
+    yield all([
         ...Object.values(authSagas),
-        ...Object.values(categoriaSagas),  
+        ...Object.values(categoriaSagas),
+        ...Object.values(signupSagas),
     ].map(fork))
 }

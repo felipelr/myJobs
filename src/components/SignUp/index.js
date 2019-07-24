@@ -120,6 +120,7 @@ function SignUp(props) {
             email: email,
             password: password
         }
+
         props.signup(user)
     }
 
@@ -291,7 +292,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        signup: (data) => dispatch(ActionCreators.signupRequest(data))
+        signup: (user) => dispatch(ActionCreators.signupRequest(user))
     }
 }
 

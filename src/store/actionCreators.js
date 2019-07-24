@@ -13,7 +13,7 @@ export const { Types, Creators } = createActions({
     logoutError: ['error'],
 
     //SignUp Actions
-    signupRequest: ['data'],
+    signupRequest: ['user'],
     signupSuccess: ['data'],
     signupError: ['error'],
 

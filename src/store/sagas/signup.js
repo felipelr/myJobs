@@ -16,8 +16,22 @@ setUserData = async (userData) => {
 
 function* signup(action) {
     try {
-        let signup = yield axios.post(`${urlMyJobsAPI}/users/signup.json`, {
-            user: action.user
+        console.log(action.user)
+
+        let signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: {
+                userType: action.user.userType,
+                email: action.user.email,
+                password: action.user.password,
+                name: action.user.name,
+                phone: action.user.phone,
+                document: action.user.document,
+                date_birth: action.user.date_birth,
+                genre: action.user.genre
+            }
         })
 
         let { data } = signup.data
@@ -27,11 +41,12 @@ function* signup(action) {
         yield put(ActionCreator.signupSuccess(data))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        console.log('Servidor: ' + messageError)
         yield put(ActionCreator.signupError(messageError))
     }
 }
 
-export default function* rootAuth() {
+export default function* rootSignup() {
     yield all([
         takeLatest(Types.SIGNUP_REQUEST, signup)
     ])

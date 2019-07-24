@@ -5,7 +5,7 @@ export const INITIAL_STATE = {
     isSigningUp: false,
     user: {},
     error: false,
-    errorMessage: '',
+    errorMessage: ''
 }
 
 export const signupRequest = (state = INITIAL_STATE, action) => {

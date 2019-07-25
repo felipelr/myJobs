@@ -5,23 +5,29 @@ import { CheckBox } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
 
-import TextInputJobs from '../TextInputJobs/index'
-import PickerJobs from '../PickerJobs/index'
-import CardJobs from '../CardJobs/index'
-import { white, purple } from '../common/util/colors'
-
 import {
     TextSignUpTitle, ViewContainerGotoLogin, TextGotoLogin,
-    ButtonGotoLogin, TextGotoLoginButton, ViewFixedContainer,
+    ButtonGotoLogin, TextGotoLoginButton,
     ViewContainerRow, ButtonPurple, TextButtonPurple,
     ScrollViewContainerForm
 } from './styles'
 import { styleSheets } from './styles'
 
+import TextInputJobs from '../TextInputJobs/index'
+import PickerJobs from '../PickerJobs/index'
+import CardJobs from '../CardJobs/index'
+import TextError from '../TextError/index'
+
+import { white, purple } from '../common/util/colors'
+
 function SignUp(props) {
     const [userType, setUserType] = useState(1)
     const [invalidField, setInvalidField] = useState('')
     const [genreList, setGenreList] = useState([
+        {
+            label: 'Selecione',
+            value: 'SELECIONE'
+        },
         {
             label: 'Masculino',
             value: 'MASCULINO'
@@ -36,17 +42,29 @@ function SignUp(props) {
         }
     ])
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [name, setName] = useState('')
-    const [phone, setPhone] = useState('')
-    const [documentNumber, setDocumentNumber] = useState('')
-    const [dateBirth, setDateBirth] = useState('')
-    const [genre, setGenre] = useState('')
+    const [email, setEmail] = useState('felipe.teste@gmail.com')
+    const [password, setPassword] = useState('flr123')
+    const [confirmPassword, setConfirmPassword] = useState('flr123')
+    const [name, setName] = useState('Felipe Lima')
+    const [phone, setPhone] = useState('(18) 99764-2033')
+    const [documentNumber, setDocumentNumber] = useState('425.164.238-45')
+    const [dateBirth, setDateBirth] = useState('04/03/1994')
+    const [genre, setGenre] = useState('MASCULINO')
 
     const [latitude, setLatitude] = useState('')
     const [longitude, setLongitude] = useState('')
+
+    useEffect(() => {
+        if (props.signup.isSignup) {
+            props.ownProps.onPressLogin()
+        }
+    }, [props.signup.isSignup])
+
+    useEffect(() => {
+        if (props.signup.error) {
+            this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+        }
+    }, [props.signup.error])
 
     useEffect(() => {
         if (dateBirth.length > 0) {
@@ -106,6 +124,8 @@ function SignUp(props) {
             return
         else if (!validateField('confirmPassword', confirmPassword))
             return
+        else if (!validateField('genre', confirmPassword))
+            return
 
         let date = dateBirth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
@@ -121,7 +141,7 @@ function SignUp(props) {
             password: password
         }
 
-        props.signup(user)
+        props.signupRequest(user)
     }
 
     handleOnChange = (field, text) => {
@@ -184,6 +204,10 @@ function SignUp(props) {
                 if (!value.includes('@'))
                     return false
                 break
+            case 'genre':
+                if (value === '' || value === 'SELECIONE')
+                    return false
+                break
             default:
                 break
         }
@@ -191,10 +215,13 @@ function SignUp(props) {
     }
 
     return (
-        <ScrollViewContainerForm>
-            <View style={{ paddingBottom: 50, flex: 1 }}>
+        <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
+            <View style={{ paddingBottom: 50 }}>
                 <CardJobs backColor={white} width='80' height='140' opacity={1}>
                     <TextSignUpTitle>Sign Up</TextSignUpTitle>
+                    {
+                        props.signup.error && <TextError>{props.signup.errorMessage}</TextError>
+                    }
                     <View>
                         <ViewContainerRow>
                             <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
@@ -285,14 +312,14 @@ function SignUp(props) {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.auth,
+        signup: state.signup,
         ownProps: ownProps
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        signup: (user) => dispatch(ActionCreators.signupRequest(user))
+        signupRequest: (user) => dispatch(ActionCreators.signupRequest(user))
     }
 }
 

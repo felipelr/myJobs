@@ -10,14 +10,15 @@ import {
     ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText,
     ButtonPurple, TextButtonPurple, ViewContainerFields
 } from './styles'
+
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
 import Loading from '../Loading/index'
 import TextError from '../TextError/index'
 
 function Login(props) {
-    const [email, setEmail] = useState('root@email.tld')
-    const [password, setPassword] = useState('rootroot')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     useEffect(() => {
         if (props.auth.isAuth) {

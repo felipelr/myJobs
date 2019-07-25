@@ -14,7 +14,7 @@ export const { Types, Creators } = createActions({
 
     //SignUp Actions
     signupRequest: ['user'],
-    signupSuccess: ['data'],
+    signupSuccess: ['newUser'],
     signupError: ['error'],
 
     //Actions de Categorias 

@@ -2,7 +2,8 @@ import { createReducer } from 'reduxsauce'
 import { Types } from '../actionCreators'
 
 export const INITIAL_STATE = {
-    isSigningUp: false,
+    isSigningup: false,
+    isSignup: false,
     user: {},
     error: false,
     errorMessage: ''
@@ -11,7 +12,8 @@ export const INITIAL_STATE = {
 export const signupRequest = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isSigningUp: true,
+        isSigningup: true,
+        isSignup: false,
         error: false,
         errorMessage: ''
     }
@@ -20,15 +22,18 @@ export const signupRequest = (state = INITIAL_STATE, action) => {
 export const signupSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isSigningUp: false,
-        user: action.data.user,
+        isSigningup: false,
+        isSignup: true,
+        user: action.newUser,
     }
 }
 
 export const signupError = (state = INITIAL_STATE, action) => {
+    console.log('setting error ' + action.error)
     return {
         ...state,
-        isSigningUp: false,
+        isSigningup: false,
+        isSignup: false,
         error: true,
         errorMessage: action.error,
         user: {}

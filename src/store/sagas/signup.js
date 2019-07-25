@@ -16,29 +16,29 @@ setUserData = async (userData) => {
 
 function* signup(action) {
     try {
-        console.log(action.user)
-
         let signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
+            userType: action.user.userType,
+            email: action.user.email,
+            password: action.user.password,
+            name: action.user.name,
+            phone: action.user.phone,
+            document: action.user.document,
+            date_birth: action.user.date_birth,
+            genre: action.user.genre,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            data: {
-                userType: action.user.userType,
-                email: action.user.email,
-                password: action.user.password,
-                name: action.user.name,
-                phone: action.user.phone,
-                document: action.user.document,
-                date_birth: action.user.date_birth,
-                genre: action.user.genre
             }
         })
 
-        let { data } = signup.data
+        if (signup.data.error) {
+            console.log(signup.data.errorMessage)
+            yield put(ActionCreator.signupError(signup.data.errorMessage))
+        }
+        else {
+            let user = signup.data.newUser
+            yield put(ActionCreator.signupSuccess(user))
+        }
 
-        console.log(data)
-
-        yield put(ActionCreator.signupSuccess(data))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         console.log('Servidor: ' + messageError)

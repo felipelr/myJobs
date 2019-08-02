@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View } from 'react-native'
+import { View, PermissionsAndroid, Platform } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
@@ -51,9 +51,8 @@ function SignUp(props) {
     const [documentNumber, setDocumentNumber] = useState('425.164.238-45')
     const [dateBirth, setDateBirth] = useState('04/03/1994')
     const [genre, setGenre] = useState('MASCULINO')
-
-    const [latitude, setLatitude] = useState('')
-    const [longitude, setLongitude] = useState('')
+    const [latitude, setLatitude] = useState('0')
+    const [longitude, setLongitude] = useState('0')
 
     useEffect(() => {
         if (props.signup.isSignup) {
@@ -110,6 +109,57 @@ function SignUp(props) {
         }
     }, [phone])
 
+    useEffect(() => {
+        if (Platform.OS === 'ios') {
+            callLocation()
+        } else {
+            async function requestLocationPermission() {
+                try {
+                    const granted = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+                            'title': 'Location Access Required',
+                            'message': 'This App needs to Access your location'
+                        }
+                    )
+                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        //To Check, If Permission is granted
+                        callLocation()
+                    } else {
+                        alert("Permission Denied")
+                    }
+                } catch (err) {
+                    alert("err", err)
+                }
+            }
+            requestLocationPermission()
+        }
+
+        return () => {
+            navigator.geolocation.clearWatch(this.watchID)
+        }
+    })
+
+    callLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+            //Will give you the current location
+            (position) => {
+                const currentLongitude = JSON.stringify(position.coords.longitude)
+                const currentLatitude = JSON.stringify(position.coords.latitude)
+                setLongitude(currentLongitude)
+                setLatitude(currentLatitude)
+            },
+            (error) => alert(error.message),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        )
+        this.watchID = navigator.geolocation.watchPosition((position) => {
+            //Will give you the location on location change
+            const currentLongitude = JSON.stringify(position.coords.longitude)
+            const currentLatitude = JSON.stringify(position.coords.latitude)
+            setLongitude(currentLongitude)
+            setLatitude(currentLatitude)
+        })
+    }
+
     const handleClickSignUp = () => {
         if (!validateField('name', name))
             return
@@ -139,7 +189,9 @@ function SignUp(props) {
             date_birth: dateFormatted,
             genre: genre,
             email: email,
-            password: password
+            password: password,
+            longitude: longitude,
+            latitude: latitude
         }
 
         props.signupRequest(user)
@@ -218,8 +270,9 @@ function SignUp(props) {
     return (
         <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
             <View style={{ paddingBottom: 50 }}>
-                {props.signup.isSigningup && <Loading size='large' color={purple} height='330' />}
-                {!props.signup.isSigningup && (
+                {(props.signup.isSigningup || props.signup.isSignup) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
+
+                {(!props.signup.isSigningup && !props.signup.isSignup) && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
                         <TextSignUpTitle>Sign Up</TextSignUpTitle>
                         {

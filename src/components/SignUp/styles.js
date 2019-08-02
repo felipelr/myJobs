@@ -18,6 +18,7 @@ export const TextSignUpTitle = styled.Text`
 export const ViewContainerGotoLogin = styled.View`
     padding-top: 25px;
     padding-left: 20px;
+    margin-bottom: 16px;
     width: 100%;
     flex-direction: row;
 `

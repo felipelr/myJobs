@@ -25,6 +25,8 @@ function* signup(action) {
             document: action.user.document,
             date_birth: action.user.date_birth,
             genre: action.user.genre,
+            latitude: action.user.latitude,
+            longitude: action.user.longitude,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }

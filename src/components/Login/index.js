@@ -17,8 +17,8 @@ import Loading from '../Loading/index'
 import TextError from '../TextError/index'
 
 function Login(props) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('felipe.lima.flr@gmail.com')
+    const [password, setPassword] = useState('flr123')
 
     useEffect(() => {
         if (props.auth.isAuth) {
@@ -32,8 +32,9 @@ function Login(props) {
 
     return (
         <React.Fragment>
-            {props.auth.isLogingin && <Loading size='large' color={purple} height='330' />}
-            {!props.auth.isLogingin && (
+            {(props.auth.isLogingin || props.auth.isAuth) && <Loading size='large' color={purple} height='330' error={props.auth.error} success={props.auth.isAuth} />}
+
+            {(!props.auth.isLogingin && !props.auth.isAuth) && (
                 <CardJobs backColor={white} width='80' height='55' opacity={1}>
                     <LoginTitle>Login</LoginTitle>
                     {

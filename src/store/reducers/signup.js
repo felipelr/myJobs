@@ -29,7 +29,6 @@ export const signupSuccess = (state = INITIAL_STATE, action) => {
 }
 
 export const signupError = (state = INITIAL_STATE, action) => {
-    console.log('setting error ' + action.error)
     return {
         ...state,
         isSigningup: false,

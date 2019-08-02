@@ -21,6 +21,7 @@ export const LoginButtonContainer = styled.View`
 
 export const ContainerNewUser = styled.View`
     padding-top: 16px;
+    padding-bottom: 16px;
     flex-direction: row;
 `
 

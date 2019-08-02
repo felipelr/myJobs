@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, white } from '../common/util/colors'
+import { white } from '../common/util/colors'
 
 export const ViewContainer = styled.View`
     align-self: center;
@@ -18,7 +18,7 @@ export const ViewContainerBack = styled.View`
 `
 
 export const TextLoading = styled.Text`
-    color: ${purple};
+    color: ${props => `${props.color}`};
     font-size: 16px;
     text-align: center;
     font-family: 'SF-Pro-Text-Regular';

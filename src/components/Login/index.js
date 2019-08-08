@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
-
 import { white, purple } from '../common/util/colors'
 
 import {

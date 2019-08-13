@@ -11,6 +11,7 @@ import {
     ViewContainerRow, ButtonPurple, TextButtonPurple,
     ScrollViewContainerForm
 } from './styles'
+
 import { styleSheets } from './styles'
 
 import TextInputJobs from '../TextInputJobs/index'
@@ -20,6 +21,8 @@ import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
 import { white, purple } from '../common/util/colors'
+
+import { formatPhone, formatDate } from '../common/util/functions'
 
 function SignUp(props) {
     const [userType, setUserType] = useState(1)
@@ -55,61 +58,6 @@ function SignUp(props) {
     const [longitude, setLongitude] = useState('0')
 
     useEffect(() => {
-        if (props.signup.isSignup) {
-            props.ownProps.onPressLogin()
-        }
-    }, [props.signup.isSignup])
-
-    useEffect(() => {
-        if (props.signup.error) {
-            this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
-        }
-    }, [props.signup.error])
-
-    useEffect(() => {
-        if (dateBirth.length > 0) {
-            let replaced = dateBirth.split('/').join('')
-            if (replaced.length > 4) {
-                let formatted = replaced.replace(/^(\d{2})(\d{0,2})(\d{0,4}).*/, '$1/$2/$3')
-                setDateBirth(formatted)
-            }
-            else if (replaced.length > 2) {
-                let formatted = replaced.replace(/^(\d{2})(\d{0,2}).*/, '$1/$2')
-                setDateBirth(formatted)
-            }
-            else {
-                let formatted = replaced.replace(/^(\d*)/, '$1')
-                setDateBirth(formatted)
-            }
-        }
-    }, [dateBirth])
-
-    useEffect(() => {
-        if (phone.length > 0) {
-            let replaced = phone.split('(').join('')
-            replaced = replaced.split(')').join('')
-            replaced = replaced.split('-').join('')
-            replaced = replaced.split(' ').join('')
-            if (replaced.length > 10) {
-                let formatted = replaced.replace(/^(\d{2})(\d{0,5})(\d{0,4}).*/, '($1) $2-$3')
-                setPhone(formatted)
-            }
-            else if (replaced.length > 6) {
-                let formatted = replaced.replace(/^(\d{2})(\d{0,4})(\d{0,4}).*/, '($1) $2-$3')
-                setPhone(formatted)
-            }
-            else if (replaced.length > 2) {
-                let formatted = replaced.replace(/^(\d{2})(\d{0,4}).*/, '($1) $2')
-                setPhone(formatted)
-            }
-            else if (replaced.length > 0) {
-                let formatted = replaced.replace(/^(\d*)/, '($1')
-                setPhone(formatted)
-            }
-        }
-    }, [phone])
-
-    useEffect(() => {
         if (Platform.OS === 'ios') {
             callLocation()
         } else {
@@ -128,16 +76,46 @@ function SignUp(props) {
                         alert("Permission Denied")
                     }
                 } catch (err) {
-                    alert("err", err)
+                    alert(err)
                 }
             }
             requestLocationPermission()
         }
 
+        console.log('signup_init')
+
         return () => {
             navigator.geolocation.clearWatch(this.watchID)
         }
-    })
+    }, [])
+
+    useEffect(() => {
+        if (props.signup.isSignup) {
+            props.ownProps.onPressLogin()
+        }
+    }, [props.signup.isSignup])
+
+    useEffect(() => {
+        if (props.signup.error) {
+            this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+        }
+    }, [props.signup.error])
+
+    useEffect(() => {
+        if (dateBirth.length > 0) {
+            let date_ = formatDate(dateBirth)
+            if (dateBirth !== date_)
+                setDateBirth(date_)
+        }
+    }, [dateBirth])
+
+    useEffect(() => {
+        if (phone.length > 0) {
+            let phone_ = formatPhone(phone)
+            if (phone !== phone_)
+                setPhone(phone_)
+        }
+    }, [phone])
 
     callLocation = () => {
         navigator.geolocation.getCurrentPosition(
@@ -148,8 +126,8 @@ function SignUp(props) {
                 setLongitude(currentLongitude)
                 setLatitude(currentLatitude)
             },
-            (error) => alert(error.message),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+            (error) => console.log(error.message),
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
         )
         this.watchID = navigator.geolocation.watchPosition((position) => {
             //Will give you the location on location change
@@ -160,7 +138,7 @@ function SignUp(props) {
         })
     }
 
-    const handleClickSignUp = () => {
+    handleClickSignUp = () => {
         if (!validateField('name', name))
             return
         else if (!validateField('phone', phone))
@@ -193,7 +171,6 @@ function SignUp(props) {
             longitude: longitude,
             latitude: latitude
         }
-
         props.signupRequest(user)
     }
 
@@ -270,9 +247,9 @@ function SignUp(props) {
     return (
         <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
             <View style={{ paddingBottom: 50 }}>
-                {(props.signup.isSigningup || props.signup.isSignup) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
+                {props.signup.isSigningup && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
 
-                {(!props.signup.isSigningup && !props.signup.isSignup) && (
+                {!props.signup.isSigningup && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
                         <TextSignUpTitle>Sign Up</TextSignUpTitle>
                         {
@@ -376,6 +353,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        signupInit: () => dispatch(ActionCreators.signupInit()),
         signupRequest: (user) => dispatch(ActionCreators.signupRequest(user))
     }
 }

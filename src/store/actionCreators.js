@@ -21,7 +21,10 @@ export const { Types, Creators } = createActions({
     categoriasLoadRequest: ['token'],
     categoriasLoadSuccess: ['data'],
     categoriasLoadError: ['error'],
-    categoriasSelected: ['data']
+    categoriasSelected: ['data'],
+
+    //Social Midia Actions
+    socialMidiaSignupInit: ['user'],
 })
 
 export default Creators

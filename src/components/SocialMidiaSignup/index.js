@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View } from 'react-native'
+import { View, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
@@ -16,7 +16,7 @@ import { formatPhone } from '../common/util/functions'
 
 import {
     ViewContainer, TextSignUpTitle, ViewContainerRow,
-    ButtonPurple, TextButtonPurple
+    ButtonPurple, TextButtonPurple, ScrollViewContainerForm
 } from './styles'
 
 import { styleSheets } from './styles'
@@ -26,6 +26,67 @@ function SocialMidiaSignup(props) {
     const [invalidField, setInvalidField] = useState('')
     const [phone, setPhone] = useState('')
     const [documentNumber, setDocumentNumber] = useState('')
+    const [latitude, setLatitude] = useState('0')
+    const [longitude, setLongitude] = useState('0')
+
+    useEffect(() => {
+        if (Platform.OS === 'ios') {
+            callLocation()
+        } else {
+            async function requestLocationPermission() {
+                try {
+                    const granted = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+                            'title': 'Location Access Required',
+                            'message': 'This App needs to Access your location'
+                        }
+                    )
+                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        //To Check, If Permission is granted
+                        callLocation()
+                    } else {
+                        alert("Permission Denied")
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+            }
+            requestLocationPermission()
+        }
+
+        console.log('social_midia_signup')
+
+        //verificar se já existe cadastro do facebook
+        if (props.socialMidiaSignup.user.facebook_id) {
+            props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.facebook_id, 'facebook')
+        }
+
+        return () => {
+            navigator.geolocation.clearWatch(this.watchID)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (props.socialMidiaSignup.isSignup) {
+            props.login(props.socialMidiaSignup.newUser.email, props.socialMidiaSignup.newUser.password)
+        }
+    }, [props.socialMidiaSignup.isSignup])
+
+    useEffect(() => {
+        if (props.socialMidiaSignup.error) {
+            this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+        }
+    }, [props.socialMidiaSignup.error])
+
+    useEffect(() => {
+        if (props.auth.isAuth) {
+            props.ownProps.onPressLogin()
+            props.ownProps.navigation.navigate('ProfessionalSearch')
+        }
+        else if (props.auth.error) {
+            props.ownProps.onPressLogin()
+        }
+    }, [props.auth.isAuth, props.auth.error])
 
     useEffect(() => {
         if (phone.length > 0) {
@@ -34,6 +95,27 @@ function SocialMidiaSignup(props) {
                 setPhone(phone_)
         }
     }, [phone])
+
+    callLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+            //Will give you the current location
+            (position) => {
+                const currentLongitude = JSON.stringify(position.coords.longitude)
+                const currentLatitude = JSON.stringify(position.coords.latitude)
+                setLongitude(currentLongitude)
+                setLatitude(currentLatitude)
+            },
+            (error) => console.log(error.message),
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
+        )
+        this.watchID = navigator.geolocation.watchPosition((position) => {
+            //Will give you the location on location change
+            const currentLongitude = JSON.stringify(position.coords.longitude)
+            const currentLatitude = JSON.stringify(position.coords.latitude)
+            setLongitude(currentLongitude)
+            setLatitude(currentLatitude)
+        })
+    }
 
     handleOnChange = (field, text) => {
         switch (field) {
@@ -73,77 +155,90 @@ function SocialMidiaSignup(props) {
         if (!validateField('phone', phone))
             return
         else if (!validateField('documentNumber', documentNumber))
-            return        
+            return
 
-        let date = dateBirth.split("/")
+        let date = props.socialMidiaSignup.user.birthday.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
 
         let user = {
             userType: userType,
-            name: name,
             phone: phone,
             document: documentNumber,
+            name: props.socialMidiaSignup.user.name,
             date_birth: dateFormatted,
-            genre: genre,
-            email: email,
-            password: password,
+            gender: props.socialMidiaSignup.user.gender,
+            email: props.socialMidiaSignup.user.email,
+            password: props.socialMidiaSignup.user.facebook_id,
             longitude: longitude,
-            latitude: latitude
+            latitude: latitude,
+            facebook_id: props.socialMidiaSignup.user.facebook_id
         }
 
-        //props.signupRequest(user)
+        console.log(user)
+
+        props.socialMidiaSignupRequest(user)
     }
 
     return (
-        <ViewContainer>
-            <CardJobs backColor={white} width='80' height='140' opacity={1}>
-                <TextSignUpTitle>Sign Up</TextSignUpTitle>
-                {
-                    props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
-                }
-                <View>
-                    <ViewContainerRow>
-                        <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
-                        <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
-                    </ViewContainerRow>
+        <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
+            <ViewContainer>
+                {props.socialMidiaSignup.isSigningup && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
 
-                    <TextInputJobs
-                        value={phone}
-                        onChangeText={(text) => handleOnChange('phone', text)}
-                        placeholder='Telefone'
-                        textContentType='telephoneNumber'
-                        keyboardType='phone-pad'
-                        invalidValue={invalidField}
-                        nameField='phone' />
+                {!props.socialMidiaSignup.isSigningup && (
+                    <CardJobs backColor={white} width='80' height='140' opacity={1}>
+                        <TextSignUpTitle>Sign Up</TextSignUpTitle>
+                        {
+                            props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
+                        }
+                        <View>
+                            <ViewContainerRow>
+                                <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
+                                <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
+                            </ViewContainerRow>
 
-                    <TextInputJobs
-                        value={documentNumber}
-                        onChangeText={(text) => handleOnChange('documentNumber', text)}
-                        placeholder='CPF'
-                        invalidValue={invalidField}
-                        nameField='documentNumber' />
+                            <TextInputJobs
+                                value={phone}
+                                onChangeText={(text) => handleOnChange('phone', text)}
+                                placeholder='Telefone'
+                                textContentType='telephoneNumber'
+                                keyboardType='phone-pad'
+                                invalidValue={invalidField}
+                                nameField='phone' />
 
-                    <ViewContainerRow>
-                        <ButtonPurple onPress={handleClickSignUp}>
-                            <TextButtonPurple>Confirmar</TextButtonPurple>
-                        </ButtonPurple>
-                    </ViewContainerRow>
-                </View>
-            </CardJobs>
-        </ViewContainer>
+                            <TextInputJobs
+                                value={documentNumber}
+                                onChangeText={(text) => handleOnChange('documentNumber', text)}
+                                placeholder='CPF'
+                                invalidValue={invalidField}
+                                nameField='documentNumber' />
+
+                            <ViewContainerRow>
+                                <ButtonPurple onPress={handleClickSignUp}>
+                                    <TextButtonPurple>Confirmar</TextButtonPurple>
+                                </ButtonPurple>
+                            </ViewContainerRow>
+                        </View>
+                    </CardJobs>
+                )}
+            </ViewContainer>
+        </ScrollViewContainerForm>
     )
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
         socialMidiaSignup: state.socialMidiaSignup,
-        ownProps: ownProps
+        auth: state.auth,
+        ownProps: ownProps,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        socialMidiaSignupInit: (user) => dispatch(ActionCreators.socialMidiaSignupInit(user))
+        socialMidiaSignupInit: (user) => dispatch(ActionCreators.socialMidiaSignupInit(user)),
+        socialMidiaSignupRequest: (user) => dispatch(ActionCreators.socialMidiaSignupRequest(user)),
+        socialMidiaVerifyAccount: (socialMidiaId, socialMidiaType) => dispatch(ActionCreators.socialMidiaVerifyAccount(socialMidiaId, socialMidiaType)),
+        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }
 }
 

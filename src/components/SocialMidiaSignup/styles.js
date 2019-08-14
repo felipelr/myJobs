@@ -2,6 +2,11 @@ import styled from 'styled-components'
 import { StyleSheet } from 'react-native'
 import { purple, white } from '../common/util/colors'
 
+export const ScrollViewContainerForm = styled.ScrollView.attrs({
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
+    showHorizontalScrollIndicator: false
+})``
+
 export const ViewContainer = styled.View`
     padding: 5px;
 `

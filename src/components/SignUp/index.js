@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
 import { View, PermissionsAndroid, Platform } from 'react-native'
+import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
-
-import {
-    TextSignUpTitle, ViewContainerGotoLogin, TextGotoLogin,
-    ButtonGotoLogin, TextGotoLoginButton,
-    ViewContainerRow, ButtonPurple, TextButtonPurple,
-    ScrollViewContainerForm
-} from './styles'
-
-import { styleSheets } from './styles'
 
 import TextInputJobs from '../TextInputJobs/index'
 import PickerJobs from '../PickerJobs/index'
@@ -24,14 +15,19 @@ import { white, purple } from '../common/util/colors'
 
 import { formatPhone, formatDate } from '../common/util/functions'
 
+import {
+    TextSignUpTitle, ViewContainerGotoLogin, TextGotoLogin,
+    ButtonGotoLogin, TextGotoLoginButton,
+    ViewContainerRow, ButtonPurple, TextButtonPurple,
+    ScrollViewContainerForm
+} from './styles'
+
+import { styleSheets } from './styles'
+
 function SignUp(props) {
     const [userType, setUserType] = useState(1)
     const [invalidField, setInvalidField] = useState('')
-    const [genreList, setGenreList] = useState([
-        {
-            label: 'Selecione',
-            value: 'SELECIONE'
-        },
+    const [genderList, setGenderList] = useState([
         {
             label: 'Masculino',
             value: 'MASCULINO'
@@ -45,15 +41,14 @@ function SignUp(props) {
             value: 'OUTRO'
         }
     ])
-
-    const [email, setEmail] = useState('felipe.teste@gmail.com')
-    const [password, setPassword] = useState('flr123')
-    const [confirmPassword, setConfirmPassword] = useState('flr123')
-    const [name, setName] = useState('Felipe Lima')
-    const [phone, setPhone] = useState('(18) 99764-2033')
-    const [documentNumber, setDocumentNumber] = useState('425.164.238-45')
-    const [dateBirth, setDateBirth] = useState('04/03/1994')
-    const [genre, setGenre] = useState('MASCULINO')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')//flr123
+    const [name, setName] = useState('')
+    const [phone, setPhone] = useState('')
+    const [documentNumber, setDocumentNumber] = useState('')
+    const [dateBirth, setDateBirth] = useState('')
+    const [gender, setGender] = useState('MASCULINO')
     const [latitude, setLatitude] = useState('0')
     const [longitude, setLongitude] = useState('0')
 
@@ -82,7 +77,7 @@ function SignUp(props) {
             requestLocationPermission()
         }
 
-        console.log('signup_init')
+        console.log('signup')
 
         return () => {
             navigator.geolocation.clearWatch(this.watchID)
@@ -91,7 +86,7 @@ function SignUp(props) {
 
     useEffect(() => {
         if (props.signup.isSignup) {
-            props.ownProps.onPressLogin()
+            props.login(props.signup.user.email, props.signup.user.password)
         }
     }, [props.signup.isSignup])
 
@@ -100,6 +95,16 @@ function SignUp(props) {
             this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
         }
     }, [props.signup.error])
+
+    useEffect(() => {
+        if (props.auth.isAuth) {
+            props.ownProps.onPressLogin()
+            props.ownProps.navigation.navigate('ProfessionalSearch')
+        }
+        else if (props.auth.error) {
+            props.ownProps.onPressLogin()
+        }
+    }, [props.auth.isAuth, props.auth.error])
 
     useEffect(() => {
         if (dateBirth.length > 0) {
@@ -153,7 +158,7 @@ function SignUp(props) {
             return
         else if (!validateField('confirmPassword', confirmPassword))
             return
-        else if (!validateField('genre', confirmPassword))
+        else if (!validateField('gender', confirmPassword))
             return
 
         let date = dateBirth.split("/")
@@ -165,7 +170,7 @@ function SignUp(props) {
             phone: phone,
             document: documentNumber,
             date_birth: dateFormatted,
-            genre: genre,
+            gender: gender,
             email: email,
             password: password,
             longitude: longitude,
@@ -234,7 +239,7 @@ function SignUp(props) {
                 if (!value.includes('@'))
                     return false
                 break
-            case 'genre':
+            case 'gender':
                 if (value === '' || value === 'SELECIONE')
                     return false
                 break
@@ -292,9 +297,9 @@ function SignUp(props) {
                                 nameField='dateBirth' />
 
                             <PickerJobs
-                                selectedValue={genre}
-                                onValueChange={(itemValue, itemIndex) => setGenre(itemValue)}
-                                itemsList={genreList} />
+                                selectedValue={gender}
+                                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                                itemsList={genderList} />
 
                             <TextInputJobs
                                 value={email}
@@ -347,14 +352,15 @@ function SignUp(props) {
 const mapStateToProps = (state, ownProps) => {
     return {
         signup: state.signup,
-        ownProps: ownProps
+        auth: state.auth,
+        ownProps: ownProps,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        signupInit: () => dispatch(ActionCreators.signupInit()),
-        signupRequest: (user) => dispatch(ActionCreators.signupRequest(user))
+        signupRequest: (user) => dispatch(ActionCreators.signupRequest(user)),
+        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }
 }
 

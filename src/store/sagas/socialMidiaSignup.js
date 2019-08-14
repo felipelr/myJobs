@@ -27,6 +27,7 @@ function* signup(action) {
             gender: action.user.gender,
             latitude: action.user.latitude,
             longitude: action.user.longitude,
+            facebook_id: action.user.facebook_id,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
@@ -34,24 +35,35 @@ function* signup(action) {
 
         if (signup.data.error) {
             console.log(signup.data.errorMessage)
-            yield put(ActionCreator.signupError(signup.data.errorMessage))
+            yield put(ActionCreator.socialMidiaSignupError(signup.data.errorMessage))
         }
         else {
             let user = signup.data.newUser
             user.password = action.user.password
             user.email = action.user.email
-            yield put(ActionCreator.signupSuccess(user))
+            yield put(ActionCreator.socialMidiaSignupSuccess(user))
         }
 
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         console.log('Servidor: ' + messageError)
-        yield put(ActionCreator.signupError(messageError))
+        yield put(ActionCreator.socialMidiaSignupError(messageError))
+    }
+}
+
+function* verifyAccount(action) {
+    try {
+
+    }
+    catch (ex) {
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        console.log('Servidor: ' + messageError)
     }
 }
 
 export default function* rootSignup() {
     yield all([
-        takeLatest(Types.SIGNUP_REQUEST, signup)
+        takeLatest(Types.SOCIAL_MIDIA_SIGNUP_REQUEST, signup),
+        takeLatest(Types.SOCIAL_MIDIA_VERIFY_ACCOUNT, verifyAccount),
     ])
 }

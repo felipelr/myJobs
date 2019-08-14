@@ -20,7 +20,7 @@ function SocialMidia(props) {
     }, [user])
 
     facebookLoginRequest = () => {
-        LoginManager.logInWithPermissions(["public_profile"]).then(
+        LoginManager.logInWithPermissions(["public_profile", "email"]).then(
             function (result) {
                 if (result.isCancelled) {
                     console.log("Login cancelled")
@@ -28,7 +28,7 @@ function SocialMidia(props) {
                     console.log("Login success with permissions: " + result.grantedPermissions.toString())
                     AccessToken.getCurrentAccessToken().then((data) => {
                         const { accessToken } = data
-                        fetch(urlFacebookGraph + '/me?fields=email,name,birthday,gender&access_token=' + accessToken)
+                        fetch(urlFacebookGraph + '/me?fields=name,birthday,gender,email&access_token=' + accessToken)
                             .then((response) => response.json())
                             .then((json) => {
                                 setUser({
@@ -39,8 +39,8 @@ function SocialMidia(props) {
                                     gender: (json.gender === 'male' ? 'MASCULINO' : json.gender === 'female' ? 'FEMININO' : 'OUTRO')
                                 })
                             })
-                            .catch((error) => {
-                                reject('ERROR GETTING DATA FROM FACEBOOK')
+                            .catch(() => {
+                                reject('ERROR GETTING DATA FROM FACEBOOK: ')
                             })
                     })
                 }

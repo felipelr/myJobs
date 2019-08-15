@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Image } from 'react-native'
 import { connect } from 'react-redux'
 import { LoginManager, AccessToken } from 'react-native-fbsdk'
+import { GoogleSignin, statusCodes } from 'react-native-google-signin'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -51,12 +52,32 @@ function SocialMidia(props) {
         )
     }
 
+    signInGoogle = async () => {
+        try {
+            await GoogleSignin.hasPlayServices()
+            const userInfo = await GoogleSignin.signIn()
+            console.log(userInfo)
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log("user cancelled the login flow")
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.log("operation (f.e. sign in) is in progress already")
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.log("play services not available or outdated")
+            } else {
+                console.log(error)
+            }
+        }
+    }
+
+    GoogleSignin.configure()
+
     return (
         <ContainerSocialMidia>
             <SocialMidiaButton onPress={facebookLoginRequest}>
                 <Image source={assets.facebook} />
             </SocialMidiaButton>
-            <SocialMidiaButton>
+            <SocialMidiaButton onPress={signInGoogle}>
                 <Image source={assets.googlemais} />
             </SocialMidiaButton>
         </ContainerSocialMidia>

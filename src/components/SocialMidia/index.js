@@ -70,7 +70,10 @@ function SocialMidia(props) {
         }
     }
 
-    GoogleSignin.configure()
+    GoogleSignin.configure({
+        webClientId: '333819460701-gqm646pnle9tcbotppnudr3vv4cjnglm.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+        offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER    
+    })
 
     return (
         <ContainerSocialMidia>

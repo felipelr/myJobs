@@ -252,9 +252,9 @@ function SignUp(props) {
     return (
         <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
             <View style={{ paddingBottom: 50 }}>
-                {props.signup.isSigningup && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
+                {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
 
-                {!props.signup.isSigningup && (
+                {(!props.signup.isSigningup && !props.auth.isLogingin) && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
                         <TextSignUpTitle>Sign Up</TextSignUpTitle>
                         {

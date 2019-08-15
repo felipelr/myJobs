@@ -29,6 +29,8 @@ export const { Types, Creators } = createActions({
     socialMidiaSignupSuccess: ['newUser'],
     socialMidiaSignupError: ['error'],
     socialMidiaVerifyAccount: ['socialMidiaId', 'socialMidiaType'],
+    socialMidiaVerifyError: ['error'],
+    socialMidiaVerifySuccess: ['user'],
 })
 
 export default Creators

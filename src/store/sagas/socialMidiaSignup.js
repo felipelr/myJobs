@@ -53,7 +53,24 @@ function* signup(action) {
 
 function* verifyAccount(action) {
     try {
+        let resposta = yield axios.post(`${urlMyJobsAPI}/users/social_midia_verify.json`, {
+            socialMidiaId: action.socialMidiaId,
+            socialMidiaType: action.socialMidiaType,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
 
+        if (resposta.data.error) {
+            console.log(resposta.data.errorMessage)
+            yield put(ActionCreator.socialMidiaVerifyError(resposta.data.errorMessage))
+        }
+        else {
+            let user = resposta.data.user
+            user.email = user.user.email
+            user.password = action.socialMidiaId
+            yield put(ActionCreator.socialMidiaVerifySuccess(user))
+        }
     }
     catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'

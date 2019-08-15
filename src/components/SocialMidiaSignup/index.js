@@ -67,6 +67,12 @@ function SocialMidiaSignup(props) {
     }, [])
 
     useEffect(() => {
+        if (props.socialMidiaSignup.accVerified === 1) {
+            props.login(props.socialMidiaSignup.user.email, props.socialMidiaSignup.user.password)
+        }
+    }, [props.socialMidiaSignup.accVerified])
+
+    useEffect(() => {
         if (props.socialMidiaSignup.isSignup) {
             props.login(props.socialMidiaSignup.newUser.email, props.socialMidiaSignup.newUser.password)
         }
@@ -182,9 +188,9 @@ function SocialMidiaSignup(props) {
     return (
         <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
             <ViewContainer>
-                {props.socialMidiaSignup.isSigningup && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
+                {(props.socialMidiaSignup.isSigningup || props.socialMidiaSignup.verifyingAcc || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
 
-                {!props.socialMidiaSignup.isSigningup && (
+                {(!props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
                         <TextSignUpTitle>Sign Up</TextSignUpTitle>
                         {

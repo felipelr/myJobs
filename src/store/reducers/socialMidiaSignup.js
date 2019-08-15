@@ -66,12 +66,32 @@ export const socialMidiaVerifyAccount = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const socialMidiaVerifySuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        verifyingAcc: false,
+        accVerified: 1,
+        user: action.user,
+    }
+}
+
+export const socialMidiaVerifyError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        verifyingAcc: false,
+        accVerified: 0,
+        user: {}
+    }
+}
+
 export const HANDLERS = {
     [Types.SOCIAL_MIDIA_SIGNUP_INIT]: socialMidiaSignupInit,
     [Types.SOCIAL_MIDIA_SIGNUP_REQUEST]: socialMidiaSignupRequest,
     [Types.SOCIAL_MIDIA_SIGNUP_SUCCESS]: socialMidiaSignupSuccess,
     [Types.SOCIAL_MIDIA_SIGNUP_ERROR]: socialMidiaSignupError,
     [Types.SOCIAL_MIDIA_VERIFY_ACCOUNT]: socialMidiaVerifyAccount,
+    [Types.SOCIAL_MIDIA_VERIFY_SUCCESS]: socialMidiaVerifySuccess,
+    [Types.SOCIAL_MIDIA_VERIFY_ERROR]: socialMidiaVerifyError,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

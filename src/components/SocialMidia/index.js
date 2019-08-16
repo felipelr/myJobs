@@ -18,6 +18,10 @@ function SocialMidia(props) {
             props.socialMidiaSignupInit(user)
             props.ownProps.goToSocialMidiaSignup()
         }
+        else if (user.google_id) {
+            props.socialMidiaSignupInit(user)
+            props.ownProps.goToSocialMidiaSignup()
+        }
     }, [user])
 
     facebookLoginRequest = () => {
@@ -57,6 +61,13 @@ function SocialMidia(props) {
             await GoogleSignin.hasPlayServices()
             const userInfo = await GoogleSignin.signIn()
             console.log(userInfo)
+            setUser({
+                google_id: userInfo.id,
+                name: userInfo.name,
+                email: userInfo.email,
+                birthday: '',
+                gender: 'MASCULINO',
+            })
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log("user cancelled the login flow")
@@ -71,6 +82,10 @@ function SocialMidia(props) {
     }
 
     GoogleSignin.configure({
+        scopes: [
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/userinfo.profile',
+        ],
         webClientId: '333819460701-gqm646pnle9tcbotppnudr3vv4cjnglm.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
         offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER    
     })

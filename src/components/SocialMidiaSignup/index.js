@@ -6,13 +6,14 @@ import { CheckBox } from 'react-native-elements'
 import ActionCreators from '../../store/actionCreators'
 
 import TextInputJobs from '../TextInputJobs/index'
+import PickerJobs from '../PickerJobs/index'
 import CardJobs from '../CardJobs/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
 import { white, purple } from '../common/util/colors'
 
-import { formatPhone } from '../common/util/functions'
+import { formatPhone, formatDate } from '../common/util/functions'
 
 import {
     ViewContainer, TextSignUpTitle, ViewContainerRow,
@@ -28,6 +29,22 @@ function SocialMidiaSignup(props) {
     const [documentNumber, setDocumentNumber] = useState('')
     const [latitude, setLatitude] = useState('0')
     const [longitude, setLongitude] = useState('0')
+    const [dateBirth, setDateBirth] = useState('')
+    const [gender, setGender] = useState('MASCULINO')
+    const [genderList, setGenderList] = useState([
+        {
+            label: 'Masculino',
+            value: 'MASCULINO'
+        },
+        {
+            label: 'Feminino',
+            value: 'FEMININO'
+        },
+        {
+            label: 'Outro',
+            value: 'OUTRO'
+        }
+    ])
 
     useEffect(() => {
         if (Platform.OS === 'ios') {
@@ -102,6 +119,14 @@ function SocialMidiaSignup(props) {
         }
     }, [phone])
 
+    useEffect(() => {
+        if (dateBirth.length > 0) {
+            let date_ = formatDate(dateBirth)
+            if (dateBirth !== date_)
+                setDateBirth(date_)
+        }
+    }, [dateBirth])
+
     callLocation = () => {
         navigator.geolocation.getCurrentPosition(
             //Will give you the current location
@@ -131,6 +156,9 @@ function SocialMidiaSignup(props) {
             case 'documentNumber':
                 setDocumentNumber(text)
                 break
+            case 'dateBirth':
+                setDateBirth(text)
+                break
             default:
                 break
         }
@@ -151,6 +179,14 @@ function SocialMidiaSignup(props) {
                 if (value.length < 14)
                     return false
                 break
+            case 'dateBirth':
+                if (value.length < 10)
+                    return false
+                break
+            case 'gender':
+                if (value === '' || value === 'SELECIONE')
+                    return false
+                break
             default:
                 break
         }
@@ -162,27 +198,48 @@ function SocialMidiaSignup(props) {
             return
         else if (!validateField('documentNumber', documentNumber))
             return
+        else if (!validateField('dateBirth', dateBirth))
+            return
+        else if (!validateField('gender', confirmPassword))
+            return
 
-        let date = props.socialMidiaSignup.user.birthday.split("/")
+        let date = dateBirth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
 
-        let user = {
-            userType: userType,
-            phone: phone,
-            document: documentNumber,
-            name: props.socialMidiaSignup.user.name,
-            date_birth: dateFormatted,
-            gender: props.socialMidiaSignup.user.gender,
-            email: props.socialMidiaSignup.user.email,
-            password: props.socialMidiaSignup.user.facebook_id,
-            longitude: longitude,
-            latitude: latitude,
-            facebook_id: props.socialMidiaSignup.user.facebook_id
+        if (props.socialMidiaSignup.user.facebook_id) {
+            let user = {
+                userType: userType,
+                phone: phone,
+                document: documentNumber,
+                name: props.socialMidiaSignup.user.name,
+                date_birth: dateFormatted,
+                gender: gender,
+                email: props.socialMidiaSignup.user.email,
+                password: props.socialMidiaSignup.user.facebook_id,
+                longitude: longitude,
+                latitude: latitude,
+                facebook_id: props.socialMidiaSignup.user.facebook_id
+            }
+
+            props.socialMidiaSignupRequest(user)
         }
+        else if (props.socialMidiaSignup.user.google_id) {
+            let user = {
+                userType: userType,
+                phone: phone,
+                document: documentNumber,
+                name: props.socialMidiaSignup.user.name,
+                date_birth: dateFormatted,
+                gender: props.socialMidiaSignup.user.gender,
+                email: props.socialMidiaSignup.user.email,
+                password: props.socialMidiaSignup.user.google_id,
+                longitude: longitude,
+                latitude: latitude,
+                google_id: props.socialMidiaSignup.user.google_id
+            }
 
-        console.log(user)
-
-        props.socialMidiaSignupRequest(user)
+            props.socialMidiaSignupRequest(user)
+        }
     }
 
     return (
@@ -217,6 +274,19 @@ function SocialMidiaSignup(props) {
                                 placeholder='CPF'
                                 invalidValue={invalidField}
                                 nameField='documentNumber' />
+
+                            <TextInputJobs
+                                value={dateBirth}
+                                onChangeText={(text) => handleOnChange('dateBirth', text)}
+                                placeholder='Data de Nascimento'
+                                keyboardType='number-pad'
+                                invalidValue={invalidField}
+                                nameField='dateBirth' />
+
+                            <PickerJobs
+                                selectedValue={gender}
+                                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                                itemsList={genderList} />
 
                             <ViewContainerRow>
                                 <ButtonPurple onPress={handleClickSignUp}>

@@ -16,22 +16,43 @@ setUserData = async (userData) => {
 
 function* signup(action) {
     try {
-        let signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
-            userType: action.user.userType,
-            email: action.user.email,
-            password: action.user.password,
-            name: action.user.name,
-            phone: action.user.phone,
-            document: action.user.document,
-            date_birth: action.user.date_birth,
-            gender: action.user.gender,
-            latitude: action.user.latitude,
-            longitude: action.user.longitude,
-            facebook_id: action.user.facebook_id,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
+        let signup = null
+        if (action.user.facebook_id) {
+            signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
+                userType: action.user.userType,
+                email: action.user.email,
+                password: action.user.password,
+                name: action.user.name,
+                phone: action.user.phone,
+                document: action.user.document,
+                date_birth: action.user.date_birth,
+                gender: action.user.gender,
+                latitude: action.user.latitude,
+                longitude: action.user.longitude,
+                facebook_id: action.user.facebook_id,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+        }
+        else if (action.user.google_id) {
+            signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
+                userType: action.user.userType,
+                email: action.user.email,
+                password: action.user.password,
+                name: action.user.name,
+                phone: action.user.phone,
+                document: action.user.document,
+                date_birth: action.user.date_birth,
+                gender: action.user.gender,
+                latitude: action.user.latitude,
+                longitude: action.user.longitude,
+                google_id: action.user.google_id,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+        }
 
         if (signup.data.error) {
             console.log(signup.data.errorMessage)

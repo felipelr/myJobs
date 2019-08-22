@@ -9,14 +9,14 @@ import { styles, Title, ContainerBody } from './styles'
 const CategorieItem = (props) => {
     const { categoria } = props
 
-    const handleClickLogin = () => {
+    const handleClickCategoria = () => {
         props.categoriasSelected(categoria);
     }
 
     return (
         <ContainerBody>
             <Title>{categoria.description}</Title>
-            <TouchableOpacity onPress={handleClickLogin}>
+            <TouchableOpacity onPress={handleClickCategoria}>
                 <Avatar
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={styles.overlayContainerStyle}

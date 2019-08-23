@@ -3,7 +3,7 @@ import { View, KeyboardAvoidingView, Keyboard, Platform, BackHandler } from 'rea
 import { ContainerCategorias } from './styles'
 import { connect } from 'react-redux'
 
-import {Text} from 'react-native'
+import { Text } from 'react-native'
 import ActionCreators from '../../store/actionCreators'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -43,6 +43,10 @@ function ProfessionalSearchScreen(props) {
     }, [])
 
     useEffect(() => {
+         
+    }, [props.selectedCategorie])
+
+    useEffect(() => {
         if (!props.isAuth) {
             props.ownProps.navigation.navigate('Login')
         }
@@ -66,7 +70,7 @@ function ProfessionalSearchScreen(props) {
                 </View>
             </ContainerCategorias>
             {
-            props.selectedCategorie &&  <Text>teste = {props.selectedCategorie.description}</Text>
+                props.selectedCategorie && <Text>teste = {props.selectedCategorie.description}</Text>
             }
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
@@ -89,7 +93,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
-        logout: () => dispatch(ActionCreators.logoutRequest())
+        logout: () => dispatch(ActionCreators.logoutRequest()),
+        getSubcategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token))
     }
 }
 

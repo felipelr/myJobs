@@ -24,6 +24,13 @@ export const { Types, Creators } = createActions({
     categoriasLoadError: ['error'],
     categoriasSelected: ['data'],
 
+    //Actions de Subcategories
+    subcategoriasLoadRequest: ['token'],
+    subcategoriasLoadSuccess: ['subcategories'],
+    subcategoriasLoadError: ['error'],
+    subcategoriasSelected: ['subcategory'],
+
+
     //Social Midia Actions
     socialMidiaSignupInit: ['user'],
     socialMidiaSignupRequest: ['user'],

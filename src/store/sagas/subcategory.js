@@ -5,24 +5,24 @@ import { Types } from '../actionCreators'
 import ActionCreator from '../actionCreators'
 import { urlMyJobsAPI } from '../../config/config'
 
-function* getCategories(action) {
+function* getSubCategoriesByCategory(action) {
     try {
-        let data = yield axios.get(`${urlMyJobsAPI}/categories/index.json`, {
+        let request = yield axios.get(`${urlMyJobsAPI}/subcategorias/${action.categoryID}.json`, {
             headers: {
                 Authorization: 'Bearer ' + action.token
             }
         }) 
-        let { categories } = data.data  
+        let { subcategories } = request.data  
 
-        yield put(ActionCreator.categoriasLoadSuccess(categories))
+        yield put(ActionCreator.subcategoriasLoadSuccess(subcategories))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-        yield put(ActionCreator.categoriasLoadError(messageError))
+        yield put(ActionCreator.subcategoriasLoadError(messageError))
     }
-} 
+}
 
 export default function* rootCategories() {
     yield all([
-        takeLatest(Types.CATEGORIAS_LOAD_REQUEST, getCategories)
+        takeLatest(Types.SUBCATEGORIAS_LOAD_REQUEST, getSubCategoriesByCategory)
     ])
 }

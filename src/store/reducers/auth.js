@@ -72,6 +72,14 @@ export const authError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const loginCleanError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        error: false,
+        errorMessage: ''
+    }
+}
+
 export const logoutRequest = (state = INITIAL_STATE, action) => {
     return {
         ...state,
@@ -101,6 +109,7 @@ export const HANDLERS = {
     [Types.LOGIN_REQUEST]: loginRequest,
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
+    [Types.LOGIN_CLEAN_ERROR]: loginCleanError,
     [Types.AUTH_REQUEST]: authRequest,
     [Types.AUTH_SUCCESS]: authSuccess,
     [Types.AUTH_ERROR]: authError,

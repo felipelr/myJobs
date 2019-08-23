@@ -59,12 +59,11 @@ function SocialMidia(props) {
     signInGoogle = async () => {
         try {
             await GoogleSignin.hasPlayServices()
-            const userInfo = await GoogleSignin.signIn()
-            console.log(userInfo)
+            const userInfo = await GoogleSignin.signIn()            
             setUser({
-                google_id: userInfo.id,
-                name: userInfo.name,
-                email: userInfo.email,
+                google_id: userInfo.user.id,
+                name: userInfo.user.name,
+                email: userInfo.user.email,
                 birthday: '',
                 gender: 'MASCULINO',
             })

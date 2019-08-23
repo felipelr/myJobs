@@ -5,6 +5,7 @@ export const { Types, Creators } = createActions({
     loginRequest: ['email', 'password'],
     loginSuccess: ['data'],
     loginError: ['error'],
+    loginCleanError: null,
     authRequest: null,
     authSuccess: ['data'],
     authError: null,

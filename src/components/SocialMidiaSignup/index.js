@@ -71,11 +71,12 @@ function SocialMidiaSignup(props) {
             requestLocationPermission()
         }
 
-        console.log('social_midia_signup')
-
         //verificar se já existe cadastro do facebook
         if (props.socialMidiaSignup.user.facebook_id) {
             props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.facebook_id, 'facebook')
+        }
+        else if (props.socialMidiaSignup.user.google_id) {
+            props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.google_id, 'google')
         }
 
         return () => {
@@ -200,7 +201,7 @@ function SocialMidiaSignup(props) {
             return
         else if (!validateField('dateBirth', dateBirth))
             return
-        else if (!validateField('gender', confirmPassword))
+        else if (!validateField('gender', gender))
             return
 
         let date = dateBirth.split("/")

@@ -80,7 +80,6 @@ export const socialMidiaVerifyError = (state = INITIAL_STATE, action) => {
         ...state,
         verifyingAcc: false,
         accVerified: 0,
-        user: {}
     }
 }
 

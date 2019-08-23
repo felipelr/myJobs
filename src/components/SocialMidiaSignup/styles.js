@@ -9,6 +9,7 @@ export const ScrollViewContainerForm = styled.ScrollView.attrs({
 
 export const ViewContainer = styled.View`
     padding: 5px;
+    padding-bottom: 50px;
 `
 
 export const TextSignUpTitle = styled.Text`

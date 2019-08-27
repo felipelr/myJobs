@@ -15,6 +15,14 @@ setUserData = async (userData) => {
     }
 }
 
+setClientData = async (clientData) => {
+    try {
+        await AsyncStorage.setItem('@clientData', JSON.stringify(clientData))
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 function* login(action) {
     try {
         let login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
@@ -30,7 +38,16 @@ function* login(action) {
         let userData = { user, token }
         setUserData(userData)
 
-        yield put(ActionCreator.loginSuccess({ user, token }))
+        let view = yield axios.get(`${urlMyJobsAPI}/users/view/${user.sub}.json`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        })
+
+        let client = view.data.client
+        setClientData(client)
+
+        yield put(ActionCreator.loginSuccess({ user, token, client }))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.loginError(messageError))
@@ -41,7 +58,12 @@ function* auth(action) {
     try {
         let userData = yield AsyncStorage.getItem('@userData')
         if (userData) {
+            let clientData = yield AsyncStorage.getItem('@clientData')
             let parsed = JSON.parse(userData)
+            parsed = {
+                ...parsed,
+                client: JSON.parse(clientData)
+            }
             yield put(ActionCreator.authSuccess(parsed))
         }
         else {
@@ -52,10 +74,11 @@ function* auth(action) {
     }
 }
 
-function* logout(action){
+function* logout(action) {
     try {
-        yield AsyncStorage.removeItem('@userData')    
-        yield put(ActionCreator.logoutSuccess())    
+        yield AsyncStorage.removeItem('@userData')
+        yield AsyncStorage.removeItem('@clientData')
+        yield put(ActionCreator.logoutSuccess())
     } catch (ex) {
         yield put(ActionCreator.logoutError(ex.message))
     }

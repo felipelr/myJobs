@@ -42,8 +42,11 @@ function ProfessionalSearchScreen(props) {
         }
     }, [])
 
-    useEffect(() => {
-         
+    useEffect(() => { 
+        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
+            console.log('teste subcategory = ' + JSON.stringify(props.selectedCategorie))
+            props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
+        }
     }, [props.selectedCategorie])
 
     useEffect(() => {
@@ -70,7 +73,7 @@ function ProfessionalSearchScreen(props) {
                 </View>
             </ContainerCategorias>
             {
-                props.selectedCategorie && <Text>teste = {props.selectedCategorie.description}</Text>
+                props.selectedCategorie && <Text>teste = {JSON.stringify(props.subcategories)}</Text>
             }
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
@@ -86,7 +89,8 @@ const mapStateToProps = (state, ownProps) => {
         isAuth: state.auth.isAuth,
         data: state.categoria.data,
         selectedCategorie: state.categoria.selected,
-        ownProps: ownProps
+        subcategories: state.subcategories,
+        ownProps: ownProps,
     }
 }
 
@@ -94,7 +98,7 @@ const mapDispatchToProps = dispatch => {
     return {
         getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
         logout: () => dispatch(ActionCreators.logoutRequest()),
-        getSubcategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token))
+        subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie))
     }
 }
 

@@ -1,5 +1,6 @@
 import { createReducer } from 'reduxsauce'
 import { Types } from '../actionCreators'
+import console = require('console');
 
 export const INITIAL_STATE = {
     loading: false,
@@ -17,9 +18,11 @@ export const subcategoriesLoadRequest = (state = INITIAL_STATE, action) => {
 }
 
 export const subcategoriesLoadSuccess = (state = INITIAL_STATE, action) => {
+    console.log('voltou aqui')
+    console.log(JSON.stringify(action))
     return {
         ...state,
-        subcategories: action.data,
+        subcategories: action.subcategories,
         loading: false
     }
 }
@@ -40,11 +43,19 @@ export const subcategoriesSelected = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const subcategoriesByCategoryRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: true
+    }
+}
+
 export const HANDLES = {
-    [Types.SUBCATEGORIAS_LOAD_REQUEST]: subcategoriasLoadRequest,
-    [Types.SUBCATEGORIAS_LOAD_SUCCESS]: subcategoriasLoadSuccess,
-    [Types.SUBCATEGORIAS_LOAD_ERROR]: subcategoriasLoadError,
-    [Types.SUBCATEGORIAS_SELECTED]: subcategoriasSelected,
+    [Types.SUBCATEGORIES_LOAD_REQUEST]: subcategoriesLoadRequest,
+    [Types.SUBCATEGORIES_LOAD_SUCCESS]: subcategoriesLoadSuccess,
+    [Types.SUBCATEGORIES_LOAD_ERROR]: subcategoriesLoadError,
+    [Types.SUBCATEGORIES_SELECTED]: subcategoriesSelected,
+    [Types.SUBCATEGORIES_BY_CATEGORY_REQUEST]: subcategoriesByCategoryRequest,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

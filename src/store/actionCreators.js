@@ -24,10 +24,11 @@ export const { Types, Creators } = createActions({
     categoriasSelected: ['data'],
 
     //Actions de Subcategories
-    subcategoriasLoadRequest: ['token'],
-    subcategoriasLoadSuccess: ['subcategories'],
-    subcategoriasLoadError: ['error'],
-    subcategoriasSelected: ['subcategory'],
+    subcategoriesLoadRequest: ['token'],
+    subcategoriesLoadSuccess: ['subcategories'],
+    subcategoriesLoadError: ['error'],
+    subcategoriesSelected: ['subcategory'],
+    subcategoriesByCategoryRequest: ['category', 'token'],
 
 
     //Social Midia Actions

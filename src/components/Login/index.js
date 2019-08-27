@@ -17,7 +17,7 @@ import TextError from '../TextError/index'
 
 function Login(props) {
     const [email, setEmail] = useState('felipe.lima.flr@gmail.com')
-    const [password, setPassword] = useState('flr123')
+    const [password, setPassword] = useState('101762866218022699799')
 
     useEffect(() => {
         if (props.auth.isAuth) {

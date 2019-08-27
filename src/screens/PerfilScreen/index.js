@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { View, Platform, Text } from 'react-native'
+import { connect } from 'react-redux'
+import { View, Platform } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import actualDimensions from '../../components/common/util/dimensions'
+
+import ActionCreators from '../../store/actionCreators'
 
 import {
     Container, ContainerContent, Space, ContainerTitle, Title,
@@ -10,12 +12,11 @@ import {
 } from './styles'
 import Background from '../../components/Background/index'
 import Footer from '../../components/Footer/index'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { purple } from '../../components/common/util/colors';
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { purple } from '../../components/common/util/colors'
 
-export default function PerfilScreen(props) {
-
-    const list = [
+function PerfilScreen(props) {
+    const [list, setList] = useState([
         {
             title: 'Dados Cadastrais',
             icon: 'account-circle'
@@ -44,7 +45,15 @@ export default function PerfilScreen(props) {
             title: 'Sorteios',
             icon: 'redeem'
         }
-    ]
+    ])
+
+    useEffect(() => {
+        //console.log(props.auth.client)
+
+        return () => {
+
+        }
+    }, [])
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
@@ -52,23 +61,19 @@ export default function PerfilScreen(props) {
             <View style={{ flex: 1 }}>
                 <Background />
                 <ContainerContent>
-                    <View style={{flex:1.5}}>
-                        <Space />
-                        <ContainerTitle>
-                            <Title>
-                                Tia da Amazonia 
-                            </Title>
-                        </ContainerTitle>
-                        <ContainerAvatar>
-                            <Avatar
-                                rounded
-                                avatarStyle={styles.shadow}
-                                source={{
-                                    uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                                }}
-                                size={140} />
-                        </ContainerAvatar>
-                    </View>
+                    <Space />
+                    <ContainerTitle>
+                        <Title>{props.auth.client.name}</Title>
+                    </ContainerTitle>
+                    <ContainerAvatar>
+                        <Avatar
+                            rounded
+                            avatarStyle={styles.shadow}
+                            source={{
+                                uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                            }}
+                            size={140} />
+                    </ContainerAvatar>
                     <ContainerLista>
                         {
                             list.map((item, i) => (
@@ -81,7 +86,6 @@ export default function PerfilScreen(props) {
                                         leftIcon={{ name: item.icon }}
                                     />
                                 </TouchableOpacity>
-
                             ))
                         }
                     </ContainerLista>
@@ -95,3 +99,18 @@ export default function PerfilScreen(props) {
 PerfilScreen.navigationOptions = {
     header: null
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        auth: state.auth,
+        ownProps: ownProps,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PerfilScreen)

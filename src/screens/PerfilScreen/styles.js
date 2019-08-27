@@ -1,12 +1,13 @@
 import styled from 'styled-components'
 import { purple } from '../../components/common/util/colors'
 import { StyleSheet } from 'react-native' 
-import actualDimensions, {widthPercentageToDP, heightPercentageToDP }  from '../../components/common/util/dimensions'
+import { heightPercentageToDP }  from '../../components/common/util/dimensions'
 
 
-export const Container = styled.ScrollView`
-    flex: 1;
-`
+export const Container = styled.ScrollView.attrs({
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
+    showHorizontalScrollIndicator: false
+})``
 
 export const ContainerContent = styled.View`
     width: 100%;
@@ -15,10 +16,10 @@ export const ContainerContent = styled.View`
     flex: 1;
 `
 export const Space = styled.View`
-    flex:1;
+    height:${heightPercentageToDP('16%')};
 `
 export const ContainerTitle = styled.View`
-    height:${heightPercentageToDP('13%')};
+    height:${heightPercentageToDP('15%')};
     background-color: white;
     border-top-right-radius: 20; 
     border-top-left-radius: 20;
@@ -29,20 +30,18 @@ export const ContainerTitle = styled.View`
 export const Title = styled.Text`
     font-size: 24;
     color: ${purple};
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     font-weight: bold;
 `
 export const ContainerLista = styled.View`
-    flex: 3;
     margin-top: 1;
 `
 export const ContainerAvatar = styled.View`
-    flex: 1;
     position: absolute; 
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${heightPercentageToDP('12%')};
+    top: ${heightPercentageToDP('3%')};
 `
 export const styles = StyleSheet.create({
     shadow: {

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler } from 'react-native'
+import { connect } from 'react-redux'
+
+import ActionCreators from '../../store/actionCreators'
 
 import Background from '../../components/Background/index'
 import Login from '../../components/Login/index'
@@ -13,7 +16,7 @@ import {
     ViewContainerLogin, ViewContainerSignup, TextLogoTipo
 } from './styles'
 
-export default function LoginScreen(props) {
+function LoginScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [showComponent, setShowComponent] = useState('login')
 
@@ -40,6 +43,11 @@ export default function LoginScreen(props) {
         return true;
     }
 
+    showSignup = () => {
+        props.loginCleanError()
+        setShowComponent('signup')
+    }
+
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
@@ -51,7 +59,7 @@ export default function LoginScreen(props) {
                         {
                             showComponent === 'login' &&
                             <ViewContainerLogin>
-                                <Login navigation={props.navigation} onPressSignup={() => setShowComponent('signup')} />
+                                <Login navigation={props.navigation} onPressSignup={showSignup} />
                                 <SocialMidiaText>Entrar com</SocialMidiaText>
                                 <SocialMidia goToSocialMidiaSignup={() => setShowComponent('socialMidiaSignup')} />
                             </ViewContainerLogin>
@@ -79,3 +87,18 @@ export default function LoginScreen(props) {
 LoginScreen.navigationOptions = {
     header: null
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        auth: state.auth,
+        ownProps: ownProps,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loginCleanError: () => dispatch(ActionCreators.loginCleanError()),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

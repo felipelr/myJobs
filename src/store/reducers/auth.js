@@ -26,7 +26,8 @@ export const loginSuccess = (state = INITIAL_STATE, action) => {
         isLogingin: false,
         isAuth: true,
         user: action.data.user,
-        token: action.data.token
+        token: action.data.token,
+        client: action.data.client,
     }
 }
 
@@ -38,7 +39,8 @@ export const loginError = (state = INITIAL_STATE, action) => {
         error: true,
         errorMessage: action.error,
         user: {},
-        token: ''
+        token: '',
+        client: {},
     }
 }
 
@@ -57,6 +59,7 @@ export const authSuccess = (state = INITIAL_STATE, action) => {
         isAuth: true,
         user: action.data.user,
         token: action.data.token,
+        client: action.data.client,
         authMessage: 'success'
     }
 }
@@ -68,7 +71,16 @@ export const authError = (state = INITIAL_STATE, action) => {
         isAuth: false,
         user: {},
         token: '',
+        client: {},
         authMessage: 'error'
+    }
+}
+
+export const loginCleanError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        error: false,
+        errorMessage: ''
     }
 }
 
@@ -101,6 +113,7 @@ export const HANDLERS = {
     [Types.LOGIN_REQUEST]: loginRequest,
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
+    [Types.LOGIN_CLEAN_ERROR]: loginCleanError,
     [Types.AUTH_REQUEST]: authRequest,
     [Types.AUTH_SUCCESS]: authSuccess,
     [Types.AUTH_ERROR]: authError,

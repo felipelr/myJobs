@@ -3,9 +3,8 @@ import { purple } from '../../components/common/util/colors'
 import { StyleSheet } from 'react-native' 
 import { heightPercentageToDP }  from '../../components/common/util/dimensions'
 
-
-export const Container = styled.ScrollView.attrs({
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
+export const ScrollViewContainer = styled.ScrollView.attrs({
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
     showHorizontalScrollIndicator: false
 })``
 

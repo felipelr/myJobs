@@ -1,6 +1,5 @@
 import { createReducer } from 'reduxsauce'
 import { Types } from '../actionCreators'
-import console = require('console');
 
 export const INITIAL_STATE = {
     loading: false,

@@ -3,14 +3,16 @@ import { View, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
+
 import { formatPhone, formatDate } from '../common/util/functions'
 
 import {
-    ScrollViewContainer
+    ScrollViewContainer, ViewContainerButton
 } from './styles'
 
 import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
+import ButtonPurple from '../../components/ButtonPurple/index'
 
 function ClientEntry(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -101,7 +103,7 @@ function ClientEntry(props) {
 
     return (
         <ScrollViewContainer>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, padding: 8 }}>
                 <TextInputJobs
                     value={name}
                     onChangeText={(text) => handleOnChange('name', text)}
@@ -137,6 +139,10 @@ function ClientEntry(props) {
                     selectedValue={gender}
                     onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
                     itemsList={genderList} />
+
+                <ViewContainerButton>
+                    <ButtonPurple>Confirmar</ButtonPurple>
+                </ViewContainerButton>
             </View>
         </ScrollViewContainer>
 

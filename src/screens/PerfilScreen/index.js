@@ -14,6 +14,7 @@ import {
     ContainerLista, ContainerAvatar, styles
 } from './styles'
 
+import HeaderJob from '../../components/HeaderJobs/index'
 import Background from '../../components/Background/index'
 import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
@@ -71,11 +72,11 @@ function PerfilScreen(props) {
     }
 
     return (
-        <ScrollViewContainer>
-            <View style={{ flex: 1 }}>
-                {show === 'menu' && (
-                    <View style={{ flex: 1 }}>
-                        <Background />
+        <React.Fragment>
+            <HeaderJob title='Perfil' back={true} />
+            <ScrollViewContainer>
+                <View style={{ flex: 1 }}>
+                    {show === 'menu' && (
                         <ContainerContent>
                             <Space />
                             <ContainerTitle>
@@ -96,7 +97,7 @@ function PerfilScreen(props) {
                                         <TouchableOpacity key={item.title} onPress={() => { handleClickMenu(item.title) }}>
                                             <ListItem
                                                 key={i}
-                                                containerStyle={{ marginBottom: 0.5 }}
+                                                containerStyle={{ marginBottom: 1 }}
                                                 title={item.title}
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                                 leftIcon={{ name: item.icon }}
@@ -106,14 +107,14 @@ function PerfilScreen(props) {
                                 }
                             </ContainerLista>
                         </ContainerContent>
-                    </View>
-                )}
+                    )}
 
-                {show === 'cadastro' && <ClientEntry />}
+                    {show === 'cadastro' && <ClientEntry />}
+                </View>
+            </ScrollViewContainer>
 
-                <Footer />
-            </View>
-        </ScrollViewContainer>
+            <Footer />
+        </React.Fragment>
     )
 }
 

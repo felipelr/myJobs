@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { purple } from '../../components/common/util/colors'
-import { StyleSheet } from 'react-native' 
-import { heightPercentageToDP }  from '../../components/common/util/dimensions'
+import { purple, lightgray} from '../../components/common/util/colors'
+import { StyleSheet } from 'react-native'
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
@@ -12,6 +12,7 @@ export const ContainerContent = styled.View`
     width: 100%;
     height: 100%;
     position: absolute;
+    background-color: ${purple};
     flex: 1;
 `
 export const Space = styled.View`
@@ -33,7 +34,7 @@ export const Title = styled.Text`
     font-weight: bold;
 `
 export const ContainerLista = styled.View`
-    margin-top: 1;
+    background-color: ${lightgray};
 `
 export const ContainerAvatar = styled.View`
     position: absolute; 

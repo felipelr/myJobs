@@ -7,13 +7,14 @@ import { white, purple } from '../common/util/colors'
 import {
     LoginTitle, LoginButtonContainer,
     ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText,
-    ButtonPurple, TextButtonPurple, ViewContainerFields
+    ViewContainerFields
 } from './styles'
 
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
 import Loading from '../Loading/index'
 import TextError from '../TextError/index'
+import ButtonPurple from '../ButtonPurple/index'
 
 function Login(props) {
     const [email, setEmail] = useState('felipe.lima.flr@gmail.com')
@@ -44,9 +45,7 @@ function Login(props) {
                         <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
 
                         <LoginButtonContainer>
-                            <ButtonPurple onPress={handleClickLogin}>
-                                <TextButtonPurple>Entrar</TextButtonPurple>
-                            </ButtonPurple>
+                            <ButtonPurple onPress={handleClickLogin}>Entrar</ButtonPurple>
                         </LoginButtonContainer>
                         <ContainerNewUser>
                             <NewUserText>Novo por aqui?</NewUserText>
@@ -55,10 +54,8 @@ function Login(props) {
                             </NewUserButton>
                         </ContainerNewUser>
                     </ViewContainerFields>
-
                 </CardJobs>
             )}
-
         </React.Fragment>
     )
 }

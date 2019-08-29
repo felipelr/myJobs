@@ -10,14 +10,14 @@ import PickerJobs from '../PickerJobs/index'
 import CardJobs from '../CardJobs/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
+import ButtonPurple from '../ButtonPurple/index'
 
 import { white, purple } from '../common/util/colors'
 
 import { formatPhone, formatDate } from '../common/util/functions'
 
 import {
-    ViewContainer, TextSignUpTitle, ViewContainerRow,
-    ButtonPurple, TextButtonPurple, ScrollViewContainerForm
+    ViewContainer, TextSignUpTitle, ViewContainerRow, ScrollViewContainerForm, ViewContainerButton
 } from './styles'
 
 import { styleSheets } from './styles'
@@ -289,11 +289,9 @@ function SocialMidiaSignup(props) {
                                 onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
                                 itemsList={genderList} />
 
-                            <ViewContainerRow>
-                                <ButtonPurple onPress={handleClickSignUp}>
-                                    <TextButtonPurple>Confirmar</TextButtonPurple>
-                                </ButtonPurple>
-                            </ViewContainerRow>
+                            <ViewContainerButton>
+                                <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
+                            </ViewContainerButton>
                         </View>
                     </CardJobs>
                 )}

@@ -10,6 +10,7 @@ import PickerJobs from '../PickerJobs/index'
 import CardJobs from '../CardJobs/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
+import ButtonPurple from '../ButtonPurple/index'
 
 import { white, purple } from '../common/util/colors'
 
@@ -18,8 +19,7 @@ import { formatPhone, formatDate } from '../common/util/functions'
 import {
     TextSignUpTitle, ViewContainerGotoLogin, TextGotoLogin,
     ButtonGotoLogin, TextGotoLoginButton,
-    ViewContainerRow, ButtonPurple, TextButtonPurple,
-    ScrollViewContainerForm
+    ViewContainerRow, ViewContainerButton, ScrollViewContainerForm
 } from './styles'
 
 import { styleSheets } from './styles'
@@ -328,11 +328,9 @@ function SignUp(props) {
                                 invalidValue={invalidField}
                                 nameField='confirmPassword' />
 
-                            <ViewContainerRow>
-                                <ButtonPurple onPress={handleClickSignUp}>
-                                    <TextButtonPurple>Confirmar</TextButtonPurple>
-                                </ButtonPurple>
-                            </ViewContainerRow>
+                            <ViewContainerButton>
+                                <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
+                            </ViewContainerButton>
 
                             <ViewContainerGotoLogin>
                                 <TextGotoLogin>Já possui cadastro?</TextGotoLogin>

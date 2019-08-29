@@ -25,19 +25,11 @@ export const ViewContainerRow = styled.View`
     justify-content: space-around;
 `
 
-export const ButtonPurple = styled.TouchableOpacity`
-    padding: 10px;
-    background-color: ${purple};
-    border-radius: 5px;
+export const ViewContainerButton = styled.View`
     width: 150px;
+    align-self: center;
 `
-export const TextButtonPurple = styled.Text`
-    color: ${white};
-    font-family: 'SF-Pro-Text-Regular';
-    font-size: 16px;
-    text-align: center;
-    font-weight: bold;
-`
+
 export const styleSheets = StyleSheet.create({
     containerCheck: {
         backgroundColor: '#FFFFFF',

@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View, Platform } from 'react-native'
+import { View } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import ActionCreators from '../../store/actionCreators'
 
-import {
-    Container, ContainerContent, Space, ContainerTitle, Title,
-    ContainerLista, ContainerAvatar, styles
-} from './styles'
-import Background from '../../components/Background/index'
-import Footer from '../../components/Footer/index'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { purple } from '../../components/common/util/colors'
 
+import {
+    ScrollViewContainer, ContainerContent, Space, ContainerTitle, Title,
+    ContainerLista, ContainerAvatar, styles
+} from './styles'
+
+import HeaderJob from '../../components/HeaderJobs/index'
+import Background from '../../components/Background/index'
+import Footer from '../../components/Footer/index'
+import ClientEntry from '../../components/ClientEntry/index'
+
 function PerfilScreen(props) {
+    const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
             title: 'Dados Cadastrais',
@@ -48,51 +53,68 @@ function PerfilScreen(props) {
     ])
 
     useEffect(() => {
-        //console.log(props.auth.client)
+        console.log(props.auth.client)
 
         return () => {
 
         }
     }, [])
 
-    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
+    handleClickMenu = (item) => {
+        switch (item) {
+            case 'Dados Cadastrais':
+                setShow('cadastro')
+                break;
+            default:
+                setShow('menu')
+                break;
+        }
+    }
+
     return (
-        <Container contentContainerStyle={{ flexGrow: 1 }}>
-            <View style={{ flex: 1 }}>
-                <Background />
-                <ContainerContent>
-                    <Space />
-                    <ContainerTitle>
-                        <Title>{props.auth.client.name}</Title>
-                    </ContainerTitle>
-                    <ContainerAvatar>
-                        <Avatar
-                            rounded
-                            avatarStyle={styles.shadow}
-                            source={{
-                                uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                            }}
-                            size={140} />
-                    </ContainerAvatar>
-                    <ContainerLista>
-                        {
-                            list.map((item, i) => (
-                                <TouchableOpacity key={item.title}>
-                                    <ListItem
-                                        key={i}
-                                        containerStyle={{ marginBottom: 0.5 }}
-                                        title={item.title}
-                                        rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                        leftIcon={{ name: item.icon }}
-                                    />
-                                </TouchableOpacity>
-                            ))
-                        }
-                    </ContainerLista>
-                </ContainerContent>
-                <Footer />
-            </View>
-        </Container>
+        <React.Fragment>
+            <HeaderJob title='Perfil' back={true} />
+            <ScrollViewContainer>
+                <View style={{ flex: 1 }}>
+                    {show === 'menu' && (
+                        <ContainerContent>
+                            <Space />
+                            <ContainerTitle>
+                                <Title>{props.auth.client.name}</Title>
+                            </ContainerTitle>
+                            <ContainerAvatar>
+                                <Avatar
+                                    rounded
+                                    avatarStyle={styles.shadow}
+                                    source={{
+                                        uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                                    }}
+                                    size={140} />
+                            </ContainerAvatar>
+                            <ContainerLista>
+                                {
+                                    list.map((item, i) => (
+                                        <TouchableOpacity key={item.title} onPress={() => { handleClickMenu(item.title) }}>
+                                            <ListItem
+                                                key={i}
+                                                containerStyle={{ marginBottom: 1 }}
+                                                title={item.title}
+                                                rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                                                leftIcon={{ name: item.icon }}
+                                            />
+                                        </TouchableOpacity>
+                                    ))
+                                }
+                            </ContainerLista>
+                        </ContainerContent>
+                    )}
+
+                    {show === 'cadastro' && <ClientEntry />}
+                </View>
+            </ScrollViewContainer>
+
+            <Footer />
+        </React.Fragment>
     )
 }
 

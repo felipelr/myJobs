@@ -44,17 +44,3 @@ export const NewUserButtonText = styled.Text`
     text-align: left;
     font-family: 'SF-Pro-Text-Regular';
 `
-
-export const ButtonPurple = styled.TouchableOpacity`
-    padding: 10px;
-    background-color: ${purple};
-    border-radius: 5px;
-    justify-content: space-evenly;
-`
-export const TextButtonPurple = styled.Text`
-    color: ${white};
-    font-family: 'SF-Pro-Text-Regular';
-    font-size: 16px;
-    text-align: center;
-    font-weight: bold;
-`

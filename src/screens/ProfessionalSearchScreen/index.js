@@ -89,7 +89,7 @@ const mapStateToProps = (state, ownProps) => {
         isAuth: state.auth.isAuth,
         data: state.categoria.data,
         selectedCategorie: state.categoria.selected,
-        subcategories: state.subcategories,
+        subcategories: state.subcategory.subcategories,
         ownProps: ownProps,
     }
 }

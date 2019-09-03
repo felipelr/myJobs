@@ -6,7 +6,7 @@ export const INITIAL_STATE = {
     data: [],
     error: false,
     errorMessage: '',
-    selected: {}
+    selected: null
 }
 
 export const categoriasLoadRequest = (state = INITIAL_STATE, action) => {

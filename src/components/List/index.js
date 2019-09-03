@@ -3,6 +3,7 @@ import { TitleList, ContainerList } from './styles'
 import ListItem from '../ListItem/index'
 import ListItemProfessional from '../ListItem/ListItemProfessional/index'
 import ListItemService from '../ListItem/LisItemService'
+import ListSubcategory from '../ListItem/ListSubcategory'
 
 export default function List(props) {
     const { titulo } = props
@@ -20,6 +21,9 @@ export default function List(props) {
                         }
                         else if (tipo === 'service') {
                             return <ListItemService key={index} servico={item} itemOnPress={props.itemOnPress}/>
+                        }
+                        else if (tipo === 'subcategory'){
+                            return <ListSubcategory key={index} subcategory={item} itemOnPress={props.itemOnPress}/>
                         }
                         return <ListItem key={index} />
                     })

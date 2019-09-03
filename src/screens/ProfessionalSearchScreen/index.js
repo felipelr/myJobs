@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, KeyboardAvoidingView, Keyboard, Platform, BackHandler } from 'react-native'
+import { View, Text, Platform, BackHandler } from 'react-native'
 import { ContainerCategorias } from './styles'
 import { connect } from 'react-redux'
 
-import { Text } from 'react-native'
 import ActionCreators from '../../store/actionCreators'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -42,7 +41,7 @@ function ProfessionalSearchScreen(props) {
         }
     }, [])
 
-    useEffect(() => { 
+    useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
             console.log('teste subcategory = ' + JSON.stringify(props.selectedCategorie))
             props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
@@ -69,12 +68,21 @@ function ProfessionalSearchScreen(props) {
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories />
                 <View style={{ flex: 2, marginTop: 2, backgroundColor: 'white' }}>
-                    <List tipo='professional' titulo='Profissionais/Empresas' itens={profissionais} itemOnPress={() => props.navigation.navigate('Professionals')} />
+                    {
+                        props.selectedCategorie != null ? (
+                            props.loadingSubcategories ?
+                            (
+                                <Text>loading...</Text>
+                            ) :
+                            (
+                                <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={() => props.navigation.navigate('Professionals')} />
+                            )
+                        ) : (
+                            <Text>Selecione uma categoria para visualizar as opções</Text>
+                        )
+                    }
                 </View>
             </ContainerCategorias>
-            {
-                props.selectedCategorie && <Text>teste = {JSON.stringify(props.subcategories)}</Text>
-            }
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
@@ -90,6 +98,7 @@ const mapStateToProps = (state, ownProps) => {
         data: state.categoria.data,
         selectedCategorie: state.categoria.selected,
         subcategories: state.subcategory.subcategories,
+        loadingSubcategories: state.subcategory.loading,
         ownProps: ownProps,
     }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Platform, BackHandler } from 'react-native'
-import { ContainerCategorias } from './styles'
+import { View, Text, Platform, BackHandler,ActivityIndicator } from 'react-native'
+import { ContainerCategorias, TextLoading } from './styles'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
@@ -10,6 +10,7 @@ import Highlights from '../../components/Highlights/index'
 import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
+import { purple } from '../../components/common/util/colors'
 
 function ProfessionalSearchScreen(props) {
     const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
@@ -67,19 +68,22 @@ function ProfessionalSearchScreen(props) {
             <ContainerCategorias>
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories />
-                <View style={{ flex: 2, marginTop: 2, backgroundColor: 'white' }}>
+                <View style={{ flex: 2, marginTop: 2}}>
                     {
                         props.selectedCategorie != null ? (
                             props.loadingSubcategories ?
-                            (
-                                <Text>loading...</Text>
-                            ) :
-                            (
-                                <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={() => props.navigation.navigate('Professionals')} />
-                            )
+                                (
+                                    <View style={{alignSelf:'center'}}>
+                                        <ActivityIndicator size='large' color={purple} /> 
+                                        <TextLoading>Loading...</TextLoading>
+                                    </View>
+                                ) :
+                                (
+                                    <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={() => props.navigation.navigate('Professionals')} />
+                                )
                         ) : (
-                            <Text>Selecione uma categoria para visualizar as opções</Text>
-                        )
+                                <Text>Selecione uma categoria para visualizar as opções</Text>
+                            )
                     }
                 </View>
             </ContainerCategorias>

@@ -68,10 +68,6 @@ function PerfilScreen(props) {
         }
     }
 
-    handleClickConfirm = () => {
-        setShow('menu')
-    }
-
     handleClickBack = () => {
         setShow('menu')
     }
@@ -79,8 +75,7 @@ function PerfilScreen(props) {
     return (
         <React.Fragment>
             <HeaderJobs title='Perfil'
-                back={handleClickBack}
-                confirm={show === 'cadastro' ? handleClickConfirm : false} />
+                back={handleClickBack} />
             <ScrollViewContainer>
                 <View style={{ flex: 1 }}>
                     {show === 'menu' && (
@@ -116,7 +111,7 @@ function PerfilScreen(props) {
                         </ContainerContent>
                     )}
 
-                    {show === 'cadastro' && <ClientEntry />}
+                    {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack}/>}
                 </View>
             </ScrollViewContainer>
 

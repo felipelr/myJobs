@@ -12,6 +12,7 @@ import {
 
 import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
+import ButtonPurple from '../ButtonPurple/index'
 
 function ClientEntry(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -115,6 +116,10 @@ function ClientEntry(props) {
         return true
     }
 
+    handleClickConfimar = () => {
+        props.ownProps.onUpdate()
+    }
+
     return (
         <ScrollViewContainer>
             <View style={{ flex: 1, padding: 8 }}>
@@ -153,6 +158,10 @@ function ClientEntry(props) {
                     selectedValue={gender}
                     onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
                     itemsList={genderList} />
+
+                <ViewContainerButton>
+                    <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                </ViewContainerButton>
             </View>
         </ScrollViewContainer>
 

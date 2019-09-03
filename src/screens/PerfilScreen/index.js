@@ -14,8 +14,7 @@ import {
     ContainerLista, ContainerAvatar, styles
 } from './styles'
 
-import HeaderJob from '../../components/HeaderJobs/index'
-import Background from '../../components/Background/index'
+import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
 
@@ -53,8 +52,6 @@ function PerfilScreen(props) {
     ])
 
     useEffect(() => {
-        console.log(props.auth.client)
-
         return () => {
 
         }
@@ -71,9 +68,19 @@ function PerfilScreen(props) {
         }
     }
 
+    handleClickConfirm = () => {
+        setShow('menu')
+    }
+
+    handleClickBack = () => {
+        setShow('menu')
+    }
+
     return (
         <React.Fragment>
-            <HeaderJob title='Perfil' back={true} />
+            <HeaderJobs title='Perfil'
+                back={handleClickBack}
+                confirm={show === 'cadastro' ? handleClickConfirm : false} />
             <ScrollViewContainer>
                 <View style={{ flex: 1 }}>
                     {show === 'menu' && (

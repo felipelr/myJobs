@@ -12,7 +12,6 @@ import {
 
 import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
-import ButtonPurple from '../../components/ButtonPurple/index'
 
 function ClientEntry(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -35,6 +34,21 @@ function ClientEntry(props) {
     const [documentNumber, setDocumentNumber] = useState(props.auth.client.document)
     const [dateBirth, setDateBirth] = useState(props.auth.client.date_birth)
     const [gender, setGender] = useState(props.auth.client.gender)
+
+    useEffect(() => {
+        return () => {
+            if (invalidField === '') {
+                props.auth.client = {
+                    ...props.auth.client,
+                    name: name,
+                    phone: phone,
+                    document: documentNumber,
+                    date_birth: dateBirth,
+                    gender: gender
+                }
+            }
+        }
+    }, [])
 
     useEffect(() => {
         if (dateBirth.length > 0) {
@@ -139,10 +153,6 @@ function ClientEntry(props) {
                     selectedValue={gender}
                     onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
                     itemsList={genderList} />
-
-                <ViewContainerButton>
-                    <ButtonPurple>Confirmar</ButtonPurple>
-                </ViewContainerButton>
             </View>
         </ScrollViewContainer>
 

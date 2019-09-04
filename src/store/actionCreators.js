@@ -40,6 +40,11 @@ export const { Types, Creators } = createActions({
     socialMidiaVerifyAccount: ['socialMidiaId', 'socialMidiaType'],
     socialMidiaVerifyError: ['error'],
     socialMidiaVerifySuccess: ['user'],
+
+    //Client Actions
+    clientUpdateRequest: ['client'],
+    clientUpdateSuccess: ['client'],
+    clientUpdateError: ['error']
 })
 
 export default Creators

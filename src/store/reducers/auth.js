@@ -23,11 +23,10 @@ export const loginRequest = (state = INITIAL_STATE, action) => {
 export const loginSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isLogingin: false,
         isAuth: true,
+        isLogingin: false,
         user: action.data.user,
-        token: action.data.token,
-        client: action.data.client,
+        token: action.data.token
     }
 }
 
@@ -36,11 +35,10 @@ export const loginError = (state = INITIAL_STATE, action) => {
         ...state,
         isAuth: false,
         isLogingin: false,
-        error: true,
-        errorMessage: action.error,
         user: {},
         token: '',
-        client: {},
+        error: true,
+        errorMessage: action.error
     }
 }
 
@@ -55,11 +53,10 @@ export const authRequest = (state = INITIAL_STATE, action) => {
 export const authSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isLogingin: false,
         isAuth: true,
+        isLogingin: false,
         user: action.data.user,
         token: action.data.token,
-        client: action.data.client,
         authMessage: 'success'
     }
 }
@@ -67,11 +64,10 @@ export const authSuccess = (state = INITIAL_STATE, action) => {
 export const authError = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isLogingin: false,
         isAuth: false,
+        isLogingin: false,
         user: {},
         token: '',
-        client: {},
         authMessage: 'error'
     }
 }

@@ -47,7 +47,8 @@ function* login(action) {
         let client = view.data.client
         setClientData(client)
 
-        yield put(ActionCreator.loginSuccess({ user, token, client }))
+        yield put(ActionCreator.clientUpdateSuccess(client))
+        yield put(ActionCreator.loginSuccess({ user, token }))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.loginError(messageError))
@@ -59,12 +60,9 @@ function* auth(action) {
         let userData = yield AsyncStorage.getItem('@userData')
         if (userData) {
             let clientData = yield AsyncStorage.getItem('@clientData')
-            let parsed = JSON.parse(userData)
-            parsed = {
-                ...parsed,
-                client: JSON.parse(clientData)
-            }
-            yield put(ActionCreator.authSuccess(parsed))
+            
+            yield put(ActionCreator.clientUpdateSuccess(JSON.parse(clientData)))
+            yield put(ActionCreator.authSuccess(JSON.parse(userData)))
         }
         else {
             yield put(ActionCreator.authError())

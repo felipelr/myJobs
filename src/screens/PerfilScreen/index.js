@@ -82,7 +82,7 @@ function PerfilScreen(props) {
                         <ContainerContent>
                             <Space />
                             <ContainerTitle>
-                                <Title>{props.auth.client.name}</Title>
+                                <Title>{props.client.client.name}</Title>
                             </ContainerTitle>
                             <ContainerAvatar>
                                 <Avatar
@@ -126,7 +126,7 @@ PerfilScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.auth,
+        client: state.client,
         ownProps: ownProps,
     }
 }

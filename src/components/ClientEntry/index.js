@@ -12,7 +12,7 @@ import {
 
 import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
-import ButtonPurple from '../../components/ButtonPurple/index'
+import ButtonPurple from '../ButtonPurple/index'
 
 function ClientEntry(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -30,11 +30,11 @@ function ClientEntry(props) {
             value: 'OUTRO'
         }
     ])
-    const [name, setName] = useState(props.auth.client.name)
-    const [phone, setPhone] = useState(props.auth.client.phone)
-    const [documentNumber, setDocumentNumber] = useState(props.auth.client.document)
-    const [dateBirth, setDateBirth] = useState(props.auth.client.date_birth)
-    const [gender, setGender] = useState(props.auth.client.gender)
+    const [name, setName] = useState(props.client.client.name)
+    const [phone, setPhone] = useState(props.client.client.phone)
+    const [documentNumber, setDocumentNumber] = useState(props.client.client.document)
+    const [dateBirth, setDateBirth] = useState(props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''))
+    const [gender, setGender] = useState(props.client.client.gender)
 
     useEffect(() => {
         if (dateBirth.length > 0) {
@@ -101,6 +101,22 @@ function ClientEntry(props) {
         return true
     }
 
+    handleClickConfimar = () => {
+        if (invalidField === '') {
+            let clientData = {
+                ...props.client.client,
+                name: name,
+                phone: phone,
+                document: documentNumber,
+                date_birth: dateBirth.split('/').reverse().join('-'),
+                gender: gender
+            }
+
+            props.clientUpdateRequest(clientData)
+            props.ownProps.onUpdate()
+        }
+    }
+
     return (
         <ScrollViewContainer>
             <View style={{ flex: 1, padding: 8 }}>
@@ -141,7 +157,7 @@ function ClientEntry(props) {
                     itemsList={genderList} />
 
                 <ViewContainerButton>
-                    <ButtonPurple>Confirmar</ButtonPurple>
+                    <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
                 </ViewContainerButton>
             </View>
         </ScrollViewContainer>
@@ -151,14 +167,14 @@ function ClientEntry(props) {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.auth,
+        client: state.client,
         ownProps: ownProps,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        clientUpdateRequest: (client) => dispatch(ActionCreators.clientUpdateRequest(client)),
     }
 }
 

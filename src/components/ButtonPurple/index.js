@@ -1,11 +1,14 @@
 import React from 'react'
-import { TextButton, Button } from './styles'
+import { Button } from 'react-native'
+import { purple } from '../common/util/colors'
 
 export default function ButtonPurple(props) {
     const { onPress } = props
     return (
-        <Button onPress={onPress}>
-            <TextButton>{props.children}</TextButton>
-        </Button>
+        <Button
+            onPress={onPress}
+            title={props.children}
+            color={purple}
+        />
     )
 }

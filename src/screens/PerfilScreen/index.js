@@ -14,8 +14,7 @@ import {
     ContainerLista, ContainerAvatar, styles
 } from './styles'
 
-import HeaderJob from '../../components/HeaderJobs/index'
-import Background from '../../components/Background/index'
+import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
 
@@ -53,8 +52,6 @@ function PerfilScreen(props) {
     ])
 
     useEffect(() => {
-        console.log(props.auth.client)
-
         return () => {
 
         }
@@ -71,16 +68,21 @@ function PerfilScreen(props) {
         }
     }
 
+    handleClickBack = () => {
+        setShow('menu')
+    }
+
     return (
         <React.Fragment>
-            <HeaderJob title='Perfil' back={true} />
+            <HeaderJobs title='Perfil'
+                back={handleClickBack} />
             <ScrollViewContainer>
                 <View style={{ flex: 1 }}>
                     {show === 'menu' && (
                         <ContainerContent>
                             <Space />
                             <ContainerTitle>
-                                <Title>{props.auth.client.name}</Title>
+                                <Title>{props.client.client.name}</Title>
                             </ContainerTitle>
                             <ContainerAvatar>
                                 <Avatar
@@ -109,7 +111,7 @@ function PerfilScreen(props) {
                         </ContainerContent>
                     )}
 
-                    {show === 'cadastro' && <ClientEntry />}
+                    {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack}/>}
                 </View>
             </ScrollViewContainer>
 
@@ -124,7 +126,7 @@ PerfilScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.auth,
+        client: state.client,
         ownProps: ownProps,
     }
 }

@@ -13,6 +13,7 @@ import {
 import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
 import ButtonPurple from '../ButtonPurple/index'
+import TextError from '../TextError/index'
 
 function ClientEntry(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -44,7 +45,12 @@ function ClientEntry(props) {
             }
         }
         else if (newRequest === 1) {
-            props.ownProps.onUpdate()
+            if (props.client.errorUpdating) {
+                this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+            }
+            else {
+                props.ownProps.onUpdate()
+            }
         }
     }, [props.client.isUpdating])
 
@@ -129,8 +135,11 @@ function ClientEntry(props) {
     }
 
     return (
-        <ScrollViewContainer>
+        <ScrollViewContainer ref={(c) => this.scrollViewContainer = c}>
             <View style={{ flex: 1, padding: 8 }}>
+                {
+                    props.client.errorUpdating && <TextError>{props.client.errorMessage}</TextError>
+                }
                 <TextInputJobs
                     value={name}
                     onChangeText={(text) => handleOnChange('name', text)}

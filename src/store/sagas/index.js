@@ -1,4 +1,5 @@
 import { all, fork } from 'redux-saga/effects'
+import axios from 'axios'
 
 import * as authSagas from './auth'
 import * as categoriaSagas from './categoria'

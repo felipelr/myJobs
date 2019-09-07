@@ -1,7 +1,7 @@
 import { put, takeLatest, all } from 'redux-saga/effects'
-import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import AsyncStorage from '@react-native-community/async-storage'
+import axios from 'axios'
 
 import { Types } from '../actionCreators'
 import ActionCreator from '../actionCreators'

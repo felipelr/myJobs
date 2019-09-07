@@ -35,6 +35,18 @@ function ClientEntry(props) {
     const [documentNumber, setDocumentNumber] = useState(props.client.client.document)
     const [dateBirth, setDateBirth] = useState(props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''))
     const [gender, setGender] = useState(props.client.client.gender)
+    const [newRequest, setNewRequest] = useState(-1)
+
+    useEffect(() => {
+        if (props.client.isUpdating) {
+            if (newRequest === -1) {
+                setNewRequest(1)
+            }
+        }
+        else if (newRequest === 1) {
+            props.ownProps.onUpdate()
+        }
+    }, [props.client.isUpdating])
 
     useEffect(() => {
         if (dateBirth.length > 0) {
@@ -112,8 +124,7 @@ function ClientEntry(props) {
                 gender: gender
             }
 
-            props.clientUpdateRequest(clientData)
-            props.ownProps.onUpdate()
+            props.clientUpdateRequest(clientData, props.token)
         }
     }
 
@@ -167,6 +178,7 @@ function ClientEntry(props) {
 
 const mapStateToProps = (state, ownProps) => {
     return {
+        token: state.auth.token,
         client: state.client,
         ownProps: ownProps,
     }
@@ -174,7 +186,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        clientUpdateRequest: (client) => dispatch(ActionCreators.clientUpdateRequest(client)),
+        clientUpdateRequest: (client, token) => dispatch(ActionCreators.clientUpdateRequest(client, token)),
     }
 }
 

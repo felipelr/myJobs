@@ -42,7 +42,7 @@ export const { Types, Creators } = createActions({
     socialMidiaVerifySuccess: ['user'],
 
     //Client Actions
-    clientUpdateRequest: ['client'],
+    clientUpdateRequest: ['client', 'token'],
     clientUpdateSuccess: ['client'],
     clientUpdateError: ['error']
 })

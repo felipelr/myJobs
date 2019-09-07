@@ -6,18 +6,21 @@ import ActionCreator from '../actionCreators'
 import { urlMyJobsAPI } from '../../config/config'
 
 function* updateClient(action) {
+    console.log(action)
     try {
-        let data = yield axios.put(`${urlMyJobsAPI}/client/edit.json`, {
+        let data = yield axios.put(`${urlMyJobsAPI}/clients/edit/${action.client.id}.json`, {
             headers: {
                 Authorization: 'Bearer ' + action.token
-            }
+            },
+            ...action.client
         })
-        let { data } = data
-        let client = {}
+        console.log(data)
+        let client = data.data.client
 
         yield put(ActionCreator.clientUpdateSuccess(client))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        console.log(messageError)
         yield put(ActionCreator.clientUpdateError(messageError))
     }
 }

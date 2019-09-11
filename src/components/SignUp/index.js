@@ -60,9 +60,9 @@ function SignUp(props) {
                 try {
                     const granted = await PermissionsAndroid.request(
                         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-                            'title': 'Location Access Required',
-                            'message': 'This App needs to Access your location'
-                        }
+                        'title': 'Acesso a Localização requisitado',
+                        'message': 'Este aplicativo precisa acessar sua localização'
+                    }
                     )
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                         //To Check, If Permission is granted
@@ -76,8 +76,6 @@ function SignUp(props) {
             }
             requestLocationPermission()
         }
-
-        console.log('signup')
 
         return () => {
             navigator.geolocation.clearWatch(this.watchID)

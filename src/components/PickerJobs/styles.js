@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black } from '../common/util/colors'
+import { black, gray } from '../common/util/colors'
 
 export const PickerCustom = styled.Picker`
     font-size: 14px;
@@ -9,7 +9,7 @@ export const PickerCustom = styled.Picker`
 `
 
 export const ViewContainer = styled.View`
-    border-bottom-color: ${black};
-    border-bottom-width: 1px;
-    margin-bottom: 25px;
+    border-bottom-color: ${gray};
+    border-bottom-width: 0.5px;
+    margin-bottom: 20px;
 `

@@ -5,8 +5,6 @@ import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
-import ActionCreators from '../../store/actionCreators'
-
 import { purple } from '../../components/common/util/colors'
 
 import {
@@ -87,7 +85,7 @@ function PerfilScreen(props) {
                             <ContainerAvatar>
                                 <Avatar
                                     rounded
-                                    avatarStyle={styles.shadow}
+                                    containerStyle={styles.shadow}
                                     source={{
                                         uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
                                     }}

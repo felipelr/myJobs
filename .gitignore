@@ -56,4 +56,7 @@ buck-out/
 *.jsbundle
 App.js
 
+# CocoaPods
+/ios/Pods/
+
 /android/app/google-services.json

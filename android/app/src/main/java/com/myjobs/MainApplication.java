@@ -3,11 +3,13 @@ package com.myjobs;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import org.reactnative.camera.RNCameraPackage;
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+
+import android.util.Log;
+import com.facebook.react.PackageList;
+import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
+import com.facebook.react.bridge.JavaScriptExecutorFactory;
+
+
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -16,15 +18,7 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 
-import com.facebook.CallbackManager;
-
 public class MainApplication extends Application implements ReactApplication {
-
-  private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
-
-  protected static CallbackManager getCallbackManager() {
-    return mCallbackManager;
-  }
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -34,15 +28,11 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new RNCameraPackage(),
-            new RNGoogleSigninPackage(),
-            new FBSDKPackage(mCallbackManager),
-            new VectorIconsPackage(),
-            new AsyncStoragePackage(),
-            new RNGestureHandlerPackage()
-      );
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for example:
+      // packages.add(new MyReactNativePackage());
+      return packages;
     }
 
     @Override
@@ -61,4 +51,5 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
   }
+
 }

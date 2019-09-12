@@ -6,7 +6,8 @@ import { heightPercentageToDP } from '../../components/common/util/dimensions'
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
     showHorizontalScrollIndicator: false
-})``
+})`
+`
 
 export const ContainerContent = styled.View`
     width: 100%;

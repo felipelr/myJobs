@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { View } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import { purple } from '../../components/common/util/colors'
 
@@ -94,22 +93,21 @@ function PerfilScreen(props) {
                             <ContainerLista>
                                 {
                                     list.map((item, i) => (
-                                        <TouchableOpacity key={item.title} onPress={() => { handleClickMenu(item.title) }}>
-                                            <ListItem
-                                                key={i}
-                                                containerStyle={{ marginBottom: 1 }}
-                                                title={item.title}
-                                                rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                leftIcon={{ name: item.icon }}
-                                            />
-                                        </TouchableOpacity>
+                                        <ListItem
+                                            key={i}
+                                            containerStyle={{ marginBottom: 1 }}
+                                            title={item.title}
+                                            rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                                            leftIcon={{ name: item.icon }}
+                                            onPress={() => { handleClickMenu(item.title) }}
+                                        />
                                     ))
                                 }
                             </ContainerLista>
                         </ContainerContent>
                     )}
 
-                    {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack}/>}
+                    {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack} />}
                 </View>
             </ScrollViewContainer>
 

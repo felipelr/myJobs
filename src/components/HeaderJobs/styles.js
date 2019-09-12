@@ -6,6 +6,7 @@ export default styles = StyleSheet.create({
         height: 45,
         backgroundColor: purple, 
         justifyContent: 'space-between',
-        paddingTop: 0
+        paddingTop: 0,
+        margin: 0
     }
 })

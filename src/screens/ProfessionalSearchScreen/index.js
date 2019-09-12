@@ -69,7 +69,6 @@ function ProfessionalSearchScreen(props) {
                 <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
                 <Categories />
                 <View style={{ flex: 2, marginTop: 2}}>
-                {console.log('teste zika master = ' + JSON.stringify(props.subcategories))}
                     { 
                         props.selectedCategorie != null ? (
                             props.loadingSubcategories ?

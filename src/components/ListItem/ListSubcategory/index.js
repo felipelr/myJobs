@@ -25,8 +25,8 @@ export default function ListItemService(props) {
             centerContent={
                 <View>
                     <TitleSubcategory>{subcategory.description}</TitleSubcategory>
-                    <InfoSubcategory>15 Serviços</InfoSubcategory>
-                    <InfoSubcategory>10 Profissionais</InfoSubcategory>
+                    <InfoSubcategory>{subcategory.countServices} {subcategory.countServices !== 1 ? 'Serviços' : 'Serviço'}</InfoSubcategory>
+                    <InfoSubcategory>{subcategory.countProfessionals} {subcategory.countProfessionals !== 1 ? 'Profissionais' : 'Profissional'}</InfoSubcategory>
                 </View>
             }
             rightContent={

@@ -64,3 +64,8 @@ export const ContainerAvatar = styled.View`
     padding-bottom: 10px;
     margin-bottom: 10px;
 `
+
+export const ViewContainerInputs = styled.View`
+    flex-direction: row;
+    justify-content: space-evenly;
+`

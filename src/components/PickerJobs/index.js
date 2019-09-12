@@ -6,8 +6,9 @@ export default function PickerJobs(props) {
     const { onValueChange } = props
     const { selectedValue } = props
     const { itemsList } = props
+    const { style } = props
     return (
-        <ViewContainer>
+        <ViewContainer style={style}>
             <PickerCustom
                 selectedValue={selectedValue}
                 onValueChange={onValueChange}>

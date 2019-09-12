@@ -9,10 +9,17 @@ import ActionCreators from '../../store/actionCreators'
 import { formatPhone, formatDate } from '../common/util/functions'
 
 import {
-    ScrollViewContainer, ViewContainerButton, ModalContainer,
-    TakePictureButtonContainer, TakePictureButtonLabel,
-    ModalButtons, CameraButtonContainer, CancelButtonText, ContinueButtonText,
-    ContainerAvatar
+    ScrollViewContainer, 
+    ViewContainerButton, 
+    ModalContainer,
+    TakePictureButtonContainer, 
+    TakePictureButtonLabel,
+    ModalButtons, 
+    CameraButtonContainer, 
+    CancelButtonText, 
+    ContinueButtonText,
+    ContainerAvatar, 
+    ViewContainerInputs
 } from './styles'
 import { purple } from '../common/util/colors'
 
@@ -154,14 +161,15 @@ function ClientEntry(props) {
         } else {
             async function requestCameraPermission() {
                 try {
-                    const granted = await PermissionsAndroid.request(
-                        PermissionsAndroid.PERMISSIONS.CAMERA, {
-                        'title': 'Acesso a câmera requisitado',
-                        'message': 'Este aplicativo precisar acessar sua câmera'
-                    }
+                    const granted = await PermissionsAndroid.requestMultiple(
+                        [
+                            PermissionsAndroid.PERMISSIONS.CAMERA,
+                            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                        ]
                     )
-                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        //To Check, If Permission is granted
+                    if (granted["android.permission.CAMERA"] === PermissionsAndroid.RESULTS.GRANTED) {
                         setCameraModalOpened(true)
                     } else {
                         alert("Permission Denied")
@@ -207,34 +215,42 @@ function ClientEntry(props) {
                             invalidValue={invalidField}
                             nameField='name' />
 
-                        <TextInputJobs
-                            value={phone}
-                            onChangeText={(text) => handleOnChange('phone', text)}
-                            placeholder='Telefone'
-                            textContentType='telephoneNumber'
-                            keyboardType='phone-pad'
-                            invalidValue={invalidField}
-                            nameField='phone' />
+                        <ViewContainerInputs>
+                            <TextInputJobs
+                                value={phone}
+                                onChangeText={(text) => handleOnChange('phone', text)}
+                                placeholder='Telefone'
+                                textContentType='telephoneNumber'
+                                keyboardType='phone-pad'
+                                invalidValue={invalidField}
+                                nameField='phone'
+                                style={{ flex: 1, marginRight: 5 }} />
 
-                        <TextInputJobs
-                            value={documentNumber}
-                            onChangeText={(text) => handleOnChange('documentNumber', text)}
-                            placeholder='CPF'
-                            invalidValue={invalidField}
-                            nameField='documentNumber' />
+                            <TextInputJobs
+                                value={documentNumber}
+                                onChangeText={(text) => handleOnChange('documentNumber', text)}
+                                placeholder='CPF'
+                                invalidValue={invalidField}
+                                nameField='documentNumber'
+                                style={{ flex: 1, marginLeft: 5 }} />
+                        </ViewContainerInputs>
 
-                        <TextInputJobs
-                            value={dateBirth}
-                            onChangeText={(text) => handleOnChange('dateBirth', text)}
-                            placeholder='Data de Nascimento'
-                            keyboardType='number-pad'
-                            invalidValue={invalidField}
-                            nameField='dateBirth' />
+                        <ViewContainerInputs>
+                            <TextInputJobs
+                                value={dateBirth}
+                                onChangeText={(text) => handleOnChange('dateBirth', text)}
+                                placeholder='Data de Nascimento'
+                                keyboardType='number-pad'
+                                invalidValue={invalidField}
+                                nameField='dateBirth'
+                                style={{ flex: 1, marginRight: 5 }} />
 
-                        <PickerJobs
-                            selectedValue={gender}
-                            onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
-                            itemsList={genderList} />
+                            <PickerJobs
+                                selectedValue={gender}
+                                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                                itemsList={genderList}
+                                style={{ flex: 1, marginLeft: 5 }} />
+                        </ViewContainerInputs>
 
                         <ViewContainerButton>
                             <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
@@ -251,11 +267,21 @@ function ClientEntry(props) {
                                     <RNCamera
                                         ref={camera => { this.camera = camera; }}
                                         style={{ flex: 1 }}
-                                        type={RNCamera.Constants.Type.back}
+                                        type={RNCamera.Constants.Type.front}
                                         autoFocus={RNCamera.Constants.AutoFocus.on}
                                         flashMode={RNCamera.Constants.FlashMode.off}
-                                        permissionDialogTitle={"Permissão para usar a câmera"}
-                                        permissionDialogMessage={"Nós precisamos da sua permissão para usar a câmera do seu celular."}
+                                        androidCameraPermissionOptions={{
+                                            title: 'Permissão para usar a câmera',
+                                            message: 'Nós precisamos da sua permissão para usar a câmera',
+                                            buttonPositive: 'Ok',
+                                            buttonNegative: 'Cancel',
+                                        }}
+                                        androidRecordAudioPermissionOptions={{
+                                            title: 'Permissão para gravar audio',
+                                            message: 'Nós precisamos da sua permissão para usar o seu audio',
+                                            buttonPositive: 'Ok',
+                                            buttonNegative: 'Cancel',
+                                        }}
                                     />
                                     <TakePictureButtonContainer onPress={this.handleTakePicture}>
                                         <TakePictureButtonLabel />

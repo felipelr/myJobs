@@ -10,9 +10,10 @@ export default function TextInputJobs(props) {
     const { keyboardType } = props
     const { invalidValue } = props
     const { nameField } = props
+    const { style } = props
 
     return (
-        <ContainerTextInput>
+        <ContainerTextInput style={style}>
             <TextInputCustom
                 placeholder={placeholder ? placeholder : ''}
                 textContentType={textContentType ? textContentType : 'none'}

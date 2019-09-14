@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
+import Geolocation from 'react-native-geolocation-service'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -78,7 +79,8 @@ function SignUp(props) {
         }
 
         return () => {
-            navigator.geolocation.clearWatch(this.watchID)
+            if (this.watchID)
+                Geolocation.clearWatch(this.watchID)
         }
     }, [])
 
@@ -121,7 +123,7 @@ function SignUp(props) {
     }, [phone])
 
     callLocation = () => {
-        navigator.geolocation.getCurrentPosition(
+        Geolocation.getCurrentPosition(
             //Will give you the current location
             (position) => {
                 const currentLongitude = JSON.stringify(position.coords.longitude)
@@ -132,13 +134,14 @@ function SignUp(props) {
             (error) => console.log(error.message),
             { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
         )
-        this.watchID = navigator.geolocation.watchPosition((position) => {
+        this.watchID = Geolocation.watchPosition(
             //Will give you the location on location change
-            const currentLongitude = JSON.stringify(position.coords.longitude)
-            const currentLatitude = JSON.stringify(position.coords.latitude)
-            setLongitude(currentLongitude)
-            setLatitude(currentLatitude)
-        })
+            (position) => {
+                const currentLongitude = JSON.stringify(position.coords.longitude)
+                const currentLatitude = JSON.stringify(position.coords.latitude)
+                setLongitude(currentLongitude)
+                setLatitude(currentLatitude)
+            })
     }
 
     handleClickSignUp = () => {

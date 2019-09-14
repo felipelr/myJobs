@@ -19,27 +19,27 @@ function PerfilScreen(props) {
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
-            title: 'Dados Cadastrais',
+            title: 'Dados Cadastrais', //mvp -> alterar info do usuario
             icon: 'account-circle'
         },
         {
-            title: 'Segurança',
+            title: 'Segurança', //mvp -> alteração de senha
             icon: 'lock'
         },
         {
-            title: 'Meus Agendamentos',
+            title: 'Meus Agendamentos', //mvp
             icon: 'date-range'
         },
         {
-            title: 'Avisos',
+            title: 'Avisos', //mvp
             icon: 'notifications-active'
         },
         {
-            title: 'Sugerir Profissionais/Empresas',
+            title: 'Sugerir Profissionais/Empresas', //mvp -> colher dados de contato do indicado
             icon: 'thumb-up'
         },
         {
-            title: 'Convidar Amigos',
+            title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
             icon: 'share'
         },
         {
@@ -79,7 +79,7 @@ function PerfilScreen(props) {
                         <ContainerContent>
                             <Space />
                             <ContainerTitle>
-                                <Title>{props.client.client.name}</Title>
+                                <Title>{props.client.name}</Title>
                             </ContainerTitle>
                             <ContainerAvatar>
                                 <Avatar
@@ -88,7 +88,7 @@ function PerfilScreen(props) {
                                     source={{
                                         uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
                                     }}
-                                    size={140} />
+                                    size={120} />
                             </ContainerAvatar>
                             <ContainerLista>
                                 {
@@ -122,7 +122,7 @@ PerfilScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        client: state.client,
+        client: state.client.client,
         ownProps: ownProps,
     }
 }

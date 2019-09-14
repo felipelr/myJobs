@@ -9,16 +9,16 @@ import ActionCreators from '../../store/actionCreators'
 import { formatPhone, formatDate } from '../common/util/functions'
 
 import {
-    ScrollViewContainer, 
-    ViewContainerButton, 
+    ScrollViewContainer,
+    ViewContainerButton,
     ModalContainer,
-    TakePictureButtonContainer, 
+    TakePictureButtonContainer,
     TakePictureButtonLabel,
-    ModalButtons, 
-    CameraButtonContainer, 
-    CancelButtonText, 
+    ModalButtons,
+    CameraButtonContainer,
+    CancelButtonText,
     ContinueButtonText,
-    ContainerAvatar, 
+    ContainerAvatar,
     ViewContainerInputs
 } from './styles'
 import { purple } from '../common/util/colors'
@@ -52,7 +52,7 @@ function ClientEntry(props) {
     const [gender, setGender] = useState(props.client.client.gender)
     const [requisitou, setRequisitou] = useState(false)
     const [cameraModalOpened, setCameraModalOpened] = useState(false)
-    const [image, setImage] = useState(null)
+    const [image, setImage] = useState(props.client.client.image_path ? { uri: props.client.client.image_path } : { uri: '' })
 
     useEffect(() => {
         if (requisitou) {
@@ -140,7 +140,8 @@ function ClientEntry(props) {
                 phone: phone,
                 document: documentNumber,
                 date_birth: dateBirth.split('/').reverse().join('-'),
-                gender: gender
+                gender: gender,
+                image: image.base64 ? image.base64 : ''
             }
             props.clientUpdateRequest(clientData, props.token)
         }
@@ -183,10 +184,12 @@ function ClientEntry(props) {
     }
 
     handleCameraModalClose = () => {
+        setImage({ uri: '' })
         setCameraModalOpened(false)
     }
 
     handleCameraModalConfirm = () => {
+        console.log(image)
         setCameraModalOpened(false)
     }
 
@@ -202,10 +205,12 @@ function ClientEntry(props) {
                                 rounded
                                 containerStyle={{ elevation: 2, alignSelf: "center" }}
                                 source={{
-                                    uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                                    uri: image.uri.length > 0 ? image.uri : 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
                                 }}
-                                size={140}
-                                onPress={this.handleCameraModalOpen} />
+                                size={120}
+                                onPress={this.handleCameraModalOpen}
+                                showEditButton
+                                editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />
                         </ContainerAvatar>
 
                         <TextInputJobs
@@ -215,42 +220,34 @@ function ClientEntry(props) {
                             invalidValue={invalidField}
                             nameField='name' />
 
-                        <ViewContainerInputs>
-                            <TextInputJobs
-                                value={phone}
-                                onChangeText={(text) => handleOnChange('phone', text)}
-                                placeholder='Telefone'
-                                textContentType='telephoneNumber'
-                                keyboardType='phone-pad'
-                                invalidValue={invalidField}
-                                nameField='phone'
-                                style={{ flex: 1, marginRight: 5 }} />
+                        <TextInputJobs
+                            value={phone}
+                            onChangeText={(text) => handleOnChange('phone', text)}
+                            placeholder='Telefone'
+                            textContentType='telephoneNumber'
+                            keyboardType='phone-pad'
+                            invalidValue={invalidField}
+                            nameField='phone' />
 
-                            <TextInputJobs
-                                value={documentNumber}
-                                onChangeText={(text) => handleOnChange('documentNumber', text)}
-                                placeholder='CPF'
-                                invalidValue={invalidField}
-                                nameField='documentNumber'
-                                style={{ flex: 1, marginLeft: 5 }} />
-                        </ViewContainerInputs>
+                        <TextInputJobs
+                            value={documentNumber}
+                            onChangeText={(text) => handleOnChange('documentNumber', text)}
+                            placeholder='CPF'
+                            invalidValue={invalidField}
+                            nameField='documentNumber' />
 
-                        <ViewContainerInputs>
-                            <TextInputJobs
-                                value={dateBirth}
-                                onChangeText={(text) => handleOnChange('dateBirth', text)}
-                                placeholder='Data de Nascimento'
-                                keyboardType='number-pad'
-                                invalidValue={invalidField}
-                                nameField='dateBirth'
-                                style={{ flex: 1, marginRight: 5 }} />
+                        <TextInputJobs
+                            value={dateBirth}
+                            onChangeText={(text) => handleOnChange('dateBirth', text)}
+                            placeholder='Data de Nascimento'
+                            keyboardType='number-pad'
+                            invalidValue={invalidField}
+                            nameField='dateBirth' />
 
-                            <PickerJobs
-                                selectedValue={gender}
-                                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
-                                itemsList={genderList}
-                                style={{ flex: 1, marginLeft: 5 }} />
-                        </ViewContainerInputs>
+                        <PickerJobs
+                            selectedValue={gender}
+                            onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                            itemsList={genderList} />
 
                         <ViewContainerButton>
                             <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>

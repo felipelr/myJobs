@@ -59,8 +59,6 @@ export const ContinueButtonText = styled.Text`
 `
 
 export const ContainerAvatar = styled.View`
-    border-bottom-color: ${gray};
-    border-bottom-width: 0.5;
     padding-bottom: 10px;
     margin-bottom: 10px;
 `

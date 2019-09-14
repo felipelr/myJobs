@@ -16,19 +16,28 @@ setClientData = async (clientData) => {
 
 function* updateClient(action) {
     try {
-        let data = yield axios.post(`${urlMyJobsAPI}/clients/edit/${action.client.id}.json`,
+        let putResp = yield axios.put(`${urlMyJobsAPI}/clients/edit/${action.client.id}.json`,
             {
                 ...action.client
             },
             {
                 headers: {
-                    Authorization: 'Bearer ' + action.token
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
                 }
-            })
-        let client = data.data.client
-        setClientData(client)
+            }
+        )
 
-        yield put(ActionCreator.clientUpdateSuccess(client))
+        if (putResp.data.error) {
+            console.log(putResp.data.errorMessage)
+            yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
+        }
+        else {
+            console.log(putResp.data)
+            let client = putResp.data.client
+            setClientData(client)
+            yield put(ActionCreator.clientUpdateSuccess(client))
+        }
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         console.log(messageError)
@@ -38,6 +47,6 @@ function* updateClient(action) {
 
 export default function* rootClients() {
     yield all([
-        takeLatest(Types.CLIENT_UPDATE_REQUEST, updateClient)
+        takeLatest(Types.CLIENT_UPDATE_REQUEST, updateClient),
     ])
 }

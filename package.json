@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.1",
+    "@react-native-community/cameraroll": "^1.2.1",
     "axios": "^0.18.0",
     "jwt-decode": "^2.2.0",
     "prop-types": "^15.7.2",

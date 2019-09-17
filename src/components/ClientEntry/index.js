@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { View, Modal, PermissionsAndroid, Platform } from 'react-native'
-import { RNCamera } from 'react-native-camera'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
+import { RNCamera } from 'react-native-camera'
+import CameraRoll from "@react-native-community/cameraroll";
+
+import { urlMyJobs } from '../../config/config'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -19,7 +22,9 @@ import {
     CancelButtonText,
     ContinueButtonText,
     ContainerAvatar,
-    ViewContainerInputs
+    ViewContainerButtonsMenu,
+    ButtonMenu,
+    ButtonMenuText
 } from './styles'
 import { purple } from '../common/util/colors'
 
@@ -50,9 +55,12 @@ function ClientEntry(props) {
     const [documentNumber, setDocumentNumber] = useState(props.client.client.document)
     const [dateBirth, setDateBirth] = useState(props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''))
     const [gender, setGender] = useState(props.client.client.gender)
+    const [image, setImage] = useState(props.client.client.image_path ? { uri: urlMyJobs + props.client.client.image_path } : { uri: '' })
     const [requisitou, setRequisitou] = useState(false)
-    const [cameraModalOpened, setCameraModalOpened] = useState(false)
-    const [image, setImage] = useState(props.client.client.image_path ? { uri: props.client.client.image_path } : { uri: '' })
+    const [modalOpened, setModalOpened] = useState(false)
+    const [menuOpened, setMenuOpened] = useState(true)
+    const [cameraOpened, setCameraOpened] = useState(false)
+    const [folderImagesOpened, setFolderImagesOpened] = useState(false)
 
     useEffect(() => {
         if (requisitou) {
@@ -152,13 +160,15 @@ function ClientEntry(props) {
             const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
             const data = await this.camera.takePictureAsync(options)
             setImage(data)
-            console.log(image)
         }
     }
 
-    handleCameraModalOpen = () => {
+    handleAvatarClick = () => {
         if (Platform.OS === 'ios') {
-            setCameraModalOpened(true)
+            setModalOpened(true)
+            setMenuOpened(true)
+            setCameraOpened(false)
+            setFolderImagesOpened(false)
         } else {
             async function requestCameraPermission() {
                 try {
@@ -171,7 +181,10 @@ function ClientEntry(props) {
                         ]
                     )
                     if (granted["android.permission.CAMERA"] === PermissionsAndroid.RESULTS.GRANTED) {
-                        setCameraModalOpened(true)
+                        setModalOpened(true)
+                        setMenuOpened(true)
+                        setCameraOpened(false)
+                        setFolderImagesOpened(false)
                     } else {
                         alert("Permission Denied")
                     }
@@ -183,14 +196,29 @@ function ClientEntry(props) {
         }
     }
 
-    handleCameraModalClose = () => {
+    handleModalClose = () => {
         setImage({ uri: '' })
-        setCameraModalOpened(false)
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
     }
 
     handleCameraModalConfirm = () => {
-        console.log(image)
-        setCameraModalOpened(false)
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
+    }
+
+    handleShowCamera = () => {
+        setMenuOpened(false)
+        setCameraOpened(true)
+    }
+
+    handleShowFolder = () => {
+        setMenuOpened(false)
+        setFolderImagesOpened(true)
     }
 
     return (
@@ -205,10 +233,10 @@ function ClientEntry(props) {
                                 rounded
                                 containerStyle={{ elevation: 2, alignSelf: "center" }}
                                 source={{
-                                    uri: image.uri.length > 0 ? image.uri : 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                                    uri: image.uri.length > 0 ? image.uri : '',
                                 }}
                                 size={120}
-                                onPress={this.handleCameraModalOpen}
+                                onPress={this.handleAvatarClick}
                                 showEditButton
                                 editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />
                         </ContainerAvatar>
@@ -254,45 +282,57 @@ function ClientEntry(props) {
                         </ViewContainerButton>
 
                         <Modal
-                            visible={cameraModalOpened}
+                            visible={modalOpened}
                             transparent={false}
                             animationType="slide"
-                            onRequestClose={this.handleCameraModalClose}
+                            onRequestClose={this.handleModalClose}
                         >
-                            <ModalContainer>
+                            {menuOpened && (
+                                <ViewContainerButtonsMenu>
+                                    <ButtonMenu onPress={this.handleShowCamera}>
+                                        <ButtonMenuText>Tirar Foto</ButtonMenuText>
+                                    </ButtonMenu>
+                                    <ButtonMenu onPress={this.handleShowFolder}>
+                                        <ButtonMenuText>Galeria</ButtonMenuText>
+                                    </ButtonMenu>
+                                </ViewContainerButtonsMenu>
+                            )}
+                            {cameraOpened && (
                                 <ModalContainer>
-                                    <RNCamera
-                                        ref={camera => { this.camera = camera; }}
-                                        style={{ flex: 1 }}
-                                        type={RNCamera.Constants.Type.front}
-                                        autoFocus={RNCamera.Constants.AutoFocus.on}
-                                        flashMode={RNCamera.Constants.FlashMode.off}
-                                        androidCameraPermissionOptions={{
-                                            title: 'Permissão para usar a câmera',
-                                            message: 'Nós precisamos da sua permissão para usar a câmera',
-                                            buttonPositive: 'Ok',
-                                            buttonNegative: 'Cancel',
-                                        }}
-                                        androidRecordAudioPermissionOptions={{
-                                            title: 'Permissão para gravar audio',
-                                            message: 'Nós precisamos da sua permissão para usar o seu audio',
-                                            buttonPositive: 'Ok',
-                                            buttonNegative: 'Cancel',
-                                        }}
-                                    />
-                                    <TakePictureButtonContainer onPress={this.handleTakePicture}>
-                                        <TakePictureButtonLabel />
-                                    </TakePictureButtonContainer>
+                                    <ModalContainer>
+                                        <RNCamera
+                                            ref={camera => { this.camera = camera; }}
+                                            style={{ flex: 1 }}
+                                            type={RNCamera.Constants.Type.front}
+                                            autoFocus={RNCamera.Constants.AutoFocus.on}
+                                            flashMode={RNCamera.Constants.FlashMode.off}
+                                            androidCameraPermissionOptions={{
+                                                title: 'Permissão para usar a câmera',
+                                                message: 'Nós precisamos da sua permissão para usar a câmera',
+                                                buttonPositive: 'Ok',
+                                                buttonNegative: 'Cancel',
+                                            }}
+                                            androidRecordAudioPermissionOptions={{
+                                                title: 'Permissão para gravar audio',
+                                                message: 'Nós precisamos da sua permissão para usar o seu audio',
+                                                buttonPositive: 'Ok',
+                                                buttonNegative: 'Cancel',
+                                            }}
+                                        />
+                                        <TakePictureButtonContainer onPress={this.handleTakePicture}>
+                                            <TakePictureButtonLabel />
+                                        </TakePictureButtonContainer>
+                                    </ModalContainer>
+                                    <ModalButtons>
+                                        <CameraButtonContainer onPress={this.handleModalClose}>
+                                            <CancelButtonText>Cancelar</CancelButtonText>
+                                        </CameraButtonContainer>
+                                        <CameraButtonContainer onPress={this.handleCameraModalConfirm}>
+                                            <ContinueButtonText>Continuar</ContinueButtonText>
+                                        </CameraButtonContainer>
+                                    </ModalButtons>
                                 </ModalContainer>
-                                <ModalButtons>
-                                    <CameraButtonContainer onPress={this.handleCameraModalClose}>
-                                        <CancelButtonText>Cancelar</CancelButtonText>
-                                    </CameraButtonContainer>
-                                    <CameraButtonContainer onPress={this.handleCameraModalConfirm}>
-                                        <ContinueButtonText>Continuar</ContinueButtonText>
-                                    </CameraButtonContainer>
-                                </ModalButtons>
-                            </ModalContainer>
+                            )}
                         </Modal>
                     </React.Fragment>
                 )}

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, gray, lightgray } from '../../components/common/util/colors'
+import { purple, gray, white, black } from '../../components/common/util/colors'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
@@ -63,7 +63,24 @@ export const ContainerAvatar = styled.View`
     margin-bottom: 10px;
 `
 
-export const ViewContainerInputs = styled.View`
-    flex-direction: row;
-    justify-content: space-evenly;
+export const ViewContainerButtonsMenu = styled.View`
+    flex-direction: column;
+    flex: 1;
+    background-color: transparent;
+    justify-content: center;
+    align-items: center;
+`
+
+export const ButtonMenu = styled.TouchableHighlight`
+    background-color: ${white};
+    padding: 16px;
+    height: 50px;
+    width: 80%;
+`
+
+export const ButtonMenuText = styled.Text`
+    color: ${gray};
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
 `

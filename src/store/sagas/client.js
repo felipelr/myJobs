@@ -29,6 +29,7 @@ function* updateClient(action) {
         )
 
         if (putResp.data.error) {
+            console.log(putResp)
             console.log(putResp.data.errorMessage)
             yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
         }
@@ -40,6 +41,7 @@ function* updateClient(action) {
         }
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        console.log(action)
         console.log(messageError)
         yield put(ActionCreator.clientUpdateError(messageError))
     }

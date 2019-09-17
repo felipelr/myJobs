@@ -4,6 +4,8 @@ import { View } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+import { urlMyJobs } from '../../config/config'
+
 import { purple } from '../../components/common/util/colors'
 
 import {
@@ -16,6 +18,7 @@ import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
 
 function PerfilScreen(props) {
+    const [image, setImage] = useState(props.client.image_path ? { uri: urlMyJobs + props.client.image_path } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
@@ -48,12 +51,6 @@ function PerfilScreen(props) {
         }
     ])
 
-    useEffect(() => {
-        return () => {
-
-        }
-    }, [])
-
     handleClickMenu = (item) => {
         switch (item) {
             case 'Dados Cadastrais':
@@ -85,9 +82,7 @@ function PerfilScreen(props) {
                                 <Avatar
                                     rounded
                                     containerStyle={styles.shadow}
-                                    source={{
-                                        uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                                    }}
+                                    source={{ uri: image.uri }}
                                     size={120} />
                             </ContainerAvatar>
                             <ContainerLista>

@@ -14,4 +14,12 @@ export const ContainerItems = styled.ScrollView.attrs({
 })` 
     flex-direction: row;
 `
+
+export const TextLoading = styled.Text`
+    color: ${purple};
+    font-size: 16px;
+    text-align: center;
+    font-family: 'SF-Pro-Text-Regular';
+    font-weight: bold;
+`
  

@@ -1,24 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import {Text} from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 
-import { ContainerContent, ContainerItems } from './styles'
+import { ContainerContent, ContainerItems, TextLoading } from './styles'
 import CategorieItem from '../CategorieItem/index'
+import { purple } from '../../components/common/util/colors'
 
 const Categories = (props) => {
-    return ( 
-            !props.loading ?
-                <ContainerContent>
-                    <ContainerItems>
-                        {
-                            props.data.map((item) => (
-                                <CategorieItem key={item.id} categoria={item} />
-                            ))
-                        }
-                    </ContainerItems>
-                </ContainerContent> 
+    return (
+        !props.loading ?
+            <ContainerContent>
+                <ContainerItems>
+                    {
+                        props.data.map((item) => (
+                            <CategorieItem key={item.id} categoria={item} />
+                        ))
+                    }
+                </ContainerItems>
+            </ContainerContent>
             :
-            <Text>loading...</Text>
+            <View style={{ alignSelf: 'center' }}>
+                <ActivityIndicator size='large' color={purple} />
+                <TextLoading>Loading...</TextLoading>
+            </View>
     )
 }
 

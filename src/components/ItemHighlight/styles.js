@@ -1,5 +1,5 @@
 import styled from 'styled-components/native'
-import { purple, white } from '../common/util/colors'
+import { purple, white ,yellow} from '../common/util/colors' 
 
 export const ContainerItem = styled.TouchableOpacity`
     background-color: ${purple};
@@ -33,4 +33,18 @@ export const DescriptionItem = styled.Text`
     font-family: 'SF-Pro-Text-Regular';
     color: ${white};
     flex: 1;
+`
+
+export const Services = styled.Text`
+    font-size: 10px;
+    font-family: 'SF-Pro-Text-Regular';
+    color: ${yellow}; 
+    flex-direction:row;
+`
+export const ServicesAmount = styled.Text`
+    font-size: 11px;
+    font-family: 'SF-Pro-Text-Bold';
+    font-weight: bold;
+    color: ${yellow}; 
+    flex-direction:row;
 `

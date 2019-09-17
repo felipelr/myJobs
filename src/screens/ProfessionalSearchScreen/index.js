@@ -17,18 +17,14 @@ function ProfessionalSearchScreen(props) {
     const [profissionais, setProfissionais] = useState([
         {
             nome: 'Finos e Cheirosos',
-            descricao: 'Banho e Tosa de animais de pequeno e médio porte.',
-            avaliacao: 3,
-            qtdeAvaliacoes: 143000,
-            info: '245 Atendimentos realizados,  0,6km de você',
+            descricao: 'Banho e Tosa de animais de pequeno e médio porte.', 
+            qtdeServicos: 46, 
             imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         },
         {
             nome: 'CatDog',
-            descricao: 'Vacinação e cuidados médicos.',
-            avaliacao: 3.5,
-            qtdeAvaliacoes: 76000,
-            info: '87 Atendimentos realizados,  0,82km de você',
+            descricao: 'Vacinação e cuidados médicos.', 
+            qtdeServicos: 34, 
             imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
         }
     ])
@@ -66,7 +62,7 @@ function ProfessionalSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} />
             <ContainerCategorias>
-                <Highlights titulo='Destaques do mês' destaques={{ categoria, profissionais }} />
+                <Highlights titulo='Destaques do mês' destaques={{ profissionais }} />
                 <Categories />
                 <View style={{ flex: 2, marginTop: 2}}>
                     { 

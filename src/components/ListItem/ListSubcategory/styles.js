@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black, purple } from '../../common/util/colors'
+import { black} from '../../common/util/colors'
 import {StyleSheet} from 'react-native'
 
 export const TitleSubcategory = styled.Text`
@@ -13,7 +13,7 @@ export const TitleSubcategory = styled.Text`
 
 export const InfoSubcategory = styled.Text`
     color: ${black};
-    font-size: 10px;
+    font-size: 12px;
     font-family: 'SF-Pro-Text-Regular';
     flex: 1;
     padding-top: 5px;
@@ -27,6 +27,6 @@ export const styles = StyleSheet.create({
         justifyContent:'space-between'
     },
     overlayContainerStyle:{
-        backgroundColor: purple
+        backgroundColor: '#4CAF50' 
     }
 })

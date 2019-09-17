@@ -31,6 +31,15 @@ export const { Types, Creators } = createActions({
     subcategoriesSelected: ['subcategory'],
     subcategoriesByCategoryRequest: ['category', 'token'],
 
+    //Professionals
+    professionalsLoadRequest: ['token'],
+    professionalsLoadSuccess: ['highlights'],
+    professionalsLoadError: ['error'],
+
+    //Highlights
+    highlightsLoadRequest: ['token'],
+    highlightsLoadSuccess: ['data'],
+    highlightsLoadError: ['error'],
 
     //Social Midia Actions
     socialMidiaSignupInit: ['user'],

@@ -63,7 +63,7 @@ export const ContainerAvatar = styled.View`
     margin-bottom: 10px;
 `
 
-export const ViewContainerButtonsMenu = styled.View`
+export const ViewContainerMenu = styled.View`
     flex-direction: column;
     flex: 1;
     background-color: transparent;
@@ -71,11 +71,18 @@ export const ViewContainerButtonsMenu = styled.View`
     align-items: center;
 `
 
+export const ViewContainerButtonsMenu = styled.View`
+    flex-direction: column;
+    background-color: ${white};
+    width: 80%;
+    border-width: 1;
+    border-color: ${gray};
+`
+
 export const ButtonMenu = styled.TouchableHighlight`
     background-color: ${white};
     padding: 16px;
     height: 50px;
-    width: 80%;
 `
 
 export const ButtonMenuText = styled.Text`
@@ -83,4 +90,14 @@ export const ButtonMenuText = styled.Text`
     font-size: 18px;
     font-weight: bold;
     text-align: center;
+`
+
+export const ViewImageListItem = styled.TouchableHighlight`
+    height: 200px;
+    width: 200px;
+    flex-grow: 1;
+`
+
+export const ImageItem = styled.Image`
+    flex: 1
 `

@@ -4,6 +4,7 @@ import { Types } from '../actionCreators'
 export const INITIAL_STATE = {
     isAuth: false,
     isLogingin: false,
+    isUpdating: false,
     user: {},
     error: false,
     errorMessage: '',
@@ -105,6 +106,41 @@ export const logoutError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const changePasswordRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: true,
+        error: false,
+        errorMessage: ''
+    }
+}
+
+export const changePasswordSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        error: false,
+        errorMessage: ''
+    }
+}
+
+export const changePasswordError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        error: true,
+        errorMessage: action.error
+    }
+}
+
+export const authCleanErrors = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        error: false,
+        errorMessage: ''
+    }
+}
+
 export const HANDLERS = {
     [Types.LOGIN_REQUEST]: loginRequest,
     [Types.LOGIN_SUCCESS]: loginSuccess,
@@ -115,7 +151,11 @@ export const HANDLERS = {
     [Types.AUTH_ERROR]: authError,
     [Types.LOGOUT_REQUEST]: logoutRequest,
     [Types.LOGOUT_SUCCESS]: logoutSuccess,
-    [Types.LOGOUT_ERROR]: logoutError
+    [Types.LOGOUT_ERROR]: logoutError,
+    [Types.CHANGE_PASSWORD_REQUEST]: changePasswordRequest,
+    [Types.CHANGE_PASSWORD_SUCCESS]: changePasswordSuccess,
+    [Types.CHANGE_PASSWORD_ERROR]: changePasswordError,
+    [Types.AUTH_CLEAN_ERRORS]: authCleanErrors,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

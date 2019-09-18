@@ -34,10 +34,20 @@ export const clientUpdateError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const clientClearErrors = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
 export const HANDLERS = {
     [Types.CLIENT_UPDATE_REQUEST]: clientUpdateRequest,
     [Types.CLIENT_UPDATE_SUCCESS]: clientUpdateSuccess,
     [Types.CLIENT_UPDATE_ERROR]: clientUpdateError,
+    [Types.CLIENT_CLEAR_ERRORS]: clientClearErrors,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

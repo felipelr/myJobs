@@ -12,6 +12,10 @@ export const { Types, Creators } = createActions({
     logoutRequest: null,
     logoutSuccess: null,
     logoutError: ['error'],
+    changePasswordRequest: ['token', 'user', 'currentPassword', 'newPassword'],
+    changePasswordSuccess: null,
+    changePasswordError: ['error'],
+    authCleanErrors: null,
 
     //SignUp Actions
     signupRequest: ['user'],
@@ -44,7 +48,8 @@ export const { Types, Creators } = createActions({
     //Client Actions
     clientUpdateRequest: ['client', 'token'],
     clientUpdateSuccess: ['client'],
-    clientUpdateError: ['error']
+    clientUpdateError: ['error'],
+    clientClearErrors: null,
 })
 
 export default Creators

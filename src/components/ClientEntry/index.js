@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { View, Modal, PermissionsAndroid, Platform } from 'react-native'
+import { View, Modal, PermissionsAndroid, Platform, FlatList } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
-import CameraRoll from "@react-native-community/cameraroll";
+import CameraRoll from "@react-native-community/cameraroll"
+import RNFetchBlob from 'react-native-fetch-blob'
 
 import { urlMyJobs } from '../../config/config'
 
@@ -22,9 +23,12 @@ import {
     CancelButtonText,
     ContinueButtonText,
     ContainerAvatar,
+    ViewContainerMenu,
     ViewContainerButtonsMenu,
     ButtonMenu,
-    ButtonMenuText
+    ButtonMenuText,
+    ViewImageListItem,
+    ImageItem
 } from './styles'
 import { purple } from '../common/util/colors'
 
@@ -61,6 +65,9 @@ function ClientEntry(props) {
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
+    const [imagesFolder, setImagesFolder] = useState([])
+    const [hasNextPage, setHasNextPage] = useState(true)
+    const [endCursor, setEndCursor] = useState('')
 
     useEffect(() => {
         if (requisitou) {
@@ -140,6 +147,33 @@ function ClientEntry(props) {
         return true
     }
 
+    handleAvatarClick = () => {
+        if (Platform.OS === 'ios') {
+            handleShowMenu()
+        } else {
+            async function requestCameraPermission() {
+                try {
+                    const granted = await PermissionsAndroid.requestMultiple(
+                        [
+                            PermissionsAndroid.PERMISSIONS.CAMERA,
+                            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                        ]
+                    )
+                    if (granted["android.permission.CAMERA"] === PermissionsAndroid.RESULTS.GRANTED) {
+                        handleShowMenu()
+                    } else {
+                        alert("Permission Denied")
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+            }
+            requestCameraPermission()
+        }
+    }
+
     handleClickConfimar = () => {
         if (invalidField === '') {
             let clientData = {
@@ -163,41 +197,36 @@ function ClientEntry(props) {
         }
     }
 
-    handleAvatarClick = () => {
-        if (Platform.OS === 'ios') {
-            setModalOpened(true)
-            setMenuOpened(true)
-            setCameraOpened(false)
-            setFolderImagesOpened(false)
-        } else {
-            async function requestCameraPermission() {
-                try {
-                    const granted = await PermissionsAndroid.requestMultiple(
-                        [
-                            PermissionsAndroid.PERMISSIONS.CAMERA,
-                            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-                            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-                            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-                        ]
-                    )
-                    if (granted["android.permission.CAMERA"] === PermissionsAndroid.RESULTS.GRANTED) {
-                        setModalOpened(true)
-                        setMenuOpened(true)
-                        setCameraOpened(false)
-                        setFolderImagesOpened(false)
-                    } else {
-                        alert("Permission Denied")
-                    }
-                } catch (err) {
-                    alert(err)
+    handleSelectPicture = (item) => {
+        RNFetchBlob.fs.readFile(item.uri, 'base64')
+            .then(data => {
+                item = {
+                    ...item,
+                    base64: data
                 }
-            }
-            requestCameraPermission()
-        }
+                setImage(item)
+                setMenuOpened(true)
+                setCameraOpened(false)
+                setFolderImagesOpened(false)
+                setModalOpened(false)
+            })
+            .catch(err => {
+                setMenuOpened(true)
+                setCameraOpened(false)
+                setFolderImagesOpened(false)
+                setModalOpened(false)
+            })
+    }
+
+    handleShowMenu = () => {
+        setModalOpened(true)
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
     }
 
     handleModalClose = () => {
-        setImage({ uri: '' })
+        setImage(props.client.client.image_path ? { uri: urlMyJobs + props.client.client.image_path } : { uri: '' })
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
@@ -219,6 +248,30 @@ function ClientEntry(props) {
     handleShowFolder = () => {
         setMenuOpened(false)
         setFolderImagesOpened(true)
+        loadGaleryPhotos()
+    }
+
+    loadGaleryPhotos = () => {
+        if (hasNextPage) {
+            CameraRoll.getPhotos({
+                first: 10,
+                after: endCursor,
+                assetType: 'Photos',
+            })
+                .then(r => {
+                    const photos = r.edges.map(item => item.node.image)
+                    if (imagesFolder.length > 0)
+                        setImagesFolder([...imagesFolder, ...photos])
+                    else
+                        setImagesFolder(photos)
+                    setHasNextPage(r.page_info.has_next_page)
+                    setEndCursor(r.page_info.end_cursor)
+                })
+                .catch((err) => {
+                    console.error(err)
+                    setImagesFolder([])
+                })
+        }
     }
 
     return (
@@ -232,9 +285,7 @@ function ClientEntry(props) {
                             <Avatar
                                 rounded
                                 containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                source={{
-                                    uri: image.uri.length > 0 ? image.uri : '',
-                                }}
+                                source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
                                 size={120}
                                 onPress={this.handleAvatarClick}
                                 showEditButton
@@ -283,19 +334,21 @@ function ClientEntry(props) {
 
                         <Modal
                             visible={modalOpened}
-                            transparent={false}
+                            transparent={menuOpened}
                             animationType="slide"
                             onRequestClose={this.handleModalClose}
                         >
                             {menuOpened && (
-                                <ViewContainerButtonsMenu>
-                                    <ButtonMenu onPress={this.handleShowCamera}>
-                                        <ButtonMenuText>Tirar Foto</ButtonMenuText>
-                                    </ButtonMenu>
-                                    <ButtonMenu onPress={this.handleShowFolder}>
-                                        <ButtonMenuText>Galeria</ButtonMenuText>
-                                    </ButtonMenu>
-                                </ViewContainerButtonsMenu>
+                                <ViewContainerMenu>
+                                    <ViewContainerButtonsMenu>
+                                        <ButtonMenu onPress={this.handleShowCamera}>
+                                            <ButtonMenuText>Tirar Foto</ButtonMenuText>
+                                        </ButtonMenu>
+                                        <ButtonMenu onPress={this.handleShowFolder}>
+                                            <ButtonMenuText>Galeria</ButtonMenuText>
+                                        </ButtonMenu>
+                                    </ViewContainerButtonsMenu>
+                                </ViewContainerMenu>
                             )}
                             {cameraOpened && (
                                 <ModalContainer>
@@ -329,6 +382,35 @@ function ClientEntry(props) {
                                         </CameraButtonContainer>
                                         <CameraButtonContainer onPress={this.handleCameraModalConfirm}>
                                             <ContinueButtonText>Continuar</ContinueButtonText>
+                                        </CameraButtonContainer>
+                                    </ModalButtons>
+                                </ModalContainer>
+                            )}
+                            {folderImagesOpened && (
+                                <ModalContainer>
+                                    <ModalContainer>
+                                        <FlatList
+                                            numColumns={2}
+                                            data={imagesFolder}
+                                            keyExtractor={image => image.filename}
+                                            renderItem={({ item }) => {
+                                                return (
+                                                    <ViewImageListItem onPress={() => this.handleSelectPicture(item)}>
+                                                        <ImageItem
+                                                            source={{ uri: item.uri }}
+                                                            resizeMode="stretch"
+                                                        />
+                                                    </ViewImageListItem>
+                                                )
+                                            }}
+                                            onEndReached={(info) => {
+                                                loadGaleryPhotos()
+                                            }}
+                                        />
+                                    </ModalContainer>
+                                    <ModalButtons>
+                                        <CameraButtonContainer onPress={this.handleModalClose}>
+                                            <CancelButtonText>Cancelar</CancelButtonText>
                                         </CameraButtonContainer>
                                     </ModalButtons>
                                 </ModalContainer>

@@ -60,7 +60,7 @@ function* auth(action) {
         let userData = yield AsyncStorage.getItem('@userData')
         if (userData) {
             let clientData = yield AsyncStorage.getItem('@clientData')
-            
+
             yield put(ActionCreator.clientUpdateSuccess(JSON.parse(clientData)))
             yield put(ActionCreator.authSuccess(JSON.parse(userData)))
         }
@@ -82,10 +82,35 @@ function* logout(action) {
     }
 }
 
+function* changePassword(action) {
+    try {
+        let postRequest = yield axios.post(`${urlMyJobsAPI}/users/change_password.json`,
+            {
+                id: action.user.id,
+                currentPassword: action.currentPassword,
+                newPassword: action.newPassword,
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token
+                }
+            })
+
+        let { data } = postRequest.data
+        console.log(data)
+
+        yield put(ActionCreator.changePasswordSuccess())
+    } catch (ex) {
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.changePasswordError(messageError))
+    }
+}
+
 export default function* rootAuth() {
     yield all([
         takeLatest(Types.LOGIN_REQUEST, login),
         takeLatest(Types.AUTH_REQUEST, auth),
-        takeLatest(Types.LOGOUT_REQUEST, logout)
+        takeLatest(Types.LOGOUT_REQUEST, logout),
+        takeLatest(Types.CHANGE_PASSWORD_REQUEST, changePassword),
     ])
 }

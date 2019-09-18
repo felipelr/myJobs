@@ -29,12 +29,10 @@ function* updateClient(action) {
         )
 
         if (putResp.data.error) {
-            console.log(putResp)
-            console.log(putResp.data.errorMessage)
             yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
         }
         else {
-            console.log(putResp.data)
+            console.log(putResp)
             let client = putResp.data.client
             setClientData(client)
             yield put(ActionCreator.clientUpdateSuccess(client))

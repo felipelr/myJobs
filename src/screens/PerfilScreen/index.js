@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View } from 'react-native'
+import { View, BackHandler } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { urlMyJobs } from '../../config/config'
 
+import ActionCreators from '../../store/actionCreators'
+
 import { purple } from '../../components/common/util/colors'
 
 import {
-    ScrollViewContainer, ContainerContent, Space, ContainerTitle, Title,
-    ContainerLista, ContainerAvatar, styles
+    ScrollViewContainer,
+    ContainerContent,
+    Space,
+    ContainerTitle,
+    Title,
+    ContainerLista,
+    ContainerAvatar,
+    styles
 } from './styles'
 
 import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
+import ChangePassword from '../../components/ChangePassword/index'
 
 function PerfilScreen(props) {
-    const [image, setImage] = useState(props.client.image_path ? { uri: urlMyJobs + props.client.image_path } : { uri: '' })
+    const [title, setTitle] = useState('Perfil')
+    const [image, setImage] = useState((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
@@ -51,24 +61,63 @@ function PerfilScreen(props) {
         }
     ])
 
+    useEffect(() => {
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        return () => {
+            this.backHandler.remove()
+        }
+    }, [])
+
+    useEffect(() => {
+        switch (show) {
+            case 'cadastro':
+                setTitle('Dados Cadastrais')
+                break
+            case 'alterarSenha':
+                setTitle('Ateração de Senha')
+                break
+            default:
+                setTitle('Perfil')
+                break
+        }
+    }, [show])
+
+    handleBackPress = () => {
+        switch (show) {
+            case 'menu':
+                break
+            default:
+                setShow('menu')
+                break
+        }
+        return true
+    }
+
     handleClickMenu = (item) => {
         switch (item) {
             case 'Dados Cadastrais':
+                props.clientClearErrors()
                 setShow('cadastro')
-                break;
+                break
+            case 'Segurança':
+                props.authCleanErrors()
+                setShow('alterarSenha')
+                break
             default:
                 setShow('menu')
-                break;
+                break
         }
     }
 
     handleClickBack = () => {
         setShow('menu')
+        setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
     }
 
     return (
         <React.Fragment>
-            <HeaderJobs title='Perfil'
+            <HeaderJobs
+                title={title}
                 back={handleClickBack} />
             <ScrollViewContainer>
                 <View style={{ flex: 1 }}>
@@ -103,6 +152,8 @@ function PerfilScreen(props) {
                     )}
 
                     {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack} />}
+
+                    {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
                 </View>
             </ScrollViewContainer>
 
@@ -124,7 +175,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        clientClearErrors: () => dispatch(ActionCreators.clientClearErrors()),
+        authCleanErrors: () => dispatch(ActionCreators.authCleanErrors()),
     }
 }
 

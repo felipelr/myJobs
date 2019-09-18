@@ -44,7 +44,7 @@ function SignUp(props) {
     ])
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')//flr123
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [documentNumber, setDocumentNumber] = useState('')
@@ -258,9 +258,7 @@ function SignUp(props) {
                 {(!props.signup.isSigningup && !props.auth.isLogingin) && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
                         <TextSignUpTitle>Sign Up</TextSignUpTitle>
-                        {
-                            props.signup.error && <TextError>{props.signup.errorMessage}</TextError>
-                        }
+                        {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
                         <View>
                             <ViewContainerRow>
                                 <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />

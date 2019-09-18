@@ -2,31 +2,49 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
 
-import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, Services,ServicesAmount } from './styles'
-import { white, purple } from '../common/util/colors' 
+import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, Services, ServicesAmount, TextoVazio, DescricaoVazia, styles } from './styles'
+import { white } from '../common/util/colors'
+
+
 
 export default function ItemHighlight(props) {
     const { profissional } = props
     return (
-        <ContainerItem>
+        <ContainerItem gray={(profissional ? false : true)}>
             <BodyItem>
-                <Avatar
-                    containerStyle={{ alignSelf: 'center', borderColor: purple}}
-                    rounded
-                    size={55}
-                    source={{
-                        uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                    }} />
+                {profissional &&
+                    <Avatar
+                        containerStyle={styles.containerStyle}
+                        rounded
+                        size={55}
+                        source={{
+                            uri: profissional.imagem,
+                        }} />
+                }
+                {!profissional &&
+                    <Avatar
+                        containerStyle={styles.containerStyle}
+                        rounded
+                        size={55} />
+                }
+
                 <ContentInfo>
-                    <TitleItem>{profissional.name}</TitleItem>
-                    <DescriptionItem>{profissional.description}</DescriptionItem>
+                    {profissional && <TitleItem>{profissional.name}</TitleItem>}
+                    {!profissional && <TextoVazio />}
+
+                    {profissional && <DescriptionItem>{profissional.description}</DescriptionItem>}
+                    {!profissional && <DescricaoVazia />}
+
                 </ContentInfo>
                 <Icon name="chevron-right" size={30} color={white} style={{ alignSelf: 'center' }} />
             </BodyItem>
-           {/*  <RatingJobs avaliacao={profissional.avaliacao} qtdeAvaliacoes={profissional.qtdeAvaliacoes} backPurple={true}/> */}
-           <Services>
-                  Oferece <ServicesAmount>{profissional.qtdeServicos}</ServicesAmount> serviços  
-           </Services> 
+            {
+                profissional &&
+                <Services>
+                    Oferece <ServicesAmount>{profissional.qtdeServices}</ServicesAmount> {profissional.qtdeServices > 1 ? 'serviços' : 'serviço'}
+                </Services>
+            }
+
         </ContainerItem>
     )
 }

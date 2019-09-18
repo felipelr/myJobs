@@ -3,7 +3,7 @@ import { Types } from '../actionCreators'
 
 export const INITIAL_STATE = {
     loading: false,
-    data: [],
+    highlights: [],
     error: false,
     errorMessage: '', 
 }

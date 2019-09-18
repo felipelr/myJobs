@@ -1,8 +1,16 @@
 import styled from 'styled-components/native'
-import { purple, white ,yellow} from '../common/util/colors' 
+import { purple, white, yellow, lightgray, disabled } from '../common/util/colors'
+import { StyleSheet } from 'react-native'
+
+export const styles = StyleSheet.create({
+    containerStyle: {
+        alignSelf: 'center',
+        borderColor: purple
+    }
+})
 
 export const ContainerItem = styled.TouchableOpacity`
-    background-color: ${purple};
+    background-color: ${props => props.gray ? lightgray : purple};
     border-radius: 2px;
     padding: 8px 0px 4px 8px;
     margin-right: 10px;
@@ -29,10 +37,17 @@ export const TitleItem = styled.Text`
     margin-bottom: 5px;
 `
 export const DescriptionItem = styled.Text`
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'SF-Pro-Text-Regular';
     color: ${white};
     flex: 1;
+`
+
+export const ContainerDescription = styled.ScrollView.attrs({
+    horizontal: true,
+    showHorizontalScrollIndicator: false
+})` 
+    flex-direction: column;
 `
 
 export const Services = styled.Text`
@@ -48,3 +63,19 @@ export const ServicesAmount = styled.Text`
     color: ${yellow}; 
     flex-direction:row;
 `
+export const TextoVazio = styled.View`
+    background-color: ${disabled};
+    height: 25;  
+    border-radius: 5;
+`
+
+export const DescricaoVazia = styled.View`
+    background-color: ${disabled};
+    height: 40;  
+    border-radius: 5;
+    margin-top:10;
+`
+
+
+
+

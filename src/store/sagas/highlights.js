@@ -12,12 +12,11 @@ function* getHighlights(action) {
                 Authorization: 'Bearer ' + action.token
             }
         })  
-        let { highlights } = request.data  
-        console.log(JSON.stringify(request))
+        let { highlights } = request.data   
         yield put(ActionCreator.highlightsLoadSuccess(highlights))
     } catch (ex) { 
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-        console.log(messageError)
+        console.log('teste erro saga')
         yield put(ActionCreator.highlightsLoadError(messageError))
     }
 } 

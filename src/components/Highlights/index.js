@@ -5,6 +5,7 @@ import ItemHighlight from '../ItemHighlight/index'
 export default function Highlights(props) { 
     const { highlights } = props
     const { titulo } = props
+    console.log(highlights)
     return (
         <ContainerContent>
             <Title>{titulo}</Title>

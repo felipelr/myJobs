@@ -47,8 +47,9 @@ function ProfessionalSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} />
             <ContainerCategorias>
-                <Highlights titulo='Destaques do mês' highlights={ props.highlights } />
-                <Categories />
+                <Text>{JSON.stringify(props.highlights)}</Text>
+                {/* <Highlights titulo='Destaques do mês' highlights={ props.highlights } /> */}
+                <Categories /> 
                 <View style={{ flex: 2, marginTop: 2}}>
                     { 
                         props.selectedCategorie != null ? (
@@ -84,7 +85,7 @@ const mapStateToProps = (state, ownProps) => {
         selectedCategorie: state.categoria.selected,
         subcategories: state.subcategory.subcategories,
         loadingSubcategories: state.subcategory.loading, 
-        highlights: state.highlights.data,
+        highlights: state.highlights.highlights,
         ownProps: ownProps
     }
 }

@@ -18,8 +18,8 @@ export default function ItemHighlight(props) {
                         uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
                     }} />
                 <ContentInfo>
-                    <TitleItem>{profissional.nome}</TitleItem>
-                    <DescriptionItem>{profissional.descricao}</DescriptionItem>
+                    <TitleItem>{profissional.name}</TitleItem>
+                    <DescriptionItem>{profissional.description}</DescriptionItem>
                 </ContentInfo>
                 <Icon name="chevron-right" size={30} color={white} style={{ alignSelf: 'center' }} />
             </BodyItem>

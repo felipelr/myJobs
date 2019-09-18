@@ -18,7 +18,7 @@ export const highlightsLoadRequest = (state = INITIAL_STATE, action) => {
 export const highlightsLoadSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        data: action.highlights,
+        highlights: action.highlights,
         loading: false
     }
 }

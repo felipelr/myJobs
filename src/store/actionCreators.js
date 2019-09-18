@@ -38,7 +38,7 @@ export const { Types, Creators } = createActions({
 
     //Highlights
     highlightsLoadRequest: ['token'],
-    highlightsLoadSuccess: ['data'],
+    highlightsLoadSuccess: ['highlights'],
     highlightsLoadError: ['error'],
 
     //Social Midia Actions

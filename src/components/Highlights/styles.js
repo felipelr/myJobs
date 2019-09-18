@@ -15,8 +15,17 @@ export const Title = styled.Text`
     font-weight: bold;
 `
 
+export const TextLoading = styled.Text`
+    color: ${purple};
+    font-size: 16px;
+    text-align: center;
+    font-family: 'SF-Pro-Text-Regular';
+    font-weight: bold;
+`
+ 
+
 export const ContainerItems = styled.ScrollView.attrs({
-    horizontal: true,
+    horizontal: true, 
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
     showHorizontalScrollIndicator: false
 })``

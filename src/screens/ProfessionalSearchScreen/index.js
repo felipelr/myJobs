@@ -13,24 +13,10 @@ import List from '../../components/List/index'
 import { purple } from '../../components/common/util/colors'
 
 function ProfessionalSearchScreen(props) {
-    const [categoria, setCategoria] = useState({ descricao: 'PetShop' })
-    const [profissionais, setProfissionais] = useState([
-        {
-            nome: 'Finos e Cheirosos',
-            descricao: 'Banho e Tosa de animais de pequeno e médio porte.', 
-            qtdeServicos: 46, 
-            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
-        },
-        {
-            nome: 'CatDog',
-            descricao: 'Vacinação e cuidados médicos.', 
-            qtdeServicos: 34, 
-            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
-        }
-    ])
-
+    
     useEffect(() => {
-        props.getCategories(props.token)
+        props.getCategories(props.token) //carrega categorias
+        props.getHighlights(props.token) //carrega anunciantes
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
@@ -39,8 +25,7 @@ function ProfessionalSearchScreen(props) {
     }, [])
 
     useEffect(() => {
-        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
-            console.log('teste subcategory = ' + JSON.stringify(props.selectedCategorie))
+        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) { 
             props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
         }
     }, [props.selectedCategorie])
@@ -61,9 +46,10 @@ function ProfessionalSearchScreen(props) {
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJob filter={true} />
-            <ContainerCategorias>
-                <Highlights titulo='Destaques do mês' destaques={{ profissionais }} />
-                <Categories />
+            <ContainerCategorias> 
+                <Text>{JSON.stringify(props.highlights)}</Text>
+                <Highlights titulo={'Destaques do mês'} />
+                <Categories /> 
                 <View style={{ flex: 2, marginTop: 2}}>
                     { 
                         props.selectedCategorie != null ? (
@@ -98,14 +84,15 @@ const mapStateToProps = (state, ownProps) => {
         data: state.categoria.data,
         selectedCategorie: state.categoria.selected,
         subcategories: state.subcategory.subcategories,
-        loadingSubcategories: state.subcategory.loading,
-        ownProps: ownProps,
+        loadingSubcategories: state.subcategory.loading,  
+        ownProps: ownProps
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
+        getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
         logout: () => dispatch(ActionCreators.logoutRequest()),
         subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie))
     }

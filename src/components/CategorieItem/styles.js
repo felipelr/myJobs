@@ -6,10 +6,7 @@ export const styles = StyleSheet.create({
     containerStyle:{
         alignSelf: 'center',
         justifyContent:'space-between'
-    },
-    overlayContainerStyle:{
-        backgroundColor: purple
-    }
+    } 
 })
 
 export const Title = styled.Text`
@@ -19,6 +16,6 @@ export const Title = styled.Text`
 export const ContainerBody = styled.View`
     justify-content:center;
     align-items: center;
-    margin-right: 15
+    margin-right: 20;
 `
  

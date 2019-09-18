@@ -6,6 +6,14 @@ import { ContainerContent, ContainerItems, TextLoading } from './styles'
 import CategorieItem from '../CategorieItem/index'
 import { purple } from '../../components/common/util/colors'
 
+const ArrayVazio = () => {
+    let rows = []
+    for (let i = 0; i < 10; i++) {
+        rows.push(i)
+    }
+    return rows.map((item) => <CategorieItem key={item} />) 
+}
+
 const Categories = (props) => {
     return (
         !props.loading ?
@@ -19,10 +27,11 @@ const Categories = (props) => {
                 </ContainerItems>
             </ContainerContent>
             :
-            <View style={{ alignSelf: 'center' }}>
-                <ActivityIndicator size='large' color={purple} />
-                <TextLoading>Loading...</TextLoading>
-            </View>
+            <ContainerContent>
+                <ContainerItems>
+                     <ArrayVazio />
+                </ContainerItems>
+            </ContainerContent>
     )
 }
 

@@ -3,16 +3,23 @@ import { View } from 'react-native'
 import ListItem from '../index'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
+import { connect } from 'react-redux'
 
 import { purple } from '../../../components/common/util/colors'
 import { TitleSubcategory, InfoSubcategory, styles } from './styles'
+import ActionCreators from '../../../store/actionCreators'
 
-export default function ListItemService(props) {
+function ListItemService(props){
     const { subcategory } = props
-    console.log('teste' + JSON.stringify(subcategory))
+
+    onPress = (navigate) => {
+        props.selectSubcategory(props.subcategory)
+        navigate()
+    }
+
     return (
         <ListItem
-            itemOnPress={props.itemOnPress}
+            itemOnPress={() => onPress(props.itemOnPress)}
             leftContent={
                 <Avatar
                     containerStyle={styles.containerStyle}
@@ -42,3 +49,10 @@ export default function ListItemService(props) {
         />
     )
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        selectSubcategory: (subcategory) => dispatch(ActionCreators.subcategoriesSelected(subcategory))    }
+}
+ 
+export default connect(null, mapDispatchToProps)(ListItemService)

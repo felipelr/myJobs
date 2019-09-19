@@ -17,8 +17,7 @@ export const subcategoriesLoadRequest = (state = INITIAL_STATE, action) => {
 }
 
 export const subcategoriesLoadSuccess = (state = INITIAL_STATE, action) => {
-    console.log('voltou aqui')
-    console.log(JSON.stringify(action))
+
     return {
         ...state,
         subcategories: action.subcategories,
@@ -36,9 +35,10 @@ export const subcategoriesLoadError = (state = INITIAL_STATE, action) => {
 }
 
 export const subcategoriesSelected = (state = INITIAL_STATE, action) => {
+    console.log(JSON.stringify(action))
     return {
         ...state,
-        selected: action.data
+        selected: action.subcategory
     }
 }
 

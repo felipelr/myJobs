@@ -41,13 +41,17 @@ function ProfessionalSearchScreen(props) {
         return true
     }
 
+    selectSubcategoryRedirect = (subcategory) => {
+        props.navigation.navigate('Services')
+    }
+
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJob filter={true} />
             <ContainerCategorias> 
-                <Text>{JSON.stringify(props.highlights)}</Text>
+                <Text>{JSON.stringify(props.selectSubcategory)}</Text>
                 <Highlights titulo={'Destaques do mês'} />
                 <Categories /> 
                 <View style={{ flex: 2, marginTop: 2}}>
@@ -61,7 +65,7 @@ function ProfessionalSearchScreen(props) {
                                     </View>
                                 ) :
                                 ( 
-                                    <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={() => props.navigation.navigate('Professionals')} />
+                                    <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={selectSubcategoryRedirect} />
                                 )
                         ) : (
                                 <Text>Selecione uma categoria para visualizar as opções</Text>
@@ -84,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
         data: state.categoria.data,
         selectedCategorie: state.categoria.selected,
         subcategories: state.subcategory.subcategories,
-        loadingSubcategories: state.subcategory.loading,  
+        loadingSubcategories: state.subcategory.loading,   
         ownProps: ownProps
     }
 }
@@ -94,7 +98,7 @@ const mapDispatchToProps = dispatch => {
         getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
         getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
         logout: () => dispatch(ActionCreators.logoutRequest()),
-        subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie))
+        subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie)),
     }
 }
 

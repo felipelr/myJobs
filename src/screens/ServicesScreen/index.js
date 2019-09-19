@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'react-native'
+import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity, View, ActivityIndicator } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { connect } from 'react-redux'
 
-import styles, { ContainerList, ContainerSearch } from './styles'
+import styles, { ContainerList, ContainerSearch, TextLoading } from './styles'
 import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import List from '../../components/List/index'
 import Categories from '../../components/Categories'
 
-export default function ServicesScreen(props) {
+function ServicesScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [search, setSearch] = useState('')
     const [servicos, setServicos] = useState([
@@ -47,33 +48,47 @@ export default function ServicesScreen(props) {
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <Container />
-            <HeaderJobs back title='Buscar Serviço' chat />
-            <ContainerSearch>
-                <SearchBar placeholder="Oque você está procurando?"
-                    placeholderTextColor='white'
-                    inputContainerStyle={styles.searchInputContainerStyle}
-                    inputStyle={{ color: 'white', marginTop: 7 }}
-                    containerStyle={styles.searchContainerStyle}
-                    onChangeText={(e) => setSearch(e)}
-                    value={search}
-                    searchIcon={<Icon name='search' size={24} color='white' />}
-                    clearIcon={search != '' &&
-                        <TouchableOpacity onPress={() => setSearch('')}>
-                            <Icon name='close' size={24} color='white' />
-                        </TouchableOpacity>}
-                />
-            </ContainerSearch>
-            <Categories />
-            <ContainerList>
-                <List tipo='service' titulo='Serviços' itens={servicos} itemOnPress={() => props.navigation.navigate('ServiceHome')}/>
-            </ContainerList>
-            <Footer />
-        </KeyboardAvoidingView>
+        props.selectedSubcategory ?
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+                <Container />
+                <HeaderJobs back title='Buscar Serviço' chat />
+                <ContainerSearch>
+                    <SearchBar placeholder="Oque você está procurando?"
+                        placeholderTextColor='white'
+                        inputContainerStyle={styles.searchInputContainerStyle}
+                        inputStyle={{ color: 'white', marginTop: 7 }}
+                        containerStyle={styles.searchContainerStyle}
+                        onChangeText={(e) => setSearch(e)}
+                        value={search}
+                        searchIcon={<Icon name='search' size={24} color='white' />}
+                        clearIcon={search != '' &&
+                            <TouchableOpacity onPress={() => setSearch('')}>
+                                <Icon name='close' size={24} color='white' />
+                            </TouchableOpacity>}
+                    />
+                </ContainerSearch>
+                <ContainerList>
+                    <List tipo='service' titulo='Serviços' itens={servicos} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
+                </ContainerList>
+                <Footer />
+            </KeyboardAvoidingView>
+            :
+            <View style={{ alignSelf: 'center' }}>
+                <ActivityIndicator size='large' color={purple} />
+                <TextLoading>Loading...</TextLoading>
+            </View>
     )
 }
 
 ServicesScreen.navigationOptions = {
     header: null
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        selectedSubcategory: state.subcategory.selected,
+        ownProps: ownProps
+    }
+}
+ 
+export default connect(mapStateToProps)(ServicesScreen)

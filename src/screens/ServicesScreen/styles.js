@@ -15,6 +15,14 @@ export const ContainerSearch = styled.View`
     padding-bottom: 5px;
 `
 
+export const TextLoading = styled.Text`
+    color: ${purple};
+    font-size: 16px;
+    text-align: center;
+    font-family: 'SF-Pro-Text-Regular';
+    font-weight: bold;
+`
+
 export default styles = StyleSheet.create({
     searchContainerStyle: {
         backgroundColor: purple,

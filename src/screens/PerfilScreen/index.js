@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { View, BackHandler } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import Share from 'react-native-share';
 
 import { urlMyJobs } from '../../config/config'
 
@@ -86,7 +87,7 @@ function PerfilScreen(props) {
         }
     }, [show])
 
-    handleBackPress = () => {
+    const handleBackPress = () => {
         switch (show) {
             case 'menu':
                 //voltar para screen anterior
@@ -98,7 +99,7 @@ function PerfilScreen(props) {
         return true
     }
 
-    handleClickMenu = (item) => {
+    const handleClickMenu = (item) => {
         switch (item) {
             case 'Dados Cadastrais':
                 props.clientClearErrors()
@@ -112,15 +113,29 @@ function PerfilScreen(props) {
                 props.professionalsCleanErrors()
                 setShow('sugerirEmpresa')
                 break
+            case 'Convidar Amigos':
+                handleClickShare()
+                break
             default:
                 setShow('menu')
                 break
         }
     }
 
-    handleClickBack = () => {
+    const handleClickBack = () => {
         setShow('menu')
         setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+    }
+
+    const handleClickShare = () => {
+        const shareOptions = {
+            title: 'Compartilhe o MyJobs',
+            message: 'MyJobs faça parte desta comunidade. ',
+            url: 'https://play.google.com/store/apps/details?id=it.mobile.food',
+        }
+        Share.open(shareOptions)
+            .then((res) => { console.log(res) })
+            .catch((err) => { err && console.log(err) })
     }
 
     return (

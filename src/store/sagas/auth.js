@@ -92,14 +92,18 @@ function* changePassword(action) {
             },
             {
                 headers: {
-                    Authorization: 'Bearer ' + action.token
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
                 }
             })
 
-        let { data } = postRequest.data
-        console.log(data)
-
-        yield put(ActionCreator.changePasswordSuccess())
+        let { data } = postRequest
+        if (data.error) {
+            yield put(ActionCreator.changePasswordError(data.errorMessage))
+        }
+        else {
+            yield put(ActionCreator.changePasswordSuccess())
+        }
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.changePasswordError(messageError))

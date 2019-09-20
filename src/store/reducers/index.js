@@ -7,6 +7,7 @@ import socialMidiaSignup from './socialMidiaSignup'
 import subcategory from './subcategory'
 import client from './client'
 import highlights from './highlights'
+import professional from './professional'
 
 const rootReducer = combineReducers({
     auth,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
     socialMidiaSignup,
     subcategory,
     client,
-    highlights
+    highlights,
+    professional,
 })
 
 export default rootReducer

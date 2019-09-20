@@ -17,11 +17,11 @@ import Loading from '../Loading/index'
 
 function ChangePassword(props) {
     const [invalidField, setInvalidField] = useState('')
+    const [newRequest, setNewRequest] = useState(false)
     const [userId, setUserId] = useState(props.auth.user.sub)
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
-    const [newRequest, setNewRequest] = useState(false)
 
     useEffect(() => {
         if (newRequest && !props.auth.isUpdating) {

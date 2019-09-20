@@ -25,6 +25,7 @@ import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
 import ChangePassword from '../../components/ChangePassword/index'
+import SuggestCompany from '../../components/SuggestCompany/index'
 
 function PerfilScreen(props) {
     const [title, setTitle] = useState('Perfil')
@@ -76,6 +77,9 @@ function PerfilScreen(props) {
             case 'alterarSenha':
                 setTitle('Ateração de Senha')
                 break
+            case 'sugerirEmpresa':
+                setTitle('Sugerir Empresa/Profissional')
+                break
             default:
                 setTitle('Perfil')
                 break
@@ -85,6 +89,7 @@ function PerfilScreen(props) {
     handleBackPress = () => {
         switch (show) {
             case 'menu':
+                //voltar para screen anterior
                 break
             default:
                 setShow('menu')
@@ -102,6 +107,10 @@ function PerfilScreen(props) {
             case 'Segurança':
                 props.authCleanErrors()
                 setShow('alterarSenha')
+                break
+            case 'Sugerir Profissionais/Empresas':
+                props.professionalsCleanErrors()
+                setShow('sugerirEmpresa')
                 break
             default:
                 setShow('menu')
@@ -154,10 +163,15 @@ function PerfilScreen(props) {
                     {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack} />}
 
                     {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
+
+                    {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
                 </View>
             </ScrollViewContainer>
 
-            <Footer />
+            <Footer
+                homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
+                servicesOnPress={() => props.ownProps.navigation.navigate('Services')}
+                perfilOnPress={() => { }} />
         </React.Fragment>
     )
 }
@@ -177,6 +191,7 @@ const mapDispatchToProps = dispatch => {
     return {
         clientClearErrors: () => dispatch(ActionCreators.clientClearErrors()),
         authCleanErrors: () => dispatch(ActionCreators.authCleanErrors()),
+        professionalsCleanErrors: () => dispatch(ActionCreators.professionalsCleanErrors()),
     }
 }
 

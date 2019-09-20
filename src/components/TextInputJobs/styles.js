@@ -12,7 +12,7 @@ export const ContainerTextInput = styled.View`
 `
 export const ViewRed = styled.View`
     border-bottom-color: ${red};
-    border-bottom-width: 0.5px;
+    border-bottom-width: 1.5px;
     margin-bottom: 20px;
 `
 export const ViewBlack = styled.View`

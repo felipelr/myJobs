@@ -65,6 +65,7 @@ function ServicesScreen(props) {
                 <ContainerList>
                     <List tipo='service' titulo='Serviços' itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
                 </ContainerList>
+<<<<<<< HEAD
             }
             {props.loading &&
                 <View style={{ alignSelf: 'center' }}>
@@ -75,6 +76,18 @@ function ServicesScreen(props) {
             <Footer />
         </KeyboardAvoidingView>
 
+=======
+                <Footer
+                    homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
+                    servicesOnPress={() => { }}
+                    perfilOnPress={() => props.ownProps.navigation.navigate('Perfil')} />
+            </KeyboardAvoidingView>
+            :
+            <View style={{ alignSelf: 'center' }}>
+                <ActivityIndicator size='large' color={purple} />
+                <TextLoading>Loading...</TextLoading>
+            </View>
+>>>>>>> f3c28504f32ccf22fb8085eb29dca0952c872452
     )
 }
 
@@ -93,6 +106,7 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
+<<<<<<< HEAD
 const mapDispatchToProps = dispatch => {
     return {
         getServicesSubcategoryRequest: (selectedSubcategory, token) => dispatch(ActionCreators.getServicesSubcategoryRequest(selectedSubcategory, token)),
@@ -100,3 +114,6 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen)
+=======
+export default connect(mapStateToProps)(ServicesScreen)
+>>>>>>> f3c28504f32ccf22fb8085eb29dca0952c872452

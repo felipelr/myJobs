@@ -8,6 +8,7 @@ import * as socialMidiaSignupSagas from './socialMidiaSignup'
 import * as subcategorySagas from './subcategory'
 import * as clientSagas from './client'
 import * as highlightsSagas from './highlights'
+import * as professionalsSagas from './professional'
 
 export default function* rootSaga() {
     yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga() {
         ...Object.values(subcategorySagas),
         ...Object.values(clientSagas),
         ...Object.values(highlightsSagas),
+        ...Object.values(professionalsSagas),
     ].map(fork))
 }

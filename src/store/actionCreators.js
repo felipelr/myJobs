@@ -42,6 +42,10 @@ export const { Types, Creators } = createActions({
     professionalsLoadRequest: ['token'],
     professionalsLoadSuccess: ['highlights'],
     professionalsLoadError: ['error'],
+    professionalsCleanErrors: null,
+    professionalsSendNewSuggest: ['token', 'data'],
+    professionalsSendNewSuggestSuccess: null,
+    professionalsSendNewSuggestError: ['error'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

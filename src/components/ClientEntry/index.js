@@ -70,15 +70,13 @@ function ClientEntry(props) {
     const [endCursor, setEndCursor] = useState('')
 
     useEffect(() => {
-        if (requisitou) {
+        if (requisitou && !props.client.isUpdating) {
             if (props.client.errorUpdating) {
+                setRequisitou(false)
                 this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
             }
-            else {
+            else
                 props.ownProps.onUpdate()
-            }
-        } else if (props.client.isUpdating) {
-            setRequisitou(true)
         }
     }, [props.client.isUpdating])
 
@@ -185,6 +183,7 @@ function ClientEntry(props) {
                 gender: gender,
                 image: image.base64 ? image.base64 : ''
             }
+            setRequisitou(true)
             props.clientUpdateRequest(clientData, props.token)
         }
     }
@@ -277,8 +276,10 @@ function ClientEntry(props) {
     return (
         <ScrollViewContainer ref={(c) => this.scrollViewContainer = c}>
             <View style={{ flex: 1, padding: 8 }}>
+                {props.client.isUpdating && <Loading size='large' color={purple} height='330' error={props.client.errorUpdating} />}
+
                 {props.client.errorUpdating && <TextError>{props.client.errorMessage}</TextError>}
-                {props.client.isUpdating && <Loading size='large' color={purple} height='330' />}
+
                 {!props.client.isUpdating && (
                     <React.Fragment>
                         <ContainerAvatar>

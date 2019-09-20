@@ -34,6 +34,9 @@ export const { Types, Creators } = createActions({
     subcategoriesLoadError: ['error'],
     subcategoriesSelected: ['subcategory'],
     subcategoriesByCategoryRequest: ['category', 'token'],
+    subcategoriesByCategoryRequest: ['category', 'token'],
+    getServicesSubcategoryRequest: ['subcategory', 'token'],
+    getServicesSubcategorySuccess: ['services'],
 
     //Professionals
     professionalsLoadRequest: ['token'],

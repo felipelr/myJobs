@@ -70,7 +70,10 @@ function ServicesScreen(props) {
                 <ContainerList>
                     <List tipo='service' titulo='Serviços' itens={servicos} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
                 </ContainerList>
-                <Footer />
+                <Footer
+                    homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
+                    servicesOnPress={() => { }}
+                    perfilOnPress={() => props.ownProps.navigation.navigate('Perfil')} />
             </KeyboardAvoidingView>
             :
             <View style={{ alignSelf: 'center' }}>
@@ -90,5 +93,5 @@ const mapStateToProps = (state, ownProps) => {
         ownProps: ownProps
     }
 }
- 
+
 export default connect(mapStateToProps)(ServicesScreen)

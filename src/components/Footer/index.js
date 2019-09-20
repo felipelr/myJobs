@@ -6,7 +6,7 @@ import { white, gold, purple } from '../common/util/colors'
 export default function Footer(props) {
     return (
         <ContainerFooter>
-            <FooterButton>
+            <FooterButton onPress={props.homeOnPress}>
                 <Icon name="home" size={25} color={gold} />
             </FooterButton>
             <FooterButton>

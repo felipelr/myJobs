@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity, View, ActivityIndicator } from 'react-native'
+import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity, View, ActivityIndicator, Text } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
@@ -9,30 +9,16 @@ import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import List from '../../components/List/index'
-import Categories from '../../components/Categories'
+import ActionCreators from '../../store/actionCreators'
+import { purple } from '../../components/common/util/colors'
 
 function ServicesScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [search, setSearch] = useState('')
-    const [servicos, setServicos] = useState([
-        {
-            descricao: 'PetShop',
-            info: '245 Atendimentos realizados,  0,6km de você',
-            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
-        },
-        {
-            descricao: 'Mecânico',
-            info: '245 Atendimentos realizados,  0,6km de você',
-            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
-        },
-        {
-            descricao: 'Diarista',
-            info: '245 Atendimentos realizados,  0,6km de você',
-            imagem: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
-        }
-    ])
 
     useEffect(() => {
+        props.getServicesSubcategoryRequest(props.selectedSubcategory, props.token)
+
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
             setKeyboardIsVisible(true)
         })
@@ -44,39 +30,51 @@ function ServicesScreen(props) {
             this.kbShow.remove()
             this.kbShow.remove()
         }
+
     }, [])
+
+    useEffect(() => {
+        if (!props.isAuth) {
+            props.ownProps.navigation.navigate('Login')
+        }
+    }, [props.isAuth])
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        props.selectedSubcategory ?
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-                <Container />
-                <HeaderJobs back title='Buscar Serviço' chat />
-                <ContainerSearch>
-                    <SearchBar placeholder="Oque você está procurando?"
-                        placeholderTextColor='white'
-                        inputContainerStyle={styles.searchInputContainerStyle}
-                        inputStyle={{ color: 'white', marginTop: 7 }}
-                        containerStyle={styles.searchContainerStyle}
-                        onChangeText={(e) => setSearch(e)}
-                        value={search}
-                        searchIcon={<Icon name='search' size={24} color='white' />}
-                        clearIcon={search != '' &&
-                            <TouchableOpacity onPress={() => setSearch('')}>
-                                <Icon name='close' size={24} color='white' />
-                            </TouchableOpacity>}
-                    />
-                </ContainerSearch>
+
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+            {console.log(JSON.stringify(props.services))}
+            <Container />
+            <HeaderJobs back title='Buscar Serviço' chat />
+            <ContainerSearch>
+                <SearchBar placeholder="Oque você está procurando?"
+                    placeholderTextColor='white'
+                    inputContainerStyle={styles.searchInputContainerStyle}
+                    inputStyle={{ color: 'white', marginTop: 7 }}
+                    containerStyle={styles.searchContainerStyle}
+                    onChangeText={(e) => setSearch(e)}
+                    value={search}
+                    searchIcon={<Icon name='search' size={24} color='white' />}
+                    clearIcon={search != '' &&
+                        <TouchableOpacity onPress={() => setSearch('')}>
+                            <Icon name='close' size={24} color='white' />
+                        </TouchableOpacity>}
+                />
+            </ContainerSearch>
+            {!props.loading &&
                 <ContainerList>
-                    <List tipo='service' titulo='Serviços' itens={servicos} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
+                    <List tipo='service' titulo='Serviços' itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
                 </ContainerList>
-                <Footer />
-            </KeyboardAvoidingView>
-            :
-            <View style={{ alignSelf: 'center' }}>
-                <ActivityIndicator size='large' color={purple} />
-                <TextLoading>Loading...</TextLoading>
-            </View>
+            }
+            {props.loading &&
+                <View style={{ alignSelf: 'center' }}>
+                    <ActivityIndicator size='large' color={purple} />
+                    <TextLoading>Loading...</TextLoading>
+                </View>
+            }
+            <Footer />
+        </KeyboardAvoidingView>
+
     )
 }
 
@@ -86,9 +84,19 @@ ServicesScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
+        token: state.auth.token,
+        isAuth: state.auth.isAuth,
         selectedSubcategory: state.subcategory.selected,
+        services: state.subcategory.services,
+        loading: state.subcategory.loading,
         ownProps: ownProps
     }
 }
- 
-export default connect(mapStateToProps)(ServicesScreen)
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getServicesSubcategoryRequest: (selectedSubcategory, token) => dispatch(ActionCreators.getServicesSubcategoryRequest(selectedSubcategory, token)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen)

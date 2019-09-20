@@ -16,14 +16,13 @@ export default function ListItemService(props) {
                 <Avatar
                     rounded
                     containerStyle={{ alignSelf: 'center' }}
-                    size={40}
-                    source={{ uri: servico.imagem, }}
+                    size={40} 
                 />
             }
             centerContent={
                 <View>
-                    <TitleService>{servico.descricao}</TitleService>
-                    <InfoService>{servico.info}</InfoService>
+                    <TitleService>{servico.description}</TitleService>
+                    <InfoService>{servico.description}</InfoService>
                 </View>
             }
             rightContent={

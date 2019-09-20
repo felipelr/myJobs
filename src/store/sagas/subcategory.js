@@ -11,7 +11,7 @@ function* getSubCategoriesByCategory(action) {
             headers: {
                 Authorization: 'Bearer ' + action.token
             }
-        }) 
+        })  
         let { subcategories } = request.data   
         yield put(ActionCreator.subcategoriesLoadSuccess(subcategories))
     } catch (ex) { 
@@ -20,8 +20,27 @@ function* getSubCategoriesByCategory(action) {
     }
 }
 
+function* getServicesSubcategory(action) {  
+    try {
+        let request = yield axios.get(`${urlMyJobsAPI}/services/getBySubcategory/${action.subcategory.id}.json`, {
+            headers: {
+                Authorization: 'Bearer ' + action.token
+            }
+        }) 
+         
+        let { services } = request.data   
+        yield put(ActionCreator.getServicesSubcategorySuccess(services))
+
+    } catch (ex) {  
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        console.log('erro na saga ' + messageError)
+        yield put(ActionCreator.subcategoriesLoadError(messageError))
+    }
+}
+
 export default function* rootSubCategories() { 
     yield all([
-        takeLatest(Types.SUBCATEGORIES_BY_CATEGORY_REQUEST, getSubCategoriesByCategory)
+        takeLatest(Types.SUBCATEGORIES_BY_CATEGORY_REQUEST, getSubCategoriesByCategory),
+        takeLatest(Types.GET_SERVICES_SUBCATEGORY_REQUEST, getServicesSubcategory),
     ])
 }

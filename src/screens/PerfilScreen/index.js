@@ -9,7 +9,7 @@ import { urlMyJobs } from '../../config/config'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { purple } from '../../components/common/util/colors'
+import { purple, lightgray } from '../../components/common/util/colors'
 
 import {
     ScrollViewContainer,
@@ -163,7 +163,7 @@ function PerfilScreen(props) {
                                     list.map((item, i) => (
                                         <ListItem
                                             key={i}
-                                            containerStyle={{ marginBottom: 1 }}
+                                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
                                             title={item.title}
                                             rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                             leftIcon={{ name: item.icon }}

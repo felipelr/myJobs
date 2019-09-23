@@ -80,6 +80,8 @@ function SocialMidiaSignup(props) {
             props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.google_id, 'google')
         }
 
+        console.log('passou aqui')
+
         return () => {
             if (this.watchID)
                 Geolocation.clearWatch(this.watchID)
@@ -106,8 +108,8 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            props.ownProps.onPressLogin()
             props.ownProps.navigation.navigate('ProfessionalSearch')
+            props.ownProps.onPressLogin()
         }
         else if (props.auth.error) {
             props.ownProps.onPressLogin()
@@ -131,25 +133,29 @@ function SocialMidiaSignup(props) {
     }, [dateBirth])
 
     callLocation = () => {
-        Geolocation.getCurrentPosition(
-            //Will give you the current location
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude)
-                const currentLatitude = JSON.stringify(position.coords.latitude)
-                setLongitude(currentLongitude)
-                setLatitude(currentLatitude)
-            },
-            (error) => console.log(error.message),
-            { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
-        )
-        this.watchID = Geolocation.watchPosition(
-            //Will give you the location on location change
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude)
-                const currentLatitude = JSON.stringify(position.coords.latitude)
-                setLongitude(currentLongitude)
-                setLatitude(currentLatitude)
-            })
+        try {
+            Geolocation.getCurrentPosition(
+                //Will give you the current location
+                (position) => {
+                    const currentLongitude = JSON.stringify(position.coords.longitude)
+                    const currentLatitude = JSON.stringify(position.coords.latitude)
+                    setLongitude(currentLongitude)
+                    setLatitude(currentLatitude)
+                },
+                (error) => console.log(error.message),
+                { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
+            )
+            this.watchID = Geolocation.watchPosition(
+                //Will give you the location on location change
+                (position) => {
+                    const currentLongitude = JSON.stringify(position.coords.longitude)
+                    const currentLatitude = JSON.stringify(position.coords.latitude)
+                    setLongitude(currentLongitude)
+                    setLatitude(currentLatitude)
+                })
+        } catch (err) {
+
+        }
     }
 
     handleOnChange = (field, text) => {
@@ -253,7 +259,7 @@ function SocialMidiaSignup(props) {
 
                 {(!props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
-                        <TextSignUpTitle>Sign Up</TextSignUpTitle>
+                        <TextSignUpTitle>Complete seu Cadastro</TextSignUpTitle>
                         {
                             props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
                         }
@@ -293,7 +299,7 @@ function SocialMidiaSignup(props) {
                                 itemsList={genderList} />
 
                             <ViewContainerButton>
-                                <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
+                                <ButtonPurple onPress={handleClickSignUp}>Continuar</ButtonPurple>
                             </ViewContainerButton>
                         </View>
                     </CardJobs>

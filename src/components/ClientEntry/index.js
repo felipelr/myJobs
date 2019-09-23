@@ -31,6 +31,7 @@ import {
     ImageItem,
     ViewContainerMenuOpacity
 } from './styles'
+
 import { purple } from '../common/util/colors'
 
 import TextInputJobs from '../../components/TextInputJobs/index'
@@ -266,8 +267,6 @@ function ClientEntry(props) {
                         setImagesFolder(photos)
                     setHasNextPage(r.page_info.has_next_page)
                     setEndCursor(r.page_info.end_cursor)
-
-                    console.log(imagesFolder)
                 })
                 .catch((err) => {
                     console.error(err)
@@ -286,14 +285,25 @@ function ClientEntry(props) {
                 {!props.client.isUpdating && (
                     <React.Fragment>
                         <ContainerAvatar>
-                            <Avatar
-                                rounded
-                                containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
-                                size={120}
-                                onPress={this.handleAvatarClick}
-                                showEditButton
-                                editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />
+                            {image.uri.length > 0 &&
+                                <Avatar
+                                    rounded
+                                    containerStyle={{ elevation: 2, alignSelf: "center" }}
+                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
+                                    size={120}
+                                    onPress={this.handleAvatarClick}
+                                    showEditButton
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+
+                            {image.uri.length <= 0 &&
+                                <Avatar
+                                    rounded
+                                    containerStyle={{ elevation: 2, alignSelf: "center" }}
+                                    size={120}
+                                    onPress={this.handleAvatarClick}
+                                    showEditButton
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+
                         </ContainerAvatar>
 
                         <TextInputJobs

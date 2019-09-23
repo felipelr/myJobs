@@ -117,7 +117,7 @@ function PerfilScreen(props) {
 
     const handleClickBack = () => {
         if (show === 'menu') {
-            
+
         }
         else {
             setShow('menu')
@@ -150,11 +150,19 @@ function PerfilScreen(props) {
                                 <Title>{props.client.name}</Title>
                             </ContainerTitle>
                             <ContainerAvatar>
-                                <Avatar
-                                    rounded
-                                    containerStyle={styles.shadow}
-                                    source={{ uri: image.uri }}
-                                    size={120} />
+                                {image.uri.length > 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={styles.shadow}
+                                        source={{ uri: image.uri }}
+                                        size={120} />}
+
+                                {image.uri.length <= 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={styles.shadow}
+                                        size={120} />}
+
                             </ContainerAvatar>
                             <ContainerLista>
                                 {

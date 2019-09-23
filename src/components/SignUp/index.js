@@ -257,7 +257,7 @@ function SignUp(props) {
 
                 {(!props.signup.isSigningup && !props.auth.isLogingin) && (
                     <CardJobs backColor={white} width='80' height='140' opacity={1}>
-                        <TextSignUpTitle>Sign Up</TextSignUpTitle>
+                        <TextSignUpTitle>Cadastre-se</TextSignUpTitle>
                         {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
                         <View>
                             <ViewContainerRow>

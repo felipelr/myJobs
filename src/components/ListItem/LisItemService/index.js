@@ -21,7 +21,7 @@ export default function ListItemService(props) {
             }
             centerContent={
                 <View>
-                    <TitleService>{servico.description}</TitleService>
+                    <TitleService>{servico.title}</TitleService>
                     <InfoService>{servico.description}</InfoService>
                 </View>
             }

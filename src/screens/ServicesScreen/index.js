@@ -63,7 +63,7 @@ function ServicesScreen(props) {
             </ContainerSearch>
             {!props.loading &&
                 <ContainerList>
-                    <List tipo='service' titulo='Serviços' itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
+                    <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
                 </ContainerList>
             }
             {props.loading &&

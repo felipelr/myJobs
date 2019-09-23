@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { purple, gray, white, black } from '../../components/common/util/colors'
+import { widthPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
@@ -71,12 +72,22 @@ export const ViewContainerMenu = styled.View`
     align-items: center;
 `
 
+export const ViewContainerMenuOpacity = styled.View`
+    background-color: black;
+    opacity: 0.7;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+`
+
 export const ViewContainerButtonsMenu = styled.View`
     flex-direction: column;
     background-color: ${white};
     width: 80%;
-    border-width: 1;
-    border-color: ${gray};
+    border-radius: 15px;
+    padding: 7px;
 `
 
 export const ButtonMenu = styled.TouchableHighlight`
@@ -93,9 +104,8 @@ export const ButtonMenuText = styled.Text`
 `
 
 export const ViewImageListItem = styled.TouchableHighlight`
-    height: 200px;
-    width: 200px;
-    flex-grow: 1;
+    width: ${widthPercentageToDP('33.33%')};
+    height: ${widthPercentageToDP('33.33%')};
 `
 
 export const ImageItem = styled.Image`

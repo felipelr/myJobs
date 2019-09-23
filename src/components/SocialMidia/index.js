@@ -25,41 +25,45 @@ function SocialMidia(props) {
     }, [user])
 
     facebookLoginRequest = () => {
-        LoginManager.logInWithPermissions(["public_profile", "email"]).then(
-            function (result) {
-                if (result.isCancelled) {
-                    console.log("Login cancelled")
-                } else {
-                    console.log("Login success with permissions: " + result.grantedPermissions.toString())
-                    AccessToken.getCurrentAccessToken().then((data) => {
-                        const { accessToken } = data
-                        fetch(urlFacebookGraph + '/me?fields=name,birthday,gender,email&access_token=' + accessToken)
-                            .then((response) => response.json())
-                            .then((json) => {
-                                setUser({
-                                    facebook_id: json.id,
-                                    name: json.name,
-                                    email: json.email,
-                                    birthday: json.birthday,
-                                    gender: (json.gender === 'male' ? 'MASCULINO' : json.gender === 'female' ? 'FEMININO' : 'OUTRO')
+        try {
+            LoginManager.logInWithPermissions(["public_profile", "email"]).then(
+                function (result) {
+                    if (result.isCancelled) {
+                        console.log("Login cancelado")
+                    } else {
+                        console.log("Login success with permissions: " + result.grantedPermissions.toString())
+                        AccessToken.getCurrentAccessToken().then((data) => {
+                            const { accessToken } = data
+                            fetch(urlFacebookGraph + '/me?fields=name,birthday,gender,email&access_token=' + accessToken)
+                                .then((response) => response.json())
+                                .then((json) => {
+                                    setUser({
+                                        facebook_id: json.id,
+                                        name: json.name,
+                                        email: json.email,
+                                        birthday: json.birthday,
+                                        gender: (json.gender === 'male' ? 'MASCULINO' : json.gender === 'female' ? 'FEMININO' : 'OUTRO')
+                                    })
                                 })
-                            })
-                            .catch(() => {
-                                reject('ERROR GETTING DATA FROM FACEBOOK: ')
-                            })
-                    })
+                                .catch(() => {
+                                    reject('Erro ao receber dados do Facebook.')
+                                })
+                        })
+                    }
+                },
+                function (error) {
+                    alert("Login falhou com o erro: " + error)
                 }
-            },
-            function (error) {
-                console.log("Login fail with error: " + error)
-            }
-        )
+            )
+        } catch (ex) {
+            alert("Login falhou com o erro: " + ex.message)
+        }
     }
 
     signInGoogle = async () => {
         try {
             await GoogleSignin.hasPlayServices()
-            const userInfo = await GoogleSignin.signIn()            
+            const userInfo = await GoogleSignin.signIn()
             setUser({
                 google_id: userInfo.user.id,
                 name: userInfo.user.name,
@@ -69,13 +73,13 @@ function SocialMidia(props) {
             })
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.log("user cancelled the login flow")
+                //alert("user cancelled the login flow")
             } else if (error.code === statusCodes.IN_PROGRESS) {
-                console.log("operation (f.e. sign in) is in progress already")
+                //alert("operation (f.e. sign in) is in progress already")
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                console.log("play services not available or outdated")
+                alert("O Play Services não está instaldo.")
             } else {
-                console.log(error)
+                alert("Login falhou com o erro: " + error.message)
             }
         }
     }

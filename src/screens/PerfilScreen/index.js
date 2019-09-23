@@ -87,15 +87,8 @@ function PerfilScreen(props) {
         }
     }, [show])
 
-    const handleBackPress = () => {
-        switch (show) {
-            case 'menu':
-                //voltar para screen anterior
-                break
-            default:
-                setShow('menu')
-                break
-        }
+    const handleBackPress = async () => {
+        handleClickBack()
         return true
     }
 
@@ -123,8 +116,13 @@ function PerfilScreen(props) {
     }
 
     const handleClickBack = () => {
-        setShow('menu')
-        setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+        if (show === 'menu') {
+
+        }
+        else {
+            setShow('menu')
+            setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+        }
     }
 
     const handleClickShare = () => {
@@ -152,11 +150,19 @@ function PerfilScreen(props) {
                                 <Title>{props.client.name}</Title>
                             </ContainerTitle>
                             <ContainerAvatar>
-                                <Avatar
-                                    rounded
-                                    containerStyle={styles.shadow}
-                                    source={{ uri: image.uri }}
-                                    size={120} />
+                                {image.uri.length > 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={styles.shadow}
+                                        source={{ uri: image.uri }}
+                                        size={120} />}
+
+                                {image.uri.length <= 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={styles.shadow}
+                                        size={120} />}
+
                             </ContainerAvatar>
                             <ContainerLista>
                                 {
@@ -168,6 +174,7 @@ function PerfilScreen(props) {
                                             rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                             leftIcon={{ name: item.icon }}
                                             onPress={() => { handleClickMenu(item.title) }}
+                                            onLongPress={() => { handleClickMenu(item.title) }}
                                         />
                                     ))
                                 }

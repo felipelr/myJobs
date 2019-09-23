@@ -17,9 +17,10 @@ export const INITIAL_STATE = {
 export const socialMidiaSignupInit = (state = INITIAL_STATE, action) => {
     return {
         ...state,
+        user: action.user,
         isSigningup: false,
         isSignup: false,
-        user: action.user,
+        newUser: {},
         error: false,
         errorMessage: ''
     }

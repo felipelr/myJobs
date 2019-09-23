@@ -28,8 +28,10 @@ import {
     ButtonMenu,
     ButtonMenuText,
     ViewImageListItem,
-    ImageItem
+    ImageItem,
+    ViewContainerMenuOpacity
 } from './styles'
+
 import { purple } from '../common/util/colors'
 
 import TextInputJobs from '../../components/TextInputJobs/index'
@@ -283,14 +285,25 @@ function ClientEntry(props) {
                 {!props.client.isUpdating && (
                     <React.Fragment>
                         <ContainerAvatar>
-                            <Avatar
-                                rounded
-                                containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
-                                size={120}
-                                onPress={this.handleAvatarClick}
-                                showEditButton
-                                editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />
+                            {image.uri.length > 0 &&
+                                <Avatar
+                                    rounded
+                                    containerStyle={{ elevation: 2, alignSelf: "center" }}
+                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
+                                    size={120}
+                                    onPress={this.handleAvatarClick}
+                                    showEditButton
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+
+                            {image.uri.length <= 0 &&
+                                <Avatar
+                                    rounded
+                                    containerStyle={{ elevation: 2, alignSelf: "center" }}
+                                    size={120}
+                                    onPress={this.handleAvatarClick}
+                                    showEditButton
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+
                         </ContainerAvatar>
 
                         <TextInputJobs
@@ -336,17 +349,21 @@ function ClientEntry(props) {
                         <Modal
                             visible={modalOpened}
                             transparent={menuOpened}
-                            animationType="slide"
+                            animationType="fade"
                             onRequestClose={this.handleModalClose}
                         >
                             {menuOpened && (
                                 <ViewContainerMenu>
+                                    <ViewContainerMenuOpacity />
                                     <ViewContainerButtonsMenu>
                                         <ButtonMenu onPress={this.handleShowCamera}>
                                             <ButtonMenuText>Tirar Foto</ButtonMenuText>
                                         </ButtonMenu>
                                         <ButtonMenu onPress={this.handleShowFolder}>
                                             <ButtonMenuText>Galeria</ButtonMenuText>
+                                        </ButtonMenu>
+                                        <ButtonMenu onPress={this.handleModalClose}>
+                                            <ButtonMenuText>Cancelar</ButtonMenuText>
                                         </ButtonMenu>
                                     </ViewContainerButtonsMenu>
                                 </ViewContainerMenu>
@@ -391,7 +408,7 @@ function ClientEntry(props) {
                                 <ModalContainer>
                                     <ModalContainer>
                                         <FlatList
-                                            numColumns={2}
+                                            numColumns={3}
                                             data={imagesFolder}
                                             keyExtractor={image => image.filename}
                                             renderItem={({ item }) => {

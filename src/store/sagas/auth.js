@@ -44,10 +44,18 @@ function* login(action) {
             }
         })
 
-        let client = view.data.client
-        setClientData(client)
+        const { client } = view.data.user
+        const { professional } = view.data.user
 
-        yield put(ActionCreator.clientUpdateSuccess(client))
+        if (client) {
+            setClientData(client)
+            yield put(ActionCreator.clientUpdateSuccess(client))
+        }
+
+        if (professional) {
+
+        }
+
         yield put(ActionCreator.loginSuccess({ user, token }))
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'

@@ -41,11 +41,10 @@ function ServicesScreen(props) {
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             {console.log(JSON.stringify(props.services))}
             <Container />
-            <HeaderJobs back title='Buscar Serviço' chat />
+            <HeaderJobs back={() => props.ownProps.navigation.navigate('ProfessionalSearch')} title='Buscar Serviço' chat />
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'
@@ -60,12 +59,10 @@ function ServicesScreen(props) {
                             <Icon name='close' size={24} color='white' />
                         </TouchableOpacity>}
                 />
-            </ContainerSearch>
-            {!props.loading &&
-                <ContainerList>
-                    <List tipo='service' titulo='Serviços' itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />
-                </ContainerList>
-            }
+            </ContainerSearch> 
+            <ContainerList>
+                {!props.loading && <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />}
+            </ContainerList> 
             {props.loading &&
                 <View style={{ alignSelf: 'center' }}>
                     <ActivityIndicator size='large' color={purple} />
@@ -73,9 +70,9 @@ function ServicesScreen(props) {
                 </View>
             }
             <Footer
-                    homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
-                    servicesOnPress={() => { }}
-                    perfilOnPress={() => props.ownProps.navigation.navigate('Perfil')} />
+                homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
+                servicesOnPress={() => { }}
+                perfilOnPress={() => props.ownProps.navigation.navigate('Perfil')} />
         </KeyboardAvoidingView>
     )
 }

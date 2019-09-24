@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black} from '../../common/util/colors'
+import { black, green} from '../../common/util/colors'
 import {StyleSheet} from 'react-native'
 
 export const TitleSubcategory = styled.Text`
@@ -27,6 +27,6 @@ export const styles = StyleSheet.create({
         justifyContent:'space-between'
     },
     overlayContainerStyle:{
-        backgroundColor: '#4CAF50' 
+        backgroundColor: green
     }
 })

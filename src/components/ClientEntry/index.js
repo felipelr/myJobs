@@ -6,8 +6,6 @@ import { RNCamera } from 'react-native-camera'
 import CameraRoll from "@react-native-community/cameraroll"
 import RNFetchBlob from 'react-native-fetch-blob'
 
-import { urlMyJobs } from '../../config/config'
-
 import ActionCreators from '../../store/actionCreators'
 
 import { formatPhone, formatDate } from '../common/util/functions'
@@ -61,7 +59,7 @@ function ClientEntry(props) {
     const [documentNumber, setDocumentNumber] = useState(props.client.client.document)
     const [dateBirth, setDateBirth] = useState(props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''))
     const [gender, setGender] = useState(props.client.client.gender)
-    const [image, setImage] = useState(props.client.client.image_path ? { uri: urlMyJobs + props.client.client.image_path } : { uri: '' })
+    const [image, setImage] = useState(props.client.client.image_path ? { uri: props.client.client.image_path } : { uri: '' })
     const [requisitou, setRequisitou] = useState(false)
     const [modalOpened, setModalOpened] = useState(false)
     const [menuOpened, setMenuOpened] = useState(true)
@@ -227,7 +225,7 @@ function ClientEntry(props) {
     }
 
     handleModalClose = () => {
-        setImage(props.client.client.image_path ? { uri: urlMyJobs + props.client.client.image_path } : { uri: '' })
+        setImage(props.client.client.image_path ? { uri: props.client.client.image_path } : { uri: '' })
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)

@@ -3,9 +3,7 @@ import { connect } from 'react-redux'
 import { View, BackHandler } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import Share from 'react-native-share';
-
-import { urlMyJobs } from '../../config/config'
+import Share from 'react-native-share'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -30,7 +28,7 @@ import SuggestCompany from '../../components/SuggestCompany/index'
 
 function PerfilScreen(props) {
     const [title, setTitle] = useState('Perfil')
-    const [image, setImage] = useState((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+    const [image, setImage] = useState((props.client.image_path && props.client.image_path.length > 0) ? { uri: props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
@@ -121,7 +119,7 @@ function PerfilScreen(props) {
         }
         else {
             setShow('menu')
-            setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: urlMyJobs + props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+            setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
         }
     }
 

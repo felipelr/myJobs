@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
 
 import { purple } from '../../../components/common/util/colors'
-import { TitleService, InfoService } from './styles'
+import { TitleService, InfoService, styles } from './styles'
 
 export default function ListItemService(props) {
     const { servico } = props
@@ -14,9 +14,11 @@ export default function ListItemService(props) {
             itemOnPress={props.itemOnPress}
             leftContent={
                 <Avatar
-                    rounded
-                    containerStyle={{ alignSelf: 'center' }}
-                    size={40} 
+                    containerStyle={styles.containerStyle}
+                    overlayContainerStyle={styles.overlayContainerStyle}
+                    containerStyle={{ alignSelf: 'center' }} 
+                    size={60}
+                    title={servico.title.substring(0,1)}
                 />
             }
             centerContent={

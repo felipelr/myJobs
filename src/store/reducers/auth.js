@@ -9,7 +9,8 @@ export const INITIAL_STATE = {
     error: false,
     errorMessage: '',
     token: '',
-    authMessage: ''
+    authMessage: '',
+    userType: 'client'
 }
 
 export const loginRequest = (state = INITIAL_STATE, action) => {

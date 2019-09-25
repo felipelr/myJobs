@@ -1,5 +1,6 @@
 import styled from 'styled-components/native'
-import { purple, black, white } from '../../components/common/util/colors'
+import { StyleSheet } from 'react-native'
+import { purple, black } from '../../components/common/util/colors'
 
 export const LoginTitle = styled.Text`
     font-size: 24px;
@@ -44,3 +45,15 @@ export const NewUserButtonText = styled.Text`
     text-align: left;
     font-family: 'SF-Pro-Text-Regular';
 `
+
+export const ViewContainerRow = styled.View`
+    flex-direction: row;
+    justify-content: space-around;
+`
+
+export const styleSheets = StyleSheet.create({
+    containerCheck: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 0
+    }
+})

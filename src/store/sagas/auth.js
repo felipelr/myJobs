@@ -23,19 +23,27 @@ setClientData = async (clientData) => {
     }
 }
 
+setProfessionalData = async (professionalData) => {
+    try {
+        await AsyncStorage.setItem('@professionalData', JSON.stringify(professionalData))
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 function* login(action) {
     try {
-        let login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
+        const login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
             email: action.email,
             password: action.password
         })
 
-        let { data } = login.data
+        const { data } = login.data
         token = data.token
-        let user = jwtDecode(token)
+        const user = jwtDecode(token)
 
         //salvar token
-        let userData = { user, token }
+        const userData = { user, token }
         setUserData(userData)
 
         let view = yield axios.get(`${urlMyJobsAPI}/users/view/${user.sub}.json`, {
@@ -53,23 +61,31 @@ function* login(action) {
         }
 
         if (professional) {
-
+            setProfessionalData(professional)
+            yield put(ActionCreator.professionalUpdateSuccess(client))
         }
 
         yield put(ActionCreator.loginSuccess({ user, token }))
     } catch (ex) {
-        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.loginError(messageError))
     }
 }
 
 function* auth(action) {
     try {
-        let userData = yield AsyncStorage.getItem('@userData')
+        const userData = yield AsyncStorage.getItem('@userData')
         if (userData) {
-            let clientData = yield AsyncStorage.getItem('@clientData')
+            const clientData = yield AsyncStorage.getItem('@clientData')
+            if (clientData) {
+                yield put(ActionCreator.clientUpdateSuccess(JSON.parse(clientData)))
+            }
 
-            yield put(ActionCreator.clientUpdateSuccess(JSON.parse(clientData)))
+            const professionalData = yield AsyncStorage.getItem('@professionalData')
+            if (professionalData) {
+                yield put(ActionCreator.professionalUpdateSuccess(JSON.parse(professionalData)))
+            }
+
             yield put(ActionCreator.authSuccess(JSON.parse(userData)))
         }
         else {
@@ -84,6 +100,7 @@ function* logout(action) {
     try {
         yield AsyncStorage.removeItem('@userData')
         yield AsyncStorage.removeItem('@clientData')
+        yield AsyncStorage.removeItem('@professionalData')
         yield put(ActionCreator.logoutSuccess())
     } catch (ex) {
         yield put(ActionCreator.logoutError(ex.message))
@@ -92,7 +109,7 @@ function* logout(action) {
 
 function* changePassword(action) {
     try {
-        let postRequest = yield axios.post(`${urlMyJobsAPI}/users/change_password.json`,
+        const postRequest = yield axios.post(`${urlMyJobsAPI}/users/change_password.json`,
             {
                 id: action.user.id,
                 currentPassword: action.currentPassword,
@@ -105,7 +122,7 @@ function* changePassword(action) {
                 }
             })
 
-        let { data } = postRequest
+        const { data } = postRequest
         if (data.error) {
             yield put(ActionCreator.changePasswordError(data.errorMessage))
         }
@@ -113,7 +130,7 @@ function* changePassword(action) {
             yield put(ActionCreator.changePasswordSuccess())
         }
     } catch (ex) {
-        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.changePasswordError(messageError))
     }
 }

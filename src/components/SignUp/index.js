@@ -18,9 +18,14 @@ import { white, purple } from '../common/util/colors'
 import { formatPhone, formatDate } from '../common/util/functions'
 
 import {
-    TextSignUpTitle, ViewContainerGotoLogin, TextGotoLogin,
-    ButtonGotoLogin, TextGotoLoginButton,
-    ViewContainerRow, ViewContainerButton, ScrollViewContainerForm
+    TextSignUpTitle,
+    ViewContainerGotoLogin,
+    TextGotoLogin,
+    ButtonGotoLogin,
+    TextGotoLoginButton,
+    ViewContainerRow,
+    ViewContainerButton,
+    ScrollViewContainerForm
 } from './styles'
 
 import { styleSheets } from './styles'
@@ -261,8 +266,20 @@ function SignUp(props) {
                         {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
                         <View>
                             <ViewContainerRow>
-                                <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
-                                <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
+                                <CheckBox title='Cliente'
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checkedColor={purple}
+                                    containerStyle={styleSheets.containerCheck}
+                                    checked={userType === 1}
+                                    onPress={() => setUserType(1)} />
+                                <CheckBox title='Profissional'
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checkedColor={purple}
+                                    containerStyle={styleSheets.containerCheck}
+                                    checked={userType !== 1}
+                                    onPress={() => setUserType(2)} />
                             </ViewContainerRow>
                             <TextInputJobs
                                 value={name}

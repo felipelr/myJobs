@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { StyleSheet } from 'react-native'
-import { purple, black, white } from '../common/util/colors'
+import { purple, black } from '../common/util/colors'
 
 export const ScrollViewContainerForm = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },

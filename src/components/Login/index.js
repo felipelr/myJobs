@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react'
+import { CheckBox } from 'react-native-elements'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
 import { white, purple } from '../common/util/colors'
 
 import {
-    LoginTitle, LoginButtonContainer,
-    ContainerNewUser, NewUserText, NewUserButton, NewUserButtonText,
-    ViewContainerFields
+    LoginTitle,
+    LoginButtonContainer,
+    ContainerNewUser,
+    NewUserText,
+    NewUserButton,
+    NewUserButtonText,
+    ViewContainerFields,
+    ViewContainerRow
 } from './styles'
+
+import { styleSheets } from './styles'
 
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
@@ -17,6 +25,7 @@ import TextError from '../TextError/index'
 import ButtonPurple from '../ButtonPurple/index'
 
 function Login(props) {
+    const [userType, setUserType] = useState(props.auth.userType === 'client' ? 1 : 2)
     const [email, setEmail] = useState('felipe.lima.flr@gmail.com')
     const [password, setPassword] = useState('101762866218022699799')
 
@@ -27,7 +36,7 @@ function Login(props) {
     }, [props.auth.isAuth])
 
     const handleClickLogin = () => {
-        props.login(email, password)
+        props.login(email, password, userType)
     }
 
     return (
@@ -41,6 +50,22 @@ function Login(props) {
                         props.auth.error && <TextError>{props.auth.errorMessage}</TextError>
                     }
                     <ViewContainerFields>
+                        <ViewContainerRow>
+                            <CheckBox title='Cliente'
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                checkedColor={purple}
+                                containerStyle={styleSheets.containerCheck}
+                                checked={userType === 1}
+                                onPress={() => setUserType(1)} />
+                            <CheckBox title='Profissional'
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                checkedColor={purple}
+                                containerStyle={styleSheets.containerCheck}
+                                checked={userType !== 1}
+                                onPress={() => setUserType(2)} />
+                        </ViewContainerRow>
                         <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
                         <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
 
@@ -69,7 +94,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password))
+        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType))
     }
 }
 

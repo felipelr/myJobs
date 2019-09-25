@@ -2,7 +2,7 @@ import { createActions } from 'reduxsauce'
 
 export const { Types, Creators } = createActions({
     //Auth Actions
-    loginRequest: ['email', 'password'],
+    loginRequest: ['email', 'password', 'userType'],
     loginSuccess: ['data'],
     loginError: ['error'],
     loginCleanError: null,
@@ -46,6 +46,10 @@ export const { Types, Creators } = createActions({
     professionalsSendNewSuggest: ['token', 'data'],
     professionalsSendNewSuggestSuccess: null,
     professionalsSendNewSuggestError: ['error'],
+    professionalUpdateRequest: ['professional', 'token'],
+    professionalUpdateSuccess: ['professional'],
+    professionalUpdateError: ['error'],
+    professionalClearErrors: null,
 
     //Highlights
     highlightsLoadRequest: ['token'],

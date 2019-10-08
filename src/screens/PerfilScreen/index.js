@@ -28,7 +28,7 @@ import SuggestCompany from '../../components/SuggestCompany/index'
 
 function PerfilScreen(props) {
     const [title, setTitle] = useState('Perfil')
-    const [image, setImage] = useState((props.client.image_path && props.client.image_path.length > 0) ? { uri: props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+    const [image, setImage] = useState((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + new Date().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
@@ -119,7 +119,7 @@ function PerfilScreen(props) {
         }
         else {
             setShow('menu')
-            setImage((props.client.image_path && props.client.image_path.length > 0) ? { uri: props.client.image_path + '?v=' + new Date().getTime() } : { uri: '' })
+            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + new Date().getTime() } : { uri: '' })
         }
     }
 

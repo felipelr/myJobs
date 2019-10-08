@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { View, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
-import Geolocation from 'react-native-geolocation-service'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -28,8 +27,6 @@ function SocialMidiaSignup(props) {
     const [invalidField, setInvalidField] = useState('')
     const [phone, setPhone] = useState('')
     const [documentNumber, setDocumentNumber] = useState('')
-    const [latitude, setLatitude] = useState('0')
-    const [longitude, setLongitude] = useState('0')
     const [dateBirth, setDateBirth] = useState('')
     const [gender, setGender] = useState('MASCULINO')
     const [genderList, setGenderList] = useState([
@@ -48,43 +45,12 @@ function SocialMidiaSignup(props) {
     ])
 
     useEffect(() => {
-        if (Platform.OS === 'ios') {
-            callLocation()
-        } else {
-            async function requestLocationPermission() {
-                try {
-                    const granted = await PermissionsAndroid.request(
-                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-                        'title': 'Location Access Required',
-                        'message': 'This App needs to Access your location'
-                    }
-                    )
-                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        //To Check, If Permission is granted
-                        callLocation()
-                    } else {
-                        alert("Permission Denied")
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-            }
-            requestLocationPermission()
-        }
-
         //verificar se já existe cadastro do facebook
         if (props.socialMidiaSignup.user.facebook_id) {
             props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.facebook_id, 'facebook')
         }
         else if (props.socialMidiaSignup.user.google_id) {
             props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.google_id, 'google')
-        }
-
-        console.log('passou aqui')
-
-        return () => {
-            if (this.watchID)
-                Geolocation.clearWatch(this.watchID)
         }
     }, [])
 
@@ -131,32 +97,6 @@ function SocialMidiaSignup(props) {
                 setDateBirth(date_)
         }
     }, [dateBirth])
-
-    callLocation = () => {
-        try {
-            Geolocation.getCurrentPosition(
-                //Will give you the current location
-                (position) => {
-                    const currentLongitude = JSON.stringify(position.coords.longitude)
-                    const currentLatitude = JSON.stringify(position.coords.latitude)
-                    setLongitude(currentLongitude)
-                    setLatitude(currentLatitude)
-                },
-                (error) => console.log(error.message),
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
-            )
-            this.watchID = Geolocation.watchPosition(
-                //Will give you the location on location change
-                (position) => {
-                    const currentLongitude = JSON.stringify(position.coords.longitude)
-                    const currentLatitude = JSON.stringify(position.coords.latitude)
-                    setLongitude(currentLongitude)
-                    setLatitude(currentLatitude)
-                })
-        } catch (err) {
-
-        }
-    }
 
     handleOnChange = (field, text) => {
         switch (field) {
@@ -226,8 +166,6 @@ function SocialMidiaSignup(props) {
                 gender: gender,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.facebook_id,
-                longitude: longitude,
-                latitude: latitude,
                 facebook_id: props.socialMidiaSignup.user.facebook_id
             }
 
@@ -243,8 +181,6 @@ function SocialMidiaSignup(props) {
                 gender: props.socialMidiaSignup.user.gender,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.google_id,
-                longitude: longitude,
-                latitude: latitude,
                 google_id: props.socialMidiaSignup.user.google_id
             }
 

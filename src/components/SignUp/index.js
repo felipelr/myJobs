@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { View, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
-import Geolocation from 'react-native-geolocation-service'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -55,38 +54,9 @@ function SignUp(props) {
     const [documentNumber, setDocumentNumber] = useState('')
     const [dateBirth, setDateBirth] = useState('')
     const [gender, setGender] = useState('MASCULINO')
-    const [latitude, setLatitude] = useState('0')
-    const [longitude, setLongitude] = useState('0')
 
     useEffect(() => {
-        if (Platform.OS === 'ios') {
-            callLocation()
-        } else {
-            async function requestLocationPermission() {
-                try {
-                    const granted = await PermissionsAndroid.request(
-                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-                        'title': 'Acesso a Localização requisitado',
-                        'message': 'Este aplicativo precisa acessar sua localização'
-                    }
-                    )
-                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        //To Check, If Permission is granted
-                        callLocation()
-                    } else {
-                        alert("Permission Denied")
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-            }
-            requestLocationPermission()
-        }
-
-        return () => {
-            if (this.watchID)
-                Geolocation.clearWatch(this.watchID)
-        }
+        
     }, [])
 
     useEffect(() => {
@@ -127,28 +97,6 @@ function SignUp(props) {
         }
     }, [phone])
 
-    callLocation = () => {
-        Geolocation.getCurrentPosition(
-            //Will give you the current location
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude)
-                const currentLatitude = JSON.stringify(position.coords.latitude)
-                setLongitude(currentLongitude)
-                setLatitude(currentLatitude)
-            },
-            (error) => console.log(error.message),
-            { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
-        )
-        this.watchID = Geolocation.watchPosition(
-            //Will give you the location on location change
-            (position) => {
-                const currentLongitude = JSON.stringify(position.coords.longitude)
-                const currentLatitude = JSON.stringify(position.coords.latitude)
-                setLongitude(currentLongitude)
-                setLatitude(currentLatitude)
-            })
-    }
-
     handleClickSignUp = () => {
         if (!validateField('name', name))
             return
@@ -179,8 +127,6 @@ function SignUp(props) {
             gender: gender,
             email: email,
             password: password,
-            longitude: longitude,
-            latitude: latitude
         }
         props.signupRequest(user)
     }

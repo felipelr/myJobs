@@ -88,7 +88,7 @@ function* verifyAccount(action) {
         }
         else {
             let user = resposta.data.user
-            user.email = user.user.email
+            user.email = user.email
             user.password = action.socialMidiaId
             yield put(ActionCreator.socialMidiaVerifySuccess(user))
         }

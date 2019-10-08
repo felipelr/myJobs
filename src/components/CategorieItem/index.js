@@ -41,7 +41,6 @@ const CategorieItem = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        selected: state.categoria.selected,
         ownProps: ownProps
     }
 }

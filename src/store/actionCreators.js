@@ -55,6 +55,7 @@ export const { Types, Creators } = createActions({
     highlightsLoadRequest: ['token'],
     highlightsLoadSuccess: ['highlights'],
     highlightsLoadError: ['error'],
+    highlightsLoadBySubcategoryRequest: ['subcategory','token'],
 
     //Social Midia Actions
     socialMidiaSignupInit: ['user'],

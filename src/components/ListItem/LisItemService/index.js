@@ -9,9 +9,14 @@ import { TitleService, InfoService, styles, Services } from './styles'
 
 export default function ListItemService(props) {
     const { servico } = props
+
+    onPress = (navigate, servicoItem) => { 
+        navigate()
+    }
+
     return (
         <ListItem
-            itemOnPress={props.itemOnPress}
+            itemOnPress={() => onPress(props.itemOnPress,servico)}
             leftContent={
                 <Avatar
                     containerStyle={styles.containerStyle}

@@ -43,7 +43,7 @@ function ProfessionalSearchScreen(props) {
         return true
     }
 
-    selectSubcategoryRedirect = (subcategory) => {
+    selectSubcategoryRedirect = () => {
         props.navigation.navigate('Services')
     }
 
@@ -52,8 +52,12 @@ function ProfessionalSearchScreen(props) {
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJob filter={true} />
+<<<<<<< HEAD
             <ContainerCategorias>
                 <Text>{JSON.stringify(props.selectSubcategory)}</Text>
+=======
+            <ContainerCategorias>  
+>>>>>>> 86ac2fca8bc568072f3b3579b0651dbae56e24f8
                 <Highlights titulo={'Destaques do mês'} />
                 <Categories />
                 <View style={{ flex: 2, marginTop: 2 }}>

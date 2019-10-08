@@ -12,14 +12,14 @@ import ActionCreators from '../../../store/actionCreators'
 function ListItemService(props){
     const { subcategory } = props
 
-    onPress = (navigate) => {
-        props.selectSubcategory(props.subcategory)
+    onPress = (navigate, subcategoryItem) => {
+        props.selectSubcategory(subcategoryItem)
         navigate()
     }
 
     return (
         <ListItem
-            itemOnPress={() => onPress(props.itemOnPress)}
+            itemOnPress={() => onPress(props.itemOnPress,subcategory)}
             leftContent={
                 <Avatar
                     containerStyle={styles.containerStyle}

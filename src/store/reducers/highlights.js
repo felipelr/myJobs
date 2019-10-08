@@ -31,11 +31,19 @@ export const highlightsLoadError = (state = INITIAL_STATE, action) => {
         errorMessage: action.error
     }
 }
+
+export const highlightsLoadBySubcategoryRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: true
+    }
+}
  
 export const HANDLES = {
     [Types.HIGHLIGHTS_LOAD_REQUEST]: highlightsLoadRequest,
     [Types.HIGHLIGHTS_LOAD_SUCCESS]: highlightsLoadSuccess,
     [Types.HIGHLIGHTS_LOAD_ERROR]: highlightsLoadError,
+    [Types.HIGHLIGHTS_LOAD_BY_SUBCATEGORY_REQUEST]: highlightsLoadBySubcategoryRequest,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

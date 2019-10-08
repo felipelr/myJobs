@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black, green } from '../../common/util/colors'
+import { black, green, gold } from '../../common/util/colors'
 import {StyleSheet} from 'react-native'
 
 export const TitleService = styled.Text`
@@ -19,6 +19,15 @@ export const InfoService = styled.Text`
     margin-left: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
+`
+
+export const Services = styled.Text`
+    font-size: 10px;
+    font-family: 'SF-Pro-Text-Bold'; 
+    color: ${gold}; 
+    margin-left: 10px;
+    flex-direction:row;
+    font-weight:bold;
 `
  
 export const styles = StyleSheet.create({

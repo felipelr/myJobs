@@ -9,15 +9,18 @@ import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import List from '../../components/List/index'
+import Highlights from '../../components/Highlights/index'
 import ActionCreators from '../../store/actionCreators'
 import { purple } from '../../components/common/util/colors'
 
 function ServicesScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
-    const [search, setSearch] = useState('')
+    const [search, setSearch] = useState('');
+    const [servicesSubcategory, setServicesSubcategory] = useState([]);
 
     useEffect(() => {
         props.getServicesSubcategoryRequest(props.selectedSubcategory, props.token)
+        props.getHighlightsLoadBySubcategoryRequest(props.selectedSubcategory, props.token)
 
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
             setKeyboardIsVisible(true)
@@ -34,17 +37,29 @@ function ServicesScreen(props) {
     }, [])
 
     useEffect(() => {
+        if (search.length > 0) {
+            var filtrados = props.services.filter(function (obj) {
+                return obj.title.toUpperCase().includes(search.toUpperCase()) || obj.description.toUpperCase().includes(search.toUpperCase());
+            })
+            setServicesSubcategory(filtrados);
+        } else {
+            setServicesSubcategory(props.services);
+        }
+    }, [search, props.services])
+
+    useEffect(() => {
         if (!props.isAuth) {
             props.ownProps.navigation.navigate('Login')
         }
     }, [props.isAuth])
+ 
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            {console.log(JSON.stringify(props.services))}
             <Container />
             <HeaderJobs back={() => props.ownProps.navigation.navigate('ProfessionalSearch')} title='Buscar Serviço' chat />
+            <Highlights titulo={'Destaques do mês'} />
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'
@@ -59,10 +74,10 @@ function ServicesScreen(props) {
                             <Icon name='close' size={24} color='white' />
                         </TouchableOpacity>}
                 />
-            </ContainerSearch> 
+            </ContainerSearch>
             <ContainerList>
-                {!props.loading && <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />}
-            </ContainerList> 
+                {!props.loading && <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={servicesSubcategory} itemOnPress={() => props.navigation.navigate('ProfessionalHome')} />}
+            </ContainerList>
             {props.loading &&
                 <View style={{ alignSelf: 'center' }}>
                     <ActivityIndicator size='large' color={purple} />
@@ -95,6 +110,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         getServicesSubcategoryRequest: (selectedSubcategory, token) => dispatch(ActionCreators.getServicesSubcategoryRequest(selectedSubcategory, token)),
+        getHighlightsLoadBySubcategoryRequest: (selectedSubcategory, token) => dispatch(ActionCreators.highlightsLoadBySubcategoryRequest(selectedSubcategory, token)),
     }
 }
 

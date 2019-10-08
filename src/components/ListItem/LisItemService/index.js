@@ -5,13 +5,18 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
 
 import { purple } from '../../../components/common/util/colors'
-import { TitleService, InfoService, styles } from './styles'
+import { TitleService, InfoService, styles, Services } from './styles'
 
 export default function ListItemService(props) {
     const { servico } = props
+
+    onPress = (navigate, servicoItem) => { 
+        navigate()
+    }
+
     return (
         <ListItem
-            itemOnPress={props.itemOnPress}
+            itemOnPress={() => onPress(props.itemOnPress,servico)}
             leftContent={
                 <Avatar
                     containerStyle={styles.containerStyle}
@@ -25,6 +30,9 @@ export default function ListItemService(props) {
                 <View>
                     <TitleService>{servico.title}</TitleService>
                     <InfoService>{servico.description}</InfoService>
+                    <Services>
+                    {servico.Profissionais}{servico.Profissionais != 1 ? ' profissionais registrados': ' profissional registrado'}   
+                    </Services>
                 </View>
             }
             rightContent={

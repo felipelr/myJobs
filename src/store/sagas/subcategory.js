@@ -32,8 +32,7 @@ function* getServicesSubcategory(action) {
         yield put(ActionCreator.getServicesSubcategorySuccess(services))
 
     } catch (ex) {  
-        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-        console.log('erro na saga ' + messageError)
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido' 
         yield put(ActionCreator.subcategoriesLoadError(messageError))
     }
 }

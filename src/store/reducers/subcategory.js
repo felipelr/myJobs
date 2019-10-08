@@ -18,7 +18,6 @@ export const subcategoriesLoadRequest = (state = INITIAL_STATE, action) => {
 }
 
 export const subcategoriesLoadSuccess = (state = INITIAL_STATE, action) => {
-
     return {
         ...state,
         subcategories: action.subcategories,

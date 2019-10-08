@@ -14,9 +14,10 @@ import { purple } from '../../components/common/util/colors'
 
 function ServicesScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
-    const [search, setSearch] = useState('')
+    const [search, setSearch] = useState('');
+    const [servicesSubcategory, setServicesSubcategory] = useState([]);
 
-    useEffect(() => {
+    useEffect(() => { 
         props.getServicesSubcategoryRequest(props.selectedSubcategory, props.token)
 
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -29,9 +30,20 @@ function ServicesScreen(props) {
         return () => {
             this.kbShow.remove()
             this.kbShow.remove()
-        }
+        } 
 
     }, [])
+
+    useEffect(() => {
+        if(search.length > 0){
+            console.log(search)
+            var filtrados = props.services.filter(function(obj) { return obj.description.toUpperCase().includes(search.toUpperCase()); })
+            console.log(filtrados)
+            setServicesSubcategory(filtrados); 
+        }else{
+            setServicesSubcategory(props.services);
+        }
+    }, [search, props.services])
 
     useEffect(() => {
         if (!props.isAuth) {
@@ -42,7 +54,6 @@ function ServicesScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            {console.log(JSON.stringify(props.services))}
             <Container />
             <HeaderJobs back={() => props.ownProps.navigation.navigate('ProfessionalSearch')} title='Buscar Serviço' chat />
             <ContainerSearch>
@@ -61,7 +72,7 @@ function ServicesScreen(props) {
                 />
             </ContainerSearch> 
             <ContainerList>
-                {!props.loading && <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={props.services} itemOnPress={() => props.navigation.navigate('ServiceHome')} />}
+                {!props.loading && <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={servicesSubcategory} itemOnPress={() => props.navigation.navigate('ServiceHome')} />}
             </ContainerList> 
             {props.loading &&
                 <View style={{ alignSelf: 'center' }}>

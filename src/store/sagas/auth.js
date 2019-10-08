@@ -38,6 +38,8 @@ function* login(action) {
             password: action.password
         })
 
+        console.log(action)
+
         const { data } = login.data
         token = data.token
         const user = jwtDecode(token)
@@ -65,7 +67,9 @@ function* login(action) {
             yield put(ActionCreator.professionalUpdateSuccess(client))
         }
 
-        yield put(ActionCreator.loginSuccess({ user, token }))
+        const userType = action.userType
+
+        yield put(ActionCreator.loginSuccess({ user, token, userType }))
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.loginError(messageError))
@@ -76,6 +80,7 @@ function* auth(action) {
     try {
         const userData = yield AsyncStorage.getItem('@userData')
         if (userData) {
+            let userType = 1
             const clientData = yield AsyncStorage.getItem('@clientData')
             if (clientData) {
                 yield put(ActionCreator.clientUpdateSuccess(JSON.parse(clientData)))
@@ -84,9 +89,12 @@ function* auth(action) {
             const professionalData = yield AsyncStorage.getItem('@professionalData')
             if (professionalData) {
                 yield put(ActionCreator.professionalUpdateSuccess(JSON.parse(professionalData)))
+                userType = 2
             }
 
-            yield put(ActionCreator.authSuccess(JSON.parse(userData)))
+            const dados = { ...JSON.parse(userData), userType }
+
+            yield put(ActionCreator.authSuccess(dados))
         }
         else {
             yield put(ActionCreator.authError())

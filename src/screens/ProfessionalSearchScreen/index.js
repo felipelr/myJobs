@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Platform, BackHandler,ActivityIndicator } from 'react-native'
+import { View, Text, Platform, BackHandler, ActivityIndicator } from 'react-native'
 import { ContainerCategorias, TextLoading } from './styles'
 import { connect } from 'react-redux'
 
@@ -13,10 +13,12 @@ import List from '../../components/List/index'
 import { purple } from '../../components/common/util/colors'
 
 function ProfessionalSearchScreen(props) {
-    
+
     useEffect(() => {
         props.getCategories(props.token) //carrega categorias
         props.getHighlights(props.token) //carrega anunciantes
+
+        console.log(props.userType)
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
@@ -25,7 +27,7 @@ function ProfessionalSearchScreen(props) {
     }, [])
 
     useEffect(() => {
-        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) { 
+        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
             props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
         }
     }, [props.selectedCategorie])
@@ -50,21 +52,21 @@ function ProfessionalSearchScreen(props) {
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJob filter={true} />
-            <ContainerCategorias> 
+            <ContainerCategorias>
                 <Text>{JSON.stringify(props.selectSubcategory)}</Text>
                 <Highlights titulo={'Destaques do mês'} />
-                <Categories /> 
-                <View style={{ flex: 2, marginTop: 2}}>
-                    { 
+                <Categories />
+                <View style={{ flex: 2, marginTop: 2 }}>
+                    {
                         props.selectedCategorie != null ? (
                             props.loadingSubcategories ?
                                 (
-                                    <View style={{alignSelf:'center'}}>
-                                        <ActivityIndicator size='large' color={purple} /> 
+                                    <View style={{ alignSelf: 'center' }}>
+                                        <ActivityIndicator size='large' color={purple} />
                                         <TextLoading>Loading...</TextLoading>
                                     </View>
                                 ) :
-                                ( 
+                                (
                                     <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={selectSubcategoryRedirect} />
                                 )
                         ) : (
@@ -75,7 +77,7 @@ function ProfessionalSearchScreen(props) {
             </ContainerCategorias>
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')}
+                perfilOnPress={() => props.userType === 'client' ? props.navigation.navigate('Perfil') : props.navigation.navigate('ProfessionalHome')}
             />
         </View>
     )
@@ -88,7 +90,9 @@ const mapStateToProps = (state, ownProps) => {
         data: state.categoria.data,
         selectedCategorie: state.categoria.selected,
         subcategories: state.subcategory.subcategories,
-        loadingSubcategories: state.subcategory.loading,   
+        loadingSubcategories: state.subcategory.loading,
+        userType: state.auth.userType,
+        professional: state.professional.professional,
         ownProps: ownProps
     }
 }

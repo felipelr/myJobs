@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, PermissionsAndroid, Platform } from 'react-native'
+import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 

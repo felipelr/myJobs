@@ -28,7 +28,8 @@ export const loginSuccess = (state = INITIAL_STATE, action) => {
         isAuth: true,
         isLogingin: false,
         user: action.data.user,
-        token: action.data.token
+        token: action.data.token,
+        userType: action.userType === 1 ? 'client' : 'professional'
     }
 }
 
@@ -59,6 +60,7 @@ export const authSuccess = (state = INITIAL_STATE, action) => {
         isLogingin: false,
         user: action.data.user,
         token: action.data.token,
+        userType: action.userType === 1 ? 'client' : 'professional',
         authMessage: 'success'
     }
 }

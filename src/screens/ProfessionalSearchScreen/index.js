@@ -3,6 +3,8 @@ import { View, Text, Platform, BackHandler, ActivityIndicator } from 'react-nati
 import { ContainerCategorias, TextLoading } from './styles'
 import { connect } from 'react-redux'
 
+import { logout } from '../../services/authServices'
+
 import ActionCreators from '../../store/actionCreators'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -39,7 +41,7 @@ function ProfessionalSearchScreen(props) {
     }, [props.isAuth])
 
     handleBackPress = () => {
-        props.logout()
+        logout()
         return true
     }
 
@@ -52,12 +54,8 @@ function ProfessionalSearchScreen(props) {
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJob filter={true} />
-<<<<<<< HEAD
             <ContainerCategorias>
                 <Text>{JSON.stringify(props.selectSubcategory)}</Text>
-=======
-            <ContainerCategorias>  
->>>>>>> 86ac2fca8bc568072f3b3579b0651dbae56e24f8
                 <Highlights titulo={'Destaques do mês'} />
                 <Categories />
                 <View style={{ flex: 2, marginTop: 2 }}>
@@ -105,7 +103,6 @@ const mapDispatchToProps = dispatch => {
     return {
         getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
         getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
-        logout: () => dispatch(ActionCreators.logoutRequest()),
         subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie)),
     }
 }

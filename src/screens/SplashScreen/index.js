@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -7,18 +8,42 @@ import { ViewContainer } from './styles'
 
 function SplashScreen(props) {
 
-    useEffect(() => {
-        props.authRequest()
-    }, [])
+    getUserData = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('@userData')
+            if (userData) {
+                let userType = 1
+                const clientData = await AsyncStorage.getItem('@clientData')
+                const professionalData = await AsyncStorage.getItem('@professionalData')
+
+                if (clientData) {
+                    props.clientUpdateSuccess(JSON.parse(clientData))
+                }
+
+                if (professionalData) {
+                    props.professionalUpdateSuccess(JSON.parse(professionalData))
+                    userType = 2
+                }
+
+                return { ...JSON.parse(userData), userType }
+            }
+            return null;
+        } catch (e) {
+            return null
+        }
+    }
 
     useEffect(() => {
-        if (props.auth.authMessage === 'success') {
-            props.ownProps.navigation.navigate('ProfessionalSearch')
-        }
-        else {
-            props.ownProps.navigation.navigate('Login')
-        }
-    }, [props.auth.authMessage])
+        getUserData()
+            .then((dados) => {
+                if (dados != null) {
+                    props.authSuccess(dados)
+                    props.ownProps.navigation.navigate('Perfil')
+                } else {
+                    props.ownProps.navigation.navigate('Login')
+                }
+            })
+    }, [])
 
     return (
         <ViewContainer>
@@ -32,14 +57,15 @@ SplashScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        auth: state.auth,
         ownProps: ownProps
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        authRequest: () => dispatch(ActionCreators.authRequest())
+        clientUpdateSuccess: (dados) => dispatch(ActionCreators.clientUpdateSuccess(dados)),
+        professionalUpdateSuccess: (dados) => dispatch(ActionCreators.professionalUpdateSuccess(dados)),
+        authSuccess: (dados) => dispatch(ActionCreators.authSuccess(dados)),
     }
 }
 

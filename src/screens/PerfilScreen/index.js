@@ -36,6 +36,10 @@ function PerfilScreen(props) {
             icon: 'account-circle'
         },
         {
+            title: 'Meus Endereços', //mvp -> alterar endereço
+            icon: 'account-circle'
+        },
+        {
             title: 'Segurança', //mvp -> alteração de senha
             icon: 'lock'
         },

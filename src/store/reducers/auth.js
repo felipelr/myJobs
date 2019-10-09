@@ -9,7 +9,6 @@ export const INITIAL_STATE = {
     error: false,
     errorMessage: '',
     token: '',
-    authMessage: '',
     userType: 'client'
 }
 
@@ -45,14 +44,6 @@ export const loginError = (state = INITIAL_STATE, action) => {
     }
 }
 
-export const authRequest = (state = INITIAL_STATE, action) => {
-    return {
-        ...state,
-        isLogingin: true,
-        authMessage: ''
-    }
-}
-
 export const authSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
@@ -60,19 +51,7 @@ export const authSuccess = (state = INITIAL_STATE, action) => {
         isLogingin: false,
         user: action.data.user,
         token: action.data.token,
-        userType: action.userType === 1 ? 'client' : 'professional',
-        authMessage: 'success'
-    }
-}
-
-export const authError = (state = INITIAL_STATE, action) => {
-    return {
-        ...state,
-        isAuth: false,
-        isLogingin: false,
-        user: {},
-        token: '',
-        authMessage: 'error'
+        userType: action.userType === 1 ? 'client' : 'professional'
     }
 }
 
@@ -81,31 +60,6 @@ export const loginCleanError = (state = INITIAL_STATE, action) => {
         ...state,
         error: false,
         errorMessage: ''
-    }
-}
-
-export const logoutRequest = (state = INITIAL_STATE, action) => {
-    return {
-        ...state,
-        error: false,
-        errorMessage: ''
-    }
-}
-
-export const logoutSuccess = (state = INITIAL_STATE, action) => {
-    return {
-        ...state,
-        isAuth: false,
-        error: false,
-        errorMessage: ''
-    }
-}
-
-export const logoutError = (state = INITIAL_STATE, action) => {
-    return {
-        ...state,
-        error: true,
-        errorMessage: action.error
     }
 }
 
@@ -149,12 +103,7 @@ export const HANDLERS = {
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
     [Types.LOGIN_CLEAN_ERROR]: loginCleanError,
-    [Types.AUTH_REQUEST]: authRequest,
     [Types.AUTH_SUCCESS]: authSuccess,
-    [Types.AUTH_ERROR]: authError,
-    [Types.LOGOUT_REQUEST]: logoutRequest,
-    [Types.LOGOUT_SUCCESS]: logoutSuccess,
-    [Types.LOGOUT_ERROR]: logoutError,
     [Types.CHANGE_PASSWORD_REQUEST]: changePasswordRequest,
     [Types.CHANGE_PASSWORD_SUCCESS]: changePasswordSuccess,
     [Types.CHANGE_PASSWORD_ERROR]: changePasswordError,

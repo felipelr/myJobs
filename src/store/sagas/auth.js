@@ -76,34 +76,6 @@ function* login(action) {
     }
 }
 
-function* auth(action) {
-    try {
-        const userData = yield AsyncStorage.getItem('@userData')
-        if (userData) {
-            let userType = 1
-            const clientData = yield AsyncStorage.getItem('@clientData')
-            if (clientData) {
-                yield put(ActionCreator.clientUpdateSuccess(JSON.parse(clientData)))
-            }
-
-            const professionalData = yield AsyncStorage.getItem('@professionalData')
-            if (professionalData) {
-                yield put(ActionCreator.professionalUpdateSuccess(JSON.parse(professionalData)))
-                userType = 2
-            }
-
-            const dados = { ...JSON.parse(userData), userType }
-
-            yield put(ActionCreator.authSuccess(dados))
-        }
-        else {
-            yield put(ActionCreator.authError())
-        }
-    } catch (ex) {
-        yield put(ActionCreator.authError())
-    }
-}
-
 function* logout(action) {
     try {
         yield AsyncStorage.removeItem('@userData')
@@ -146,7 +118,6 @@ function* changePassword(action) {
 export default function* rootAuth() {
     yield all([
         takeLatest(Types.LOGIN_REQUEST, login),
-        takeLatest(Types.AUTH_REQUEST, auth),
         takeLatest(Types.LOGOUT_REQUEST, logout),
         takeLatest(Types.CHANGE_PASSWORD_REQUEST, changePassword),
     ])

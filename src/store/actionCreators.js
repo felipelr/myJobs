@@ -7,6 +7,7 @@ export const { Types, Creators } = createActions({
     loginError: ['error'],
     loginCleanError: null,
     authSuccess: ['data'],
+    logoutSuccess: null,
     changePasswordRequest: ['token', 'user', 'currentPassword', 'newPassword'],
     changePasswordSuccess: null,
     changePasswordError: ['error'],

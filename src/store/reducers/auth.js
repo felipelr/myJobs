@@ -44,6 +44,25 @@ export const loginError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const loginCleanError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        error: false,
+        errorMessage: ''
+    }
+}
+
+export const logoutSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isAuth: true,
+        isLogingin: false,
+        user: {},
+        token: '',
+        userType: 'client'
+    }
+}
+
 export const authSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
@@ -52,14 +71,6 @@ export const authSuccess = (state = INITIAL_STATE, action) => {
         user: action.data.user,
         token: action.data.token,
         userType: action.userType === 1 ? 'client' : 'professional'
-    }
-}
-
-export const loginCleanError = (state = INITIAL_STATE, action) => {
-    return {
-        ...state,
-        error: false,
-        errorMessage: ''
     }
 }
 
@@ -103,6 +114,7 @@ export const HANDLERS = {
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
     [Types.LOGIN_CLEAN_ERROR]: loginCleanError,
+    [Types.LOGOUT_SUCCESS]: logoutSuccess,
     [Types.AUTH_SUCCESS]: authSuccess,
     [Types.CHANGE_PASSWORD_REQUEST]: changePasswordRequest,
     [Types.CHANGE_PASSWORD_SUCCESS]: changePasswordSuccess,

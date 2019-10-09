@@ -12,6 +12,7 @@ import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 import { purple } from '../../components/common/util/colors'
 import categoryAPI from '../../services/categoryAPI'
+import { logout } from '../../services/authServices'
 
 function ProfessionalSearchScreen(props) {
 
@@ -42,14 +43,14 @@ function ProfessionalSearchScreen(props) {
     useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
             //props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token) 
-            setSubcategories([]); 
+            setSubcategories([]);
             categoryAPI.subcategoriesByCategoryRequest(props.token, props.selectedCategorie.id)
                 .then(resposta => {
-                    setSubcategories(resposta.data.subcategories); 
+                    setSubcategories(resposta.data.subcategories);
                 })
                 .catch(function (error) {
                     console.log('Erro na requisição: ' + error.message);
-                }); 
+                });
         }
     }, [props.selectedCategorie])
 
@@ -60,7 +61,10 @@ function ProfessionalSearchScreen(props) {
     }, [props.isAuth])
 
     handleBackPress = () => {
-        props.logout()
+        logout().then((result) => {
+            if (result === 'success')
+                props.logoutSuccess()
+        })
         return true
     }
 
@@ -108,7 +112,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
-        selectedCategorie: state.categoria.selected, 
+        selectedCategorie: state.categoria.selected,
         userType: state.auth.userType,
         professional: state.professional.professional,
         ownProps: ownProps
@@ -116,10 +120,10 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = dispatch => {
-    return { 
+    return {
         getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
-        logout: () => dispatch(ActionCreators.logoutRequest()),
-     }
+        logoutSuccess: () => dispatch(ActionCreators.logoutSuccess()),
+    }
 }
 
 ProfessionalSearchScreen.navigationOptions = {

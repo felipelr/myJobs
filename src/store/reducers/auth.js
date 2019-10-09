@@ -53,9 +53,10 @@ export const loginCleanError = (state = INITIAL_STATE, action) => {
 }
 
 export const logoutSuccess = (state = INITIAL_STATE, action) => {
+    console.log('logout success')
     return {
         ...state,
-        isAuth: true,
+        isAuth: false,
         isLogingin: false,
         user: {},
         token: '',

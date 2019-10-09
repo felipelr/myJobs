@@ -22,7 +22,7 @@ export const changePassword = async (dados) => {
             return data.errorMessage
         }
 
-        return "sucesso"
+        return "success"
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         return messageError

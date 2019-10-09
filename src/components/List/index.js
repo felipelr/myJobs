@@ -5,10 +5,11 @@ import ListItemProfessional from '../ListItem/ListItemProfessional/index'
 import ListItemService from '../ListItem/LisItemService'
 import ListSubcategory from '../ListItem/ListSubcategory'
 
-export default function List(props) {
+export default function List(props) { 
     const { titulo } = props
     const { itens } = props
     const { tipo } = props
+    console.log('itens = ' + JSON.stringify(itens))
     return (
         <React.Fragment>
             <TitleList>{titulo}</TitleList>

@@ -42,15 +42,14 @@ function ProfessionalSearchScreen(props) {
     useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
             //props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token) 
+            setSubcategories([]); 
             categoryAPI.subcategoriesByCategoryRequest(props.token, props.selectedCategorie.id)
                 .then(resposta => {
-                    setSubcategories(resposta.data.subcategories);
-                    console.log('sucesso = ' + subcategories)
+                    setSubcategories(resposta.data.subcategories); 
                 })
                 .catch(function (error) {
                     console.log('Erro na requisição: ' + error.message);
-                });
-            props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
+                }); 
         }
     }, [props.selectedCategorie])
 
@@ -80,7 +79,7 @@ function ProfessionalSearchScreen(props) {
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
                         props.selectedCategorie != null ? (
-                            subcategories != null ?
+                            subcategories == null || subcategories.length == 0 ?
                                 (
                                     <View style={{ alignSelf: 'center' }}>
                                         <ActivityIndicator size='large' color={purple} />
@@ -109,10 +108,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
-        data: state.categoria.data,
-        selectedCategorie: state.categoria.selected,
-        subcategories: state.subcategory.subcategories,
-        loadingSubcategories: state.subcategory.loading,
+        selectedCategorie: state.categoria.selected, 
         userType: state.auth.userType,
         professional: state.professional.professional,
         ownProps: ownProps
@@ -120,12 +116,10 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = dispatch => {
-    return {
-        //getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
+    return { 
         getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
         logout: () => dispatch(ActionCreators.logoutRequest()),
-        //subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie)),
-    }
+     }
 }
 
 ProfessionalSearchScreen.navigationOptions = {

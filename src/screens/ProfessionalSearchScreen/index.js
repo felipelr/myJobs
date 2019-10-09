@@ -1,64 +1,53 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, Platform, BackHandler, ActivityIndicator } from 'react-native'
-import { ContainerCategorias, TextLoading } from './styles'
-import { connect } from 'react-redux'
+import React, { useState, useEffect } from 'react';
+import { View, Text, Platform, BackHandler, ActivityIndicator } from 'react-native';
+import { ContainerCategorias, TextLoading } from './styles';
+import { connect } from 'react-redux';
 
-import ActionCreators from '../../store/actionCreators'
-import Footer from '../../components/Footer/index'
-import Container from '../../components/Container/index'
-import Highlights from '../../components/Highlights/index'
-import HeaderJob from '../../components/HeaderJobs/index'
-import Categories from '../../components/Categories/index'
-import List from '../../components/List/index'
-import { purple } from '../../components/common/util/colors'
-import categoryAPI from '../../services/categoryAPI'
-import { logout } from '../../services/authServices'
+import ActionCreators from '../../store/actionCreators';
+import Footer from '../../components/Footer/index';
+import Container from '../../components/Container/index';
+import Highlights from '../../components/Highlights/index';
+import HeaderJob from '../../components/HeaderJobs/index';
+import Categories from '../../components/Categories/index';
+import List from '../../components/List/index';
+import { purple } from '../../components/common/util/colors';
+import { logout } from '../../services/authServices';
+import useGet from '../../services/restServices';
 
 function ProfessionalSearchScreen(props) {
 
-    const [categories, setCategories] = useState([]);
-    const [subcategories, setSubcategories] = useState([]);
+    const categories = useGet('/categories/index.json', props.token); //Carrega as categorias do sistema
+    const subcategories = useGet('', props.token); //Passa o parametro URL como vazio para que não seja feita nenhuma requisição porém gera os Hooks normalmente
+    const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
-        //props.getCategories(props.token) //carrega categorias
-        props.getHighlights(props.token) //carrega anunciantes
+        if (BackHandler)
+            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-        categoryAPI.loadCategorias(props.token)
-            .then(resposta => {
-                setCategories(resposta.data);
-            })
-            .catch(function (error) {
-                console.log('Teste: ' + error.message);
-            });
-
-
-        console.log(props.userType)
-
-        this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
-            this.backHandler.remove()
+            if (this.backHandler)
+                this.backHandler.remove();
         }
     }, [])
 
     useEffect(() => {
-        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
-            //props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token) 
-            setSubcategories([]);
-            categoryAPI.subcategoriesByCategoryRequest(props.token, props.selectedCategorie.id)
-                .then(resposta => {
-                    setSubcategories(resposta.data.subcategories);
-                })
-                .catch(function (error) {
-                    console.log('Erro na requisição: ' + error.message);
-                });
+        if (categories.data && categories.data.categories) {
+            props.categoriaSelected(categories.data.categories[0]);
         }
-    }, [props.selectedCategorie])
+    }, [categories.data]); //Quando houver alteração nas categorias
+
+
+    useEffect(() => {
+        if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
+            subcategories.refetch(`/subcategories/view/${props.selectedCategorie.id}.json`);
+        }
+    }, [props.selectedCategorie]); //Quando trocar a categoria selecionada
 
     useEffect(() => {
         if (!props.isAuth) {
             props.ownProps.navigation.navigate('Login')
         }
-    }, [props.isAuth])
+    }, [props.isAuth]);
 
     handleBackPress = () => {
         logout()
@@ -67,11 +56,11 @@ function ProfessionalSearchScreen(props) {
                     props.logoutSuccess()
             })
         return true
-    }
+    };
 
     selectSubcategoryRedirect = () => {
         props.navigation.navigate('Services')
-    }
+    };
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
@@ -79,24 +68,18 @@ function ProfessionalSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} />
             <ContainerCategorias>
-                <Highlights titulo={'Destaques do mês'} />
-                <Categories data={categories} />
+                <Highlights titulo={'Destaques do mês'} highlights={highlights} />
+                <Categories data={categories.data} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
-                        props.selectedCategorie != null ? (
-                            subcategories == null || subcategories.length == 0 ?
-                                (
-                                    <View style={{ alignSelf: 'center' }}>
-                                        <ActivityIndicator size='large' color={purple} />
-                                        <TextLoading>Loading...</TextLoading>
-                                    </View>
-                                ) :
-                                (
-                                    <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories} itemOnPress={selectSubcategoryRedirect} />
-
-                                )
-                        ) : (
-                                <Text>Selecione uma categoria para visualizar as opções</Text>
+                        subcategories.loading ? (
+                            <View style={{ alignSelf: 'center' }}>
+                                <ActivityIndicator size='large' color={purple} />
+                                <TextLoading>Loading...</TextLoading>
+                            </View>
+                        ) :
+                            (
+                                props.selectedCategorie != null && <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories.data.subcategories} itemOnPress={selectSubcategoryRedirect} />
                             )
                     }
                 </View>
@@ -118,18 +101,19 @@ const mapStateToProps = (state, ownProps) => {
         professional: state.professional.professional,
         ownProps: ownProps
     }
-}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
         getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
         logoutSuccess: () => dispatch(ActionCreators.logoutSuccess()),
+        categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie))
     }
-}
+};
 
 ProfessionalSearchScreen.navigationOptions = {
     header: null
-}
+};
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalSearchScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalSearchScreen);

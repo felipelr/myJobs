@@ -1,5 +1,4 @@
-import React from 'react'
-import { connect } from 'react-redux' 
+import React from 'react' 
 
 import { ContainerContent, Title, ContainerItems } from './styles'
 import ItemHighlight from '../ItemHighlight/index' 
@@ -14,13 +13,14 @@ const ArrayVazio = () => {
 
 const Highlights = (props) => {
     const { titulo, highlights } = props
+    console.log(JSON.stringify(highlights))
     return (
-        !props.loading ?
+        !highlights.loading ?
             <ContainerContent>
                 <Title>{titulo}</Title>
                 <ContainerItems>
                     {
-                        highlights.map((item) => <ItemHighlight key={item.id} profissional={item} />)
+                        highlights.data.highlights.map((item) => <ItemHighlight key={item.id} profissional={item} />)
                     }
                 </ContainerItems>
             </ContainerContent>
@@ -36,12 +36,6 @@ const Highlights = (props) => {
     )
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        highlights: state.highlights.highlights,
-        loading: state.highlights.loading,
-        ownProps: ownProps
-    }
-}
+ 
 
-export default connect(mapStateToProps, null)(Highlights)
+export default Highlights

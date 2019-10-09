@@ -14,7 +14,7 @@ const ArrayVazio = () => {
     return rows.map((item) => <CategorieItem key={item} />)
 }
 
-const Categories = (props) => { 
+const Categories = (props) => {  
     let { categories } = props.data 
     return (
         categories != null ?

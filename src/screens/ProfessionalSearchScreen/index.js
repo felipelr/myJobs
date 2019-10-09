@@ -42,6 +42,7 @@ function ProfessionalSearchScreen(props) {
     useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
             //props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token) 
+            setSubcategories([]); 
             categoryAPI.subcategoriesByCategoryRequest(props.token, props.selectedCategorie.id)
                 .then(resposta => {
                     setSubcategories(resposta.data.subcategories); 

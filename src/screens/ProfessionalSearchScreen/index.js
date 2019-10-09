@@ -61,10 +61,11 @@ function ProfessionalSearchScreen(props) {
     }, [props.isAuth])
 
     handleBackPress = () => {
-        logout().then((result) => {
-            if (result === 'success')
-                props.logoutSuccess()
-        })
+        logout()
+            .then((result) => {
+                if (result === 'success')
+                    props.logoutSuccess()
+            })
         return true
     }
 

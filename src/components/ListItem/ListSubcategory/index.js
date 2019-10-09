@@ -9,16 +9,18 @@ import { purple } from '../../../components/common/util/colors'
 import { TitleSubcategory, InfoSubcategory, styles } from './styles'
 import ActionCreators from '../../../store/actionCreators'
 
-function ListItemService(props){
-    const { subcategory } = props 
-    onPress = (navigate, subcategoryItem) => {
+function ListSubcategory(props) {
+    const { subcategory } = props
+
+    const onPress = (subcategoryItem) => {
+        console.log('teste  subcategory selectedd = '+ JSON.stringify(subcategoryItem))
         props.selectSubcategory(subcategoryItem)
-        navigate()
+        props.itemOnPress()
     }
 
     return (
         <ListItem
-            itemOnPress={() => onPress(props.itemOnPress,subcategory)}
+            itemOnPress={() => onPress(subcategory)}
             leftContent={
                 <Avatar
                     containerStyle={styles.containerStyle}
@@ -36,13 +38,13 @@ function ListItemService(props){
                 </View>
             }
             rightContent={
-                <View style={{justifyContent:'space-between',flexDirection:'row'}}>
+                <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
                     <Icon
                         name="chevron-right"
                         size={30}
                         color={purple}
                         style={{ alignSelf: 'center' }}
-                    /> 
+                    />
                 </View>
             }
         />
@@ -51,7 +53,8 @@ function ListItemService(props){
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectSubcategory: (subcategory) => dispatch(ActionCreators.subcategoriesSelected(subcategory))    }
+        selectSubcategory: (subcategory) => dispatch(ActionCreators.subcategoriesSelected(subcategory))
+    }
 }
- 
-export default connect(null, mapDispatchToProps)(ListItemService)
+
+export default connect(null, mapDispatchToProps)(ListSubcategory)

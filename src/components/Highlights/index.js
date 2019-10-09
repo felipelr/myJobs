@@ -12,10 +12,9 @@ const ArrayVazio = () => {
 }
 
 const Highlights = (props) => {
-    const { titulo, highlights } = props
-    console.log(JSON.stringify(highlights))
+    const { titulo, highlights } = props 
     return (
-        !highlights.loading ?
+        !highlights.loading &&  highlights.data && highlights.data.highlights ?
             <ContainerContent>
                 <Title>{titulo}</Title>
                 <ContainerItems>

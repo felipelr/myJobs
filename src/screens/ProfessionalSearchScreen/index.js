@@ -58,7 +58,7 @@ function ProfessionalSearchScreen(props) {
         return true
     };
 
-    selectSubcategoryRedirect = () => {
+    selectSubcategoryRedirect = () => {        
         props.navigation.navigate('Services')
     };
 
@@ -79,7 +79,7 @@ function ProfessionalSearchScreen(props) {
                             </View>
                         ) :
                             (
-                                props.selectedCategorie != null && <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories.data.subcategories} itemOnPress={selectSubcategoryRedirect} />
+                                props.selectedCategorie != null && <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories.data.subcategories} itemOnPress={() => props.navigation.navigate('Services')} />
                             )
                     }
                 </View>
@@ -105,7 +105,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
         logoutSuccess: () => dispatch(ActionCreators.logoutSuccess()),
         categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie))
     }

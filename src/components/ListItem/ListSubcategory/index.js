@@ -10,8 +10,7 @@ import { TitleSubcategory, InfoSubcategory, styles } from './styles'
 import ActionCreators from '../../../store/actionCreators'
 
 function ListItemService(props){
-    const { subcategory } = props
-
+    const { subcategory } = props 
     onPress = (navigate, subcategoryItem) => {
         props.selectSubcategory(subcategoryItem)
         navigate()

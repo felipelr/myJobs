@@ -52,12 +52,14 @@ export const loginCleanError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const logoutRequest = (state = INITIAL_STATE, action) => {
+    return state
+}
+
 export const logoutSuccess = (state = INITIAL_STATE, action) => {
-    console.log('logout success')
     return {
         ...state,
         isAuth: false,
-        isLogingin: false,
         user: {},
         token: '',
         userType: 'client'
@@ -115,6 +117,7 @@ export const HANDLERS = {
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
     [Types.LOGIN_CLEAN_ERROR]: loginCleanError,
+    [Types.LOGOUT_REQUEST]: logoutRequest,
     [Types.LOGOUT_SUCCESS]: logoutSuccess,
     [Types.AUTH_SUCCESS]: authSuccess,
     [Types.CHANGE_PASSWORD_REQUEST]: changePasswordRequest,

@@ -1,30 +1,45 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import AsyncStorage from '@react-native-community/async-storage'
 
-import { getUserData } from '../../services/authServices'
 import ActionCreators from '../../store/actionCreators'
 
 import { ViewContainer } from './styles'
 
 function SplashScreen(props) {
 
+    const getUserData = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('@userData')
+            if (userData) {
+                const clientData = await AsyncStorage.getItem('@clientData')
+                const professionalData = await AsyncStorage.getItem('@professionalData')
+
+                let userType = professionalData ? 2 : 1
+
+                const userJson = { ...JSON.parse(userData), userType }
+                const clientJson = clientData ? JSON.parse(clientData) : null
+                const professionalJson = professionalData ? JSON.parse(professionalData) : null
+
+                if (clientJson !== null)
+                    props.clientUpdateSuccess(clientJson)
+
+                if (professionalJson !== null)
+                    props.professionalUpdateSuccess(professionalJson)
+
+                props.authSuccess(userJson)
+
+                props.ownProps.navigation.navigate('ProfessionalSearch')
+            } else {
+                props.ownProps.navigation.navigate('Login')
+            }
+        } catch (e) {
+            props.ownProps.navigation.navigate('Login')
+        }
+    }
+
     useEffect(() => {
         getUserData()
-            .then(([result, user, client, professional]) => {
-                if (result === "success") {
-                    if (client !== null)
-                        props.clientUpdateSuccess(client)
-
-                    if (professional !== null)
-                        props.professionalUpdateSuccess(professional)
-
-                    props.authSuccess(user)
-
-                    props.ownProps.navigation.navigate('ProfessionalSearch')
-                } else {
-                    props.ownProps.navigation.navigate('Login')
-                }
-            })
     }, [])
 
     return (

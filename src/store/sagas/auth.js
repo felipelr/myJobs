@@ -76,17 +76,6 @@ function* login(action) {
     }
 }
 
-function* logout(action) {
-    try {
-        yield AsyncStorage.removeItem('@userData')
-        yield AsyncStorage.removeItem('@clientData')
-        yield AsyncStorage.removeItem('@professionalData')
-        yield put(ActionCreator.logoutSuccess())
-    } catch (ex) {
-        yield put(ActionCreator.logoutError(ex.message))
-    }
-}
-
 function* changePassword(action) {
     try {
         const postRequest = yield axios.post(`${urlMyJobsAPI}/users/change_password.json`,
@@ -118,7 +107,6 @@ function* changePassword(action) {
 export default function* rootAuth() {
     yield all([
         takeLatest(Types.LOGIN_REQUEST, login),
-        takeLatest(Types.LOGOUT_REQUEST, logout),
         takeLatest(Types.CHANGE_PASSWORD_REQUEST, changePassword),
     ])
 }

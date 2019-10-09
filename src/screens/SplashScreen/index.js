@@ -25,7 +25,11 @@ function SplashScreen(props) {
                     userType = 2
                 }
 
-                return { ...JSON.parse(userData), userType }
+                const dados = { ...JSON.parse(userData), userType }
+
+                props.authSuccess(dados)
+
+                return "sucesso"
             }
             return null;
         } catch (e) {
@@ -36,9 +40,8 @@ function SplashScreen(props) {
     useEffect(() => {
         getUserData()
             .then((dados) => {
-                if (dados != null) {
-                    props.authSuccess(dados)
-                    props.ownProps.navigation.navigate('Perfil')
+                if (dados === "sucesso") {
+                    props.ownProps.navigation.navigate('ProfessionalSearch')
                 } else {
                     props.ownProps.navigation.navigate('Login')
                 }

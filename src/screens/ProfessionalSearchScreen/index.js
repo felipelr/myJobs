@@ -14,21 +14,24 @@ import { purple } from '../../components/common/util/colors'
 import categoryAPI from '../../services/categoryAPI'
 
 function ProfessionalSearchScreen(props) {
-    const [categories, setCategories] = useState([]); 
-    const [subcategories, setSubcategories] = useState([]); 
+
+    const [categories, setCategories] = useState([]);
+    const [subcategories, setSubcategories] = useState([]);
 
     useEffect(() => {
         //props.getCategories(props.token) //carrega categorias
         props.getHighlights(props.token) //carrega anunciantes
- 
+
         categoryAPI.loadCategorias(props.token)
-            .then(resposta => { 
-                setCategories(resposta.data); 
+            .then(resposta => {
+                setCategories(resposta.data);
             })
             .catch(function (error) {
-                console.log('Teste: ' + error.message); 
+                console.log('Teste: ' + error.message);
             });
 
+
+        console.log(props.userType)
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
@@ -41,12 +44,13 @@ function ProfessionalSearchScreen(props) {
             //props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token) 
             categoryAPI.subcategoriesByCategoryRequest(props.token, props.selectedCategorie.id)
                 .then(resposta => {
-                    setSubcategories(resposta.data.subcategories); 
+                    setSubcategories(resposta.data.subcategories);
                     console.log('sucesso = ' + subcategories)
                 })
                 .catch(function (error) {
-                    console.log('Erro na requisição: ' + error.message); 
+                    console.log('Erro na requisição: ' + error.message);
                 });
+            props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
         }
     }, [props.selectedCategorie])
 
@@ -85,6 +89,7 @@ function ProfessionalSearchScreen(props) {
                                 ) :
                                 (
                                     <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories} itemOnPress={selectSubcategoryRedirect} />
+
                                 )
                         ) : (
                                 <Text>Selecione uma categoria para visualizar as opções</Text>
@@ -94,7 +99,7 @@ function ProfessionalSearchScreen(props) {
             </ContainerCategorias>
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')}
+                perfilOnPress={() => props.userType === 'client' ? props.navigation.navigate('Perfil') : props.navigation.navigate('ProfessionalHome')}
             />
         </View>
     )
@@ -108,6 +113,8 @@ const mapStateToProps = (state, ownProps) => {
         selectedCategorie: state.categoria.selected,
         subcategories: state.subcategory.subcategories,
         loadingSubcategories: state.subcategory.loading,
+        userType: state.auth.userType,
+        professional: state.professional.professional,
         ownProps: ownProps
     }
 }

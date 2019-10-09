@@ -15,7 +15,7 @@ function SplashScreen(props) {
         if (props.auth.authMessage === 'success') {
             props.ownProps.navigation.navigate('ProfessionalSearch')
         }
-        else if (props.auth.authMessage === 'error') {
+        else {
             props.ownProps.navigation.navigate('Login')
         }
     }, [props.auth.authMessage])

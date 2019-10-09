@@ -20,6 +20,8 @@ function ProfessionalSearchScreen(props) {
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
+console.log(props.userType)
+
         if (BackHandler)
             this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 

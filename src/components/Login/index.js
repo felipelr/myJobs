@@ -26,8 +26,8 @@ import ButtonPurple from '../ButtonPurple/index'
 
 function Login(props) {
     const [userType, setUserType] = useState(props.auth.userType === 'client' ? 1 : 2)
-    const [email, setEmail] = useState('felipe_lima_flr@hotmail.com')
-    const [password, setPassword] = useState('123456')
+    const [email, setEmail] = useState('felipe.lima.flr@gmail.com')
+    const [password, setPassword] = useState('101762866218022699799')
 
     useEffect(() => {
         if (props.auth.isAuth) {

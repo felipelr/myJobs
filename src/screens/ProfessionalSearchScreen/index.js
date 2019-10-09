@@ -3,8 +3,6 @@ import { View, Text, Platform, BackHandler, ActivityIndicator } from 'react-nati
 import { ContainerCategorias, TextLoading } from './styles'
 import { connect } from 'react-redux'
 
-import { logout } from '../../services/authServices'
-
 import ActionCreators from '../../store/actionCreators'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
@@ -13,12 +11,25 @@ import HeaderJob from '../../components/HeaderJobs/index'
 import Categories from '../../components/Categories/index'
 import List from '../../components/List/index'
 import { purple } from '../../components/common/util/colors'
+import categoryAPI from '../../services/categoryAPI'
 
 function ProfessionalSearchScreen(props) {
 
+    const [categories, setCategories] = useState([]);
+    const [subcategories, setSubcategories] = useState([]);
+
     useEffect(() => {
-        props.getCategories(props.token) //carrega categorias
+        //props.getCategories(props.token) //carrega categorias
         props.getHighlights(props.token) //carrega anunciantes
+
+        categoryAPI.loadCategorias(props.token)
+            .then(resposta => {
+                setCategories(resposta.data);
+            })
+            .catch(function (error) {
+                console.log('Teste: ' + error.message);
+            });
+
 
         console.log(props.userType)
 
@@ -30,6 +41,15 @@ function ProfessionalSearchScreen(props) {
 
     useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
+            //props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token) 
+            categoryAPI.subcategoriesByCategoryRequest(props.token, props.selectedCategorie.id)
+                .then(resposta => {
+                    setSubcategories(resposta.data.subcategories);
+                    console.log('sucesso = ' + subcategories)
+                })
+                .catch(function (error) {
+                    console.log('Erro na requisição: ' + error.message);
+                });
             props.subcategoriesByCategoryRequest(props.selectedCategorie, props.token)
         }
     }, [props.selectedCategorie])
@@ -41,7 +61,7 @@ function ProfessionalSearchScreen(props) {
     }, [props.isAuth])
 
     handleBackPress = () => {
-        logout()
+        props.logout()
         return true
     }
 
@@ -55,13 +75,12 @@ function ProfessionalSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} />
             <ContainerCategorias>
-                <Text>{JSON.stringify(props.selectSubcategory)}</Text>
                 <Highlights titulo={'Destaques do mês'} />
-                <Categories />
+                <Categories data={categories} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
                         props.selectedCategorie != null ? (
-                            props.loadingSubcategories ?
+                            subcategories != null ?
                                 (
                                     <View style={{ alignSelf: 'center' }}>
                                         <ActivityIndicator size='large' color={purple} />
@@ -69,7 +88,8 @@ function ProfessionalSearchScreen(props) {
                                     </View>
                                 ) :
                                 (
-                                    <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={props.subcategories} itemOnPress={selectSubcategoryRedirect} />
+                                    <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories} itemOnPress={selectSubcategoryRedirect} />
+
                                 )
                         ) : (
                                 <Text>Selecione uma categoria para visualizar as opções</Text>
@@ -101,9 +121,10 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
+        //getCategories: (token) => dispatch(ActionCreators.categoriasLoadRequest(token)),
         getHighlights: (token) => dispatch(ActionCreators.highlightsLoadRequest(token)),
-        subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie)),
+        logout: () => dispatch(ActionCreators.logoutRequest()),
+        //subcategoriesByCategoryRequest: (token, selectedCategorie) => dispatch(ActionCreators.subcategoriesByCategoryRequest(token, selectedCategorie)),
     }
 }
 

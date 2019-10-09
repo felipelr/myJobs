@@ -11,16 +11,17 @@ const ArrayVazio = () => {
     for (let i = 0; i < 10; i++) {
         rows.push(i)
     }
-    return rows.map((item) => <CategorieItem key={item} />) 
+    return rows.map((item) => <CategorieItem key={item} />)
 }
 
-const Categories = (props) => {
+const Categories = (props) => { 
+    let { categories } = props.data 
     return (
-        !props.loading ?
+        categories != null ?
             <ContainerContent>
                 <ContainerItems>
                     {
-                        props.data.map((item) => (
+                        categories.map((item) => (
                             <CategorieItem key={item.id} categoria={item} />
                         ))
                     }
@@ -29,21 +30,15 @@ const Categories = (props) => {
             :
             <ContainerContent>
                 <ContainerItems>
-                     <ArrayVazio />
+                    <ArrayVazio />
                 </ContainerItems>
             </ContainerContent>
     )
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        data: state.categoria.data,
-        loading: state.categoria.loading,
-        ownProps: ownProps
-    }
-}
 
-export default connect(mapStateToProps, null)(Categories)
+
+export default Categories
 
 
 

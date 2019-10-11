@@ -22,13 +22,14 @@ export const loginRequest = (state = INITIAL_STATE, action) => {
 }
 
 export const loginSuccess = (state = INITIAL_STATE, action) => {
+    console.log('userType', action.data.userType)
     return {
         ...state,
         isAuth: true,
         isLogingin: false,
         user: action.data.user,
         token: action.data.token,
-        userType: action.data.userType === 1 ? 'client' : 'professional'
+        userType: action.data.userType === 2 ? 'professional' : 'client'
     }
 }
 
@@ -67,13 +68,14 @@ export const logoutSuccess = (state = INITIAL_STATE, action) => {
 }
 
 export const authSuccess = (state = INITIAL_STATE, action) => {
+    console.log('userType', action.data.userType)
     return {
         ...state,
         isAuth: true,
         isLogingin: false,
         user: action.data.user,
         token: action.data.token,
-        userType: action.userType === 1 ? 'client' : 'professional'
+        userType: action.data.userType === 2 ? 'professional' : 'client'
     }
 }
 

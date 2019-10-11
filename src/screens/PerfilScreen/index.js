@@ -25,6 +25,7 @@ import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
 import ChangePassword from '../../components/ChangePassword/index'
 import SuggestCompany from '../../components/SuggestCompany/index'
+import MyAddress from '../../components/MyAddress/index'
 
 function PerfilScreen(props) {
     const [title, setTitle] = useState('Perfil')
@@ -37,7 +38,7 @@ function PerfilScreen(props) {
         },
         {
             title: 'Meus Endereços', //mvp -> alterar endereço
-            icon: 'account-circle'
+            icon: 'room'
         },
         {
             title: 'Segurança', //mvp -> alteração de senha
@@ -66,9 +67,11 @@ function PerfilScreen(props) {
     ])
 
     useEffect(() => {
-        this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        if (BackHandler && BackHandler != null)
+            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
-            this.backHandler.remove()
+            if (this.backHandler && this.backHandler != null)
+                this.backHandler.remove()
         }
     }, [])
 
@@ -76,6 +79,9 @@ function PerfilScreen(props) {
         switch (show) {
             case 'cadastro':
                 setTitle('Dados Cadastrais')
+                break
+            case 'enderecos':
+                setTitle('Meus Endereços')
                 break
             case 'alterarSenha':
                 setTitle('Ateração de Senha')
@@ -99,6 +105,10 @@ function PerfilScreen(props) {
             case 'Dados Cadastrais':
                 props.clientClearErrors()
                 setShow('cadastro')
+                break
+            case 'Meus Endereços':
+                //props.clientClearErrors()
+                setShow('enderecos')
                 break
             case 'Segurança':
                 props.authCleanErrors()
@@ -189,6 +199,8 @@ function PerfilScreen(props) {
                     {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 
                     {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
+
+                    {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} />}
                 </View>
             </ScrollViewContainer>
 

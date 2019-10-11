@@ -19,9 +19,11 @@ function ChangePassword(props) {
     const [invalidField, setInvalidField] = useState('')
     const [newRequest, setNewRequest] = useState(false)
     const [userId, setUserId] = useState(props.auth.user.sub)
-    const [currentPassword, setCurrentPassword] = useState('')
-    const [newPassword, setNewPassword] = useState('')
-    const [confirmNewPassword, setConfirmNewPassword] = useState('')
+    const [form, setForm] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: ''
+    })
 
     useEffect(() => {
         if (newRequest && !props.auth.isUpdating) {
@@ -32,39 +34,30 @@ function ChangePassword(props) {
         }
     }, [props.auth.isUpdating])
 
-    handleOnChange = (field, text) => {
-        switch (field) {
-            case 'currentPassword':
-                setCurrentPassword(text)
-                break
-            case 'newPassword':
-                setNewPassword(text)
-                break
-            case 'confirmNewPassword':
-                setConfirmNewPassword(text)
-                break
-            default:
-                break
-        }
+    handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
 
-        if (!validateField(field, text))
-            setInvalidField(field)
+        if (!validateField(name, text))
+            setInvalidField(name)
         else
             setInvalidField('')
     }
 
-    validateField = (field, value) => {
-        switch (field) {
+    validateField = (name, text) => {
+        switch (name) {
             case 'currentPassword':
-                if (value < 5)
+                if (text < 5)
                     return false
                 break
             case 'newPassword':
-                if (value.length < 5)
+                if (text.length < 5)
                     return false
                 break
             case 'confirmNewPassword':
-                if (value !== newPassword)
+                if (text !== form.newPassword)
                     return false
                 break
             default:
@@ -76,7 +69,7 @@ function ChangePassword(props) {
     handleClickChangePassword = () => {
         if (invalidField === '') {
             setNewRequest(true)
-            props.changePasswordRequest(props.token, { id: userId }, currentPassword, newPassword)
+            props.changePasswordRequest(props.token, { id: userId }, form.currentPassword, form.newPassword)
         }
     }
 
@@ -88,31 +81,28 @@ function ChangePassword(props) {
                 <React.Fragment>
                     {props.auth.error && <TextError>{props.auth.errorMessage}</TextError>}
                     <TextInputJobs
-                        value={currentPassword}
-                        onChangeText={(text) => handleOnChange('currentPassword', text)}
+                        name='currentPassword'
+                        onChangeText={handleOnChange}
                         placeholder='Senha Atual'
                         textContentType='password'
                         secureTextEntry={true}
-                        invalidValue={invalidField}
-                        nameField='currentPassword' />
+                        invalidValue={invalidField === 'currentPassword'} />
 
                     <TextInputJobs
-                        value={newPassword}
-                        onChangeText={(text) => handleOnChange('newPassword', text)}
+                        name='newPassword'
+                        onChangeText={handleOnChange}
                         placeholder='Nova Senha'
                         textContentType='password'
                         secureTextEntry={true}
-                        invalidValue={invalidField}
-                        nameField='newPassword' />
+                        invalidValue={invalidField === 'newPassword'} />
 
                     <TextInputJobs
-                        value={confirmNewPassword}
-                        onChangeText={(text) => handleOnChange('confirmNewPassword', text)}
+                        name='confirmNewPassword'
+                        onChangeText={handleOnChange}
                         placeholder='Confirme a Nova Senha'
                         textContentType='password'
                         secureTextEntry={true}
-                        invalidValue={invalidField}
-                        nameField='confirmNewPassword' />
+                        invalidValue={invalidField === 'confirmNewPassword'} />
 
                     <ViewContainerButton>
                         <ButtonPurple onPress={handleClickChangePassword}>Alterar Senha</ButtonPurple>

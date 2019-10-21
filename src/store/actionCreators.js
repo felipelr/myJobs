@@ -68,6 +68,7 @@ export const { Types, Creators } = createActions({
     clientUpdateSuccess: ['client'],
     clientUpdateError: ['error'],
     clientClearErrors: null,
+    addNewClientAddress: ['token', 'clientAddress']
 })
 
 export default Creators

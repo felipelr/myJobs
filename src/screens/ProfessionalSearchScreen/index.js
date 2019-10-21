@@ -20,8 +20,6 @@ function ProfessionalSearchScreen(props) {
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
-console.log(props.userType)
-
         if (BackHandler)
             this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
@@ -55,7 +53,7 @@ console.log(props.userType)
         return true
     };
 
-    selectSubcategoryRedirect = () => {        
+    selectSubcategoryRedirect = () => {
         props.navigation.navigate('Services')
     };
 
@@ -83,7 +81,7 @@ console.log(props.userType)
             </ContainerCategorias>
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
-                perfilOnPress={() => props.userType === 'client' ? props.navigation.navigate('Perfil') : props.navigation.navigate('ProfessionalHome')}
+                perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </View>
     )

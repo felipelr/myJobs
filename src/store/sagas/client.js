@@ -32,15 +32,40 @@ function* updateClient(action) {
             yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
         }
         else {
-            console.log(putResp)
             let client = putResp.data.client
             setClientData(client)
             yield put(ActionCreator.clientUpdateSuccess(client))
         }
     } catch (ex) {
         let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-        console.log(action)
-        console.log(messageError)
+        yield put(ActionCreator.clientUpdateError(messageError))
+    }
+}
+
+function* addNewClientAddress(action){
+    try {
+        let postResp = yield axios.post(`${urlMyJobsAPI}/clientsAddresses/add.json`,
+            {
+                ...action.clientAddress
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (postResp.data.error) {
+            yield put(ActionCreator.clientUpdateError(postResp.data.errorMessage))
+        }
+        else {
+            let client = postResp.data.client
+            setClientData(client)
+            yield put(ActionCreator.clientUpdateSuccess(client))
+        }
+    } catch (ex) {
+        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.clientUpdateError(messageError))
     }
 }
@@ -48,5 +73,6 @@ function* updateClient(action) {
 export default function* rootClients() {
     yield all([
         takeLatest(Types.CLIENT_UPDATE_REQUEST, updateClient),
+        takeLatest(Types.ADD_NEW_CLIENT_ADDRESS, addNewClientAddress),
     ])
 }

@@ -28,6 +28,7 @@ import SuggestCompany from '../../components/SuggestCompany/index'
 import MyAddress from '../../components/MyAddress/index'
 
 function PerfilScreen(props) {
+    const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
     const [image, setImage] = useState((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + new Date().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
@@ -150,9 +151,14 @@ function PerfilScreen(props) {
 
     return (
         <React.Fragment>
-            <HeaderJobs
-                title={title}
-                back={handleClickBack} />
+            {
+                showHeader && (
+                    <HeaderJobs
+                        title={title}
+                        back={handleClickBack} />
+                )
+            }
+
             <ScrollViewContainer>
                 <View style={{ flex: 1 }}>
                     {show === 'menu' && (
@@ -200,7 +206,7 @@ function PerfilScreen(props) {
 
                     {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
 
-                    {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} />}
+                    {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
                 </View>
             </ScrollViewContainer>
 
@@ -219,6 +225,7 @@ PerfilScreen.navigationOptions = {
 const mapStateToProps = (state, ownProps) => {
     return {
         client: state.client.client,
+        userType: state.auth.userType,
         ownProps: ownProps,
     }
 }

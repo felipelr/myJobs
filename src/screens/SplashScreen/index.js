@@ -29,7 +29,7 @@ function SplashScreen(props) {
 
                 props.authSuccess(userJson)
 
-                props.ownProps.navigation.navigate('ProfessionalSearch')
+                props.ownProps.navigation.navigate('CategoriesSearch')
             } else {
                 props.ownProps.navigation.navigate('Login')
             }

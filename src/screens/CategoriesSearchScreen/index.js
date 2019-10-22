@@ -20,8 +20,8 @@ function CategoriesSearchScreen(props) {
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
-        if (BackHandler)
-            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+        //if (BackHandler)
+           // this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
         return () => {
             if (this.backHandler)

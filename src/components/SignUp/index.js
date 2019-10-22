@@ -76,7 +76,7 @@ function SignUp(props) {
     useEffect(() => {
         if (props.auth.isAuth) {
             props.ownProps.onPressLogin()
-            props.ownProps.navigation.navigate('ProfessionalSearch')
+            props.ownProps.navigation.navigate('CategoriesSearch')
         }
         else if (props.auth.error) {
             props.ownProps.onPressLogin()

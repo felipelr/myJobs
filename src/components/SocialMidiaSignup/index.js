@@ -76,7 +76,7 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            props.ownProps.navigation.navigate('ProfessionalSearch')
+            props.ownProps.navigation.navigate('CategoriesSearch')
             props.ownProps.onPressLogin()
         }
         else if (props.auth.error) {

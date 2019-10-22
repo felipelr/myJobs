@@ -10,8 +10,7 @@ import Highlights from '../../components/Highlights/index';
 import HeaderJob from '../../components/HeaderJobs/index';
 import Categories from '../../components/Categories/index';
 import List from '../../components/List/index';
-import { purple } from '../../components/common/util/colors';
-import { logout } from '../../services/authServices';
+import { purple } from '../../components/common/util/colors'; 
 import useGet from '../../services/restServices';
 
 function CategoriesSearchScreen(props) {
@@ -48,16 +47,7 @@ function CategoriesSearchScreen(props) {
             props.ownProps.navigation.navigate('Login')
         }
     }, [props.isAuth]);
-
-    handleBackPress = () => {
-        logout()
-            .then((result) => {
-                if (result === 'success')
-                    props.logoutSuccess()
-            })
-        return true
-    };
-
+ 
     selectSubcategoryRedirect = () => {        
         props.navigation.navigate('Services')
     };

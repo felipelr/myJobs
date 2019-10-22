@@ -30,7 +30,7 @@ export const BodyItem = styled.View`
 `
 
 export const TitleItem = styled.Text`
-    font-size: 18px;
+    font-size: 16px;
     color: ${white};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;

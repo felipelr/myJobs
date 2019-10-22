@@ -1,5 +1,6 @@
 import { put, takeLatest, all } from 'redux-saga/effects'
 import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { Types } from '../actionCreators'
 import ActionCreator from '../actionCreators'

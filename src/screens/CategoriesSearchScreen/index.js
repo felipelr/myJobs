@@ -10,7 +10,7 @@ import Highlights from '../../components/Highlights/index';
 import HeaderJob from '../../components/HeaderJobs/index';
 import Categories from '../../components/Categories/index';
 import List from '../../components/List/index';
-import { purple } from '../../components/common/util/colors'; 
+import { purple } from '../../components/common/util/colors';
 import useGet from '../../services/restServices';
 
 function CategoriesSearchScreen(props) {
@@ -20,11 +20,11 @@ function CategoriesSearchScreen(props) {
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
-        //if (BackHandler)
-           // this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+        if (this != null)
+            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
         return () => {
-            if (this.backHandler)
+            if (this != null)
                 this.backHandler.remove();
         }
     }, [])
@@ -47,9 +47,14 @@ function CategoriesSearchScreen(props) {
             props.ownProps.navigation.navigate('Login')
         }
     }, [props.isAuth]);
- 
-    selectSubcategoryRedirect = () => {        
+
+    selectSubcategoryRedirect = () => {
         props.navigation.navigate('Services')
+    };
+
+    handleBackPress = () => {
+        props.logoutRequest()
+        return true
     };
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -76,7 +81,7 @@ function CategoriesSearchScreen(props) {
             </ContainerCategorias>
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
-                perfilOnPress={() => props.userType === 'client' ? props.navigation.navigate('Perfil') : props.navigation.navigate('ProfessionalHome')}
+                perfilOnPress={() => props.navigation.navigate('Perfil') }
             />
         </View>
     )
@@ -95,7 +100,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        logoutSuccess: () => dispatch(ActionCreators.logoutSuccess()),
+        logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
         categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie))
     }
 };

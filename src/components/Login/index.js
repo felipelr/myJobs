@@ -33,7 +33,7 @@ function Login(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            props.ownProps.navigation.navigate('ProfessionalSearch')
+            props.ownProps.navigation.navigate('CategoriesSearch')
         }
     }, [props.auth.isAuth])
 

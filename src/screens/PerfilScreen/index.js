@@ -218,7 +218,7 @@ function PerfilScreen(props) {
             </View>
 
             <Footer
-                homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
+                homeOnPress={() => props.ownProps.navigation.navigate('CategoriesSearch')}
                 servicesOnPress={() => props.ownProps.navigation.navigate('Services')}
                 perfilOnPress={() => { }} />
         </React.Fragment>

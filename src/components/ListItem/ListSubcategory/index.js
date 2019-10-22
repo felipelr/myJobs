@@ -13,7 +13,6 @@ function ListSubcategory(props) {
     const { subcategory } = props
 
     const onPress = (subcategoryItem) => {
-        console.log('teste  subcategory selectedd = '+ JSON.stringify(subcategoryItem))
         props.selectSubcategory(subcategoryItem)
         props.itemOnPress()
     }

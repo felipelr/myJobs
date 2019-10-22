@@ -68,7 +68,7 @@ function ProfessionalSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} />
             <ContainerCategorias>
-                <Highlights titulo={'Destaques do mês'} highlights={highlights} />
+                <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategories={false}/>
                 <Categories data={categories.data} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {

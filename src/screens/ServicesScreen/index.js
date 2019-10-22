@@ -67,7 +67,7 @@ function ServicesScreen(props) {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJobs back={back} title='Buscar Serviço' chat />
-            <Highlights titulo={'Destaques do mês'} highlights={highlights} />
+            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true}/>
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'

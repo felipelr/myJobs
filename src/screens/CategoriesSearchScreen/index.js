@@ -10,18 +10,18 @@ import Highlights from '../../components/Highlights/index';
 import HeaderJob from '../../components/HeaderJobs/index';
 import Categories from '../../components/Categories/index';
 import List from '../../components/List/index';
-import { purple } from '../../components/common/util/colors';
+import { purple } from '../../components/common/util/colors'; 
 import useGet from '../../services/restServices';
 
-function ProfessionalSearchScreen(props) {
+function CategoriesSearchScreen(props) {
 
     const categories = useGet('/categories/index.json', props.token); //Carrega as categorias do sistema
     const subcategories = useGet('', props.token); //Passa o parametro URL como vazio para que não seja feita nenhuma requisição porém gera os Hooks normalmente
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
-        if (BackHandler)
-            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+        //if (BackHandler)
+           // this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
         return () => {
             if (this.backHandler)
@@ -47,13 +47,8 @@ function ProfessionalSearchScreen(props) {
             props.ownProps.navigation.navigate('Login')
         }
     }, [props.isAuth]);
-
-    handleBackPress = () => {
-        props.logoutRequest()
-        return true
-    };
-
-    selectSubcategoryRedirect = () => {
+ 
+    selectSubcategoryRedirect = () => {        
         props.navigation.navigate('Services')
     };
 
@@ -81,7 +76,7 @@ function ProfessionalSearchScreen(props) {
             </ContainerCategorias>
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')}
+                perfilOnPress={() => props.userType === 'client' ? props.navigation.navigate('Perfil') : props.navigation.navigate('ProfessionalHome')}
             />
         </View>
     )
@@ -100,14 +95,14 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
+        logoutSuccess: () => dispatch(ActionCreators.logoutSuccess()),
         categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie))
     }
 };
 
-ProfessionalSearchScreen.navigationOptions = {
+CategoriesSearchScreen.navigationOptions = {
     header: null
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalSearchScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(CategoriesSearchScreen);

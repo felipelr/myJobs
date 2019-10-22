@@ -1,5 +1,5 @@
 import styled from 'styled-components/native'
-import { purple, white, yellow, lightgray, disabled } from '../common/util/colors'
+import { purple, white, yellow, lightgray, gray } from '../common/util/colors'
 import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
         alignSelf: 'center',
         borderColor: purple
     }
-})
+}) 
 
 export const ContainerItem = styled.TouchableOpacity`
     background-color: ${props => props.gray ? lightgray : purple};
@@ -31,7 +31,7 @@ export const BodyItem = styled.View`
 
 export const TitleItem = styled.Text`
     font-size: 16px;
-    color: ${white};
+    color: ${gray};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;
     margin-bottom: 5px;
@@ -39,7 +39,7 @@ export const TitleItem = styled.Text`
 export const DescriptionItem = styled.Text`
     font-size: 12px;
     font-family: 'SF-Pro-Text-Regular';
-    color: ${white};
+    color: ${gray};
     flex: 1;
 `
 
@@ -53,29 +53,9 @@ export const ContainerDescription = styled.ScrollView.attrs({
 export const Services = styled.Text`
     font-size: 10px;
     font-family: 'SF-Pro-Text-Regular';
-    color: ${yellow}; 
+    color: ${purple}; 
     flex-direction:row;
-`
-export const ServicesAmount = styled.Text`
-    font-size: 11px;
-    font-family: 'SF-Pro-Text-Bold';
-    font-weight: bold;
-    color: ${yellow}; 
-    flex-direction:row;
-`
-export const TextoVazio = styled.View`
-    background-color: ${disabled};
-    height: 25;  
-    border-radius: 5;
-`
-
-export const DescricaoVazia = styled.View`
-    background-color: ${disabled};
-    height: 40;  
-    border-radius: 5;
-    margin-top:10;
-`
-
+` 
 
 
 

@@ -26,11 +26,12 @@ import ClientEntry from '../../components/ClientEntry/index'
 import ChangePassword from '../../components/ChangePassword/index'
 import SuggestCompany from '../../components/SuggestCompany/index'
 import MyAddress from '../../components/MyAddress/index'
+import ProfessionalEntry from '../../components/ProfessionalEntry/index'
 
 function PerfilScreen(props) {
     const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
-    const [image, setImage] = useState((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + new Date().getTime() } : { uri: '' })
+    const [image, setImage] = useState((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
@@ -108,7 +109,6 @@ function PerfilScreen(props) {
                 setShow('cadastro')
                 break
             case 'Meus Endereços':
-                //props.clientClearErrors()
                 setShow('enderecos')
                 break
             case 'Segurança':
@@ -134,7 +134,7 @@ function PerfilScreen(props) {
         }
         else {
             setShow('menu')
-            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + new Date().getTime() } : { uri: '' })
+            setImage((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
         }
     }
 
@@ -159,13 +159,13 @@ function PerfilScreen(props) {
                 )
             }
 
-            <ScrollViewContainer>
-                <View style={{ flex: 1 }}>
-                    {show === 'menu' && (
+            <View style={{ flex: 1 }}>
+                {show === 'menu' && (
+                    <React.Fragment>
                         <ContainerContent>
                             <Space />
                             <ContainerTitle>
-                                <Title>{props.client.name}</Title>
+                                <Title>{props.user.name}</Title>
                             </ContainerTitle>
                             <ContainerAvatar>
                                 {image.uri.length > 0 &&
@@ -182,33 +182,40 @@ function PerfilScreen(props) {
                                         size={120} />}
 
                             </ContainerAvatar>
-                            <ContainerLista>
-                                {
-                                    list.map((item, i) => (
-                                        <ListItem
-                                            key={i}
-                                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                            title={item.title}
-                                            rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                            leftIcon={{ name: item.icon }}
-                                            onPress={() => { handleClickMenu(item.title) }}
-                                            onLongPress={() => { handleClickMenu(item.title) }}
-                                        />
-                                    ))
-                                }
-                            </ContainerLista>
+
+                            <ScrollViewContainer>
+                                <View>
+                                    <ContainerLista>
+                                        {
+                                            list.map((item, i) => (
+                                                <ListItem
+                                                    key={i}
+                                                    containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                    title={item.title}
+                                                    rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                                                    leftIcon={{ name: item.icon }}
+                                                    onPress={() => { handleClickMenu(item.title) }}
+                                                    onLongPress={() => { handleClickMenu(item.title) }}
+                                                />
+                                            ))
+                                        }
+                                    </ContainerLista>
+                                </View>
+                            </ScrollViewContainer>
                         </ContainerContent>
-                    )}
 
-                    {show === 'cadastro' && <ClientEntry onUpdate={handleClickBack} />}
+                    </React.Fragment>
+                )}
 
-                    {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
+                {(show === 'cadastro' && props.userType === 'client')  && <ClientEntry onUpdate={handleClickBack} />}
+                {(show === 'cadastro' && props.userType === 'professional')  && <ProfessionalEntry onUpdate={handleClickBack} />}
 
-                    {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
+                {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 
-                    {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
-                </View>
-            </ScrollViewContainer>
+                {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
+
+                {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
+            </View>
 
             <Footer
                 homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
@@ -224,7 +231,7 @@ PerfilScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        client: state.client.client,
+        user: state.auth.userType === 'client' ? state.client.client : state.professional.professional,
         userType: state.auth.userType,
         ownProps: ownProps,
     }

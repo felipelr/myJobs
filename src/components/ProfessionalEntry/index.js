@@ -8,7 +8,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { formatPhone, formatDate } from '../common/util/functions'
+import { formatDate } from '../common/util/functions'
 
 import {
     ScrollViewContainer,
@@ -33,33 +33,18 @@ import {
 import { purple } from '../common/util/colors'
 
 import TextInputJobs from '../../components/TextInputJobs/index'
-import PickerJobs from '../../components/PickerJobs/index'
 import ButtonPurple from '../ButtonPurple/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
-function ClientEntry(props) {
+function ProfessionalEntry(props) {
     const [invalidField, setInvalidField] = useState('')
-    const [genderList, setGenderList] = useState([
-        {
-            label: 'Masculino',
-            value: 'MASCULINO'
-        },
-        {
-            label: 'Feminino',
-            value: 'FEMININO'
-        },
-        {
-            label: 'Outro',
-            value: 'OUTRO'
-        }
-    ])
     const [form, setForm] = useState({
-        ...props.client.client,
-        date_birth: props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''),
+        ...props.professional.professional,
+        date_birth: props.professional.professional.date_birth.substring(0, 10).split('-').reverse().join(''),
     })
 
-    const [image, setImage] = useState(props.client.client.photo ? { uri: props.client.client.photo } : { uri: '' })
+    const [image, setImage] = useState(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
 
     const [requisitou, setRequisitou] = useState(false)
     const [modalOpened, setModalOpened] = useState(false)
@@ -71,15 +56,15 @@ function ClientEntry(props) {
     const [endCursor, setEndCursor] = useState('')
 
     useEffect(() => {
-        if (requisitou && !props.client.isUpdating) {
-            if (props.client.errorUpdating) {
+        if (requisitou && !props.professional.isUpdating) {
+            if (props.professional.errorUpdating) {
                 setRequisitou(false)
                 this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
             }
             else
                 props.ownProps.onUpdate()
         }
-    }, [props.client.isUpdating])
+    }, [props.professional.isUpdating])
 
     useEffect(() => {
         if (form.date_birth.length > 0) {
@@ -92,18 +77,6 @@ function ClientEntry(props) {
             }
         }
     }, [form.date_birth])
-
-    useEffect(() => {
-        if (form.phone.length > 0) {
-            let phone_ = formatPhone(form.phone)
-            if (form.phone !== phone_) {
-                setForm({
-                    ...form,
-                    'phone': phone_
-                })
-            }
-        }
-    }, [form.phone])
 
     handleOnChange = (name, text) => {
         setForm({
@@ -124,16 +97,8 @@ function ClientEntry(props) {
                 if (value.length === 0)
                     return false
                 break
-            case 'phone':
-                if (value.length < 14)
-                    return false
-                break
             case 'date_birth':
                 if (value.length < 10)
-                    return false
-                break
-            case 'gender':
-                if (value === '' || value === 'SELECIONE')
                     return false
                 break
             default:
@@ -171,14 +136,14 @@ function ClientEntry(props) {
 
     handleClickConfimar = () => {
         if (invalidField === '') {
-            let clientData = {
-                ...props.client.client,
+            let professionalData = {
+                ...props.professional.professional,
                 ...form,
                 date_birth: form.date_birth.split('/').reverse().join('-'),
                 image: image.base64 ? image.base64 : ''
             }
             setRequisitou(true)
-            props.clientUpdateRequest(clientData, props.token)
+            props.professionalUpdateRequest(professionalData, props.token)
         }
     }
 
@@ -219,7 +184,7 @@ function ClientEntry(props) {
     }
 
     handleModalClose = () => {
-        setImage(props.client.client.photo ? { uri: props.client.client.photo } : { uri: '' })
+        setImage(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
@@ -270,11 +235,11 @@ function ClientEntry(props) {
     return (
         <ScrollViewContainer ref={(c) => this.scrollViewContainer = c}>
             <View style={{ flex: 1, padding: 8 }}>
-                {props.client.isUpdating && <Loading size='large' color={purple} height='330' error={props.client.errorUpdating} />}
+                {props.professional.isUpdating && <Loading size='large' color={purple} height='330' error={props.professional.errorUpdating} />}
 
-                {props.client.errorUpdating && <TextError>{props.client.errorMessage}</TextError>}
+                {props.professional.errorUpdating && <TextError>{props.professional.errorMessage}</TextError>}
 
-                {!props.client.isUpdating && (
+                {!props.professional.isUpdating && (
                     <React.Fragment>
                         <ContainerAvatar>
                             {image.uri.length > 0 &&
@@ -306,19 +271,20 @@ function ClientEntry(props) {
                             invalidValue={invalidField === 'name'} />
 
                         <TextInputJobs
-                            value={form.phone}
-                            name='phone'
+                            value={form.description}
+                            name='description'
                             onChangeText={handleOnChange}
-                            placeholder='Telefone'
-                            textContentType='telephoneNumber'
-                            keyboardType='phone-pad'
-                            invalidValue={invalidField === 'phone'} />
+                            placeholder='Descrição'
+                            multiline={true}
+                            numberOfLines={3}
+                            style={{ textAlignVertical: true}}
+                            invalidValue={invalidField === 'description'} />
 
                         <TextInputJobs
                             value={form.document}
                             name='document'
                             onChangeText={handleOnChange}
-                            placeholder='CPF'
+                            placeholder='CPF/CNPJ'
                             invalidValue={invalidField === 'document'} />
 
                         <TextInputJobs
@@ -328,16 +294,6 @@ function ClientEntry(props) {
                             placeholder='Data de Nascimento'
                             keyboardType='number-pad'
                             invalidValue={invalidField === 'date_birth'} />
-
-                        <PickerJobs
-                            selectedValue={form.gender}
-                            onValueChange={(itemValue, itemIndex) => {
-                                setForm({
-                                    ...form,
-                                    'gender': itemValue
-                                })
-                            }}
-                            itemsList={genderList} />
 
                         <ViewContainerButton>
                             <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
@@ -441,15 +397,15 @@ function ClientEntry(props) {
 const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
-        client: state.client,
+        professional: state.professional,
         ownProps: ownProps,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        clientUpdateRequest: (client, token) => dispatch(ActionCreators.clientUpdateRequest(client, token)),
+        professionalUpdateRequest: (professional, token) => dispatch(ActionCreators.professionalUpdateRequest(professional, token)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClientEntry)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalEntry)

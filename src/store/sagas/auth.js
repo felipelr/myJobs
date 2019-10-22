@@ -64,7 +64,7 @@ function* login(action) {
 
         if (professional) {
             setProfessionalData(professional)
-            yield put(ActionCreator.professionalUpdateSuccess(client))
+            yield put(ActionCreator.professionalUpdateSuccess(professional))
         }
 
         const userType = action.userType

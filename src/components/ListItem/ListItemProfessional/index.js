@@ -14,15 +14,14 @@ export default function ListItemProfessional(props) {
         <ListItem
             itemOnPress={props.itemOnPress}
             leftContent={
-                <Avatar
-                    rounded
+                <Avatar 
                     containerStyle={{ alignSelf: 'center' }}
-                    size={40}
+                    size={60}
                     source={{ uri: profissional.imagem, }}
                 />
             }
             centerContent={
-                <View>
+                <View style={{marginLeft:10}}>
                     <TitleProfessional>{profissional.nome}</TitleProfessional>
                     <InfoProfessional>{profissional.info}</InfoProfessional>
                     <RatingJobs avaliacao={profissional.avaliacao} qtdeAvaliacoes={profissional.qtdeAvaliacoes} />

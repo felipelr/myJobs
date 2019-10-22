@@ -3,6 +3,7 @@ import { black } from '../../common/util/colors'
 
 export const TitleProfessional = styled.Text`
     color: ${black};
+    margin-left: 5px;
     font-size: 14px;
     font-family: 'SF-Pro-Text-regular';
     flex: 1;
@@ -11,6 +12,7 @@ export const TitleProfessional = styled.Text`
 export const InfoProfessional = styled.Text`
     color: ${black};
     font-size: 10px;
+    margin-left: 5px;
     font-family: 'SF-Pro-Text-Regular';
     flex: 1;
     padding-top: 5px;

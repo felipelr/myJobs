@@ -16,7 +16,7 @@ setClientData = async (clientData) => {
 
 function* updateClient(action) {
     try {
-        let putResp = yield axios.put(`${urlMyJobsAPI}/clients/edit/${action.client.id}.json`,
+        const putResp = yield axios.put(`${urlMyJobsAPI}/clients/edit/${action.client.id}.json`,
             {
                 ...action.client
             },
@@ -32,19 +32,19 @@ function* updateClient(action) {
             yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
         }
         else {
-            let client = putResp.data.client
+            const client = putResp.data.client
             setClientData(client)
             yield put(ActionCreator.clientUpdateSuccess(client))
         }
     } catch (ex) {
-        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.clientUpdateError(messageError))
     }
 }
 
-function* addNewClientAddress(action){
+function* addNewClientAddress(action) {
     try {
-        let postResp = yield axios.post(`${urlMyJobsAPI}/clientsAddresses/add.json`,
+        const postResp = yield axios.post(`${urlMyJobsAPI}/clientsAddresses/add.json`,
             {
                 ...action.clientAddress
             },
@@ -60,12 +60,65 @@ function* addNewClientAddress(action){
             yield put(ActionCreator.clientUpdateError(postResp.data.errorMessage))
         }
         else {
-            let client = postResp.data.client
+            const client = postResp.data.client
             setClientData(client)
             yield put(ActionCreator.clientUpdateSuccess(client))
         }
     } catch (ex) {
-        let messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.clientUpdateError(messageError))
+    }
+}
+
+function* editClientAddress(action) {
+    try {
+        const putResp = yield axios.put(`${urlMyJobsAPI}/clientsAddresses/edit/${action.clientAddress.id}.json`,
+            {
+                ...action.clientAddress
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (putResp.data.error) {
+            yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
+        }
+        else {
+            const client = putResp.data.client
+            setClientData(client)
+            yield put(ActionCreator.clientUpdateSuccess(client))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.clientUpdateError(messageError))
+    }
+}
+
+function* deleteClientAddress(action){
+    try {
+        const deleteResp = yield axios.delete(`${urlMyJobsAPI}/clientsAddresses/delete/${action.id}.json`,
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (deleteResp.data.error) {
+            yield put(ActionCreator.clientUpdateError(deleteResp.data.errorMessage))
+        }
+        else {
+            const client = deleteResp.data.client
+            setClientData(client)
+            yield put(ActionCreator.clientUpdateSuccess(client))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         yield put(ActionCreator.clientUpdateError(messageError))
     }
 }
@@ -74,5 +127,7 @@ export default function* rootClients() {
     yield all([
         takeLatest(Types.CLIENT_UPDATE_REQUEST, updateClient),
         takeLatest(Types.ADD_NEW_CLIENT_ADDRESS, addNewClientAddress),
+        takeLatest(Types.EDIT_CLIENT_ADDRESS, editClientAddress),
+        takeLatest(Types.DELETE_CLIENT_ADDRESS, deleteClientAddress),
     ])
 }

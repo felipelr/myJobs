@@ -20,9 +20,11 @@ import Loading from '../Loading/index'
 function SuggestCompany(props) {
     const [invalidField, setInvalidField] = useState('')
     const [newRequest, setNewRequest] = useState(false)
-    const [name, setName] = useState('')
-    const [contact, setContact] = useState('')
-    const [contactPhone, setContactPhone] = useState('')
+    const [form, setForm] = useState({
+        name: '',
+        contact: '',
+        phone: '',
+    })
 
     useEffect(() => {
         if (newRequest && !props.professional.loading) {
@@ -34,30 +36,25 @@ function SuggestCompany(props) {
     }, [props.professional.loading])
 
     useEffect(() => {
-        if (contactPhone.length > 0) {
-            let phone_ = formatPhone(contactPhone)
-            if (contactPhone !== phone_)
-                setContactPhone(phone_)
+        if (form.phone.length > 0) {
+            let phone_ = formatPhone(form.phone)
+            if (form.phone !== phone_) {
+                setForm({
+                    ...form,
+                    phone: phone_
+                })
+            }
         }
-    }, [contactPhone])
+    }, [form.phone])
 
-    handleOnChange = (field, text) => {
-        switch (field) {
-            case 'name':
-                setName(text)
-                break
-            case 'contact':
-                setContact(text)
-                break
-            case 'contactPhone':
-                setContactPhone(text)
-                break
-            default:
-                break
-        }
+    const handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
 
-        if (!validateField(field, text))
-            setInvalidField(field)
+        if (!validateField(name, text))
+            setInvalidField(name)
         else
             setInvalidField('')
     }
@@ -72,7 +69,7 @@ function SuggestCompany(props) {
                 if (value.length < 5)
                     return false
                 break
-            case 'contactPhone':
+            case 'phone':
                 if (value.length < 14)
                     return false
                 break
@@ -85,12 +82,7 @@ function SuggestCompany(props) {
     handleClickEnviar = () => {
         if (invalidField === '') {
             setNewRequest(true)
-            const data = {
-                name,
-                contact,
-                phone: contactPhone
-            }
-            props.sendNewSuggest(props.token, data)
+            props.sendNewSuggest(props.token, form)
         }
     }
 
@@ -102,27 +94,25 @@ function SuggestCompany(props) {
                 <React.Fragment>
                     {props.professional.error && <TextError>{props.professional.errorMessage}</TextError>}
                     <TextInputJobs
-                        value={name}
-                        onChangeText={(text) => handleOnChange('name', text)}
+                        name='name'
+                        onChangeText={handleOnChange}
                         placeholder='Nome'
-                        invalidValue={invalidField}
-                        nameField='name' />
+                        invalidValue={invalidField === 'name'} />
 
                     <TextInputJobs
-                        value={contact}
-                        onChangeText={(text) => handleOnChange('contact', text)}
+                        name='contact'
+                        onChangeText={handleOnChange}
                         placeholder='Nome do contato'
-                        invalidValue={invalidField}
-                        nameField='contact' />
+                        invalidValue={invalidField === 'contact'} />
 
                     <TextInputJobs
-                        value={contactPhone}
-                        onChangeText={(text) => handleOnChange('contactPhone', text)}
+                        value={form.phone}
+                        name='phone'
+                        onChangeText={handleOnChange}
                         placeholder='Telefone'
                         textContentType='telephoneNumber'
                         keyboardType='phone-pad'
-                        invalidValue={invalidField}
-                        nameField='contactPhone' />
+                        invalidValue={invalidField === 'phone'} />
 
                     <ViewContainerButton>
                         <ButtonPurple onPress={handleClickEnviar}>Enviar</ButtonPurple>

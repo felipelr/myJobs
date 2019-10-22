@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View } from 'react-native'
+import { View, TouchableOpacity, Alert } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
@@ -23,6 +23,7 @@ import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
 function MyAddress(props) {
+    const [alterar, setAlterar] = useState(false)
     const [newRequest, setNewRequest] = useState(false)
     const [titleHeader, setTitleHeader] = useState('')
     const [showForm, setShowForm] = useState(false)
@@ -58,6 +59,7 @@ function MyAddress(props) {
     }, [props.isUpdating])
 
     const handleNewAddressClick = () => {
+        setAlterar(false)
         setForm({
             client_id: props.client.id,
             city_id: 0,
@@ -105,19 +107,48 @@ function MyAddress(props) {
     const handleClickConfimar = () => {
         if (invalidField === '' && form.city_id !== 0) {
             setNewRequest(true)
-            props.addNewClientAddress(props.token, form)
+            if (alterar)
+                props.editClientAddress(props.token, form)
+            else
+                props.addNewClientAddress(props.token, form)
         }
     }
 
     const handleAddressClick = (addressId) => {
         const clientAddress = props.client.clientsAddresses.filter((item) => item.id === addressId)
         if (clientAddress) {
+            setAlterar(true)
             setForm(clientAddress[0])
             setTitleHeader('Alterar Endereço')
             setSelectedState(clientAddress[0].city.state.id)
             setShowForm(true)
             props.ownProps.changeVisiblityPerfilHeader(false)
+            console.log(clientAddress)
         }
+    }
+
+    const handleDeleteClick = (id) => {
+        Alert.alert(
+            'Atenção',
+            'Confirma a exclusão deste endereço?',
+            [
+                {
+                    text: 'Não',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'Sim',
+                    onPress: () => {
+                        setNewRequest(true)
+                        props.deleteClientAddress(props.token, id)
+                    }
+                }
+            ],
+            {
+                cancelable: false
+            }
+        )
     }
 
     return (
@@ -126,7 +157,8 @@ function MyAddress(props) {
                 showForm && (
                     <HeaderJobs
                         title={titleHeader}
-                        back={gotoAddressList} />
+                        back={gotoAddressList}
+                    />
                 )
             }
             <ViewContainer>
@@ -143,6 +175,11 @@ function MyAddress(props) {
                                             containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
                                             title={address.street + ', ' + address.street_number}
                                             rightIcon={<Icon name="chevron-right" size={30} color={purple} />}
+                                            leftElement={
+                                                <TouchableOpacity onPress={() => handleDeleteClick(address.id)}>
+                                                    <Icon name="delete" size={30} color={purple} />
+                                                </TouchableOpacity>
+                                            }
                                             onPress={() => handleAddressClick(address.id)}
                                         />
                                     ))
@@ -232,6 +269,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         addNewClientAddress: (token, clientAddress) => dispatch(ActionCreators.addNewClientAddress(token, clientAddress)),
+        editClientAddress: (token, clientAddress) => dispatch(ActionCreators.editClientAddress(token, clientAddress)),
+        deleteClientAddress: (token, id) => dispatch(ActionCreators.deleteClientAddress(token, id)),
     }
 }
 

@@ -68,7 +68,6 @@ export const logoutSuccess = (state = INITIAL_STATE, action) => {
 }
 
 export const authSuccess = (state = INITIAL_STATE, action) => {
-    console.log('userType', action.data.userType)
     return {
         ...state,
         isAuth: true,

@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
-    contentContainerStyle: { flexGrow: 1 },
     showHorizontalScrollIndicator: false
 })``
 
@@ -35,7 +34,6 @@ export const Title = styled.Text`
 `
 export const ContainerLista = styled.View`
     background-color: ${white};
-    flex: 1;
 `
 export const ContainerAvatar = styled.View`
     position: absolute; 

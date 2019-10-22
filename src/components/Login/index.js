@@ -25,9 +25,11 @@ import TextError from '../TextError/index'
 import ButtonPurple from '../ButtonPurple/index'
 
 function Login(props) {
-    const [userType, setUserType] = useState(props.auth.userType === 'client' ? 1 : 2)
-    const [email, setEmail] = useState('felipe_lima_flr@hotmail.com')
-    const [password, setPassword] = useState('123456')
+    const [form, setForm] = useState({
+        email: 'felipe.lima.flr@gmail.com',
+        password: '101762866218022699799',
+        userType: props.auth.userType === 'client' ? 1 : 2
+    })
 
     useEffect(() => {
         if (props.auth.isAuth) {
@@ -36,7 +38,14 @@ function Login(props) {
     }, [props.auth.isAuth])
 
     const handleClickLogin = () => {
-        props.login(email, password, userType)
+        props.login(form.email, form.password, form.userType)
+    }
+
+    handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
     }
 
     return (
@@ -51,23 +60,45 @@ function Login(props) {
                     }
                     <ViewContainerFields>
                         <ViewContainerRow>
-                            <CheckBox title='Cliente'
+                            <CheckBox
+                                title='Cliente'
                                 checkedIcon='dot-circle-o'
                                 uncheckedIcon='circle-o'
                                 checkedColor={purple}
                                 containerStyle={styleSheets.containerCheck}
-                                checked={userType === 1}
-                                onPress={() => setUserType(1)} />
-                            <CheckBox title='Profissional'
+                                checked={form.userType === 1}
+                                onPress={() => {
+                                    setForm({
+                                        ...form,
+                                        'userType': 1
+                                    })
+                                }} />
+                            <CheckBox
+                                title='Profissional'
                                 checkedIcon='dot-circle-o'
                                 uncheckedIcon='circle-o'
                                 checkedColor={purple}
                                 containerStyle={styleSheets.containerCheck}
-                                checked={userType !== 1}
-                                onPress={() => setUserType(2)} />
+                                checked={form.userType !== 1}
+                                onPress={() => {
+                                    setForm({
+                                        ...form,
+                                        'userType': 2
+                                    })
+                                }} />
                         </ViewContainerRow>
-                        <TextInputJobs value={email} onChangeText={(text) => setEmail(text)} placeholder='Usuário' />
-                        <TextInputJobs value={password} onChangeText={(text) => setPassword(text)} placeholder='Senha' textContentType='password' secureTextEntry={true} />
+                        <TextInputJobs
+                            value={form.email}
+                            name='email'
+                            onChangeText={handleOnChange}
+                            placeholder='Usuário' />
+                        <TextInputJobs
+                            value={form.password}
+                            name='password'
+                            onChangeText={handleOnChange}
+                            placeholder='Senha'
+                            textContentType='password'
+                            secureTextEntry={true} />
 
                         <LoginButtonContainer>
                             <ButtonPurple onPress={handleClickLogin}>Entrar</ButtonPurple>

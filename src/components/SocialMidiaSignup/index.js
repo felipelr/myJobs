@@ -23,12 +23,7 @@ import {
 import { styleSheets } from './styles'
 
 function SocialMidiaSignup(props) {
-    const [userType, setUserType] = useState(1)
     const [invalidField, setInvalidField] = useState('')
-    const [phone, setPhone] = useState('')
-    const [documentNumber, setDocumentNumber] = useState('')
-    const [dateBirth, setDateBirth] = useState('')
-    const [gender, setGender] = useState('MASCULINO')
     const [genderList, setGenderList] = useState([
         {
             label: 'Masculino',
@@ -43,6 +38,13 @@ function SocialMidiaSignup(props) {
             value: 'OUTRO'
         }
     ])
+    const [form, setForm] = useState({
+        userType: 1,
+        phone: '',
+        document: '',
+        date_birth: '',
+        gender: 'MASCULINO'
+    })
 
     useEffect(() => {
         //verificar se já existe cadastro do facebook
@@ -56,13 +58,13 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         if (props.socialMidiaSignup.accVerified === 1) {
-            props.login(props.socialMidiaSignup.user.email, props.socialMidiaSignup.user.password)
+            props.login(props.socialMidiaSignup.user.email, props.socialMidiaSignup.user.password, form.userType)
         }
     }, [props.socialMidiaSignup.accVerified])
 
     useEffect(() => {
         if (props.socialMidiaSignup.isSignup) {
-            props.login(props.socialMidiaSignup.newUser.email, props.socialMidiaSignup.newUser.password)
+            props.login(props.socialMidiaSignup.newUser.email, props.socialMidiaSignup.newUser.password, form.userType)
         }
     }, [props.socialMidiaSignup.isSignup])
 
@@ -83,45 +85,44 @@ function SocialMidiaSignup(props) {
     }, [props.auth.isAuth, props.auth.error])
 
     useEffect(() => {
-        if (phone.length > 0) {
-            let phone_ = formatPhone(phone)
-            if (phone !== phone_)
-                setPhone(phone_)
+        if (form.date_birth.length > 0) {
+            let date_ = formatDate(form.date_birth)
+            if (form.date_birth !== date_) {
+                setForm({
+                    ...form,
+                    'date_birth': date_
+                })
+            }
         }
-    }, [phone])
+    }, [form.date_birth])
 
     useEffect(() => {
-        if (dateBirth.length > 0) {
-            let date_ = formatDate(dateBirth)
-            if (dateBirth !== date_)
-                setDateBirth(date_)
+        if (form.phone.length > 0) {
+            let phone_ = formatPhone(form.phone)
+            if (form.phone !== phone_) {
+                setForm({
+                    ...form,
+                    'phone': phone_
+                })
+            }
         }
-    }, [dateBirth])
+    }, [form.phone])
 
-    handleOnChange = (field, text) => {
-        switch (field) {
-            case 'phone':
-                setPhone(text)
-                break
-            case 'documentNumber':
-                setDocumentNumber(text)
-                break
-            case 'dateBirth':
-                setDateBirth(text)
-                break
-            default:
-                break
-        }
+    handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
 
-        if (!validateField(field, text))
-            setInvalidField(field)
+        if (!validateField(name, text))
+            setInvalidField(name)
         else
             setInvalidField('')
     }
 
     validateField = (field, value) => {
         switch (field) {
-            case 'documentNumber':
+            case 'document':
                 if (value.length === 0)
                     return false
                 break
@@ -129,7 +130,7 @@ function SocialMidiaSignup(props) {
                 if (value.length < 14)
                     return false
                 break
-            case 'dateBirth':
+            case 'date_birth':
                 if (value.length < 10)
                     return false
                 break
@@ -144,28 +145,19 @@ function SocialMidiaSignup(props) {
     }
 
     handleClickSignUp = () => {
-        if (!validateField('phone', phone))
-            return
-        else if (!validateField('documentNumber', documentNumber))
-            return
-        else if (!validateField('dateBirth', dateBirth))
-            return
-        else if (!validateField('gender', gender))
+        if (invalidField !== '')
             return
 
-        let date = dateBirth.split("/")
+        let date = form.date_birth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
 
         if (props.socialMidiaSignup.user.facebook_id) {
             let user = {
-                userType: userType,
-                phone: phone,
-                document: documentNumber,
+                ...form,
                 name: props.socialMidiaSignup.user.name,
-                date_birth: dateFormatted,
-                gender: gender,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.facebook_id,
+                date_birth: dateFormatted,
                 facebook_id: props.socialMidiaSignup.user.facebook_id
             }
 
@@ -173,14 +165,12 @@ function SocialMidiaSignup(props) {
         }
         else if (props.socialMidiaSignup.user.google_id) {
             let user = {
-                userType: userType,
-                phone: phone,
-                document: documentNumber,
+                ...form,
                 name: props.socialMidiaSignup.user.name,
-                date_birth: dateFormatted,
-                gender: props.socialMidiaSignup.user.gender,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.google_id,
+                date_birth: dateFormatted,
+                gender: props.socialMidiaSignup.user.gender,
                 google_id: props.socialMidiaSignup.user.google_id
             }
 
@@ -201,37 +191,65 @@ function SocialMidiaSignup(props) {
                         }
                         <View>
                             <ViewContainerRow>
-                                <CheckBox title='Cliente' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType === 1} onPress={() => setUserType(1)} />
-                                <CheckBox title='Profissional' checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checkedColor={purple} containerStyle={styleSheets.containerCheck} checked={userType !== 1} onPress={() => setUserType(2)} />
+                                <CheckBox
+                                    title='Cliente'
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checkedColor={purple}
+                                    containerStyle={styleSheets.containerCheck}
+                                    checked={form.userType === 1}
+                                    onPress={() => {
+                                        setForm({
+                                            ...form,
+                                            'userType': 1
+                                        })
+                                    }} />
+                                <CheckBox
+                                    title='Profissional'
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checkedColor={purple}
+                                    containerStyle={styleSheets.containerCheck}
+                                    checked={form.userType !== 1}
+                                    onPress={() => {
+                                        setForm({
+                                            ...form,
+                                            'userType': 2
+                                        })
+                                    }} />
                             </ViewContainerRow>
 
                             <TextInputJobs
-                                value={phone}
-                                onChangeText={(text) => handleOnChange('phone', text)}
+                                value={form.phone}
+                                name='phone'
+                                onChangeText={handleOnChange}
                                 placeholder='Telefone'
                                 textContentType='telephoneNumber'
                                 keyboardType='phone-pad'
-                                invalidValue={invalidField}
-                                nameField='phone' />
+                                invalidValue={invalidField === 'phone'} />
 
                             <TextInputJobs
-                                value={documentNumber}
-                                onChangeText={(text) => handleOnChange('documentNumber', text)}
+                                name='document'
+                                onChangeText={handleOnChange}
                                 placeholder='CPF'
-                                invalidValue={invalidField}
-                                nameField='documentNumber' />
+                                invalidValue={invalidField === 'document'} />
 
                             <TextInputJobs
-                                value={dateBirth}
-                                onChangeText={(text) => handleOnChange('dateBirth', text)}
+                                value={form.date_birth}
+                                name='date_birth'
+                                onChangeText={handleOnChange}
                                 placeholder='Data de Nascimento'
                                 keyboardType='number-pad'
-                                invalidValue={invalidField}
-                                nameField='dateBirth' />
+                                invalidValue={invalidField === 'date_birth'} />
 
                             <PickerJobs
-                                selectedValue={gender}
-                                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                                selectedValue={form.gender}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    setForm({
+                                        ...form,
+                                        'gender': itemValue
+                                    })
+                                }}
                                 itemsList={genderList} />
 
                             <ViewContainerButton>
@@ -258,7 +276,7 @@ const mapDispatchToProps = dispatch => {
         socialMidiaSignupInit: (user) => dispatch(ActionCreators.socialMidiaSignupInit(user)),
         socialMidiaSignupRequest: (user) => dispatch(ActionCreators.socialMidiaSignupRequest(user)),
         socialMidiaVerifyAccount: (socialMidiaId, socialMidiaType) => dispatch(ActionCreators.socialMidiaVerifyAccount(socialMidiaId, socialMidiaType)),
-        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
+        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType)),
     }
 }
 

@@ -30,7 +30,6 @@ import {
 import { styleSheets } from './styles'
 
 function SignUp(props) {
-    const [userType, setUserType] = useState(1)
     const [invalidField, setInvalidField] = useState('')
     const [genderList, setGenderList] = useState([
         {
@@ -46,22 +45,25 @@ function SignUp(props) {
             value: 'OUTRO'
         }
     ])
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [name, setName] = useState('')
-    const [phone, setPhone] = useState('')
-    const [documentNumber, setDocumentNumber] = useState('')
-    const [dateBirth, setDateBirth] = useState('')
-    const [gender, setGender] = useState('MASCULINO')
+    const [form, setForm] = useState({
+        userType: 1,
+        email: '',
+        password: '',
+        confirmPassword: '',
+        name: '',
+        phone: '',
+        document: '',
+        date_birth: '',
+        gender: 'MASCULINO'
+    })
 
     useEffect(() => {
-        
+
     }, [])
 
     useEffect(() => {
         if (props.signup.isSignup) {
-            props.login(props.signup.user.email, props.signup.user.password)
+            props.login(props.signup.user.email, props.signup.user.password, form.userType)
         }
     }, [props.signup.isSignup])
 
@@ -82,84 +84,37 @@ function SignUp(props) {
     }, [props.auth.isAuth, props.auth.error])
 
     useEffect(() => {
-        if (dateBirth.length > 0) {
-            let date_ = formatDate(dateBirth)
-            if (dateBirth !== date_)
-                setDateBirth(date_)
+        if (form.date_birth.length > 0) {
+            let date_ = formatDate(form.date_birth)
+            if (form.date_birth !== date_) {
+                setForm({
+                    ...form,
+                    'date_birth': date_
+                })
+            }
         }
-    }, [dateBirth])
+    }, [form.date_birth])
 
     useEffect(() => {
-        if (phone.length > 0) {
-            let phone_ = formatPhone(phone)
-            if (phone !== phone_)
-                setPhone(phone_)
+        if (form.phone.length > 0) {
+            let phone_ = formatPhone(form.phone)
+            if (form.phone !== phone_) {
+                setForm({
+                    ...form,
+                    'phone': phone_
+                })
+            }
         }
-    }, [phone])
+    }, [form.phone])
 
-    handleClickSignUp = () => {
-        if (!validateField('name', name))
-            return
-        else if (!validateField('phone', phone))
-            return
-        else if (!validateField('documentNumber', documentNumber))
-            return
-        else if (!validateField('dateBirth', dateBirth))
-            return
-        else if (!validateField('email', email))
-            return
-        else if (!validateField('password', password))
-            return
-        else if (!validateField('confirmPassword', confirmPassword))
-            return
-        else if (!validateField('gender', confirmPassword))
-            return
+    handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
 
-        let date = dateBirth.split("/")
-        let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
-
-        let user = {
-            userType: userType,
-            name: name,
-            phone: phone,
-            document: documentNumber,
-            date_birth: dateFormatted,
-            gender: gender,
-            email: email,
-            password: password,
-        }
-        props.signupRequest(user)
-    }
-
-    handleOnChange = (field, text) => {
-        switch (field) {
-            case 'name':
-                setName(text)
-                break
-            case 'phone':
-                setPhone(text)
-                break
-            case 'documentNumber':
-                setDocumentNumber(text)
-                break
-            case 'dateBirth':
-                setDateBirth(text)
-                break
-            case 'email':
-                setEmail(text)
-                break
-            case 'password':
-                setPassword(text)
-                break
-            case 'confirmPassword':
-                setConfirmPassword(text)
-                break
-            default:
-                break
-        }
-
-        if (!validateField(field, text))
-            setInvalidField(field)
+        if (!validateField(name, text))
+            setInvalidField(name)
         else
             setInvalidField('')
     }
@@ -167,7 +122,7 @@ function SignUp(props) {
     validateField = (field, value) => {
         switch (field) {
             case 'name':
-            case 'documentNumber':
+            case 'document':
                 if (value.length === 0)
                     return false
                 break
@@ -175,7 +130,7 @@ function SignUp(props) {
                 if (value.length < 14)
                     return false
                 break
-            case 'dateBirth':
+            case 'date_birth':
                 if (value.length < 10)
                     return false
                 break
@@ -184,7 +139,7 @@ function SignUp(props) {
                     return false
                 break
             case 'confirmPassword':
-                if (value !== password)
+                if (value !== form.password)
                     return false
                 break
             case 'email':
@@ -201,6 +156,20 @@ function SignUp(props) {
         return true
     }
 
+    handleClickSignUp = () => {
+        if (invalidField !== '')
+            return
+
+        let date = form.date_birth.split("/")
+        let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
+
+        let user = {
+            ...form,
+            date_birth: dateFormatted,
+        }
+        props.signupRequest(user)
+    }
+
     return (
         <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
             <View style={{ paddingBottom: 50 }}>
@@ -212,83 +181,96 @@ function SignUp(props) {
                         {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
                         <View>
                             <ViewContainerRow>
-                                <CheckBox title='Cliente'
+                                <CheckBox
+                                    title='Cliente'
                                     checkedIcon='dot-circle-o'
                                     uncheckedIcon='circle-o'
                                     checkedColor={purple}
                                     containerStyle={styleSheets.containerCheck}
-                                    checked={userType === 1}
-                                    onPress={() => setUserType(1)} />
-                                <CheckBox title='Profissional'
+                                    checked={form.userType === 1}
+                                    onPress={() => {
+                                        setForm({
+                                            ...form,
+                                            'userType': 1
+                                        })
+                                    }} />
+                                <CheckBox
+                                    title='Profissional'
                                     checkedIcon='dot-circle-o'
                                     uncheckedIcon='circle-o'
                                     checkedColor={purple}
                                     containerStyle={styleSheets.containerCheck}
-                                    checked={userType !== 1}
-                                    onPress={() => setUserType(2)} />
+                                    checked={form.userType !== 1}
+                                    onPress={() => {
+                                        setForm({
+                                            ...form,
+                                            'userType': 2
+                                        })
+                                    }} />
                             </ViewContainerRow>
                             <TextInputJobs
-                                value={name}
-                                onChangeText={(text) => handleOnChange('name', text)}
+                                name='name'
+                                onChangeText={handleOnChange}
                                 placeholder='Nome'
-                                invalidValue={invalidField}
-                                nameField='name' />
+                                invalidValue={invalidField === 'name'} />
 
                             <TextInputJobs
-                                value={phone}
-                                onChangeText={(text) => handleOnChange('phone', text)}
+                                value={form.phone}
+                                name='phone'
+                                onChangeText={handleOnChange}
                                 placeholder='Telefone'
                                 textContentType='telephoneNumber'
                                 keyboardType='phone-pad'
-                                invalidValue={invalidField}
-                                nameField='phone' />
+                                invalidValue={invalidField === 'phone'} />
 
                             <TextInputJobs
-                                value={documentNumber}
-                                onChangeText={(text) => handleOnChange('documentNumber', text)}
+                                name='document'
+                                onChangeText={handleOnChange}
+                                keyboardType='number-pad'
                                 placeholder='CPF'
-                                invalidValue={invalidField}
-                                nameField='documentNumber' />
+                                invalidValue={invalidField === 'document'} />
 
                             <TextInputJobs
-                                value={dateBirth}
-                                onChangeText={(text) => handleOnChange('dateBirth', text)}
+                                value={form.date_birth}
+                                name='date_birth'
+                                onChangeText={handleOnChange}
                                 placeholder='Data de Nascimento'
                                 keyboardType='number-pad'
-                                invalidValue={invalidField}
-                                nameField='dateBirth' />
+                                invalidValue={invalidField === 'date_birth'} />
 
                             <PickerJobs
-                                selectedValue={gender}
-                                onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                                selectedValue={form.gender}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    setForm({
+                                        ...form,
+                                        'gender': itemValue
+                                    })
+                                }}
                                 itemsList={genderList} />
 
                             <TextInputJobs
-                                value={email}
-                                onChangeText={(text) => handleOnChange('email', text)}
+                                name='email'
+                                onChangeText={handleOnChange}
                                 placeholder='Email'
                                 textContentType='emailAddress'
                                 keyboardType='email-address'
-                                invalidValue={invalidField}
-                                nameField='email' />
+                                invalidValue={invalidField === 'email'} />
 
                             <TextInputJobs
-                                value={password}
-                                onChangeText={(text) => handleOnChange('password', text)}
+                                name='password'
+                                onChangeText={handleOnChange}
                                 placeholder='Senha'
                                 textContentType='password'
                                 secureTextEntry={true}
-                                invalidValue={invalidField}
-                                nameField='password' />
+                                invalidValue={invalidField === 'password'} />
 
                             <TextInputJobs
-                                value={confirmPassword}
-                                onChangeText={(text) => handleOnChange('confirmPassword', text)}
+                                name='confirmPassword'
+                                onChangeText={handleOnChange}
                                 placeholder='Confirme a Senha'
                                 textContentType='password'
                                 secureTextEntry={true}
-                                invalidValue={invalidField}
-                                nameField='confirmPassword' />
+                                invalidValue={invalidField === 'confirmPassword'} />
 
                             <ViewContainerButton>
                                 <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
@@ -320,7 +302,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         signupRequest: (user) => dispatch(ActionCreators.signupRequest(user)),
-        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
+        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType)),
     }
 }
 

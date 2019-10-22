@@ -11,7 +11,6 @@ import HeaderJob from '../../components/HeaderJobs/index';
 import Categories from '../../components/Categories/index';
 import List from '../../components/List/index';
 import { purple } from '../../components/common/util/colors';
-import { logout } from '../../services/authServices';
 import useGet from '../../services/restServices';
 
 function ProfessionalSearchScreen(props) {
@@ -50,15 +49,11 @@ function ProfessionalSearchScreen(props) {
     }, [props.isAuth]);
 
     handleBackPress = () => {
-        logout()
-            .then((result) => {
-                if (result === 'success')
-                    props.logoutSuccess()
-            })
+        props.logoutRequest()
         return true
     };
 
-    selectSubcategoryRedirect = () => {        
+    selectSubcategoryRedirect = () => {
         props.navigation.navigate('Services')
     };
 
@@ -86,7 +81,7 @@ function ProfessionalSearchScreen(props) {
             </ContainerCategorias>
             <Footer
                 servicesOnPress={() => props.navigation.navigate('Services')}
-                perfilOnPress={() => props.userType === 'client' ? props.navigation.navigate('Perfil') : props.navigation.navigate('ProfessionalHome')}
+                perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </View>
     )
@@ -105,7 +100,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        logoutSuccess: () => dispatch(ActionCreators.logoutSuccess()),
+        logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
         categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie))
     }
 };

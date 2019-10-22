@@ -22,13 +22,14 @@ export const loginRequest = (state = INITIAL_STATE, action) => {
 }
 
 export const loginSuccess = (state = INITIAL_STATE, action) => {
+    console.log('userType', action.data.userType)
     return {
         ...state,
         isAuth: true,
         isLogingin: false,
         user: action.data.user,
         token: action.data.token,
-        userType: action.userType === 1 ? 'client' : 'professional'
+        userType: action.data.userType === 2 ? 'professional' : 'client'
     }
 }
 
@@ -52,12 +53,14 @@ export const loginCleanError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const logoutRequest = (state = INITIAL_STATE, action) => {
+    return state
+}
+
 export const logoutSuccess = (state = INITIAL_STATE, action) => {
-    console.log('logout success')
     return {
         ...state,
         isAuth: false,
-        isLogingin: false,
         user: {},
         token: '',
         userType: 'client'
@@ -65,13 +68,14 @@ export const logoutSuccess = (state = INITIAL_STATE, action) => {
 }
 
 export const authSuccess = (state = INITIAL_STATE, action) => {
+    console.log('userType', action.data.userType)
     return {
         ...state,
         isAuth: true,
         isLogingin: false,
         user: action.data.user,
         token: action.data.token,
-        userType: action.userType === 1 ? 'client' : 'professional'
+        userType: action.data.userType === 2 ? 'professional' : 'client'
     }
 }
 
@@ -115,6 +119,7 @@ export const HANDLERS = {
     [Types.LOGIN_SUCCESS]: loginSuccess,
     [Types.LOGIN_ERROR]: loginError,
     [Types.LOGIN_CLEAN_ERROR]: loginCleanError,
+    [Types.LOGOUT_REQUEST]: logoutRequest,
     [Types.LOGOUT_SUCCESS]: logoutSuccess,
     [Types.AUTH_SUCCESS]: authSuccess,
     [Types.CHANGE_PASSWORD_REQUEST]: changePasswordRequest,

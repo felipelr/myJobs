@@ -25,8 +25,10 @@ import Footer from '../../components/Footer/index'
 import ClientEntry from '../../components/ClientEntry/index'
 import ChangePassword from '../../components/ChangePassword/index'
 import SuggestCompany from '../../components/SuggestCompany/index'
+import MyAddress from '../../components/MyAddress/index'
 
 function PerfilScreen(props) {
+    const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
     const [image, setImage] = useState((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + new Date().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
@@ -37,7 +39,7 @@ function PerfilScreen(props) {
         },
         {
             title: 'Meus Endereços', //mvp -> alterar endereço
-            icon: 'account-circle'
+            icon: 'room'
         },
         {
             title: 'Segurança', //mvp -> alteração de senha
@@ -66,9 +68,11 @@ function PerfilScreen(props) {
     ])
 
     useEffect(() => {
-        this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        if (BackHandler && BackHandler != null)
+            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
-            this.backHandler.remove()
+            if (this.backHandler && this.backHandler != null)
+                this.backHandler.remove()
         }
     }, [])
 
@@ -76,6 +80,9 @@ function PerfilScreen(props) {
         switch (show) {
             case 'cadastro':
                 setTitle('Dados Cadastrais')
+                break
+            case 'enderecos':
+                setTitle('Meus Endereços')
                 break
             case 'alterarSenha':
                 setTitle('Ateração de Senha')
@@ -99,6 +106,10 @@ function PerfilScreen(props) {
             case 'Dados Cadastrais':
                 props.clientClearErrors()
                 setShow('cadastro')
+                break
+            case 'Meus Endereços':
+                //props.clientClearErrors()
+                setShow('enderecos')
                 break
             case 'Segurança':
                 props.authCleanErrors()
@@ -140,9 +151,14 @@ function PerfilScreen(props) {
 
     return (
         <React.Fragment>
-            <HeaderJobs
-                title={title}
-                back={handleClickBack} />
+            {
+                showHeader && (
+                    <HeaderJobs
+                        title={title}
+                        back={handleClickBack} />
+                )
+            }
+
             <ScrollViewContainer>
                 <View style={{ flex: 1 }}>
                     {show === 'menu' && (
@@ -189,6 +205,8 @@ function PerfilScreen(props) {
                     {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 
                     {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
+
+                    {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
                 </View>
             </ScrollViewContainer>
 
@@ -207,6 +225,7 @@ PerfilScreen.navigationOptions = {
 const mapStateToProps = (state, ownProps) => {
     return {
         client: state.client.client,
+        userType: state.auth.userType,
         ownProps: ownProps,
     }
 }

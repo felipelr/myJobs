@@ -54,12 +54,13 @@ function ClientEntry(props) {
             value: 'OUTRO'
         }
     ])
-    const [name, setName] = useState(props.client.client.name)
-    const [phone, setPhone] = useState(props.client.client.phone)
-    const [documentNumber, setDocumentNumber] = useState(props.client.client.document)
-    const [dateBirth, setDateBirth] = useState(props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''))
-    const [gender, setGender] = useState(props.client.client.gender)
+    const [form, setForm] = useState({
+        ...props.client.client,
+        date_birth: props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''),
+    })
+
     const [image, setImage] = useState(props.client.client.photo ? { uri: props.client.client.photo } : { uri: '' })
+
     const [requisitou, setRequisitou] = useState(false)
     const [modalOpened, setModalOpened] = useState(false)
     const [menuOpened, setMenuOpened] = useState(true)
@@ -81,41 +82,37 @@ function ClientEntry(props) {
     }, [props.client.isUpdating])
 
     useEffect(() => {
-        if (dateBirth.length > 0) {
-            let date_ = formatDate(dateBirth)
-            if (dateBirth !== date_)
-                setDateBirth(date_)
+        if (form.date_birth.length > 0) {
+            let date_ = formatDate(form.date_birth)
+            if (form.date_birth !== date_) {
+                setForm({
+                    ...form,
+                    'date_birth': date_
+                })
+            }
         }
-    }, [dateBirth])
+    }, [form.date_birth])
 
     useEffect(() => {
-        if (phone.length > 0) {
-            let phone_ = formatPhone(phone)
-            if (phone !== phone_)
-                setPhone(phone_)
+        if (form.phone.length > 0) {
+            let phone_ = formatPhone(form.phone)
+            if (form.phone !== phone_) {
+                setForm({
+                    ...form,
+                    'phone': phone_
+                })
+            }
         }
-    }, [phone])
+    }, [form.phone])
 
-    handleOnChange = (field, text) => {
-        switch (field) {
-            case 'name':
-                setName(text)
-                break
-            case 'phone':
-                setPhone(text)
-                break
-            case 'documentNumber':
-                setDocumentNumber(text)
-                break
-            case 'dateBirth':
-                setDateBirth(text)
-                break
-            default:
-                break
-        }
+    handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
 
-        if (!validateField(field, text))
-            setInvalidField(field)
+        if (!validateField(name, text))
+            setInvalidField(name)
         else
             setInvalidField('')
     }
@@ -123,7 +120,7 @@ function ClientEntry(props) {
     validateField = (field, value) => {
         switch (field) {
             case 'name':
-            case 'documentNumber':
+            case 'document':
                 if (value.length === 0)
                     return false
                 break
@@ -131,7 +128,7 @@ function ClientEntry(props) {
                 if (value.length < 14)
                     return false
                 break
-            case 'dateBirth':
+            case 'date_birth':
                 if (value.length < 10)
                     return false
                 break
@@ -176,11 +173,8 @@ function ClientEntry(props) {
         if (invalidField === '') {
             let clientData = {
                 ...props.client.client,
-                name: name,
-                phone: phone,
-                document: documentNumber,
-                date_birth: dateBirth.split('/').reverse().join('-'),
-                gender: gender,
+                ...form,
+                date_birth: form.date_birth.split('/').reverse().join('-'),
                 image: image.base64 ? image.base64 : ''
             }
             setRequisitou(true)
@@ -305,39 +299,44 @@ function ClientEntry(props) {
                         </ContainerAvatar>
 
                         <TextInputJobs
-                            value={name}
-                            onChangeText={(text) => handleOnChange('name', text)}
+                            value={form.name}
+                            name='name'
+                            onChangeText={handleOnChange}
                             placeholder='Nome'
-                            invalidValue={invalidField}
-                            nameField='name' />
+                            invalidValue={invalidField === 'name'} />
 
                         <TextInputJobs
-                            value={phone}
-                            onChangeText={(text) => handleOnChange('phone', text)}
+                            value={form.phone}
+                            name='phone'
+                            onChangeText={handleOnChange}
                             placeholder='Telefone'
                             textContentType='telephoneNumber'
                             keyboardType='phone-pad'
-                            invalidValue={invalidField}
-                            nameField='phone' />
+                            invalidValue={invalidField === 'phone'} />
 
                         <TextInputJobs
-                            value={documentNumber}
-                            onChangeText={(text) => handleOnChange('documentNumber', text)}
+                            value={form.document}
+                            name='document'
+                            onChangeText={handleOnChange}
                             placeholder='CPF'
-                            invalidValue={invalidField}
-                            nameField='documentNumber' />
+                            invalidValue={invalidField === 'document'} />
 
                         <TextInputJobs
-                            value={dateBirth}
-                            onChangeText={(text) => handleOnChange('dateBirth', text)}
+                            value={form.date_birth}
+                            name='date_birth'
+                            onChangeText={handleOnChange}
                             placeholder='Data de Nascimento'
                             keyboardType='number-pad'
-                            invalidValue={invalidField}
-                            nameField='dateBirth' />
+                            invalidValue={invalidField === 'date_birth'} />
 
                         <PickerJobs
-                            selectedValue={gender}
-                            onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                            selectedValue={form.gender}
+                            onValueChange={(itemValue, itemIndex) => {
+                                setForm({
+                                    ...form,
+                                    'gender': itemValue
+                                })
+                            }}
                             itemsList={genderList} />
 
                         <ViewContainerButton>

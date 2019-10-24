@@ -69,10 +69,10 @@ function PerfilScreen(props) {
     ])
 
     useEffect(() => {
-        if (BackHandler && BackHandler != null)
+        if (this != null)
             this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         return () => {
-            if (this.backHandler && this.backHandler != null)
+            if (this != null)
                 this.backHandler.remove()
         }
     }, [])
@@ -207,8 +207,8 @@ function PerfilScreen(props) {
                     </React.Fragment>
                 )}
 
-                {(show === 'cadastro' && props.userType === 'client')  && <ClientEntry onUpdate={handleClickBack} />}
-                {(show === 'cadastro' && props.userType === 'professional')  && <ProfessionalEntry onUpdate={handleClickBack} />}
+                {(show === 'cadastro' && props.userType === 'client') && <ClientEntry onUpdate={handleClickBack} />}
+                {(show === 'cadastro' && props.userType === 'professional') && <ProfessionalEntry onUpdate={handleClickBack} />}
 
                 {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 

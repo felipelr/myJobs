@@ -108,6 +108,33 @@ export const professionalClearErrors = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const addNewProfessionalAddress = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: true,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const editProfessionalAddress = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: true,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const deleteProfessionalAddress = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: true,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
 export const HANDLES = {
     [Types.PROFESSIONALS_LOAD_REQUEST]: professionalsLoadRequest,
     [Types.PROFESSIONALS_LOAD_SUCCESS]: professionalsLoadSuccess,
@@ -120,6 +147,9 @@ export const HANDLES = {
     [Types.PROFESSIONAL_UPDATE_SUCCESS]: professionalUpdateSuccess,
     [Types.PROFESSIONAL_UPDATE_ERROR]: professionalUpdateError,
     [Types.PROFESSIONAL_CLEAR_ERRORS]: professionalClearErrors,
+    [Types.ADD_NEW_PROFESSIONAL_ADDRESS]: addNewProfessionalAddress,
+    [Types.EDIT_PROFESSIONAL_ADDRESS]: editProfessionalAddress,
+    [Types.DELETE_PROFESSIONAL_ADDRESS]: deleteProfessionalAddress,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

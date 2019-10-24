@@ -47,6 +47,9 @@ export const { Types, Creators } = createActions({
     professionalUpdateSuccess: ['professional'],
     professionalUpdateError: ['error'],
     professionalClearErrors: null,
+    addNewProfessionalAddress: ['token', 'professionalAddress'],
+    editProfessionalAddress: ['token', 'professionalAddress'],
+    deleteProfessionalAddress: ['token', 'id'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

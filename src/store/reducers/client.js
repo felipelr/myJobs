@@ -68,7 +68,7 @@ export const deleteClientAddress = (state = INITIAL_STATE, action) => {
         errorUpdating: false,
         errorMessage: ''
     }
-} 
+}
 
 export const HANDLERS = {
     [Types.CLIENT_UPDATE_REQUEST]: clientUpdateRequest,

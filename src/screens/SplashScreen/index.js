@@ -17,9 +17,6 @@ function SplashScreen(props) {
 
                 let userType = professionalData ? 2 : 1
 
-                console.log('userType', userType)
-                console.log('professionalData', professionalData)
-
                 const userJson = { ...JSON.parse(userData), userType }
                 const clientJson = clientData ? JSON.parse(clientData) : null
                 const professionalJson = professionalData ? JSON.parse(professionalData) : null

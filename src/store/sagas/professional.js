@@ -68,9 +68,95 @@ function* updateProfessional(action) {
     }
 }
 
+function* addNewProfessionalAddress(action) {
+    try {
+        const postResp = yield axios.post(`${urlMyJobsAPI}/professionalsAddresses/add.json`,
+            {
+                ...action.professionalAddress
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        console.log(postResp.data)
+
+        if (postResp.data.error) {
+            yield put(ActionCreator.professionalUpdateError(postResp.data.errorMessage))
+        }
+        else {
+            const professional = postResp.data.professional
+            setProfessionalData(professional)
+            yield put(ActionCreator.professionalUpdateSuccess(professional))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.professionalUpdateError(messageError))
+    }
+}
+
+function* editProfessionalAddress(action) {
+    try {
+        const putResp = yield axios.put(`${urlMyJobsAPI}/professionalsAddresses/edit/${action.professionalAddress.id}.json`,
+            {
+                ...action.professionalAddress
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (putResp.data.error) {
+            yield put(ActionCreator.professionalUpdateError(putResp.data.errorMessage))
+        }
+        else {
+            const professional = putResp.data.professional
+            setProfessionalData(professional)
+            yield put(ActionCreator.professionalUpdateSuccess(professional))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.professionalUpdateError(messageError))
+    }
+}
+
+function* deleteProfessionalAddress(action){
+    try {
+        const deleteResp = yield axios.delete(`${urlMyJobsAPI}/professionalsAddresses/delete/${action.id}.json`,
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (deleteResp.data.error) {
+            yield put(ActionCreator.professionalUpdateError(deleteResp.data.errorMessage))
+        }
+        else {
+            const professional = deleteResp.data.professional
+            setProfessionalData(professional)
+            yield put(ActionCreator.professionalUpdateSuccess(professional))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.professionalUpdateError(messageError))
+    }
+}
+
 export default function* rootProfessionals() {
     yield all([
         takeLatest(Types.PROFESSIONALS_SEND_NEW_SUGGEST, sendNewSuggest),
         takeLatest(Types.PROFESSIONAL_UPDATE_REQUEST, updateProfessional),
+        takeLatest(Types.ADD_NEW_PROFESSIONAL_ADDRESS, addNewProfessionalAddress),
+        takeLatest(Types.EDIT_PROFESSIONAL_ADDRESS, editProfessionalAddress),
+        takeLatest(Types.DELETE_PROFESSIONAL_ADDRESS, deleteProfessionalAddress),
     ])
 }

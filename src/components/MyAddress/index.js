@@ -29,13 +29,22 @@ function MyAddress(props) {
     const [showForm, setShowForm] = useState(false)
     const [selectedState, setSelectedState] = useState(25)
     const [invalidField, setInvalidField] = useState('')
-    const [form, setForm] = useState({
-        client_id: props.client.id,
-        city_id: 0,
-        street: '',
-        street_number: '',
-        neighborhood: ''
-    })
+    const [form, setForm] = useState(props.userType === 'client' ?
+        {
+            client_id: props.client.id,
+            city_id: 0,
+            street: '',
+            street_number: '',
+            neighborhood: ''
+        }
+        :
+        {
+            professional_id: props.professional.id,
+            city_id: 0,
+            street: '',
+            street_number: '',
+            neighborhood: ''
+        })
     const getStates = useGet(`/states/index.json`, props.token)
     const getCities = useGet(`/cities/index/${selectedState}.json`, props.token)
 
@@ -60,13 +69,24 @@ function MyAddress(props) {
 
     const handleNewAddressClick = () => {
         setAlterar(false)
-        setForm({
-            client_id: props.client.id,
-            city_id: 0,
-            street: '',
-            street_number: '',
-            neighborhood: ''
-        })
+        if (props.userType === 'client') {
+            setForm({
+                client_id: props.client.id,
+                city_id: 0,
+                street: '',
+                street_number: '',
+                neighborhood: ''
+            })
+        }
+        else {
+            setForm({
+                professional_id: props.professional.id,
+                city_id: 0,
+                street: '',
+                street_number: '',
+                neighborhood: ''
+            })
+        }
         setSelectedState(25)
         setTitleHeader('Novo Endereço')
         setShowForm(true)
@@ -107,23 +127,45 @@ function MyAddress(props) {
     const handleClickConfimar = () => {
         if (invalidField === '' && form.city_id !== 0) {
             setNewRequest(true)
-            if (alterar)
-                props.editClientAddress(props.token, form)
-            else
-                props.addNewClientAddress(props.token, form)
+            if (props.userType === 'client') {
+                if (alterar)
+                    props.editClientAddress(props.token, form)
+                else
+                    props.addNewClientAddress(props.token, form)
+            }
+            else {
+                if (alterar)
+                    props.editProfessionalAddress(props.token, form)
+                else
+                    props.addNewProfessionalAddress(props.token, form)
+            }
         }
     }
 
     const handleAddressClick = (addressId) => {
-        const clientAddress = props.client.clientsAddresses.filter((item) => item.id === addressId)
-        if (clientAddress) {
-            setAlterar(true)
-            setForm(clientAddress[0])
-            setTitleHeader('Alterar Endereço')
-            setSelectedState(clientAddress[0].city.state.id)
-            setShowForm(true)
-            props.ownProps.changeVisiblityPerfilHeader(false)
-            console.log(clientAddress)
+        if (props.userType === 'client') {
+            const clientAddress = props.client.clientsAddresses.filter((item) => item.id === addressId)
+            if (clientAddress) {
+                setAlterar(true)
+                setForm(clientAddress[0])
+                setTitleHeader('Alterar Endereço')
+                setSelectedState(clientAddress[0].city.state.id)
+                setShowForm(true)
+                props.ownProps.changeVisiblityPerfilHeader(false)
+                console.log(clientAddress)
+            }
+        }
+        else {
+            const professionalAddress = props.professional.professionalsAddresses.filter((item) => item.id === addressId)
+            if (professionalAddress) {
+                setAlterar(true)
+                setForm(professionalAddress[0])
+                setTitleHeader('Alterar Endereço')
+                setSelectedState(professionalAddress[0].city.state.id)
+                setShowForm(true)
+                props.ownProps.changeVisiblityPerfilHeader(false)
+                console.log(professionalAddress)
+            }
         }
     }
 
@@ -141,7 +183,10 @@ function MyAddress(props) {
                     text: 'Sim',
                     onPress: () => {
                         setNewRequest(true)
-                        props.deleteClientAddress(props.token, id)
+                        if (props.userType === 'client')
+                            props.deleteClientAddress(props.token, id)
+                        else
+                            props.deleteProfessionalAddress(props.token, id)
                     }
                 }
             ],
@@ -169,7 +214,23 @@ function MyAddress(props) {
                         {(!props.isUpdating && !showForm) && (
                             <ContainerLista>
                                 {
-                                    props.client.clientsAddresses && props.client.clientsAddresses.map((address) => (
+                                    (props.userType === 'client' && props.client.clientsAddresses) && props.client.clientsAddresses.map((address) => (
+                                        <ListItem
+                                            key={address.id}
+                                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                            title={address.street + ', ' + address.street_number}
+                                            rightIcon={<Icon name="chevron-right" size={30} color={purple} />}
+                                            leftElement={
+                                                <TouchableOpacity onPress={() => handleDeleteClick(address.id)}>
+                                                    <Icon name="delete" size={30} color={purple} />
+                                                </TouchableOpacity>
+                                            }
+                                            onPress={() => handleAddressClick(address.id)}
+                                        />
+                                    ))
+                                }
+                                {
+                                    (props.userType !== 'client' && props.professional.professionalsAddresses) && props.professional.professionalsAddresses.map((address) => (
                                         <ListItem
                                             key={address.id}
                                             containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
@@ -259,10 +320,12 @@ const mapStateToProps = (state, ownProps) => {
     return {
         ownProps: ownProps,
         token: state.auth.token,
+        userType: state.auth.userType,
         client: state.client.client,
-        isUpdating: state.client.isUpdating,
-        errorUpdating: state.client.errorUpdating,
-        errorMessage: state.client.errorMessage,
+        professional: state.professional.professional,
+        isUpdating: state.auth.userType === 'client' ? state.client.isUpdating : state.professional.isUpdating,
+        errorUpdating: state.auth.userType === 'client' ? state.client.errorUpdating : state.professional.errorUpdating,
+        errorMessage: state.auth.userType === 'client' ? state.client.errorMessage : state.professional.errorMessage,
     }
 }
 
@@ -271,6 +334,9 @@ const mapDispatchToProps = dispatch => {
         addNewClientAddress: (token, clientAddress) => dispatch(ActionCreators.addNewClientAddress(token, clientAddress)),
         editClientAddress: (token, clientAddress) => dispatch(ActionCreators.editClientAddress(token, clientAddress)),
         deleteClientAddress: (token, id) => dispatch(ActionCreators.deleteClientAddress(token, id)),
+        addNewProfessionalAddress: (token, professionalAddress) => dispatch(ActionCreators.addNewProfessionalAddress(token, professionalAddress)),
+        editProfessionalAddress: (token, professionalAddress) => dispatch(ActionCreators.editProfessionalAddress(token, professionalAddress)),
+        deleteProfessionalAddress: (token, id) => dispatch(ActionCreators.deleteProfessionalAddress(token, id)),
     }
 }
 

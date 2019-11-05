@@ -74,6 +74,10 @@ export const { Types, Creators } = createActions({
     addNewClientAddress: ['token', 'clientAddress'],
     editClientAddress: ['token', 'clientAddress'],
     deleteClientAddress: ['token', 'id'],
+
+    //Services
+    serviceSelected: ['service'],
+
 })
 
 export default Creators

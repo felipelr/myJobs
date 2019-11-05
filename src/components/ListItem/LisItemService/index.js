@@ -3,14 +3,17 @@ import { View } from 'react-native'
 import ListItem from '../index'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
+import { connect } from 'react-redux'
 
 import { purple } from '../../../components/common/util/colors'
 import { TitleService, InfoService, styles, Services } from './styles'
+import ActionCreators from '../../../store/actionCreators'
 
-export default function ListItemService(props) {
+function ListItemService(props) {
     const { servico } = props
 
-    const onPress = (servicoItem) => { 
+    const onPress = (servicoItem) => {  
+        props.serviceSelected(servicoItem) 
         props.itemOnPress()
     }
 
@@ -46,3 +49,11 @@ export default function ListItemService(props) {
         />
     )
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        serviceSelected: (service) => dispatch(ActionCreators.serviceSelected(service))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(ListItemService)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import { KeyboardAvoidingView, Platform, Keyboard, Text } from 'react-native'
 import { connect } from 'react-redux';
 
 import { ContainerProfessionals, ContainerList } from './styles'
@@ -51,6 +51,7 @@ function ProfessionalsScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+            
             <Container />
             <HeaderJobs back={true} filter={true} />
             <ContainerProfessionals>
@@ -68,7 +69,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
-        selectedCategorie: state.categoria.selected,  
+        selectedCategorie: state.categoria.selected,
+        serviceSelected: state.service.selected,  
         ownProps: ownProps
     }
 };

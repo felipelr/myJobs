@@ -1,15 +1,16 @@
 import styled from 'styled-components'
-import { purple, lightgray, white, black } from '../common/util/colors' 
-import actualDimensions, {widthPercentageToDP, heightPercentageToDP }  from '../../components/common/util/dimensions'
+import { purple, lightgray, white, black } from '../common/util/colors'
+import { widthPercentageToDP } from '../../components/common/util/dimensions'
 
 
-export const VwContainerCard = styled.View`
+export const VwContainerCard = styled.TouchableOpacity`
     elevation: 1;
     width: ${widthPercentageToDP('60%')}; 
     margin-right:5;
     border-radius: 10;
     border-width: 1;
     border-color: ${lightgray};
+    background-color: ${white};
 `
 
 export const VwTitleCard = styled.View`

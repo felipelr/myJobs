@@ -130,7 +130,7 @@ function PerfilScreen(props) {
 
     const handleClickBack = () => {
         if (show === 'menu') {
-
+            props.navigation.navigate('CategoriesSearch')
         }
         else {
             setShow('menu')
@@ -171,14 +171,14 @@ function PerfilScreen(props) {
                                 {image.uri.length > 0 &&
                                     <Avatar
                                         rounded
-                                        containerStyle={styles.shadow}
+                                        containerStyle={styles}
                                         source={{ uri: image.uri }}
                                         size={120} />}
 
                                 {image.uri.length <= 0 &&
                                     <Avatar
                                         rounded
-                                        containerStyle={styles.shadow}
+                                        containerStyle={styles}
                                         size={120} />}
 
                             </ContainerAvatar>

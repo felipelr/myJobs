@@ -1,17 +1,52 @@
 import React from 'react'
-import { VwContainerServices } from './styles'
+import { connect } from 'react-redux'
+import ActionCreators from '../../store/actionCreators'
+
+import {
+    VwContainerServices,
+    VwContainerCard,
+    VwSubTitle,
+    VwTitleCard,
+    VwEmpty,
+    VwEmpty2,
+} from './styles'
 
 import CardService from '../../components/CardService/index'
 
-export default function CardsServices(props) {
-    const { servicos } = props
+function CardsServices({ services, loading, selectedService, ...props }) {
     return (
         <VwContainerServices>
             {
-                servicos.map((servico) => (
-                    <CardService select={servico.id == 1 ? true : false} key={servico.id} avaliacao={servico.avaliacao} qtdeAvaliacoes={servico.qtdeAvaliacoes} titulo={servico.titulo} descricao={servico.descricao} />
+                !loading && services.map((item) => (
+                    <CardService
+                        key={item.id}
+                        select={item.id === selectedService ? true : false}
+                        service={item}
+                        onPress={() => props.professionalHomeSetSelectedService(item)} />
                 ))
+            }
+
+            {
+                loading && (
+                    <VwContainerCard>
+                        <VwTitleCard>
+                            <VwEmpty />
+                        </VwTitleCard>
+                        <VwSubTitle>
+                            <VwEmpty />
+                            <VwEmpty2 />
+                        </VwSubTitle>
+                    </VwContainerCard>
+                )
             }
         </VwContainerServices>
     )
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(CardsServices)

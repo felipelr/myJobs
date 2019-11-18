@@ -1,98 +1,252 @@
-import React from 'react'
-import { View, Platform, TouchableOpacity, Text, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, FlatList } from 'react-native'
 import { Avatar } from 'react-native-elements'
+import { RNCamera } from 'react-native-camera'
+import CameraRoll from "@react-native-community/cameraroll"
+import RNFetchBlob from 'rn-fetch-blob'
+
+import useGet from '../../services/restServices'
+import ActionCreators from '../../store/actionCreators'
+
+import assets from '../../screens/ProfessionalHomeScreen/assets'
 
 import {
-    Capa, VwContainerTitle, TxtTitle, VwContainerRating,
-    VwContainerContent, VwContainerServices, VwContainerStories,
-    ContainerAvatar, ContentComentarios
+    Capa,
+    VwContainerTitle,
+    TxtTitle,
+    VwContainerRating,
+    VwContainerContent,
+    VwContainerServices,
+    VwContainerStories,
+    ContainerAvatar,
+    ContentComentarios,
+    ModalContainer,
+    TakePictureButtonContainer,
+    TakePictureButtonLabel,
+    ModalButtons,
+    CameraButtonContainer,
+    CancelButtonText,
+    ContinueButtonText,
+    ViewContainerMenu,
+    ViewContainerButtonsMenu,
+    ButtonMenu,
+    ButtonMenuText,
+    ViewImageListItem,
+    ImageItem,
+    ViewContainerMenuOpacity,
+    ImageNewStory,
+    styles
 } from './styles'
-import assets from '../../screens/ProfessionalHomeScreen/assets';
+
 import RatingJobs from '../../components/RatingJobs/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import Stories from '../../components/Stories/index'
-import CardsServices from '../../components/CardsServices/index';
-import ComentariosList from '../../components/ComentariosList';
-import { lightgray } from '../../components/common/util/colors';
+import CardsServices from '../../components/CardsServices/index'
+import ComentariosList from '../../components/ComentariosList'
 import Footer from '../../components/Footer/index'
 
-export default function ProfessionalHomeScreen(props) {
+function ProfessionalHomeScreen(props) {
+    const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
+    const [newStory, setNewStory] = useState('')
+    const [services, setServices] = useState([])
+    const [comments, setComments] = useState([])
+    const [stories, setStories] = useState([])
+    const [modalOpened, setModalOpened] = useState(false)
+    const [menuOpened, setMenuOpened] = useState(true)
+    const [cameraOpened, setCameraOpened] = useState(false)
+    const [folderImagesOpened, setFolderImagesOpened] = useState(false)
+    const [imagesFolder, setImagesFolder] = useState([])
+    const [hasNextPage, setHasNextPage] = useState(true)
+    const [endCursor, setEndCursor] = useState('')
+    const [storyTempVisible, setStoryTempVisible] = useState(false)
 
-    const empresa = {
-        imagem: 'https://www.agenciadosite.com.br/wp-content/uploads/2017/11/logo-para-petshop-2.jpg',
-        nome: 'Finos e Cheirosos'
+    const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
+    const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
+    const getStories = useGet(`/stories/view/${props.professionalData.id}.json`, props.token)
+
+    useEffect(() => {
+        if (this != null)
+            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        return () => {
+            if (this != null)
+                this.backHandler.remove()
+        }
+    }, [])
+
+    useEffect(() => {
+        if (getProfessionalServices.data && getProfessionalServices.data.professionalServices) {
+            setServices(getProfessionalServices.data.professionalServices.map(item => {
+                return {
+                    ...item.service,
+                    rating: item.rating,
+                    amount_ratings: item.amount_ratings
+                }
+            }))
+            if (services && services.length > 0) {
+                props.professionalHomeSetSelectedService(services[0])
+            }
+        }
+    }, [getProfessionalServices.loading])
+
+    useEffect(() => {
+        if (props.selectedService.id !== 0) {
+            getProfessionalComments.refetch(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`)
+        }
+    }, [props.selectedService.id])
+
+    useEffect(() => {
+        if (getProfessionalComments.data && getProfessionalComments.data.professionalComments) {
+            setComments(getProfessionalComments.data.professionalComments.map(item => {
+                return {
+                    comment: item.comment,
+                    rating: item.rating,
+                    amount_ratings: item.amount_ratings,
+                    photo: item.client.photo,
+                    client_name: item.client.name,
+                }
+            }))
+        }
+    }, [getProfessionalComments.loading])
+
+    useEffect(() => {
+        if (getStories.data && getStories.data.stories) {
+            setStories(getStories.data.stories.map(item => item))
+        }
+    }, [getStories.loading])
+
+    useEffect(() => {
+        if (!props.isAuth) {
+            props.ownProps.navigation.navigate('Login')
+        }
+    }, [props.isAuth])
+
+    const handleBackPress = async () => {
+        if (storyTempVisible)
+            setStoryTempVisible(false)
+        else
+            props.logoutRequest()
+        return true
     }
 
-    const stories = [
-        {
-            id: 1,
-            titulo: 'Banho e Tosa',
-            imagem: 'https://www.petz.com.br/blog/wp-content/uploads/2019/02/cao-no-banho.jpg'
-        },
-        {
-            id: 2,
-            titulo: 'Vacinas',
-            imagem: 'https://www.caes-e-cia.com.br//admin/storage/Imagens/iStock-153066692.jpg'
-        },
-        {
-            id: 3,
-            titulo: 'Analise',
-            imagem: 'https://www.ictq.com.br/images/varejo_farmaceutico/FARMACEUTICO-VETERINARIO-ICTQ.jpg'
+    handleNewStoryClick = () => {
+        if (Platform.OS === 'ios') {
+            handleShowMenu()
+        } else {
+            async function requestCameraPermission() {
+                try {
+                    const granted = await PermissionsAndroid.requestMultiple(
+                        [
+                            PermissionsAndroid.PERMISSIONS.CAMERA,
+                            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                        ]
+                    )
+                    if (granted["android.permission.CAMERA"] === PermissionsAndroid.RESULTS.GRANTED) {
+                        handleShowMenu()
+                    } else {
+                        alert("Permission Denied")
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+            }
+            requestCameraPermission()
         }
-    ]
+    }
 
-    const servicos = [
-        {
-            id: 1,
-            titulo: 'Banho e Tosa',
-            descricao: 'Serviço completo de higienização das partes intimas e lavagem com shampoo anti-pulgas',
-            avaliacao: 5,
-            qtdeAvaliacoes: 5644
-        },
-        {
-            id: 2,
-            titulo: 'Vacinação',
-            descricao: 'Vacinas importadas com a melhor qualidade do mercado aplicada com muito carinho no seu pet',
-            avaliacao: 5,
-            qtdeAvaliacoes: 1354
-        },
-        {
-            id: 3,
-            titulo: 'Consulta Veterinaria',
-            descricao: 'Exames de Sangue com aparelhos de ultima geração para seu Pet.',
-            avaliacao: 5,
-            qtdeAvaliacoes: 2345
-        }
-    ]
+    handleShowMenu = () => {
+        setModalOpened(true)
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+    }
 
-    const comentarios = [
-        {
-            id: 1,
-            avaliacao: 5,
-            usuarioImagem: 'https://blog.intercomassets.com/wp-content/uploads/2019/04/15153622/PatrickAndrewsLo.jpg',
-            usuarioNome: 'Ricardo',
-            comentario: 'Excelente serviço, meu pet amou'
-        },
-        {
-            id: 2,
-            avaliacao: 3,
-            usuarioImagem: 'https://www.citrix.com/blogs/wp-content/uploads/2017/05/Citrix-Blog-User-Bio-Photo-5.png',
-            usuarioNome: 'Juliana',
-            comentario: 'O serviço em sí é bom, mas poderiam oferecer diferenciais'
-        },
-        {
-            id: 3,
-            avaliacao: 5,
-            usuarioImagem: 'https://secure.gravatar.com/avatar/b10f7ddbf9b8be9e3c46c302bb20101d?s=400&d=mm&r=g',
-            usuarioNome: 'Kelly',
-            comentario: 'Sempre levo os meus Pets lá, adoro o serviço e o cuidado!'
+    handleTakePicture = async () => {
+        if (this.camera) {
+            const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
+            const data = await this.camera.takePictureAsync(options)
+            setNewStory(data)
+            setStoryTempVisible(true)
         }
-    ]
+    }
+
+    handleModalClose = () => {
+        setNewStory('')
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
+    }
+
+    handleCameraModalConfirm = () => {
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
+    }
+
+    handleShowCamera = () => {
+        setMenuOpened(false)
+        setCameraOpened(true)
+        setStoryTempVisible(false)
+    }
+
+    handleShowFolder = () => {
+        setMenuOpened(false)
+        setFolderImagesOpened(true)
+        loadGaleryPhotos()
+    }
+
+    loadGaleryPhotos = () => {
+        if (hasNextPage) {
+            CameraRoll.getPhotos({
+                first: 10,
+                after: endCursor,
+                assetType: 'Photos',
+            })
+                .then(r => {
+                    const photos = r.edges.map(item => item.node.image)
+                    if (imagesFolder.length > 0)
+                        setImagesFolder([...imagesFolder, ...photos])
+                    else
+                        setImagesFolder(photos)
+                    setHasNextPage(r.page_info.has_next_page)
+                    setEndCursor(r.page_info.end_cursor)
+                })
+                .catch((err) => {
+                    console.error(err)
+                    setImagesFolder([])
+                })
+        }
+    }
+
+    handleSelectPicture = (item) => {
+        RNFetchBlob.fs.readFile(item.uri, 'base64')
+            .then(data => {
+                item = {
+                    ...item,
+                    base64: data
+                }
+                setNewStory(item)
+                setMenuOpened(true)
+                setCameraOpened(false)
+                setFolderImagesOpened(false)
+                setModalOpened(false)
+            })
+            .catch(err => {
+                setMenuOpened(true)
+                setCameraOpened(false)
+                setFolderImagesOpened(false)
+                setModalOpened(false)
+            })
+    }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            <HeaderJobs back />
+            <HeaderJobs />
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ flex: 1 }} behavior={behavior}>
                     <Capa imagem={assets.capa} />
@@ -101,7 +255,7 @@ export default function ProfessionalHomeScreen(props) {
                             <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
                         </VwContainerRating>
                         <TxtTitle size={24}>
-                            {empresa.nome}
+                            {props.professionalData.name}
                         </TxtTitle>
                     </VwContainerTitle>
                     <VwContainerContent>
@@ -109,34 +263,141 @@ export default function ProfessionalHomeScreen(props) {
                             <TxtTitle size={14}>
                                 Stories
                             </TxtTitle>
-                            <Stories novaImagem stories={stories} />
+                            <Stories novaImagem stories={stories} onPressNewStory={handleNewStoryClick} />
                         </VwContainerStories>
                         <VwContainerServices>
                             <TxtTitle size={14}>
                                 Serviços
                             </TxtTitle>
-                            <CardsServices servicos={servicos} />
+                            <CardsServices services={services} selectedService={props.selectedService.id} loading={getProfessionalServices.loading} />
                         </VwContainerServices>
-                        <ContentComentarios> 
+                        <ContentComentarios>
                             <TxtTitle size={14}>
-                                Comentários do Serviço: Banho e Tosa
+                                Comentários do Serviço: {props.selectedService.title}
                             </TxtTitle>
-                            <ComentariosList comentarios={comentarios} />
-                        </ContentComentarios> 
+                            <ComentariosList comments={comments} loading={getProfessionalComments.loading} />
+                        </ContentComentarios>
                     </VwContainerContent>
                     <ContainerAvatar>
-                        <Avatar
-                            rounded
-                            containerStyle={{ borderWidth: 0.5, borderColor: lightgray, elevation: 1 }}
-                            avatarStyle={styles.shadow}
-                            source={{
-                                uri: empresa.imagem,
-                            }}
-                            size={140} />
+                        {image.uri.length > 0 &&
+                            <Avatar
+                                rounded
+                                containerStyle={styles}
+                                source={{ uri: image.uri }}
+                                size={120} />}
+
+                        {image.uri.length <= 0 &&
+                            <Avatar
+                                rounded
+                                containerStyle={styles}
+                                size={120} />}
                     </ContainerAvatar>
+                    <Modal
+                        visible={modalOpened}
+                        transparent={menuOpened}
+                        animationType="fade"
+                        onRequestClose={handleModalClose}
+                    >
+                        {menuOpened && (
+                            <ViewContainerMenu>
+                                <ViewContainerMenuOpacity />
+                                <ViewContainerButtonsMenu>
+                                    <ButtonMenu onPress={handleShowCamera}>
+                                        <ButtonMenuText>Tirar Foto</ButtonMenuText>
+                                    </ButtonMenu>
+                                    <ButtonMenu onPress={handleShowFolder}>
+                                        <ButtonMenuText>Galeria</ButtonMenuText>
+                                    </ButtonMenu>
+                                    <ButtonMenu onPress={handleModalClose}>
+                                        <ButtonMenuText>Cancelar</ButtonMenuText>
+                                    </ButtonMenu>
+                                </ViewContainerButtonsMenu>
+                            </ViewContainerMenu>
+                        )}
+                        {cameraOpened && (
+                            <ModalContainer>
+                                <ModalContainer>
+                                    <RNCamera
+                                        ref={camera => { this.camera = camera; }}
+                                        style={{ flex: 1 }}
+                                        type={RNCamera.Constants.Type.front}
+                                        autoFocus={RNCamera.Constants.AutoFocus.on}
+                                        flashMode={RNCamera.Constants.FlashMode.off}
+                                        androidCameraPermissionOptions={{
+                                            title: 'Permissão para usar a câmera',
+                                            message: 'Nós precisamos da sua permissão para usar a câmera',
+                                            buttonPositive: 'Ok',
+                                            buttonNegative: 'Cancel',
+                                        }}
+                                        androidRecordAudioPermissionOptions={{
+                                            title: 'Permissão para gravar audio',
+                                            message: 'Nós precisamos da sua permissão para usar o seu audio',
+                                            buttonPositive: 'Ok',
+                                            buttonNegative: 'Cancel',
+                                        }}
+                                    />
+                                    {storyTempVisible && (
+                                        <React.Fragment>
+                                            <ImageNewStory
+                                                source={{ uri: newStory.uri }}
+                                                resizeMode="cover"
+                                            />
+                                        </React.Fragment>
+                                    )}
+                                    {!storyTempVisible && (
+                                        <React.Fragment>
+                                            <TakePictureButtonContainer onPress={handleTakePicture}>
+                                                <TakePictureButtonLabel />
+                                            </TakePictureButtonContainer>
+                                        </React.Fragment>
+                                    )}
+                                </ModalContainer>
+                                {!storyTempVisible &&
+                                    <ModalButtons>
+                                        <CameraButtonContainer onPress={handleModalClose}>
+                                            <CancelButtonText>Cancelar</CancelButtonText>
+                                        </CameraButtonContainer>
+                                        <CameraButtonContainer onPress={handleCameraModalConfirm}>
+                                            <ContinueButtonText>Continuar</ContinueButtonText>
+                                        </CameraButtonContainer>
+                                    </ModalButtons>
+                                }
+
+                            </ModalContainer>
+                        )}
+                        {folderImagesOpened && (
+                            <ModalContainer>
+                                <ModalContainer>
+                                    <FlatList
+                                        numColumns={3}
+                                        data={imagesFolder}
+                                        keyExtractor={image => image.filename}
+                                        renderItem={({ item }) => {
+                                            return (
+                                                <ViewImageListItem onPress={() => handleSelectPicture(item)}>
+                                                    <ImageItem
+                                                        source={{ uri: item.uri }}
+                                                        resizeMode="stretch"
+                                                    />
+                                                </ViewImageListItem>
+                                            )
+                                        }}
+                                        onEndReached={(info) => {
+                                            loadGaleryPhotos()
+                                        }}
+                                    />
+                                </ModalContainer>
+                                <ModalButtons>
+                                    <CameraButtonContainer onPress={handleModalClose}>
+                                        <CancelButtonText>Cancelar</CancelButtonText>
+                                    </CameraButtonContainer>
+                                </ModalButtons>
+                            </ModalContainer>
+                        )}
+                    </Modal>
                 </View>
             </ScrollView>
-            <Footer />
+            <Footer perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </React.Fragment>
     )
 }
@@ -144,3 +405,23 @@ export default function ProfessionalHomeScreen(props) {
 ProfessionalHomeScreen.navigationOptions = {
     header: null
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        isAuth: state.auth.isAuth,
+        token: state.auth.token,
+        professionalCtr: state.professional,
+        professionalData: state.professional.professional,
+        selectedService: state.professionalHome.selectedService,
+        ownProps: ownProps
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
+        professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalHomeScreen)

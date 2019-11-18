@@ -1,7 +1,6 @@
 import styled from 'styled-components'
-import {purple} from '../../components/common/util/colors'
-import actualDimensions, {widthPercentageToDP, heightPercentageToDP }  from '../../components/common/util/dimensions'
-
+import { purple } from '../../components/common/util/colors'
+import { widthPercentageToDP } from '../../components/common/util/dimensions'
 
 export const VwContainerComentario = styled.View`
     flex-direction: row;

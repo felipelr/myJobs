@@ -1,27 +1,34 @@
-import React from 'react';
+import React from 'react'
+import { Image } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { SvwContainerStories, VwContainerStorieItem, ImgStorieItem } from './styles' 
+import {
+    SvwContainerStories,
+    VwContainerStorieItem,
+    VwContainerStorieItemEmpty
+} from './styles'
 
-const Stories = (props) => {
-    const { novaImagem } = props
-    const { stories } = props
+const Stories = ({ novaImagem, stories, onPressNewStory, ...props }) => {
 
-    return ( 
-        <SvwContainerStories> 
+    handleStoryClick = (story) => {
+
+    }
+
+    return (
+        <SvwContainerStories>
             {
                 novaImagem &&
-                <VwContainerStorieItem>
+                <VwContainerStorieItemEmpty onPress={onPressNewStory}>
                     <Icon name='camera-alt' size={80} color='white' />
-                </VwContainerStorieItem>
+                </VwContainerStorieItemEmpty>
             }
             {stories.map((item) => (
-                <ImgStorieItem key={item.id} imagem={item.imagem} />
+                <VwContainerStorieItem key={item.id} onPress={() => handleStoryClick(item)}>
+                    <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                </VwContainerStorieItem>
             ))}
         </SvwContainerStories>
     )
 }
 
-export default Stories;
-
-
+export default Stories

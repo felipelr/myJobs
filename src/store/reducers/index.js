@@ -8,6 +8,7 @@ import subcategory from './subcategory'
 import client from './client'
 import highlights from './highlights'
 import professional from './professional'
+import professionalHome from './professionalHome'
 
 const rootReducer = combineReducers({
     auth,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     client,
     highlights,
     professional,
+    professionalHome,
 })
 
 export default rootReducer

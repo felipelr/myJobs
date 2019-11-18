@@ -1,31 +1,47 @@
-import React from 'react'; 
+import React from 'react'
 import PropTypes from 'prop-types'
+import { View } from 'react-native'
+import { Avatar } from 'react-native-elements'
 
-import { SvwContainerComentarios} from './styles'
+import {
+    SvwContainerComentarios,
+    VwContainerComentario,
+    VwEmpty,
+    VwEmpty2
+} from './styles'
 import Comentario from '../../components/Comentario/index'
 
-const ComentariosList = (props) => { 
-
-    const {comentarios} = props
-
+const ComentariosList = ({ comments, loading, ...props }) => {
     return (
         <SvwContainerComentarios>
-             {
-                 comentarios.map((item) => (
-                    <Comentario 
+            {
+                !loading && comments.map((item) => (
+                    <Comentario
                         key={item.id}
-                        avaliacao={item.avaliacao}  
-                        usuarioImagem={item.usuarioImagem}
-                        usuarioNome={item.usuarioNome} 
-                        comentario={item.comentario}  />
-                 ))
-             }
+                        comment={item} />
+                ))
+            }
+            {
+                loading && (
+                    <VwContainerComentario>
+                        <View>
+                            <Avatar
+                                rounded
+                                size={60} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <VwEmpty />
+                            <VwEmpty2 />
+                        </View>
+                    </VwContainerComentario>
+                )
+            }
         </SvwContainerComentarios>
     )
 }
 
 ComentariosList.propTypes = {
-    comentarios: PropTypes.array.isRequired
+    comments: PropTypes.array.isRequired
 }
 
 export default ComentariosList;

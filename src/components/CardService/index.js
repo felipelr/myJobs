@@ -1,33 +1,40 @@
 import React from 'react'
-import {TouchableOpacity} from 'react-native'
+import { TouchableOpacity } from 'react-native'
 
-import { VwContainerCard, VwTitleCard, VwSubTitle, VwRodape, VwRodapeContent, TxtTitle } from './styles'
-import RatingJobs from '../RatingJobs/index' 
+import {
+    VwContainerCard,
+    VwTitleCard,
+    VwSubTitle,
+    VwRodape,
+    VwRodapeContent,
+    TxtTitle
+} from './styles'
+import RatingJobs from '../RatingJobs/index'
 
-export default CardService = (props) => {
-
-    const { titulo, descricao, avaliacao, qtdeAvaliacoes, select } = props
+export default CardService = ({ service, select, ...props }) => {
 
     return (
-        <VwContainerCard>
+        <VwContainerCard onPress={props.onPress}>
             <VwTitleCard select={select}>
                 <TxtTitle size={14} select={select} bold texto>
-                    {titulo}
+                    {service.title}
                 </TxtTitle>
             </VwTitleCard>
             <VwSubTitle>
                 <TxtTitle size={12} texto>
-                    {descricao}
+                    {service.description}
                 </TxtTitle>
             </VwSubTitle>
             <VwRodape>
                 <VwRodapeContent >
-                    <RatingJobs avaliacao={avaliacao} qtdeAvaliacoes={qtdeAvaliacoes} />
+                    <RatingJobs
+                        avaliacao={service.rating}
+                        qtdeAvaliacoes={service.amount_ratings} />
                     <TouchableOpacity>
                         <TxtTitle size={12} bold>
                             Ver comentários
                         </TxtTitle>
-                    </TouchableOpacity> 
+                    </TouchableOpacity>
                 </VwRodapeContent>
             </VwRodape>
         </VwContainerCard>

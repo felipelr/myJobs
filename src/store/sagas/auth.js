@@ -38,8 +38,6 @@ function* login(action) {
             password: action.password
         })
 
-        console.log(action)
-
         const { data } = login.data
         token = data.token
         const user = jwtDecode(token)
@@ -57,6 +55,18 @@ function* login(action) {
         const { client } = view.data.user
         const { professional } = view.data.user
 
+        const userType = action.userType
+
+        if (userType === 1 && !client) {
+            yield put(ActionCreator.loginError('Você não possui um cadastro de Cliente'))
+            return
+        }
+
+        if (userType === 2 && !professional) {
+            yield put(ActionCreator.loginError('Você não possui um cadastro de Profissional'))
+            return
+        }
+
         if (client) {
             setClientData(client)
             yield put(ActionCreator.clientUpdateSuccess(client))
@@ -66,8 +76,6 @@ function* login(action) {
             setProfessionalData(professional)
             yield put(ActionCreator.professionalUpdateSuccess(professional))
         }
-
-        const userType = action.userType
 
         yield put(ActionCreator.loginSuccess({ user, token, userType }))
     } catch (ex) {
@@ -81,10 +89,10 @@ function* logOut() {
         yield AsyncStorage.removeItem('@userData')
         yield AsyncStorage.removeItem('@clientData')
         yield AsyncStorage.removeItem('@professionalData')
-        
+
         yield put(ActionCreator.logoutSuccess())
     } catch (ex) {
-        
+
     }
 }
 

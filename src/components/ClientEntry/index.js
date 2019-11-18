@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import CameraRoll from "@react-native-community/cameraroll"
-import RNFetchBlob from 'react-native-fetch-blob'
+import RNFetchBlob from 'rn-fetch-blob'
 
 import ActionCreators from '../../store/actionCreators'
 

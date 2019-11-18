@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Image } from 'react-native'
 import { connect } from 'react-redux'
 import { LoginManager, AccessToken } from 'react-native-fbsdk'
-import { GoogleSignin, statusCodes } from 'react-native-google-signin'
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin'
 
 import ActionCreators from '../../store/actionCreators'
 

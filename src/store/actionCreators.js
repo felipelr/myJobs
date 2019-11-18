@@ -78,6 +78,8 @@ export const { Types, Creators } = createActions({
     //Services
     serviceSelected: ['service'],
 
+    //ProfessionalHome
+    professionalHomeSetSelectedService: ['service']
 })
 
 export default Creators

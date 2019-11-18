@@ -1,34 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
-import { VwContainerComentario, TxtTitle,VwContentComentario } from './styles'
+import {
+    VwContainerComentario,
+    TxtTitle,
+    VwContentComentario
+} from './styles'
+
 import { black } from '../../components/common/util/colors'
 import RatingJobs from '../../components/RatingJobs'
 
-const Comentario = (props) => {
-
-    const { comentario, usuarioImagem, avaliacao, qtdeAvaliacoes } = props
+const Comentario = ({ comment, ...props }) => {
+    const [image, setImage] = useState((comment.photo && comment.photo.length > 0) ? { uri: comment.photo + '?v=' + new Date().getTime() } : { uri: '' })
 
     return (
         <VwContainerComentario>
             <View>
-                <Avatar
-                    containerStyle={styles.containerStyle}
-                    overlayContainerStyle={styles.overlayContainerStyle}
-                    rounded
-                    source={{
-                        uri: usuarioImagem,
-                    }}
-                    size={60} />
+                {image.uri.length > 0 &&
+                    <Avatar
+                        rounded
+                        containerStyle={styles.containerStyle}
+                        overlayContainerStyle={styles.overlayContainerStyle}
+                        source={{ uri: image.uri }}
+                        size={60} />}
+
+                {image.uri.length <= 0 &&
+                    <Avatar
+                        rounded
+                        containerStyle={styles.containerStyle}
+                        overlayContainerStyle={styles.overlayContainerStyle}
+                        size={60} />}
             </View>
             <View style={{ flex: 1 }}>
                 <TxtTitle size={10} color={black}>
-                    "{comentario}"
+                    "{comment.comment}"
                 </TxtTitle>
-                <VwContentComentario> 
-                    <RatingJobs avaliacao={avaliacao} />
+                <VwContentComentario>
+                    <RatingJobs avaliacao={comment.rating} />
                 </VwContentComentario>
             </View>
         </VwContainerComentario>
@@ -36,10 +46,7 @@ const Comentario = (props) => {
 }
 
 Comentario.propTypes = {
-    comentario: PropTypes.string.isRequired,
-    usuarioImagem: PropTypes.string.isRequired,
-    avaliacao: PropTypes.number.isRequired,
-    usuarioNome: PropTypes.string.isRequired
+    comment: PropTypes.string.isRequired,
 }
 
 export default Comentario;

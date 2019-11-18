@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import { mediumgray } from '../common/util/colors'
+import { widthPercentageToDP } from '../../components/common/util/dimensions'
 
 export const SvwContainerComentarios = styled.ScrollView.attrs({
     horizontal: true,
@@ -7,4 +9,25 @@ export const SvwContainerComentarios = styled.ScrollView.attrs({
 })` 
     flex-direction: row;
     margin-bottom: 5;
+`
+
+export const VwEmpty = styled.View`
+    height: 15px;
+    margin: 6px;
+    background-color: ${mediumgray};
+    border-radius: 5px;
+`
+
+export const VwEmpty2 = styled.View`
+    height: 15px;
+    margin: 0px 30px 3px 6px;
+    background-color: ${mediumgray};
+    border-radius: 5px;
+`
+export const VwContainerComentario = styled.View`
+    flex-direction: row;
+    width: ${widthPercentageToDP('50%')}; 
+    background-color: white;
+    margin-bottom: 5;
+    margin-right:7;
 `

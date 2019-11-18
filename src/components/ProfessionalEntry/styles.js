@@ -109,5 +109,5 @@ export const ViewImageListItem = styled.TouchableHighlight`
 `
 
 export const ImageItem = styled.Image`
-    flex: 1
+    flex: 1;
 `

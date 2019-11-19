@@ -139,6 +139,7 @@ export const ModalButtons = styled.View`
     padding: 10px 10px 5px 5px;
     flex-direction: row;
     justify-content: space-between;
+    background-color: ${white};
 `
 
 export const CameraButtonContainer = styled.TouchableHighlight`
@@ -174,6 +175,7 @@ export const ImageNewStory = styled.Image`
     justify-content: center;
     top: 0;
     left: 0;
+    background-color: ${white};
 `
 
 export const styles = StyleSheet.create({

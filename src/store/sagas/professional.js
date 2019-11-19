@@ -82,8 +82,6 @@ function* addNewProfessionalAddress(action) {
             }
         )
 
-        console.log(postResp.data)
-
         if (postResp.data.error) {
             yield put(ActionCreator.professionalUpdateError(postResp.data.errorMessage))
         }
@@ -126,7 +124,7 @@ function* editProfessionalAddress(action) {
     }
 }
 
-function* deleteProfessionalAddress(action){
+function* deleteProfessionalAddress(action) {
     try {
         const deleteResp = yield axios.delete(`${urlMyJobsAPI}/professionalsAddresses/delete/${action.id}.json`,
             {

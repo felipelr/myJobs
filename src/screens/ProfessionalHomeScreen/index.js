@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
 import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, FlatList } from 'react-native'
+import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import CameraRoll from "@react-native-community/cameraroll"
@@ -45,10 +45,12 @@ import Stories from '../../components/Stories/index'
 import CardsServices from '../../components/CardsServices/index'
 import ComentariosList from '../../components/ComentariosList'
 import Footer from '../../components/Footer/index'
+import NewStoryForm from '../../components/NewStoryForm'
 
 function ProfessionalHomeScreen(props) {
     const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
     const [newStory, setNewStory] = useState('')
+    const [newStoryVisible, setNewStoryVisible] = useState(false)
     const [services, setServices] = useState([])
     const [comments, setComments] = useState([])
     const [stories, setStories] = useState([])
@@ -59,7 +61,6 @@ function ProfessionalHomeScreen(props) {
     const [imagesFolder, setImagesFolder] = useState([])
     const [hasNextPage, setHasNextPage] = useState(true)
     const [endCursor, setEndCursor] = useState('')
-    const [storyTempVisible, setStoryTempVisible] = useState(false)
 
     const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
@@ -122,14 +123,13 @@ function ProfessionalHomeScreen(props) {
     }, [props.isAuth])
 
     const handleBackPress = async () => {
-        if (storyTempVisible)
-            setStoryTempVisible(false)
-        else
-            props.logoutRequest()
+        props.logoutRequest()
         return true
     }
 
     handleNewStoryClick = () => {
+        setNewStory('')
+        setNewStoryVisible(false)
         if (Platform.OS === 'ios') {
             handleShowMenu()
         } else {
@@ -168,29 +168,31 @@ function ProfessionalHomeScreen(props) {
             const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
             const data = await this.camera.takePictureAsync(options)
             setNewStory(data)
-            setStoryTempVisible(true)
         }
     }
 
     handleModalClose = () => {
-        setNewStory('')
-        setMenuOpened(true)
-        setCameraOpened(false)
-        setFolderImagesOpened(false)
-        setModalOpened(false)
+        if (newStory === '') {
+            setMenuOpened(true)
+            setCameraOpened(false)
+            setFolderImagesOpened(false)
+            setModalOpened(false)
+        }
+        else {
+            setNewStory('')
+        }
     }
 
     handleCameraModalConfirm = () => {
-        setMenuOpened(true)
-        setCameraOpened(false)
-        setFolderImagesOpened(false)
-        setModalOpened(false)
+        if (newStory !== '') {
+            //finalizar o cadastro da new story
+            setNewStoryVisible(true)
+        }
     }
 
     handleShowCamera = () => {
         setMenuOpened(false)
         setCameraOpened(true)
-        setStoryTempVisible(false)
     }
 
     handleShowFolder = () => {
@@ -230,17 +232,23 @@ function ProfessionalHomeScreen(props) {
                     base64: data
                 }
                 setNewStory(item)
-                setMenuOpened(true)
-                setCameraOpened(false)
+                setNewStoryVisible(true)
                 setFolderImagesOpened(false)
-                setModalOpened(false)
             })
             .catch(err => {
-                setMenuOpened(true)
-                setCameraOpened(false)
+                setNewStory('')
                 setFolderImagesOpened(false)
-                setModalOpened(false)
             })
+    }
+
+    handleNewStorySuccess = () => {
+        setNewStory('')
+        setNewStoryVisible(false)
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
+        getStories.refetch(`/stories/view/${props.professionalData.id}.json`)
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -314,7 +322,7 @@ function ProfessionalHomeScreen(props) {
                                 </ViewContainerButtonsMenu>
                             </ViewContainerMenu>
                         )}
-                        {cameraOpened && (
+                        {(cameraOpened && !newStoryVisible) && (
                             <ModalContainer>
                                 <ModalContainer>
                                     <RNCamera
@@ -336,33 +344,33 @@ function ProfessionalHomeScreen(props) {
                                             buttonNegative: 'Cancel',
                                         }}
                                     />
-                                    {storyTempVisible && (
-                                        <React.Fragment>
-                                            <ImageNewStory
-                                                source={{ uri: newStory.uri }}
-                                                resizeMode="cover"
-                                            />
-                                        </React.Fragment>
+                                    {newStory !== '' && (
+                                        <ImageNewStory
+                                            source={{ uri: newStory.uri }}
+                                            resizeMode='center'
+                                        />
                                     )}
-                                    {!storyTempVisible && (
-                                        <React.Fragment>
-                                            <TakePictureButtonContainer onPress={handleTakePicture}>
-                                                <TakePictureButtonLabel />
-                                            </TakePictureButtonContainer>
-                                        </React.Fragment>
+                                    {newStory === '' && (
+                                        <TakePictureButtonContainer onPress={handleTakePicture}>
+                                            <TakePictureButtonLabel />
+                                        </TakePictureButtonContainer>
                                     )}
                                 </ModalContainer>
-                                {!storyTempVisible &&
-                                    <ModalButtons>
-                                        <CameraButtonContainer onPress={handleModalClose}>
-                                            <CancelButtonText>Cancelar</CancelButtonText>
-                                        </CameraButtonContainer>
-                                        <CameraButtonContainer onPress={handleCameraModalConfirm}>
-                                            <ContinueButtonText>Continuar</ContinueButtonText>
-                                        </CameraButtonContainer>
-                                    </ModalButtons>
-                                }
-
+                                <ModalButtons>
+                                    <CameraButtonContainer onPress={handleModalClose}>
+                                        <CancelButtonText>Cancelar</CancelButtonText>
+                                    </CameraButtonContainer>
+                                    <CameraButtonContainer onPress={handleCameraModalConfirm}>
+                                        <ContinueButtonText>Continuar</ContinueButtonText>
+                                    </CameraButtonContainer>
+                                </ModalButtons>
+                            </ModalContainer>
+                        )}
+                        {(newStoryVisible) && (
+                            <ModalContainer>
+                                <NewStoryForm
+                                    image={newStory}
+                                    onSuccess={handleNewStorySuccess} />
                             </ModalContainer>
                         )}
                         {folderImagesOpened && (

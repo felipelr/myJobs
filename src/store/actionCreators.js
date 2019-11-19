@@ -79,7 +79,13 @@ export const { Types, Creators } = createActions({
     serviceSelected: ['service'],
 
     //ProfessionalHome
-    professionalHomeSetSelectedService: ['service']
+    professionalHomeSetSelectedService: ['service'],
+
+    //Stories
+    storiesSaveRequest: ['token', 'story'],
+    storiesSaveSuccess: ['story'],
+    storiesSaveError: ['error'],
+    storiesClearError: null,
 })
 
 export default Creators

@@ -9,6 +9,7 @@ import client from './client'
 import highlights from './highlights'
 import professional from './professional'
 import professionalHome from './professionalHome'
+import stories from './stories'
 
 const rootReducer = combineReducers({
     auth,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     highlights,
     professional,
     professionalHome,
+    stories,
 })
 
 export default rootReducer

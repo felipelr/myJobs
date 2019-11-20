@@ -64,7 +64,7 @@ function ProfessionalHomeScreen(props) {
 
     const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
-    const getStories = useGet(`/stories/view/${props.professionalData.id}.json`, props.token)
+    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}/5.json`, props.token)
 
     useEffect(() => {
         if (this != null)
@@ -165,7 +165,7 @@ function ProfessionalHomeScreen(props) {
 
     handleTakePicture = async () => {
         if (this.camera) {
-            const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
+            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation : true, pauseAfterCapture: true };
             const data = await this.camera.takePictureAsync(options)
             setNewStory(data)
         }
@@ -177,9 +177,11 @@ function ProfessionalHomeScreen(props) {
             setCameraOpened(false)
             setFolderImagesOpened(false)
             setModalOpened(false)
+            setNewStoryVisible(false)
         }
         else {
             setNewStory('')
+            setNewStoryVisible(false)
         }
     }
 
@@ -191,6 +193,9 @@ function ProfessionalHomeScreen(props) {
     }
 
     handleShowCamera = () => {
+        if (this.camera)
+            this.camera.resumePreview()
+
         setMenuOpened(false)
         setCameraOpened(true)
     }
@@ -248,7 +253,7 @@ function ProfessionalHomeScreen(props) {
         setCameraOpened(false)
         setFolderImagesOpened(false)
         setModalOpened(false)
-        getStories.refetch(`/stories/view/${props.professionalData.id}.json`)
+        getStories.refetch(`/stories/viewSingle/${props.professionalData.id}/5.json`)
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -258,6 +263,7 @@ function ProfessionalHomeScreen(props) {
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ flex: 1 }} behavior={behavior}>
                     <Capa imagem={assets.capa} />
+                    
                     <VwContainerTitle>
                         <VwContainerRating>
                             <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
@@ -266,6 +272,7 @@ function ProfessionalHomeScreen(props) {
                             {props.professionalData.name}
                         </TxtTitle>
                     </VwContainerTitle>
+                    
                     <VwContainerContent>
                         <VwContainerStories>
                             <TxtTitle size={14}>
@@ -286,6 +293,7 @@ function ProfessionalHomeScreen(props) {
                             <ComentariosList comments={comments} loading={getProfessionalComments.loading} />
                         </ContentComentarios>
                     </VwContainerContent>
+
                     <ContainerAvatar>
                         {image.uri.length > 0 &&
                             <Avatar
@@ -300,6 +308,7 @@ function ProfessionalHomeScreen(props) {
                                 containerStyle={styles}
                                 size={120} />}
                     </ContainerAvatar>
+
                     <Modal
                         visible={modalOpened}
                         transparent={menuOpened}

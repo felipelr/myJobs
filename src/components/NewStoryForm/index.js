@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
+import ImageResizer from 'react-native-image-resizer'
+import RNFetchBlob from 'rn-fetch-blob'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -30,6 +32,22 @@ const NewStoryForm = ({ image, onSuccess, ...props }) => {
 
     useEffect(() => {
         props.storiesClearError()
+
+        ImageResizer.createResizedImage(image.uri, 600, 600, 'JPEG', 100)
+            .then(({ uri }) => {
+                RNFetchBlob.fs.readFile(uri, 'base64')
+                    .then(data => {
+                        setForm({
+                            ...form,
+                            image: data
+                        })
+                    })
+                    .catch(err => {
+
+                    })
+            }).catch((err) => {
+
+            })
     }, [])
 
     useEffect(() => {

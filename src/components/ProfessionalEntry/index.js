@@ -5,6 +5,7 @@ import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import CameraRoll from "@react-native-community/cameraroll"
 import RNFetchBlob from 'rn-fetch-blob'
+import ImageResizer from 'react-native-image-resizer'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -149,30 +150,48 @@ function ProfessionalEntry(props) {
 
     handleTakePicture = async () => {
         if (this.camera) {
-            const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
+            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true };
             const data = await this.camera.takePictureAsync(options)
-            setImage(data)
+            ImageResizer.createResizedImage(data.uri, 250, 250, 'JPEG', 100)
+                .then(({ uri }) => {
+                    RNFetchBlob.fs.readFile(uri, 'base64')
+                        .then(data64 => {
+                            setImage({
+                                uri: uri,
+                                base64: data64
+                            })
+                        })
+                        .catch(err => {
+
+                        })
+                }).catch((err) => {
+
+                })
         }
     }
 
     handleSelectPicture = (item) => {
-        RNFetchBlob.fs.readFile(item.uri, 'base64')
-            .then(data => {
-                item = {
-                    ...item,
-                    base64: data
-                }
-                setImage(item)
-                setMenuOpened(true)
-                setCameraOpened(false)
-                setFolderImagesOpened(false)
-                setModalOpened(false)
-            })
-            .catch(err => {
-                setMenuOpened(true)
-                setCameraOpened(false)
-                setFolderImagesOpened(false)
-                setModalOpened(false)
+        ImageResizer.createResizedImage(item.uri, 250, 250, 'JPEG', 100)
+            .then(({ uri }) => {
+                RNFetchBlob.fs.readFile(uri, 'base64')
+                    .then(data => {
+                        setImage({
+                            uri: uri,
+                            base64: data
+                        })
+                        setMenuOpened(true)
+                        setCameraOpened(false)
+                        setFolderImagesOpened(false)
+                        setModalOpened(false)
+                    })
+                    .catch(err => {
+                        setMenuOpened(true)
+                        setCameraOpened(false)
+                        setFolderImagesOpened(false)
+                        setModalOpened(false)
+                    })
+            }).catch((err) => {
+
             })
     }
 
@@ -277,7 +296,7 @@ function ProfessionalEntry(props) {
                             placeholder='Descrição'
                             multiline={true}
                             numberOfLines={3}
-                            style={{ textAlignVertical: true}}
+                            style={{ textAlignVertical: true }}
                             invalidValue={invalidField === 'description'} />
 
                         <TextInputJobs
@@ -363,7 +382,7 @@ function ProfessionalEntry(props) {
                                         <FlatList
                                             numColumns={3}
                                             data={imagesFolder}
-                                            keyExtractor={image => image.filename}
+                                            keyExtractor={item => item.filename}
                                             renderItem={({ item }) => {
                                                 return (
                                                     <ViewImageListItem onPress={() => this.handleSelectPicture(item)}>

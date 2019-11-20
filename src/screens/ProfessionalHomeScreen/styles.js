@@ -72,45 +72,6 @@ export const ContentComentarios = styled.View`
     padding: 5px; 
 `
 
-export const ViewContainerMenu = styled.View`
-    flex-direction: column;
-    flex: 1;
-    background-color: transparent;
-    justify-content: center;
-    align-items: center;
-`
-
-export const ViewContainerMenuOpacity = styled.View`
-    background-color: black;
-    opacity: 0.7;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-`
-
-export const ViewContainerButtonsMenu = styled.View`
-    flex-direction: column;
-    background-color: ${white};
-    width: 80%;
-    border-radius: 15px;
-    padding: 7px;
-`
-
-export const ButtonMenu = styled.TouchableHighlight`
-    background-color: ${white};
-    padding: 16px;
-    height: 50px;
-`
-
-export const ButtonMenuText = styled.Text`
-    color: ${gray};
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-`
-
 export const ModalContainer = styled.View`
     flex: 1;
     background-color: #FFF;
@@ -158,14 +119,6 @@ export const ContinueButtonText = styled.Text`
     font-weight: bold;
 `
 
-export const ViewImageListItem = styled.TouchableHighlight`
-    width: ${widthPercentageToDP('33.33%')};
-    height: ${widthPercentageToDP('33.33%')};
-`
-
-export const ImageItem = styled.Image`
-    flex: 1;
-`
 export const ImageNewStory = styled.Image`
     width: ${widthPercentageToDP('100%')};
     height: ${heightPercentageToDP('100%')};

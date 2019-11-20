@@ -1,6 +1,5 @@
 import styled from 'styled-components'
-import { purple, gray, white, black } from '../../components/common/util/colors'
-import { widthPercentageToDP } from '../../components/common/util/dimensions'
+import { purple, gray } from '../../components/common/util/colors'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
@@ -62,52 +61,4 @@ export const ContinueButtonText = styled.Text`
 export const ContainerAvatar = styled.View`
     padding-bottom: 10px;
     margin-bottom: 10px;
-`
-
-export const ViewContainerMenu = styled.View`
-    flex-direction: column;
-    flex: 1;
-    background-color: transparent;
-    justify-content: center;
-    align-items: center;
-`
-
-export const ViewContainerMenuOpacity = styled.View`
-    background-color: black;
-    opacity: 0.7;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-`
-
-export const ViewContainerButtonsMenu = styled.View`
-    flex-direction: column;
-    background-color: ${white};
-    width: 80%;
-    border-radius: 15px;
-    padding: 7px;
-`
-
-export const ButtonMenu = styled.TouchableHighlight`
-    background-color: ${white};
-    padding: 16px;
-    height: 50px;
-`
-
-export const ButtonMenuText = styled.Text`
-    color: ${gray};
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-`
-
-export const ViewImageListItem = styled.TouchableHighlight`
-    width: ${widthPercentageToDP('33.33%')};
-    height: ${widthPercentageToDP('33.33%')};
-`
-
-export const ImageItem = styled.Image`
-    flex: 1;
 `

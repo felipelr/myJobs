@@ -3,7 +3,6 @@ import { View, Modal, PermissionsAndroid, Platform, FlatList } from 'react-nativ
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
-import CameraRoll from "@react-native-community/cameraroll"
 import RNFetchBlob from 'rn-fetch-blob'
 import ImageResizer from 'react-native-image-resizer'
 
@@ -22,22 +21,17 @@ import {
     CancelButtonText,
     ContinueButtonText,
     ContainerAvatar,
-    ViewContainerMenu,
-    ViewContainerButtonsMenu,
-    ButtonMenu,
-    ButtonMenuText,
-    ViewImageListItem,
-    ImageItem,
-    ViewContainerMenuOpacity
 } from './styles'
 
 import { purple } from '../common/util/colors'
 
-import TextInputJobs from '../../components/TextInputJobs/index'
-import PickerJobs from '../../components/PickerJobs/index'
+import TextInputJobs from '../TextInputJobs/index'
+import PickerJobs from '../PickerJobs/index'
 import ButtonPurple from '../ButtonPurple/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
+import GaleryMyJobs from '../GaleryMyJobs'
+import MenuPicture from '../MenuPicture'
 
 function ClientEntry(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -67,9 +61,6 @@ function ClientEntry(props) {
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
-    const [imagesFolder, setImagesFolder] = useState([])
-    const [hasNextPage, setHasNextPage] = useState(true)
-    const [endCursor, setEndCursor] = useState('')
 
     useEffect(() => {
         if (requisitou && !props.client.isUpdating) {
@@ -260,30 +251,6 @@ function ClientEntry(props) {
     handleShowFolder = () => {
         setMenuOpened(false)
         setFolderImagesOpened(true)
-        loadGaleryPhotos()
-    }
-
-    loadGaleryPhotos = () => {
-        if (hasNextPage) {
-            CameraRoll.getPhotos({
-                first: 10,
-                after: endCursor,
-                assetType: 'Photos',
-            })
-                .then(r => {
-                    const photos = r.edges.map(item => item.node.image)
-                    if (imagesFolder.length > 0)
-                        setImagesFolder([...imagesFolder, ...photos])
-                    else
-                        setImagesFolder(photos)
-                    setHasNextPage(r.page_info.has_next_page)
-                    setEndCursor(r.page_info.end_cursor)
-                })
-                .catch((err) => {
-                    console.error(err)
-                    setImagesFolder([])
-                })
-        }
     }
 
     return (
@@ -366,24 +333,14 @@ function ClientEntry(props) {
                             visible={modalOpened}
                             transparent={menuOpened}
                             animationType="fade"
-                            onRequestClose={this.handleModalClose}
-                        >
-                            {menuOpened && (
-                                <ViewContainerMenu>
-                                    <ViewContainerMenuOpacity />
-                                    <ViewContainerButtonsMenu>
-                                        <ButtonMenu onPress={this.handleShowCamera}>
-                                            <ButtonMenuText>Tirar Foto</ButtonMenuText>
-                                        </ButtonMenu>
-                                        <ButtonMenu onPress={this.handleShowFolder}>
-                                            <ButtonMenuText>Galeria</ButtonMenuText>
-                                        </ButtonMenu>
-                                        <ButtonMenu onPress={this.handleModalClose}>
-                                            <ButtonMenuText>Cancelar</ButtonMenuText>
-                                        </ButtonMenu>
-                                    </ViewContainerButtonsMenu>
-                                </ViewContainerMenu>
-                            )}
+                            onRequestClose={this.handleModalClose}>
+
+                            {menuOpened &&
+                                <MenuPicture
+                                    onCameraPress={handleShowCamera}
+                                    onGaleryPress={handleShowFolder}
+                                    onCancelPress={handleModalClose} />}
+
                             {cameraOpened && (
                                 <ModalContainer>
                                     <ModalContainer>
@@ -420,35 +377,16 @@ function ClientEntry(props) {
                                     </ModalButtons>
                                 </ModalContainer>
                             )}
-                            {folderImagesOpened && (
+
+                            {folderImagesOpened &&
                                 <ModalContainer>
-                                    <ModalContainer>
-                                        <FlatList
-                                            numColumns={3}
-                                            data={imagesFolder}
-                                            keyExtractor={item => item.filename}
-                                            renderItem={({ item }) => {
-                                                return (
-                                                    <ViewImageListItem onPress={() => this.handleSelectPicture(item)}>
-                                                        <ImageItem
-                                                            source={{ uri: item.uri }}
-                                                            resizeMode="stretch"
-                                                        />
-                                                    </ViewImageListItem>
-                                                )
-                                            }}
-                                            onEndReached={(info) => {
-                                                loadGaleryPhotos()
-                                            }}
-                                        />
-                                    </ModalContainer>
+                                    <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
                                     <ModalButtons>
                                         <CameraButtonContainer onPress={this.handleModalClose}>
                                             <CancelButtonText>Cancelar</CancelButtonText>
                                         </CameraButtonContainer>
                                     </ModalButtons>
-                                </ModalContainer>
-                            )}
+                                </ModalContainer>}
                         </Modal>
                     </React.Fragment>
                 )}

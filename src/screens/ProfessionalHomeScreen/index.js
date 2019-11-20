@@ -3,7 +3,6 @@ import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, Fla
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
-import CameraRoll from "@react-native-community/cameraroll"
 import RNFetchBlob from 'rn-fetch-blob'
 
 import useGet from '../../services/restServices'
@@ -28,13 +27,6 @@ import {
     CameraButtonContainer,
     CancelButtonText,
     ContinueButtonText,
-    ViewContainerMenu,
-    ViewContainerButtonsMenu,
-    ButtonMenu,
-    ButtonMenuText,
-    ViewImageListItem,
-    ImageItem,
-    ViewContainerMenuOpacity,
     ImageNewStory,
     styles
 } from './styles'
@@ -46,6 +38,8 @@ import CardsServices from '../../components/CardsServices/index'
 import ComentariosList from '../../components/ComentariosList'
 import Footer from '../../components/Footer/index'
 import NewStoryForm from '../../components/NewStoryForm'
+import GaleryMyJobs from '../../components/GaleryMyJobs'
+import MenuPicture from '../../components/MenuPicture'
 
 function ProfessionalHomeScreen(props) {
     const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
@@ -58,10 +52,6 @@ function ProfessionalHomeScreen(props) {
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
-    const [imagesFolder, setImagesFolder] = useState([])
-    const [hasNextPage, setHasNextPage] = useState(true)
-    const [endCursor, setEndCursor] = useState('')
-
     const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
     const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}/5.json`, props.token)
@@ -165,24 +155,19 @@ function ProfessionalHomeScreen(props) {
 
     handleTakePicture = async () => {
         if (this.camera) {
-            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation : true, pauseAfterCapture: true };
+            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true, pauseAfterCapture: true };
             const data = await this.camera.takePictureAsync(options)
             setNewStory(data)
         }
     }
 
     handleModalClose = () => {
-        if (newStory === '') {
-            setMenuOpened(true)
-            setCameraOpened(false)
-            setFolderImagesOpened(false)
-            setModalOpened(false)
-            setNewStoryVisible(false)
-        }
-        else {
-            setNewStory('')
-            setNewStoryVisible(false)
-        }
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
+        setNewStory('')
+        setNewStoryVisible(false)
     }
 
     handleCameraModalConfirm = () => {
@@ -203,30 +188,6 @@ function ProfessionalHomeScreen(props) {
     handleShowFolder = () => {
         setMenuOpened(false)
         setFolderImagesOpened(true)
-        loadGaleryPhotos()
-    }
-
-    loadGaleryPhotos = () => {
-        if (hasNextPage) {
-            CameraRoll.getPhotos({
-                first: 10,
-                after: endCursor,
-                assetType: 'Photos',
-            })
-                .then(r => {
-                    const photos = r.edges.map(item => item.node.image)
-                    if (imagesFolder.length > 0)
-                        setImagesFolder([...imagesFolder, ...photos])
-                    else
-                        setImagesFolder(photos)
-                    setHasNextPage(r.page_info.has_next_page)
-                    setEndCursor(r.page_info.end_cursor)
-                })
-                .catch((err) => {
-                    console.error(err)
-                    setImagesFolder([])
-                })
-        }
     }
 
     handleSelectPicture = (item) => {
@@ -263,7 +224,7 @@ function ProfessionalHomeScreen(props) {
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={{ flex: 1 }} behavior={behavior}>
                     <Capa imagem={assets.capa} />
-                    
+
                     <VwContainerTitle>
                         <VwContainerRating>
                             <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
@@ -272,7 +233,7 @@ function ProfessionalHomeScreen(props) {
                             {props.professionalData.name}
                         </TxtTitle>
                     </VwContainerTitle>
-                    
+
                     <VwContainerContent>
                         <VwContainerStories>
                             <TxtTitle size={14}>
@@ -313,24 +274,14 @@ function ProfessionalHomeScreen(props) {
                         visible={modalOpened}
                         transparent={menuOpened}
                         animationType="fade"
-                        onRequestClose={handleModalClose}
-                    >
-                        {menuOpened && (
-                            <ViewContainerMenu>
-                                <ViewContainerMenuOpacity />
-                                <ViewContainerButtonsMenu>
-                                    <ButtonMenu onPress={handleShowCamera}>
-                                        <ButtonMenuText>Tirar Foto</ButtonMenuText>
-                                    </ButtonMenu>
-                                    <ButtonMenu onPress={handleShowFolder}>
-                                        <ButtonMenuText>Galeria</ButtonMenuText>
-                                    </ButtonMenu>
-                                    <ButtonMenu onPress={handleModalClose}>
-                                        <ButtonMenuText>Cancelar</ButtonMenuText>
-                                    </ButtonMenu>
-                                </ViewContainerButtonsMenu>
-                            </ViewContainerMenu>
-                        )}
+                        onRequestClose={handleModalClose}>
+
+                        {menuOpened &&
+                            <MenuPicture
+                                onCameraPress={handleShowCamera}
+                                onGaleryPress={handleShowFolder}
+                                onCancelPress={handleModalClose} />}
+
                         {(cameraOpened && !newStoryVisible) && (
                             <ModalContainer>
                                 <ModalContainer>
@@ -375,42 +326,21 @@ function ProfessionalHomeScreen(props) {
                                 </ModalButtons>
                             </ModalContainer>
                         )}
-                        {(newStoryVisible) && (
+
+                        {newStoryVisible &&
+                            <NewStoryForm
+                                image={newStory}
+                                onSuccess={handleNewStorySuccess} />}
+
+                        {folderImagesOpened &&
                             <ModalContainer>
-                                <NewStoryForm
-                                    image={newStory}
-                                    onSuccess={handleNewStorySuccess} />
-                            </ModalContainer>
-                        )}
-                        {folderImagesOpened && (
-                            <ModalContainer>
-                                <ModalContainer>
-                                    <FlatList
-                                        numColumns={3}
-                                        data={imagesFolder}
-                                        keyExtractor={image => image.filename}
-                                        renderItem={({ item }) => {
-                                            return (
-                                                <ViewImageListItem onPress={() => handleSelectPicture(item)}>
-                                                    <ImageItem
-                                                        source={{ uri: item.uri }}
-                                                        resizeMode="stretch"
-                                                    />
-                                                </ViewImageListItem>
-                                            )
-                                        }}
-                                        onEndReached={(info) => {
-                                            loadGaleryPhotos()
-                                        }}
-                                    />
-                                </ModalContainer>
+                                <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
                                 <ModalButtons>
                                     <CameraButtonContainer onPress={handleModalClose}>
                                         <CancelButtonText>Cancelar</CancelButtonText>
                                     </CameraButtonContainer>
                                 </ModalButtons>
-                            </ModalContainer>
-                        )}
+                            </ModalContainer>}
                     </Modal>
                 </View>
             </ScrollView>

@@ -86,6 +86,8 @@ export const { Types, Creators } = createActions({
     storiesSaveSuccess: ['story'],
     storiesSaveError: ['error'],
     storiesClearError: null,
+    storiesNextSelfPage: null,
+    storiesRestartSelfPage: null,
 })
 
 export default Creators

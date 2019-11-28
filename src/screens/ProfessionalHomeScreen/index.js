@@ -40,6 +40,7 @@ import Footer from '../../components/Footer/index'
 import NewStoryForm from '../../components/NewStoryForm'
 import GaleryMyJobs from '../../components/GaleryMyJobs'
 import MenuPicture from '../../components/MenuPicture'
+import StoriesCarousel from '../../components/StoriesCarousel'
 
 function ProfessionalHomeScreen(props) {
     const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
@@ -52,9 +53,12 @@ function ProfessionalHomeScreen(props) {
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
+    const [storiesCarouselOpened, setStoriesCarouselOpened] = useState(false)
+    const [firstImageCarousel, setFirstImageCarousel] = useState('')
+
     const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
-    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}/5.json`, props.token)
+    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=1`, props.token)
 
     useEffect(() => {
         if (this != null)
@@ -214,137 +218,156 @@ function ProfessionalHomeScreen(props) {
         setCameraOpened(false)
         setFolderImagesOpened(false)
         setModalOpened(false)
-        getStories.refetch(`/stories/viewSingle/${props.professionalData.id}/5.json`)
+        getStories.refetch(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=1`)
+    }
+
+    handleOpenCarousel = (imageUri, index) => {
+        setFirstImageCarousel({ uri: imageUri, index: index })
+        setStoriesCarouselOpened(true)
+    }
+
+    handleFinishPresentitionCarousel = () => {
+        setStoriesCarouselOpened(false)
+        props.storiesRestartSelfPage()
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            <HeaderJobs />
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <View style={{ flex: 1 }} behavior={behavior}>
-                    <Capa imagem={assets.capa} />
+            {storiesCarouselOpened &&
+                <StoriesCarousel
+                    firstImage={firstImageCarousel}
+                    onFinishPresentation={handleFinishPresentitionCarousel} />}
 
-                    <VwContainerTitle>
-                        <VwContainerRating>
-                            <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
-                        </VwContainerRating>
-                        <TxtTitle size={24}>
-                            {props.professionalData.name}
-                        </TxtTitle>
-                    </VwContainerTitle>
+            {!storiesCarouselOpened &&
+                <React.Fragment>
+                    <HeaderJobs />
+                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                        <View style={{ flex: 1 }} behavior={behavior}>
+                            <Capa imagem={assets.capa} />
 
-                    <VwContainerContent>
-                        <VwContainerStories>
-                            <TxtTitle size={14}>
-                                Stories
-                            </TxtTitle>
-                            <Stories novaImagem stories={stories} onPressNewStory={handleNewStoryClick} />
-                        </VwContainerStories>
-                        <VwContainerServices>
-                            <TxtTitle size={14}>
-                                Serviços
-                            </TxtTitle>
-                            <CardsServices services={services} selectedService={props.selectedService.id} loading={getProfessionalServices.loading} />
-                        </VwContainerServices>
-                        <ContentComentarios>
-                            <TxtTitle size={14}>
-                                Comentários do Serviço: {props.selectedService.title}
-                            </TxtTitle>
-                            <ComentariosList comments={comments} loading={getProfessionalComments.loading} />
-                        </ContentComentarios>
-                    </VwContainerContent>
+                            <VwContainerTitle>
+                                <VwContainerRating>
+                                    <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
+                                </VwContainerRating>
+                                <TxtTitle size={24}>
+                                    {props.professionalData.name}
+                                </TxtTitle>
+                            </VwContainerTitle>
 
-                    <ContainerAvatar>
-                        {image.uri.length > 0 &&
-                            <Avatar
-                                rounded
-                                containerStyle={styles}
-                                source={{ uri: image.uri }}
-                                size={120} />}
+                            <VwContainerContent>
+                                <VwContainerStories>
+                                    <TxtTitle size={14}>Stories</TxtTitle>
+                                    <Stories
+                                        novaImagem
+                                        stories={stories}
+                                        onPressNewStory={handleNewStoryClick}
+                                        onPressStory={(imageUri, index) => handleOpenCarousel(imageUri, index)} />
+                                </VwContainerStories>
 
-                        {image.uri.length <= 0 &&
-                            <Avatar
-                                rounded
-                                containerStyle={styles}
-                                size={120} />}
-                    </ContainerAvatar>
+                                <VwContainerServices>
+                                    <TxtTitle size={14}>Serviços</TxtTitle>
+                                    <CardsServices services={services} selectedService={props.selectedService.id} loading={getProfessionalServices.loading} />
+                                </VwContainerServices>
 
-                    <Modal
-                        visible={modalOpened}
-                        transparent={menuOpened}
-                        animationType="fade"
-                        onRequestClose={handleModalClose}>
+                                <ContentComentarios>
+                                    <TxtTitle size={14}>Comentários do Serviço: {props.selectedService.title}</TxtTitle>
+                                    <ComentariosList comments={comments} loading={getProfessionalComments.loading} />
+                                </ContentComentarios>
+                            </VwContainerContent>
 
-                        {menuOpened &&
-                            <MenuPicture
-                                onCameraPress={handleShowCamera}
-                                onGaleryPress={handleShowFolder}
-                                onCancelPress={handleModalClose} />}
+                            <ContainerAvatar>
+                                {image.uri.length > 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={styles}
+                                        source={{ uri: image.uri }}
+                                        size={120} />}
 
-                        {(cameraOpened && !newStoryVisible) && (
-                            <ModalContainer>
-                                <ModalContainer>
-                                    <RNCamera
-                                        ref={camera => { this.camera = camera; }}
-                                        style={{ flex: 1 }}
-                                        type={RNCamera.Constants.Type.front}
-                                        autoFocus={RNCamera.Constants.AutoFocus.on}
-                                        flashMode={RNCamera.Constants.FlashMode.off}
-                                        androidCameraPermissionOptions={{
-                                            title: 'Permissão para usar a câmera',
-                                            message: 'Nós precisamos da sua permissão para usar a câmera',
-                                            buttonPositive: 'Ok',
-                                            buttonNegative: 'Cancel',
-                                        }}
-                                        androidRecordAudioPermissionOptions={{
-                                            title: 'Permissão para gravar audio',
-                                            message: 'Nós precisamos da sua permissão para usar o seu audio',
-                                            buttonPositive: 'Ok',
-                                            buttonNegative: 'Cancel',
-                                        }}
-                                    />
-                                    {newStory !== '' && (
-                                        <ImageNewStory
-                                            source={{ uri: newStory.uri }}
-                                            resizeMode='center'
-                                        />
-                                    )}
-                                    {newStory === '' && (
-                                        <TakePictureButtonContainer onPress={handleTakePicture}>
-                                            <TakePictureButtonLabel />
-                                        </TakePictureButtonContainer>
-                                    )}
-                                </ModalContainer>
-                                <ModalButtons>
-                                    <CameraButtonContainer onPress={handleModalClose}>
-                                        <CancelButtonText>Cancelar</CancelButtonText>
-                                    </CameraButtonContainer>
-                                    <CameraButtonContainer onPress={handleCameraModalConfirm}>
-                                        <ContinueButtonText>Continuar</ContinueButtonText>
-                                    </CameraButtonContainer>
-                                </ModalButtons>
-                            </ModalContainer>
-                        )}
+                                {image.uri.length <= 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={styles}
+                                        size={120} />}
+                            </ContainerAvatar>
 
-                        {newStoryVisible &&
-                            <NewStoryForm
-                                image={newStory}
-                                onSuccess={handleNewStorySuccess} />}
+                            <Modal
+                                visible={modalOpened}
+                                transparent={menuOpened}
+                                animationType="fade"
+                                onRequestClose={handleModalClose}>
 
-                        {folderImagesOpened &&
-                            <ModalContainer>
-                                <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
-                                <ModalButtons>
-                                    <CameraButtonContainer onPress={handleModalClose}>
-                                        <CancelButtonText>Cancelar</CancelButtonText>
-                                    </CameraButtonContainer>
-                                </ModalButtons>
-                            </ModalContainer>}
-                    </Modal>
-                </View>
-            </ScrollView>
-            <Footer perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                                {menuOpened &&
+                                    <MenuPicture
+                                        onCameraPress={handleShowCamera}
+                                        onGaleryPress={handleShowFolder}
+                                        onCancelPress={handleModalClose} />}
+
+                                {(cameraOpened && !newStoryVisible) && (
+                                    <ModalContainer>
+                                        <ModalContainer>
+                                            <RNCamera
+                                                ref={camera => { this.camera = camera; }}
+                                                style={{ flex: 1 }}
+                                                type={RNCamera.Constants.Type.front}
+                                                autoFocus={RNCamera.Constants.AutoFocus.on}
+                                                flashMode={RNCamera.Constants.FlashMode.off}
+                                                androidCameraPermissionOptions={{
+                                                    title: 'Permissão para usar a câmera',
+                                                    message: 'Nós precisamos da sua permissão para usar a câmera',
+                                                    buttonPositive: 'Ok',
+                                                    buttonNegative: 'Cancel',
+                                                }}
+                                                androidRecordAudioPermissionOptions={{
+                                                    title: 'Permissão para gravar audio',
+                                                    message: 'Nós precisamos da sua permissão para usar o seu audio',
+                                                    buttonPositive: 'Ok',
+                                                    buttonNegative: 'Cancel',
+                                                }}
+                                            />
+                                            {newStory !== '' && (
+                                                <ImageNewStory
+                                                    source={{ uri: newStory.uri }}
+                                                    resizeMode='center'
+                                                />
+                                            )}
+                                            {newStory === '' && (
+                                                <TakePictureButtonContainer onPress={handleTakePicture}>
+                                                    <TakePictureButtonLabel />
+                                                </TakePictureButtonContainer>
+                                            )}
+                                        </ModalContainer>
+                                        <ModalButtons>
+                                            <CameraButtonContainer onPress={handleModalClose}>
+                                                <CancelButtonText>Cancelar</CancelButtonText>
+                                            </CameraButtonContainer>
+                                            <CameraButtonContainer onPress={handleCameraModalConfirm}>
+                                                <ContinueButtonText>Continuar</ContinueButtonText>
+                                            </CameraButtonContainer>
+                                        </ModalButtons>
+                                    </ModalContainer>
+                                )}
+
+                                {newStoryVisible &&
+                                    <NewStoryForm
+                                        image={newStory}
+                                        onSuccess={handleNewStorySuccess} />}
+
+                                {folderImagesOpened &&
+                                    <ModalContainer>
+                                        <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
+                                        <ModalButtons>
+                                            <CameraButtonContainer onPress={handleModalClose}>
+                                                <CancelButtonText>Cancelar</CancelButtonText>
+                                            </CameraButtonContainer>
+                                        </ModalButtons>
+                                    </ModalContainer>}
+                            </Modal>
+                        </View>
+                    </ScrollView>
+                    <Footer perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                </React.Fragment>
+            }
         </React.Fragment>
     )
 }
@@ -367,7 +390,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
-        professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service))
+        professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service)),
+        storiesRestartSelfPage: () => dispatch(ActionCreators.storiesRestartSelfPage()),
     }
 }
 

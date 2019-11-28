@@ -58,7 +58,7 @@ const useGet = (url, token) => {
     }, [url])
     return {
         ...state,
-        refetch
+        refetch,
     };
 }
 

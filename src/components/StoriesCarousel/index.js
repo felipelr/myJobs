@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Text } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { Dimensions } from 'react-native'
 import { connect } from 'react-redux'
 
 import useGet from '../../services/restServices'
@@ -15,83 +15,143 @@ import {
 
 function StoriesCarousel(props) {
     const [imageUri, setImagesUri] = useState(props.ownProps.firstImage.uri)
-    const [indexClicked, setIndexClicked] = useState(props.ownProps.firstImage.index)
+    const [firstIndex, setFirstIndex] = useState(props.ownProps.firstImage.index)
     const [progressValue, setProgressValue] = useState(0)
+    const [movePresentation, setMovePresentation] = useState('')
+    const moveRef = useRef()
+    const presentationRef = useRef()
+    const pageRef = useRef()
 
     const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=${props.stories.selfPage}`, props.token)
 
-    var time = 0
-    var percTime = 0
-
     useEffect(() => {
-        console.log('fisrt')
-        /* if (!getStories.loading)
-            getStories.refetch(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=${props.stories.selfPage}`) */
-    }, [props.stories.selfPage])
 
-    useEffect(() => {
-        console.log('second')
-        if (!getStories.loading && getStories.data && getStories.data.stories) {
-            playPresentation()
+        return () => {
+            if (presentationRef.current)
+                clearInterval(presentationRef.current)
+
+            if (pageRef.current)
+                clearInterval(pageRef.current)
         }
-    }, [getStories.loading])
+    }, [])
 
-    playPresentation = () => {
-        if (getStories.data.stories.length > 0) {
-            const size = getStories.data.stories.length
-            let pos = indexClicked !== 0 ? indexClicked : 0
-            setIndexClicked(0)
+    useEffect(() => {
+        moveRef.current = movePresentation
+    }, [movePresentation])
 
-            const presentationInterval = setInterval(() => {
-                if (pos >= size) {
-                    props.storiesNextSelfPage()
-                    clearInterval(presentationInterval)
-                }
+    useEffect(() => {
+        if (getStories.data && getStories.data.stories) {
+            if (getStories.data.stories.length > 0) {
+                console.log('playPresentation => fisrt ID ', getStories.data.stories[0].id)
+                playPresentation()
+            }
+            else {
+                console.log('No data ')
+                props.onFinishPresentation()
+            }
+        }
+    }, [getStories.data])
 
-                if (pos < size) {
-                    if (time === 0) {
-                        time = 1
-                        const pageInterval = setInterval(() => {
-                            if (time >= 5000) {
-                                time = 0
-                                percTime = 0
-                                pos++
-                                setProgressValue(percTime)
+    const playPresentation = () => {
+        let time = 0
+        let percTime = 0
+        let pos = firstIndex !== 0 ? firstIndex : 0
+        const size = getStories.data.stories.length
 
-                                if (pos < size) {
-                                    const item = getStories.data.stories[pos]
-                                    setImagesUri(item.photo)
-                                }
-                                clearInterval(pageInterval)
+        setFirstIndex(0)
+
+        if (pos < size) {
+            const firstItem = getStories.data.stories[pos]
+            setImagesUri(firstItem.photo)
+        }
+
+        presentationRef.current = setInterval(() => {
+            if (pos >= size) {
+                console.log('storiesNextSelfPage')
+                props.storiesNextSelfPage()
+                clearInterval(presentationRef.current)
+                clearInterval(pageRef.current)
+            }
+
+            if (pos < size) {
+                if (time === 0) {
+                    time = 1
+                    pageRef.current = setInterval(() => {
+                        if (moveRef.current === 'LEFT') {
+                            setMovePresentation('')
+                            time = 0
+                            percTime = 0
+                            pos--
+
+                            if (pos < 0)
+                                pos = 0
+
+                            setProgressValue(percTime)
+
+                            if (pos < size) {
+                                const item = getStories.data.stories[pos]
+                                setImagesUri(item.photo)
                             }
-                            else {
-                                time += 500
-                                percTime = (time * 100) / 5000
-                                setProgressValue(percTime)
+                            clearInterval(pageRef.current)
+                            return
+                        }
 
-                                console.log('time => ', time)
-                                console.log('percTime => ', percTime)
-                                console.log('pos => ', pos)
-                                console.log('size => ', size)
+                        if (moveRef.current === 'RIGHT') {
+                            setMovePresentation('')
+                            time = 0
+                            percTime = 0
+                            pos++
+                            setProgressValue(percTime)
+
+                            if (pos < size) {
+                                const item = getStories.data.stories[pos]
+                                setImagesUri(item.photo)
                             }
-                        }, 500)
-                    }
+                            clearInterval(pageRef.current)
+                            return
+                        }
+
+                        if (time >= 5000) {
+                            time = 0
+                            percTime = 0
+                            pos++
+                            setProgressValue(percTime)
+
+                            if (pos < size) {
+                                const item = getStories.data.stories[pos]
+                                setImagesUri(item.photo)
+                            }
+                            clearInterval(pageRef.current)
+                        }
+                        else {
+                            time += 500
+                            percTime = (time * 100) / 5000
+                            setProgressValue(percTime)
+                        }
+                    }, 500)
                 }
-            }, 500)
+            }
+        }, 500)
+    }
+
+    onSingleTap = (evt) => {
+        const screenWidth = Math.round(Dimensions.get('window').width)
+        const positionX = Math.round(evt.nativeEvent.locationX)
+        if (positionX < screenWidth / 2) {
+            setMovePresentation('LEFT')
         }
         else {
-            console.log('No data ')
-            props.onFinishPresentation()
+            setMovePresentation('RIGHT')
         }
     }
 
     return (
-        <ViewContainer>
+        <ViewContainer onStartShouldSetResponder={(evt) => onSingleTap(evt)}>
             {imageUri !== '' &&
                 <ImageItem
                     source={{ uri: imageUri }}
-                    resizeMode='cover' />}
-
+                    resizeMode='cover' />
+            }
             <ViewContainerAbsolute>
                 <ProgressBarMyJobs percentage={progressValue} />
             </ViewContainerAbsolute>

@@ -58,37 +58,45 @@ function ProfessionalHomeScreen(props) {
 
     const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
-    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=1`, props.token)
+    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=50&page=1`, props.token)
 
     useEffect(() => {
-        if (this != null)
-            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+
         return () => {
-            if (this != null)
-                this.backHandler.remove()
+            backHandler.remove()
         }
     }, [])
 
     useEffect(() => {
-        if (getProfessionalServices.data && getProfessionalServices.data.professionalServices) {
-            setServices(getProfessionalServices.data.professionalServices.map(item => {
-                return {
-                    ...item.service,
-                    rating: item.rating,
-                    amount_ratings: item.amount_ratings
-                }
-            }))
-            if (services && services.length > 0) {
-                props.professionalHomeSetSelectedService(services[0])
+        if (getProfessionalServices.data) {
+            if (getProfessionalServices.data.professionalServices) {
+                const array = getProfessionalServices.data.professionalServices.map(item => {
+                    return {
+                        ...item.service,
+                        rating: item.rating,
+                        amount_ratings: item.amount_ratings
+                    }
+                })
+                setServices(array)
             }
         }
-    }, [getProfessionalServices.loading])
+    }, [getProfessionalServices.data])
 
     useEffect(() => {
-        if (props.selectedService.id !== 0) {
+        if (services && services.length > 0) {
+            props.professionalHomeSetSelectedService(services[0])
+        }
+        else {
+            props.professionalHomeSetSelectedService({ id: 0, title: '' })
+        }
+    }, [services])
+
+    useEffect(() => {
+        if (props.selectedService && props.selectedService.id !== 0) {
             getProfessionalComments.refetch(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`)
         }
-    }, [props.selectedService.id])
+    }, [props.selectedService])
 
     useEffect(() => {
         if (getProfessionalComments.data && getProfessionalComments.data.professionalComments) {
@@ -102,13 +110,13 @@ function ProfessionalHomeScreen(props) {
                 }
             }))
         }
-    }, [getProfessionalComments.loading])
+    }, [getProfessionalComments.data])
 
     useEffect(() => {
         if (getStories.data && getStories.data.stories) {
             setStories(getStories.data.stories.map(item => item))
         }
-    }, [getStories.loading])
+    }, [getStories.data])
 
     useEffect(() => {
         if (!props.isAuth) {
@@ -117,8 +125,11 @@ function ProfessionalHomeScreen(props) {
     }, [props.isAuth])
 
     const handleBackPress = async () => {
-        props.logoutRequest()
+        handleFinishPresentitionCarousel()
         return true
+
+        //props.logoutRequest()
+        //return true
     }
 
     handleNewStoryClick = () => {

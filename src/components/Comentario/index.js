@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
@@ -45,10 +44,6 @@ const Comentario = ({ comment, ...props }) => {
     )
 }
 
-Comentario.propTypes = {
-    comment: PropTypes.string.isRequired,
-}
-
-export default Comentario;
+export default Comentario
 
 

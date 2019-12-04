@@ -12,14 +12,14 @@ export const SvwContainerComentarios = styled.ScrollView.attrs({
 `
 
 export const VwEmpty = styled.View`
-    height: 15px;
+    height: 10px;
     margin: 6px;
     background-color: ${mediumgray};
     border-radius: 5px;
 `
 
 export const VwEmpty2 = styled.View`
-    height: 15px;
+    height: 10px;
     margin: 0px 30px 3px 6px;
     background-color: ${mediumgray};
     border-radius: 5px;

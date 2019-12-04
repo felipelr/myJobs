@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, FlatList } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
@@ -55,6 +55,8 @@ function ProfessionalHomeScreen(props) {
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
     const [storiesCarouselOpened, setStoriesCarouselOpened] = useState(false)
     const [firstImageCarousel, setFirstImageCarousel] = useState('')
+
+    const pageRef = useRef()
 
     const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
@@ -124,12 +126,18 @@ function ProfessionalHomeScreen(props) {
         }
     }, [props.isAuth])
 
-    const handleBackPress = async () => {
-        handleFinishPresentitionCarousel()
-        return true
+    useEffect(() => {
+        pageRef.current = storiesCarouselOpened ? 'storiesCarousel' : ''
+    }, [storiesCarouselOpened])
 
-        //props.logoutRequest()
-        //return true
+    const handleBackPress = async () => {
+        if (pageRef.current === 'storiesCarousel') {
+            handleFinishPresentitionCarousel()
+            return true
+        }
+
+        props.logoutRequest()
+        return true
     }
 
     handleNewStoryClick = () => {

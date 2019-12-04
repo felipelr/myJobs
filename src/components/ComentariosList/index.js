@@ -14,28 +14,31 @@ import Comentario from '../../components/Comentario/index'
 const ComentariosList = ({ comments, loading, ...props }) => {
     return (
         <SvwContainerComentarios>
-            {
-                !loading && comments.map((item) => (
-                    <Comentario
-                        key={item.id}
-                        comment={item} />
-                ))
-            }
-            {
-                loading && (
-                    <VwContainerComentario>
-                        <View>
-                            <Avatar
-                                rounded
-                                size={60} />
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <VwEmpty />
-                            <VwEmpty2 />
-                        </View>
-                    </VwContainerComentario>
-                )
-            }
+            <View style={{ flex: 1, backgroundColor: 'white', height: 90 }}>
+                {
+                    !loading && comments.map((item) => (
+                        <Comentario
+                            key={item.id}
+                            comment={item} />
+                    ))
+                }
+                {
+                    loading && (
+                        <VwContainerComentario>
+                            <View>
+                                <Avatar
+                                    rounded
+                                    size={60} />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <VwEmpty />
+                                <VwEmpty2 />
+                            </View>
+                        </VwContainerComentario>
+                    )
+                }
+            </View>
+
         </SvwContainerComentarios>
     )
 }

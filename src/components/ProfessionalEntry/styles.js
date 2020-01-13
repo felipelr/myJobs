@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { purple, gray } from '../../components/common/util/colors'
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
+    contentContainerStyle: { paddingLeft: 0, paddingRight: 0, flexGrow: 1 },
     showHorizontalScrollIndicator: false
 })``
 
@@ -17,7 +18,7 @@ export const ModalContainer = styled.View`
     background-color: #FFF;
 `
 
-export const TakePictureButtonContainer = styled.TouchableHighlight`
+export const TakePictureButtonContainer = styled.TouchableOpacity`
     position: absolute;
     align-self: center;
     bottom: 20;
@@ -42,7 +43,7 @@ export const ModalButtons = styled.View`
     justify-content: space-between;
 `
 
-export const CameraButtonContainer = styled.TouchableHighlight`
+export const CameraButtonContainer = styled.TouchableOpacity`
     padding: 20px 20px 40px 40px;
 `
 
@@ -59,6 +60,19 @@ export const ContinueButtonText = styled.Text`
 `
 
 export const ContainerAvatar = styled.View`
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+    position: absolute; 
+    top: ${heightPercentageToDP('3%')};;
+    left: 0;
+    width: 100%;
+`
+
+export const ImageCapa = styled.Image`
+    width: 100%;
+    height: 100%;
+`
+
+export const ViewCapa = styled.TouchableOpacity`
+    width: 100%;
+    height: ${heightPercentageToDP('18%')};
+    margin-bottom: 20px;
 `

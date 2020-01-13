@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Modal, PermissionsAndroid, Platform } from 'react-native'
+import { PermissionsAndroid, Platform, View, Modal, Text } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
@@ -21,6 +21,8 @@ import {
     CancelButtonText,
     ContinueButtonText,
     ContainerAvatar,
+    ImageCapa,
+    ViewCapa,
 } from './styles'
 
 import { purple } from '../common/util/colors'
@@ -40,12 +42,14 @@ function ProfessionalEntry(props) {
     })
 
     const [image, setImage] = useState(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
+    const [backImage, setBackImage] = useState(props.professional.professional.backImage ? { uri: props.professional.professional.backImage } : { uri: '' })
 
     const [requisitou, setRequisitou] = useState(false)
     const [modalOpened, setModalOpened] = useState(false)
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
+    const [typeImage, setTypeImage] = useState(false)
 
     useEffect(() => {
         if (requisitou && !props.professional.isUpdating) {
@@ -99,7 +103,8 @@ function ProfessionalEntry(props) {
         return true
     }
 
-    handleAvatarClick = () => {
+    handleAvatarClick = (type) => {
+        setTypeImage(type)
         if (Platform.OS === 'ios') {
             handleShowMenu()
         } else {
@@ -132,7 +137,8 @@ function ProfessionalEntry(props) {
                 ...props.professional.professional,
                 ...form,
                 date_birth: form.date_birth.split('/').reverse().join('-'),
-                image: image.base64 ? image.base64 : ''
+                image: image.base64 ? image.base64 : '',
+                imageBackground: backImage.base64 ? backImage.base64 : ''
             }
             setRequisitou(true)
             props.professionalUpdateRequest(professionalData, props.token)
@@ -147,10 +153,18 @@ function ProfessionalEntry(props) {
                 .then(({ uri }) => {
                     RNFetchBlob.fs.readFile(uri, 'base64')
                         .then(data64 => {
-                            setImage({
-                                uri: uri,
-                                base64: data64
-                            })
+                            if (typeImage === 'backImage') {
+                                setBackImage({
+                                    uri: uri,
+                                    base64: data64
+                                })
+                            }
+                            else {
+                                setImage({
+                                    uri: uri,
+                                    base64: data64
+                                })
+                            }
                         })
                         .catch(err => {
 
@@ -166,10 +180,19 @@ function ProfessionalEntry(props) {
             .then(({ uri }) => {
                 RNFetchBlob.fs.readFile(uri, 'base64')
                     .then(data => {
-                        setImage({
-                            uri: uri,
-                            base64: data
-                        })
+                        if (typeImage === 'backImage') {
+                            setBackImage({
+                                uri: uri,
+                                base64: data
+                            })
+                        }
+                        else {
+                            setImage({
+                                uri: uri,
+                                base64: data
+                            })
+                        }
+
                         setMenuOpened(true)
                         setCameraOpened(false)
                         setFolderImagesOpened(false)
@@ -194,7 +217,12 @@ function ProfessionalEntry(props) {
     }
 
     handleModalClose = () => {
-        setImage(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
+        if (image != props.professional.professional.photo)
+            setImage(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
+
+        if (backImage != props.professional.professional.backImage)
+            setBackImage(props.professional.professional.backImage ? { uri: props.professional.professional.backImage } : { uri: '' })
+
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
@@ -220,13 +248,18 @@ function ProfessionalEntry(props) {
 
     return (
         <ScrollViewContainer ref={(c) => this.scrollViewContainer = c}>
-            <View style={{ flex: 1, padding: 8 }}>
+            <View style={{ flex: 1 }}>
                 {props.professional.isUpdating && <Loading size='large' color={purple} height='330' error={props.professional.errorUpdating} />}
 
                 {props.professional.errorUpdating && <TextError>{props.professional.errorMessage}</TextError>}
 
                 {!props.professional.isUpdating && (
                     <React.Fragment>
+                        <ViewCapa onPress={() => handleAvatarClick('backImage')}>
+                            {backImage.uri.length > 0 && <ImageCapa source={{ uri: backImage.uri + '?v=' + new Date().getTime() }} />}
+                            {backImage.uri.length <= 0 && <Text></Text>}
+                        </ViewCapa>
+
                         <ContainerAvatar>
                             {image.uri.length > 0 &&
                                 <Avatar
@@ -234,7 +267,7 @@ function ProfessionalEntry(props) {
                                     containerStyle={{ elevation: 2, alignSelf: "center" }}
                                     source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
                                     size={120}
-                                    onPress={this.handleAvatarClick}
+                                    onPress={() => handleAvatarClick('photo')}
                                     showEditButton
                                     editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
 
@@ -243,53 +276,55 @@ function ProfessionalEntry(props) {
                                     rounded
                                     containerStyle={{ elevation: 2, alignSelf: "center" }}
                                     size={120}
-                                    onPress={this.handleAvatarClick}
+                                    onPress={() => handleAvatarClick('photo')}
                                     showEditButton
                                     editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
 
                         </ContainerAvatar>
 
-                        <TextInputJobs
-                            value={form.name}
-                            name='name'
-                            onChangeText={handleOnChange}
-                            placeholder='Nome'
-                            invalidValue={invalidField === 'name'} />
+                        <View style={{ padding: 8 }}>
+                            <TextInputJobs
+                                value={form.name}
+                                name='name'
+                                onChangeText={handleOnChange}
+                                placeholder='Nome'
+                                invalidValue={invalidField === 'name'} />
 
-                        <TextInputJobs
-                            value={form.description}
-                            name='description'
-                            onChangeText={handleOnChange}
-                            placeholder='Descrição'
-                            multiline={true}
-                            numberOfLines={3}
-                            style={{ textAlignVertical: true }}
-                            invalidValue={invalidField === 'description'} />
+                            <TextInputJobs
+                                value={form.description}
+                                name='description'
+                                onChangeText={handleOnChange}
+                                placeholder='Descrição'
+                                multiline={true}
+                                numberOfLines={3}
+                                style={{ textAlignVertical: true }}
+                                invalidValue={invalidField === 'description'} />
 
-                        <TextInputJobs
-                            value={form.document}
-                            name='document'
-                            onChangeText={handleOnChange}
-                            placeholder='CPF/CNPJ'
-                            invalidValue={invalidField === 'document'} />
+                            <TextInputJobs
+                                value={form.document}
+                                name='document'
+                                onChangeText={handleOnChange}
+                                placeholder='CPF/CNPJ'
+                                invalidValue={invalidField === 'document'} />
 
-                        <TextInputJobs
-                            value={form.date_birth}
-                            name='date_birth'
-                            onChangeText={handleOnChange}
-                            placeholder='Data de Nascimento'
-                            keyboardType='number-pad'
-                            invalidValue={invalidField === 'date_birth'} />
+                            <TextInputJobs
+                                value={form.date_birth}
+                                name='date_birth'
+                                onChangeText={handleOnChange}
+                                placeholder='Data de Nascimento'
+                                keyboardType='number-pad'
+                                invalidValue={invalidField === 'date_birth'} />
 
-                        <ViewContainerButton>
-                            <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
-                        </ViewContainerButton>
+                            <ViewContainerButton>
+                                <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                            </ViewContainerButton>
+                        </View>
 
                         <Modal
                             visible={modalOpened}
                             transparent={menuOpened}
                             animationType="fade"
-                            onRequestClose={this.handleModalClose}>
+                            onRequestClose={handleModalClose}>
 
                             {menuOpened &&
                                 <MenuPicture
@@ -319,15 +354,15 @@ function ProfessionalEntry(props) {
                                                 buttonNegative: 'Cancel',
                                             }}
                                         />
-                                        <TakePictureButtonContainer onPress={this.handleTakePicture}>
+                                        <TakePictureButtonContainer onPress={handleTakePicture}>
                                             <TakePictureButtonLabel />
                                         </TakePictureButtonContainer>
                                     </ModalContainer>
                                     <ModalButtons>
-                                        <CameraButtonContainer onPress={this.handleModalClose}>
+                                        <CameraButtonContainer onPress={handleModalClose}>
                                             <CancelButtonText>Cancelar</CancelButtonText>
                                         </CameraButtonContainer>
-                                        <CameraButtonContainer onPress={this.handleCameraModalConfirm}>
+                                        <CameraButtonContainer onPress={handleCameraModalConfirm}>
                                             <ContinueButtonText>Continuar</ContinueButtonText>
                                         </CameraButtonContainer>
                                     </ModalButtons>
@@ -338,7 +373,7 @@ function ProfessionalEntry(props) {
                                 <ModalContainer>
                                     <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
                                     <ModalButtons>
-                                        <CameraButtonContainer onPress={this.handleModalClose}>
+                                        <CameraButtonContainer onPress={handleModalClose}>
                                             <CancelButtonText>Cancelar</CancelButtonText>
                                         </CameraButtonContainer>
                                     </ModalButtons>

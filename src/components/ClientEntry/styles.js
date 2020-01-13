@@ -17,7 +17,7 @@ export const ModalContainer = styled.View`
     background-color: #FFF;
 `
 
-export const TakePictureButtonContainer = styled.TouchableHighlight`
+export const TakePictureButtonContainer = styled.TouchableOpacity`
     position: absolute;
     align-self: center;
     bottom: 20;
@@ -42,7 +42,7 @@ export const ModalButtons = styled.View`
     justify-content: space-between;
 `
 
-export const CameraButtonContainer = styled.TouchableHighlight`
+export const CameraButtonContainer = styled.TouchableOpacity`
     padding: 20px 20px 40px 40px;
 `
 

@@ -3,9 +3,12 @@ import { purple, gray, lightgray, white } from '../../components/common/util/col
 import { heightPercentageToDP, widthPercentageToDP } from '../../components/common/util/dimensions'
 import { StyleSheet } from 'react-native'
 
-export const Capa = styled.Image.attrs(props => ({
-    source: props.imagem
-}))`
+export const Capa = styled.Image`
+    width: 100%;
+    height: ${heightPercentageToDP('18%')};
+`
+
+export const CapaEmpty = styled.View`
     width: 100%;
     height: ${heightPercentageToDP('18%')};
 `
@@ -62,7 +65,7 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${heightPercentageToDP('6%')};
+    top: ${heightPercentageToDP('4%')};
 `
 
 export const ContentComentarios = styled.View` 

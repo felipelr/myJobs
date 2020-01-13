@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Modal, PermissionsAndroid, Platform, FlatList } from 'react-native'
+import { View, Modal, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'

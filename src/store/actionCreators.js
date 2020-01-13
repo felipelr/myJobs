@@ -55,7 +55,7 @@ export const { Types, Creators } = createActions({
     highlightsLoadRequest: ['token'],
     highlightsLoadSuccess: ['highlights'],
     highlightsLoadError: ['error'],
-    highlightsLoadBySubcategoryRequest: ['subcategory','token'],
+    highlightsLoadBySubcategoryRequest: ['subcategory', 'token'],
 
     //Social Midia Actions
     socialMidiaSignupInit: ['user'],
@@ -74,6 +74,9 @@ export const { Types, Creators } = createActions({
     addNewClientAddress: ['token', 'clientAddress'],
     editClientAddress: ['token', 'clientAddress'],
     deleteClientAddress: ['token', 'id'],
+    clientNewServiceOrderRequest: ['token', 'serviceOrder'],
+    clientNewServiceOrderSuccess: ['serviceOrder'],
+    clientNewServiceOrderError: ['error'],
 
     //Services
     serviceSelected: ['service'],

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View, BackHandler } from 'react-native'
+import { View, BackHandler, Animated, Dimensions } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
@@ -29,6 +29,8 @@ import MyAddress from '../../components/MyAddress/index'
 import ProfessionalEntry from '../../components/ProfessionalEntry/index'
 
 function PerfilScreen(props) {
+    const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
+    const [slideRight] = useState(new Animated.ValueXY())
     const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
     const [image, setImage] = useState((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
@@ -103,6 +105,16 @@ function PerfilScreen(props) {
     }
 
     const handleClickMenu = (item) => {
+        Animated.spring(slideLeft, {
+            toValue: { x: 0, y: 0 },
+            delay: 0
+        }).start()
+
+        Animated.spring(slideRight, {
+            toValue: { x: (Dimensions.get('screen').width * -1), y: 0 },
+            delay: 0
+        }).start()
+
         switch (item) {
             case 'Dados Cadastrais':
                 props.clientClearErrors()
@@ -130,11 +142,24 @@ function PerfilScreen(props) {
 
     const handleClickBack = () => {
         if (show === 'menu') {
-            props.navigation.navigate('CategoriesSearch')
+            if (props.userType === 'client')
+                props.navigation.navigate('CategoriesSearch')
+            else
+                props.navigation.navigate('ProfessionalHome')
         }
         else {
             setShow('menu')
             setImage((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
+
+            Animated.spring(slideLeft, {
+                toValue: { x: Dimensions.get('screen').width, y: 0 },
+                delay: 0
+            }).start()
+
+            Animated.spring(slideRight, {
+                toValue: { x: 0, y: 0 },
+                delay: 0
+            }).start()
         }
     }
 
@@ -160,65 +185,71 @@ function PerfilScreen(props) {
             }
 
             <View style={{ flex: 1 }}>
-                {show === 'menu' && (
-                    <React.Fragment>
-                        <ContainerContent>
-                            <Space />
-                            <ContainerTitle>
-                                <Title>{props.user.name}</Title>
-                            </ContainerTitle>
-                            <ContainerAvatar>
-                                {image.uri.length > 0 &&
-                                    <Avatar
-                                        rounded
-                                        containerStyle={styles}
-                                        source={{ uri: image.uri }}
-                                        size={120} />}
+                <Animated.View style={{ ...slideRight.getLayout(), position: 'absolute', width: '100%', height: '100%' }}>
+                    {show === 'menu' && (
+                        <React.Fragment>
+                            <ContainerContent>
+                                <Space />
+                                <ContainerTitle>
+                                    <Title>{props.user.name}</Title>
+                                </ContainerTitle>
+                                <ContainerAvatar>
+                                    {image.uri.length > 0 &&
+                                        <Avatar
+                                            rounded
+                                            containerStyle={styles}
+                                            source={{ uri: image.uri }}
+                                            size={120} />}
 
-                                {image.uri.length <= 0 &&
-                                    <Avatar
-                                        rounded
-                                        containerStyle={styles}
-                                        size={120} />}
+                                    {image.uri.length <= 0 &&
+                                        <Avatar
+                                            rounded
+                                            containerStyle={styles}
+                                            size={120} />}
 
-                            </ContainerAvatar>
+                                </ContainerAvatar>
 
-                            <ScrollViewContainer>
-                                <View>
-                                    <ContainerLista>
-                                        {
-                                            list.map((item, i) => (
-                                                <ListItem
-                                                    key={i}
-                                                    containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                                    title={item.title}
-                                                    rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                    leftIcon={{ name: item.icon }}
-                                                    onPress={() => { handleClickMenu(item.title) }}
-                                                    onLongPress={() => { handleClickMenu(item.title) }}
-                                                />
-                                            ))
-                                        }
-                                    </ContainerLista>
-                                </View>
-                            </ScrollViewContainer>
-                        </ContainerContent>
+                                <ScrollViewContainer>
+                                    <View>
+                                        <ContainerLista>
+                                            {
+                                                list.map((item, i) => (
+                                                    <ListItem
+                                                        key={i}
+                                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                        title={item.title}
+                                                        rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                                                        leftIcon={{ name: item.icon }}
+                                                        onPress={() => { handleClickMenu(item.title) }}
+                                                        onLongPress={() => { handleClickMenu(item.title) }}
+                                                    />
+                                                ))
+                                            }
+                                        </ContainerLista>
+                                    </View>
+                                </ScrollViewContainer>
 
-                    </React.Fragment>
-                )}
 
-                {(show === 'cadastro' && props.userType === 'client') && <ClientEntry onUpdate={handleClickBack} />}
-                {(show === 'cadastro' && props.userType === 'professional') && <ProfessionalEntry onUpdate={handleClickBack} />}
 
-                {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
+                            </ContainerContent>
+                        </React.Fragment>
+                    )}
+                </Animated.View>
 
-                {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
+                <Animated.View style={slideLeft.getLayout()}>
+                    {(show === 'cadastro' && props.userType === 'client') && <ClientEntry onUpdate={handleClickBack} />}
+                    {(show === 'cadastro' && props.userType === 'professional') && <ProfessionalEntry onUpdate={handleClickBack} />}
 
-                {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
+                    {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
+
+                    {show === 'sugerirEmpresa' && <SuggestCompany onUpdate={handleClickBack} />}
+
+                    {show === 'enderecos' && <MyAddress onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
+                </Animated.View>
             </View>
 
             <Footer
-                homeOnPress={() => props.ownProps.navigation.navigate('CategoriesSearch')}
+                homeOnPress={() => props.userType === 'client' ? props.ownProps.navigation.navigate('CategoriesSearch') : props.ownProps.navigation.navigate('ProfessionalHome')}
                 servicesOnPress={() => props.ownProps.navigation.navigate('Services')}
                 perfilOnPress={() => { }} />
         </React.Fragment>

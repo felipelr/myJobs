@@ -9,7 +9,7 @@ export default function Footer(props) {
             <FooterButton onPress={props.homeOnPress}>
                 <Icon name="home" size={25} color={gold} />
             </FooterButton>
-            <FooterButton>
+            <FooterButton onPress={props.offersOnPress}>
                 <Icon name="local-offer" size={25} color={white} />
             </FooterButton>
             <FooterButton>

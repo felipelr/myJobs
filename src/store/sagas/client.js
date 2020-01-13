@@ -98,7 +98,7 @@ function* editClientAddress(action) {
     }
 }
 
-function* deleteClientAddress(action){
+function* deleteClientAddress(action) {
     try {
         const deleteResp = yield axios.delete(`${urlMyJobsAPI}/clientsAddresses/delete/${action.id}.json`,
             {
@@ -123,11 +123,39 @@ function* deleteClientAddress(action){
     }
 }
 
+function* clientNewServiceOrderRequest(action) {
+    try {
+        const postResp = yield axios.post(`${urlMyJobsAPI}/clientsServiceOrders/add.json`,
+            {
+                ...action.serviceOrder
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (postResp.data.error) {
+            yield put(ActionCreator.clientNewServiceOrderError(postResp.data.errorMessage))
+        }
+        else {
+            const { clientsServiceOrders } = postResp.data
+            yield put(ActionCreator.clientNewServiceOrderSuccess(clientsServiceOrders))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        yield put(ActionCreator.clientNewServiceOrderError(messageError))
+    }
+}
+
 export default function* rootClients() {
     yield all([
         takeLatest(Types.CLIENT_UPDATE_REQUEST, updateClient),
         takeLatest(Types.ADD_NEW_CLIENT_ADDRESS, addNewClientAddress),
         takeLatest(Types.EDIT_CLIENT_ADDRESS, editClientAddress),
         takeLatest(Types.DELETE_CLIENT_ADDRESS, deleteClientAddress),
+        takeLatest(Types.CLIENT_NEW_SERVICE_ORDER_REQUEST, clientNewServiceOrderRequest),
     ])
 }

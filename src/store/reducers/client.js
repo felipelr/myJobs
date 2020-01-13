@@ -70,6 +70,33 @@ export const deleteClientAddress = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const clientNewServiceOrderRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: true,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const clientNewServiceOrderSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const clientNewServiceOrderError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: true,
+        errorMessage: action.error
+    }
+}
+
 export const HANDLERS = {
     [Types.CLIENT_UPDATE_REQUEST]: clientUpdateRequest,
     [Types.CLIENT_UPDATE_SUCCESS]: clientUpdateSuccess,
@@ -77,7 +104,10 @@ export const HANDLERS = {
     [Types.CLIENT_CLEAR_ERRORS]: clientClearErrors,
     [Types.ADD_NEW_CLIENT_ADDRESS]: addNewClientAddress,
     [Types.EDIT_CLIENT_ADDRESS]: editClientAddress,
-    [Types.DELETE_CLIENT_ADDRESS]: deleteClientAddress,
+    [Types.DELETE_CLIENT_ADDRESS]: deleteClientAddress,    
+    [Types.CLIENT_NEW_SERVICE_ORDER_REQUEST]: clientNewServiceOrderRequest,
+    [Types.CLIENT_NEW_SERVICE_ORDER_SUCCESS]: clientNewServiceOrderSuccess,
+    [Types.CLIENT_NEW_SERVICE_ORDER_ERROR]: clientNewServiceOrderError,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

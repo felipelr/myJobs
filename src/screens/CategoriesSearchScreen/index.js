@@ -80,6 +80,7 @@ function CategoriesSearchScreen(props) {
                 </View>
             </ContainerCategorias>
             <Footer
+                offersOnPress={() => props.navigation.navigate('ServiceHire')}
                 servicesOnPress={() => props.navigation.navigate('Services')}
                 perfilOnPress={() => props.navigation.navigate('Perfil') }
             />

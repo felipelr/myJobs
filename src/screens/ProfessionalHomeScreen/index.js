@@ -8,10 +8,9 @@ import RNFetchBlob from 'rn-fetch-blob'
 import useGet from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
 
-import assets from '../../screens/ProfessionalHomeScreen/assets'
-
 import {
     Capa,
+    CapaEmpty,
     VwContainerTitle,
     TxtTitle,
     VwContainerRating,
@@ -43,7 +42,8 @@ import MenuPicture from '../../components/MenuPicture'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
 function ProfessionalHomeScreen(props) {
-    const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
+    const [image] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
+    const [backImage] = useState((props.professionalData.backImage && props.professionalData.backImage.length > 0) ? { uri: props.professionalData.backImage + '?v=' + new Date().getTime() } : { uri: '' })
     const [newStory, setNewStory] = useState('')
     const [newStoryVisible, setNewStoryVisible] = useState(false)
     const [services, setServices] = useState([])
@@ -263,7 +263,8 @@ function ProfessionalHomeScreen(props) {
                     <HeaderJobs />
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                         <View style={{ flex: 1 }} behavior={behavior}>
-                            <Capa imagem={assets.capa} />
+                            {backImage.uri.length > 0 && <Capa source={{ uri: backImage.uri }} />}
+                            {backImage.uri.length <= 0 && <CapaEmpty />}
 
                             <VwContainerTitle>
                                 <VwContainerRating>
@@ -384,7 +385,8 @@ function ProfessionalHomeScreen(props) {
                             </Modal>
                         </View>
                     </ScrollView>
-                    <Footer perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                    <Footer
+                        perfilOnPress={() => props.navigation.navigate('Perfil')}/>
                 </React.Fragment>
             }
         </React.Fragment>

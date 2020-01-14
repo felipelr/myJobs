@@ -32,7 +32,7 @@ function SplashScreen(props) {
                 if (userType === 1)
                     props.ownProps.navigation.navigate('CategoriesSearch')
                 else
-                    props.ownProps.navigation.navigate('ProfessionalHome')
+                    props.ownProps.navigation.navigate('CategoriesSearch')
             } else {
                 props.ownProps.navigation.navigate('Login')
             }

@@ -46,8 +46,10 @@ const useGet = (url, token) => {
                     Authorization: 'Bearer ' + token
                 }
             })
+            
             dispatch({ type: 'SUCCESS', data: resposta.data })
         } catch (e) {
+            console.log(newUrl)
             dispatch({ type: 'ERROR', errorMessage: e.message })
         }
     }

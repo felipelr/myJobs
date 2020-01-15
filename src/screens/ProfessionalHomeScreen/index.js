@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
+import firebase, { RemoteMessage } from 'react-native-firebase'
 
 import useGet from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
@@ -63,10 +64,34 @@ function ProfessionalHomeScreen(props) {
     const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=50&page=1`, props.token)
 
     useEffect(() => {
+        firebasePermission()
+
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+
+        const messageListener = firebase.messaging().onMessage((message) => {
+            // Process your message as required
+            console.log(message)
+        });
+
+        const onTokenRefreshListener = firebase.messaging().onTokenRefresh(fcmToken => {
+            // Process your token as required
+            console.log(fcmToken)
+        });
+
+        firebase.messaging().getToken()
+            .then(fcmToken => {
+                if (fcmToken) {
+                    // user has a device token
+                    console.log(fcmToken)
+                } else {
+                    // user doesn't have a device token yet
+                }
+            });
 
         return () => {
             backHandler.remove()
+            messageListener()
+            onTokenRefreshListener()
         }
     }, [])
 
@@ -129,6 +154,29 @@ function ProfessionalHomeScreen(props) {
     useEffect(() => {
         pageRef.current = storiesCarouselOpened ? 'storiesCarousel' : ''
     }, [storiesCarouselOpened])
+
+    const firebasePermission = async () => {
+        try {
+            const enabled = await firebase.messaging().hasPermission();
+            if (enabled) {
+                // user has permissions
+                console.log('has permissions')
+            } else {
+                // user doesn't have permission
+                try {
+                    await firebase.messaging().requestPermission();
+                    console.log('has authorised')
+                    // User has authorised
+                } catch (error) {
+                    // User has rejected permissions
+                    console.log('User has rejected permissions', error)
+                }
+            }
+        } catch (error) {
+            // User has rejected permissions
+            console.log('User has rejected permissions', error)
+        }
+    }
 
     const handleBackPress = async () => {
         if (pageRef.current === 'storiesCarousel') {
@@ -386,7 +434,7 @@ function ProfessionalHomeScreen(props) {
                         </View>
                     </ScrollView>
                     <Footer
-                        perfilOnPress={() => props.navigation.navigate('Perfil')}/>
+                        perfilOnPress={() => props.navigation.navigate('Perfil')} />
                 </React.Fragment>
             }
         </React.Fragment>

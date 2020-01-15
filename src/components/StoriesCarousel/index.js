@@ -16,7 +16,7 @@ import {
 function StoriesCarousel(props) {
     const [imageUri, setImagesUri] = useState(props.ownProps.firstImage.uri)
     const [firstIndex, setFirstIndex] = useState(props.ownProps.firstImage.index)
-    const [progressValue, setProgressValue] = useState(0)
+    const [progressValue, setProgressValue] = useState(10)
     const [movePresentation, setMovePresentation] = useState('')
     const moveRef = useRef()
     const presentationRef = useRef()

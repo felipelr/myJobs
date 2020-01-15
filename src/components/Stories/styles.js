@@ -4,7 +4,8 @@ import { purple } from '../../components/common/util/colors'
 export const SvwContainerStories = styled.ScrollView.attrs({
     horizontal: true,
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, height: 173 },
-    showHorizontalScrollIndicator: false
+    showsHorizontalScrollIndicator: false,
+    showsVerticalScrollIndicator: false,
 })` 
     flex-direction: row; 
 `

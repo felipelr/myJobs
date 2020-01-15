@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity, View, ActivityIndicator, Text } from 'react-native'
+import {
+    KeyboardAvoidingView,
+    Platform,
+    BackHandler,
+    ActivityIndicator,
+    TouchableOpacity,
+    View
+} from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
@@ -15,33 +22,24 @@ import useGet from '../../services/restServices';
 import ActionCreators from '../../store/actionCreators'
 
 function ServicesScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const [search, setSearch] = useState('');
     const [servicesSubcategory, setServicesSubcategory] = useState([]);
     const services = useGet(`/services/getBySubcategory/${props.selectedSubcategory.id}.json`, props.token);
     const highlights = useGet(`/highlights/highlightsBySubcategory/${props.selectedSubcategory.id}.json`, props.token);
-    
 
-    useEffect(() => {  
-        this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
-            setKeyboardIsVisible(true)
-        })
 
-        this.knHide = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardIsVisible(false)
-        })
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', back)
 
         return () => {
-            this.kbShow.remove()
-            this.kbShow.remove()
+            backHandler.remove()
         }
-
     }, [])
 
     useEffect(() => {
         if (services.data && services.data.services) {
             if (search.length > 0) {
-                var filtrados = services.data.services.filter((obj) =>  {
+                var filtrados = services.data.services.filter((obj) => {
                     return obj.title.toUpperCase().includes(search.toUpperCase()) || obj.description.toUpperCase().includes(search.toUpperCase());
                 })
                 setServicesSubcategory(filtrados);
@@ -53,12 +51,13 @@ function ServicesScreen(props) {
 
     useEffect(() => {
         if (!props.isAuth) {
-            props.ownProps.navigation.navigate('Login');
+            props.navigation.navigate('Login');
         }
     }, [props.isAuth]);
 
-    back = () => {
-        props.ownProps.navigation.navigate('ProfessionalSearch');
+    const back = async () => {
+        console.log('services back')
+        props.navigation.goBack()
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -66,7 +65,7 @@ function ServicesScreen(props) {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJobs back={back} title='Buscar Serviço' chat />
-            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true}/>
+            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} />
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'
@@ -92,9 +91,9 @@ function ServicesScreen(props) {
                 </View>
             }
             <Footer
-                homeOnPress={() => props.ownProps.navigation.navigate('ProfessionalSearch')}
+                homeOnPress={() => props.navigation.navigate('ProfessionalSearch')}
                 servicesOnPress={() => { }}
-                perfilOnPress={() => props.ownProps.navigation.navigate('Perfil')} />
+                perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </KeyboardAvoidingView>
     )
 }
@@ -117,6 +116,6 @@ const mapDispatchToProps = dispatch => {
         selectSubcategory: (subcategory) => dispatch(ActionCreators.subcategoriesSelected(subcategory))
     }
 }
- 
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen)

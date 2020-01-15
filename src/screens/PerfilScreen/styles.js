@@ -4,7 +4,8 @@ import { StyleSheet } from 'react-native'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
-    showHorizontalScrollIndicator: false
+    showsHorizontalScrollIndicator: false,
+    showsVerticalScrollIndicator: false,
 })``
 
 export const ContainerContent = styled.View`

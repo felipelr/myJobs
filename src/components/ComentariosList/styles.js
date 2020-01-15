@@ -5,7 +5,8 @@ import { widthPercentageToDP } from '../../components/common/util/dimensions'
 export const SvwContainerComentarios = styled.ScrollView.attrs({
     horizontal: true,
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
-    showHorizontalScrollIndicator: false
+    showsHorizontalScrollIndicator: false,
+    showsVerticalScrollIndicator: false,
 })` 
     flex-direction: row;
     margin-bottom: 5;

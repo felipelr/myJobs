@@ -129,6 +129,7 @@ function ProfessionalHomeScreen(props) {
         if (getProfessionalComments.data && getProfessionalComments.data.professionalComments) {
             setComments(getProfessionalComments.data.professionalComments.map(item => {
                 return {
+                    id: item.id,
                     comment: item.comment,
                     rating: item.rating,
                     amount_ratings: item.amount_ratings,
@@ -179,6 +180,7 @@ function ProfessionalHomeScreen(props) {
     }
 
     const handleBackPress = async () => {
+        console.log('professional home back')
         if (pageRef.current === 'storiesCarousel') {
             handleFinishPresentitionCarousel()
             return true
@@ -309,7 +311,9 @@ function ProfessionalHomeScreen(props) {
             {!storiesCarouselOpened &&
                 <React.Fragment>
                     <HeaderJobs />
-                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}>
                         <View style={{ flex: 1 }} behavior={behavior}>
                             {backImage.uri.length > 0 && <Capa source={{ uri: backImage.uri }} />}
                             {backImage.uri.length <= 0 && <CapaEmpty />}
@@ -434,7 +438,8 @@ function ProfessionalHomeScreen(props) {
                         </View>
                     </ScrollView>
                     <Footer
-                        perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                        perfilOnPress={() => props.navigation.navigate('Perfil')}
+                        servicesOnPress={() => props.navigation.navigate('Services')} />
                 </React.Fragment>
             }
         </React.Fragment>

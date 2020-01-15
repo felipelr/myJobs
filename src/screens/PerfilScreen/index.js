@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { View, BackHandler, Animated, Dimensions } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
@@ -70,12 +70,14 @@ function PerfilScreen(props) {
         }
     ])
 
+    const pageRef = useRef()
+
     useEffect(() => {
-        if (this != null)
-            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        pageRef.current = 'menu'
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+
         return () => {
-            if (this != null)
-                this.backHandler.remove()
+            backHandler.remove()
         }
     }, [])
 
@@ -105,51 +107,61 @@ function PerfilScreen(props) {
     }
 
     const handleClickMenu = (item) => {
-        Animated.spring(slideLeft, {
-            toValue: { x: 0, y: 0 },
-            delay: 0
-        }).start()
-
-        Animated.spring(slideRight, {
-            toValue: { x: (Dimensions.get('screen').width * -1), y: 0 },
-            delay: 0
-        }).start()
-
+        let doAnimation = false
         switch (item) {
             case 'Dados Cadastrais':
                 props.clientClearErrors()
                 setShow('cadastro')
+                pageRef.current = 'cadastro'
+                doAnimation = true
                 break
             case 'Meus Endereços':
                 setShow('enderecos')
+                pageRef.current = 'enderecos'
+                doAnimation = true
                 break
             case 'Segurança':
                 props.authCleanErrors()
                 setShow('alterarSenha')
+                pageRef.current = 'alterarSenha'
+                doAnimation = true
                 break
             case 'Sugerir Profissionais/Empresas':
                 props.professionalsCleanErrors()
                 setShow('sugerirEmpresa')
+                pageRef.current = 'sugerirEmpresa'
+                doAnimation = true
                 break
             case 'Convidar Amigos':
                 handleClickShare()
                 break
             default:
                 setShow('menu')
+                pageRef.current = 'menu'
                 break
+        }
+
+        if (doAnimation) {
+            Animated.spring(slideLeft, {
+                toValue: { x: 0, y: 0 },
+                delay: 0
+            }).start()
+
+            Animated.spring(slideRight, {
+                toValue: { x: (Dimensions.get('screen').width * -1), y: 0 },
+                delay: 0
+            }).start()
         }
     }
 
     const handleClickBack = () => {
-        if (show === 'menu') {
-            if (props.userType === 'client')
-                props.navigation.navigate('CategoriesSearch')
-            else
-                props.navigation.navigate('ProfessionalHome')
+        if (pageRef.current === 'menu') {
+            props.navigation.goBack()
         }
         else {
             setShow('menu')
             setImage((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
+            pageRef.current = 'menu'
 
             Animated.spring(slideLeft, {
                 toValue: { x: Dimensions.get('screen').width, y: 0 },
@@ -228,8 +240,6 @@ function PerfilScreen(props) {
                                         </ContainerLista>
                                     </View>
                                 </ScrollViewContainer>
-
-
 
                             </ContainerContent>
                         </React.Fragment>

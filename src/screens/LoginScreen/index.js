@@ -17,33 +17,22 @@ import {
 } from './styles'
 
 function LoginScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [showComponent, setShowComponent] = useState('login')
 
     useEffect(() => {
-        this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
-            setKeyboardIsVisible(true)
-        })
-        this.knHide = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardIsVisible(false)
-        })
-
-        this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
         return () => {
-            this.kbShow.remove()
-            this.kbShow.remove()
-            this.backHandler.remove()
+            backHandler.remove()
         }
     }, [])
 
-    handleBackPress = () => {
-        //this.goBack(); // works best when the goBack is async
+    const handleBackPress = async () => {
         setShowComponent('login')
         return true;
     }
 
-    showSignup = () => {
+    const showSignup = () => {
         props.loginCleanError()
         setShowComponent('signup')
     }

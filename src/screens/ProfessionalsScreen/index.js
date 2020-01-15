@@ -11,6 +11,7 @@ import List from '../../components/List/index'
 import useGet from '../../services/restServices';
 
 function ProfessionalsScreen(props) {
+ 
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
@@ -51,7 +52,7 @@ function ProfessionalsScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            
+            <Text>{console.log(JSON.stringify(props.serviceSelected))}</Text>
             <Container />
             <HeaderJobs back={true} filter={true} />
             <ContainerProfessionals>
@@ -65,12 +66,13 @@ function ProfessionalsScreen(props) {
     )
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, ownProps) => { 
+    console.log('state = ' + JSON.stringify(state))
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
         selectedCategorie: state.categoria.selected,
-        serviceSelected: state.service.selected,  
+        serviceSelected: state.services.selected,  
         ownProps: ownProps
     }
 };

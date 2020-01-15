@@ -23,7 +23,6 @@ function ServicesScreen(props) {
     
 
     useEffect(() => {  
-
         this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
             setKeyboardIsVisible(true)
         })

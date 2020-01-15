@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View,Text } from 'react-native'
 import ListItem from '../index'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
@@ -50,10 +50,20 @@ function ListItemService(props) {
     )
 }
 
+
+const mapStateToProps = (state, ownProps) => {  
+    return {
+        token: state.auth.token,
+        isAuth: state.auth.isAuth, 
+        ownProps: ownProps
+    } 
+};
+
 const mapDispatchToProps = dispatch => {
+    console.log('teste dispatch -->' )
     return {
         serviceSelected: (service) => dispatch(ActionCreators.serviceSelected(service))
     }
 }
 
-export default connect(null, mapDispatchToProps)(ListItemService)
+export default connect(mapStateToProps, mapDispatchToProps)(ListItemService)

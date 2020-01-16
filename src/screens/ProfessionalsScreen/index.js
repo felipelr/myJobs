@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 function ProfessionalsScreen(props) {
 
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
-    const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais 
+    const highlights = useGet(`/highlights/highlightsByService/${props.serviceSelected.id}.json`, props.token);
     const profissionais = useGet(`/professionals/getByService/${props.serviceSelected.id}.json`, props.token);
 
     console.log('profissionais ==> ' + JSON.stringify(profissionais))

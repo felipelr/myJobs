@@ -29,7 +29,7 @@ function ServiceHireScreen(props) {
     const [requisitou, setRequisitou] = useState(false)
     const [form, setForm] = useState({
         client_id: props.client.id,
-        service_id: 18,
+        service_id: props.serviceSelected.id,
         client_address_id: (props.enderecos && props.enderecos.length > 0) ? props.enderecos[0].id : 0,
         quantity: "",
         description: "",
@@ -123,7 +123,7 @@ function ServiceHireScreen(props) {
                                     <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
                                         <React.Fragment>
                                             <TexService>Serviço</TexService>
-                                            <TextName>Violão</TextName>
+                                            <TextName>{props.serviceSelected.title}</TextName>
                                             <TexService>Cliente</TexService>
                                             <TextName>{props.client.name}</TextName>
                                             <TextName>{props.client.phone}</TextName>
@@ -185,6 +185,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         client: state.client.client,
         clientCtr: state.client,
+        serviceSelected: state.services.selected,
         enderecos: state.client.client.clientsAddresses,
     }
 }

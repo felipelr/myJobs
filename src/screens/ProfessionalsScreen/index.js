@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator, View } from 'react-native'
 import { connect } from 'react-redux';
 
-import { ContainerProfessionals, ContainerList, TextLoading, ButtonContainer, ButtonOrcamento, TextOrcamento, Title } from './styles'
+import { ContainerProfessionals, ContainerList, TextLoading, ButtonContainer, ButtonOrcamento, TextOrcamento } from './styles'
 import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import Highlights from '../../components/Highlights/index'
 import List from '../../components/List/index'
 import useGet from '../../services/restServices';
-import { purple, green } from '../../components/common/util/colors'
+import { purple} from '../../components/common/util/colors'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 function ProfessionalsScreen(props) {
 
@@ -49,8 +50,9 @@ function ProfessionalsScreen(props) {
             <ContainerProfessionals>
                 <Highlights titulo={'Destaques do mês'} highlights={highlights} />
                 <ButtonContainer> 
-                    <ButtonOrcamento>
+                    <ButtonOrcamento onPress={() => props.navigation.navigate('ServiceHire')}>
                         <TextOrcamento>Solicitar Orçamentos para todos os profissionais</TextOrcamento>
+                        <Icon name='chevron-right' size={24} color={purple} />
                     </ButtonOrcamento>
                 </ButtonContainer>
                 <ContainerList>

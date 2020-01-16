@@ -59,8 +59,7 @@ const mapStateToProps = (state, ownProps) => {
     } 
 };
 
-const mapDispatchToProps = dispatch => {
-    console.log('teste dispatch -->' )
+const mapDispatchToProps = dispatch => { 
     return {
         serviceSelected: (service) => dispatch(ActionCreators.serviceSelected(service))
     }

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black } from '../../common/util/colors'
+import { black,purple} from '../../common/util/colors'
 
 export const TitleProfessional = styled.Text`
     color: ${black};
@@ -18,3 +18,4 @@ export const InfoProfessional = styled.Text`
     padding-top: 5px;
     padding-bottom: 5px;
 `
+ 

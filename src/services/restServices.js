@@ -37,10 +37,12 @@ const INITIAL_STATE = {
 }
 
 const useGet = (url, token) => {
+    console.log('chegou aqui ------')
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
     const refetch = async (newUrl) => { 
         dispatch({ type: 'REQUEST' })
         try {
+            console.log('URL Requisitada = ' + `${urlMyJobsAPI}` + newUrl)
             const resposta = await axios.get(`${urlMyJobsAPI}` + newUrl, {
                 headers: {
                     Authorization: 'Bearer ' + token

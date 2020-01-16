@@ -8,7 +8,9 @@ import ListSubcategory from '../ListItem/ListSubcategory'
 export default function List(props) { 
     const { titulo } = props
     const { itens } = props
-    const { tipo } = props 
+    const { tipo } = props  
+console.log('chamou aqui')
+
     return (
         <React.Fragment>
             <TitleList>{titulo}</TitleList>
@@ -16,10 +18,7 @@ export default function List(props) {
                 {
                     itens &&
                     itens.map((item, index) => {
-                        if (tipo === 'professional') {
-                            return <ListItemProfessional key={index} profissional={item} itemOnPress={props.itemOnPress}/>
-                        }
-                        else if (tipo === 'service') {
+                          if (tipo === 'service') {
                             return <ListItemService key={index} servico={item} itemOnPress={props.itemOnPress}/>
                         }
                         else if (tipo === 'subcategory'){

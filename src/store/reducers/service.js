@@ -9,8 +9,7 @@ export const INITIAL_STATE = {
 }
 
  
-export const serviceSelected = (state = INITIAL_STATE, action) => { 
-    console.log('chegou no reducer')
+export const serviceSelected = (state = INITIAL_STATE, action) => {  
     return {
         ...state,
         selected: action.service

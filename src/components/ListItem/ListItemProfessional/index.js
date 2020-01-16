@@ -24,7 +24,7 @@ export default function ListItemProfessional(props) {
                 <View style={{marginLeft:10}}>
                     <TitleProfessional>{profissional.nome}</TitleProfessional>
                     <InfoProfessional>{profissional.info}</InfoProfessional>
-                    <RatingJobs avaliacao={profissional.avaliacao} qtdeAvaliacoes={profissional.qtdeAvaliacoes} />
+                    <RatingJobs avaliacao={parseFloat(profissional.avaliacao)} qtdeAvaliacoes={profissional.qtdeAvaliacoes} />
                 </View>
             }
             rightContent={

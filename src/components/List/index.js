@@ -5,11 +5,11 @@ import ListItemProfessional from '../ListItem/ListItemProfessional/index'
 import ListItemService from '../ListItem/LisItemService'
 import ListSubcategory from '../ListItem/ListSubcategory'
 
-export default function List(props) { 
+export default function List(props) {
     const { titulo } = props
     const { itens } = props
-    const { tipo } = props  
-console.log('chamou aqui')
+    const { tipo } = props
+    console.log('chamou aqui ========' + JSON.stringify(props))
 
     return (
         <React.Fragment>
@@ -18,11 +18,14 @@ console.log('chamou aqui')
                 {
                     itens &&
                     itens.map((item, index) => {
-                          if (tipo === 'service') {
-                            return <ListItemService key={index} servico={item} itemOnPress={props.itemOnPress}/>
+                        if(tipo === 'professional'){ 
+                            return <ListItemProfessional key={index} profissional={item} itemOnPress={props.itemOnPress} />
                         }
-                        else if (tipo === 'subcategory'){
-                            return <ListSubcategory key={index} subcategory={item} itemOnPress={props.itemOnPress}/>
+                        else if (tipo === 'service') {
+                            return <ListItemService key={index} servico={item} itemOnPress={props.itemOnPress} />
+                        }
+                        else if (tipo === 'subcategory') {
+                            return <ListSubcategory key={index} subcategory={item} itemOnPress={props.itemOnPress} />
                         }
                         return <ListItem key={index} />
                     })

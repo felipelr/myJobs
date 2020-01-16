@@ -122,6 +122,8 @@ function ServiceHireScreen(props) {
                                     <TextHireService>Falta pouco...</TextHireService>
                                     <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
                                         <React.Fragment>
+                                            <TexService>Categoria</TexService>
+                                            <TextName>{props.selectedCategorie.description}</TextName>
                                             <TexService>Serviço</TexService>
                                             <TextName>{props.serviceSelected.title}</TextName>
                                             <TexService>Cliente</TexService>
@@ -186,6 +188,7 @@ const mapStateToProps = (state, ownProps) => {
         client: state.client.client,
         clientCtr: state.client,
         serviceSelected: state.services.selected,
+        selectedCategorie: state.categoria.selected,
         enderecos: state.client.client.clientsAddresses,
     }
 }

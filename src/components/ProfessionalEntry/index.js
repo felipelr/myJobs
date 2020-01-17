@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { PermissionsAndroid, Platform, View, Modal, Text } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
 import ImageResizer from 'react-native-image-resizer'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import Moment from 'moment'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -23,9 +25,10 @@ import {
     ContainerAvatar,
     ImageCapa,
     ViewCapa,
+    ViewIcon,
 } from './styles'
 
-import { purple } from '../common/util/colors'
+import { purple, lightgray } from '../common/util/colors'
 
 import TextInputJobs from '../TextInputJobs/index'
 import ButtonPurple from '../ButtonPurple/index'
@@ -40,22 +43,23 @@ function ProfessionalEntry(props) {
         ...props.professional.professional,
         date_birth: props.professional.professional.date_birth.substring(0, 10).split('-').reverse().join(''),
     })
-
     const [image, setImage] = useState(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
     const [backImage, setBackImage] = useState(props.professional.professional.backImage ? { uri: props.professional.professional.backImage } : { uri: '' })
-
     const [requisitou, setRequisitou] = useState(false)
     const [modalOpened, setModalOpened] = useState(false)
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
     const [typeImage, setTypeImage] = useState(false)
+    const [imgVersion, setImgVersion] = useState(Moment(props.professional.professional.modified).toDate().getTime())
+
+    const scrollViewRef = useRef()
 
     useEffect(() => {
         if (requisitou && !props.professional.isUpdating) {
             if (props.professional.errorUpdating) {
                 setRequisitou(false)
-                this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+                scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
             }
             else
                 props.ownProps.onUpdate()
@@ -74,7 +78,7 @@ function ProfessionalEntry(props) {
         }
     }, [form.date_birth])
 
-    handleOnChange = (name, text) => {
+    const handleOnChange = (name, text) => {
         setForm({
             ...form,
             [name]: text
@@ -86,7 +90,7 @@ function ProfessionalEntry(props) {
             setInvalidField('')
     }
 
-    validateField = (field, value) => {
+    const validateField = (field, value) => {
         switch (field) {
             case 'name':
             case 'document':
@@ -149,29 +153,40 @@ function ProfessionalEntry(props) {
         if (this.camera) {
             const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true };
             const data = await this.camera.takePictureAsync(options)
-            ImageResizer.createResizedImage(data.uri, 250, 250, 'JPEG', 100)
-                .then(({ uri }) => {
-                    RNFetchBlob.fs.readFile(uri, 'base64')
-                        .then(data64 => {
-                            if (typeImage === 'backImage') {
+            if (typeImage === 'backImage') {
+                ImageResizer.createResizedImage(data.uri, 1024, 1024, 'JPEG', 100)
+                    .then(({ uri }) => {
+                        RNFetchBlob.fs.readFile(uri, 'base64')
+                            .then(data64 => {
                                 setBackImage({
                                     uri: uri,
                                     base64: data64
                                 })
-                            }
-                            else {
+                            })
+                            .catch(err => {
+
+                            })
+                    }).catch((err) => {
+
+                    })
+            }
+            else {
+                ImageResizer.createResizedImage(data.uri, 250, 250, 'JPEG', 100)
+                    .then(({ uri }) => {
+                        RNFetchBlob.fs.readFile(uri, 'base64')
+                            .then(data64 => {
                                 setImage({
                                     uri: uri,
                                     base64: data64
                                 })
-                            }
-                        })
-                        .catch(err => {
+                            })
+                            .catch(err => {
 
-                        })
-                }).catch((err) => {
+                            })
+                    }).catch((err) => {
 
-                })
+                    })
+            }
         }
     }
 
@@ -247,7 +262,7 @@ function ProfessionalEntry(props) {
     }
 
     return (
-        <ScrollViewContainer ref={(c) => this.scrollViewContainer = c}>
+        <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
             <View style={{ flex: 1 }}>
                 {props.professional.isUpdating && <Loading size='large' color={purple} height='330' error={props.professional.errorUpdating} />}
 
@@ -256,8 +271,11 @@ function ProfessionalEntry(props) {
                 {!props.professional.isUpdating && (
                     <React.Fragment>
                         <ViewCapa onPress={() => handleAvatarClick('backImage')}>
-                            {backImage.uri.length > 0 && <ImageCapa source={{ uri: backImage.uri + '?v=' + new Date().getTime() }} />}
+                            {backImage.uri.length > 0 && <ImageCapa source={{ uri: backImage.uri + '?v=' + imgVersion }} />}
                             {backImage.uri.length <= 0 && <Text></Text>}
+                            <ViewIcon>
+                                <Icon name="edit" size={32} color={lightgray} />
+                            </ViewIcon>
                         </ViewCapa>
 
                         <ContainerAvatar>
@@ -265,7 +283,7 @@ function ProfessionalEntry(props) {
                                 <Avatar
                                     rounded
                                     containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
+                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + imgVersion } : { uri: '' }}
                                     size={120}
                                     onPress={() => handleAvatarClick('photo')}
                                     showEditButton

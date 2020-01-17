@@ -92,7 +92,7 @@ function* logOut() {
 
         yield put(ActionCreator.logoutSuccess())
     } catch (ex) {
-
+        console.log('ERRO DE LOGOUT', ex.message)
     }
 }
 

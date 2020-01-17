@@ -4,6 +4,7 @@ import { View, BackHandler, Animated, Dimensions } from 'react-native'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
+import Moment from 'moment'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -33,7 +34,7 @@ function PerfilScreen(props) {
     const [slideRight] = useState(new Animated.ValueXY())
     const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
-    const [image, setImage] = useState((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
+    const [image, setImage] = useState((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + Moment(props.user.modified).toDate().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [list, setList] = useState([
         {
@@ -80,6 +81,10 @@ function PerfilScreen(props) {
             backHandler.remove()
         }
     }, [])
+
+    useEffect(() => {
+        setImage((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + Moment(props.user.modified).toDate().getTime() } : { uri: '' })
+    }, [props.user.modified])
 
     useEffect(() => {
         switch (show) {
@@ -160,7 +165,6 @@ function PerfilScreen(props) {
         }
         else {
             setShow('menu')
-            setImage((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + new Date().getTime() } : { uri: '' })
             pageRef.current = 'menu'
 
             Animated.spring(slideLeft, {
@@ -259,8 +263,9 @@ function PerfilScreen(props) {
             </View>
 
             <Footer
+                selected={'perfil'}
                 homeOnPress={() => props.userType === 'client' ? props.ownProps.navigation.navigate('CategoriesSearch') : props.ownProps.navigation.navigate('ProfessionalHome')}
-                servicesOnPress={() => props.ownProps.navigation.navigate('Services')}
+                servicesOnPress={() => { }}
                 perfilOnPress={() => { }} />
         </React.Fragment>
     )

@@ -76,3 +76,16 @@ export const ViewCapa = styled.TouchableOpacity`
     height: ${heightPercentageToDP('18%')};
     margin-bottom: 20px;
 `
+
+export const ViewIcon = styled.View`
+    position: absolute; 
+    top: ${heightPercentageToDP('3%')};;
+    left: 5;
+    top: 20;
+    width: 40px;
+    height: 40px;
+    background-color: ${purple};
+    border-radius: 50px;
+    align-items: center;
+    justify-content: center;
+`

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
+import Moment from 'moment'
 import firebase, { RemoteMessage } from 'react-native-firebase'
 
 import useGet from '../../services/restServices'
@@ -43,8 +44,8 @@ import MenuPicture from '../../components/MenuPicture'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
 function ProfessionalHomeScreen(props) {
-    const [image] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + new Date().getTime() } : { uri: '' })
-    const [backImage] = useState((props.professionalData.backImage && props.professionalData.backImage.length > 0) ? { uri: props.professionalData.backImage + '?v=' + new Date().getTime() } : { uri: '' })
+    const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })
+    const [backImage, setBackImage] = useState((props.professionalData.backImage && props.professionalData.backImage.length > 0) ? { uri: props.professionalData.backImage + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })
     const [newStory, setNewStory] = useState('')
     const [newStoryVisible, setNewStoryVisible] = useState(false)
     const [services, setServices] = useState([])
@@ -155,6 +156,11 @@ function ProfessionalHomeScreen(props) {
     useEffect(() => {
         pageRef.current = storiesCarouselOpened ? 'storiesCarousel' : ''
     }, [storiesCarouselOpened])
+
+    useEffect(() => {
+        setImage((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })
+        setBackImage((props.professionalData.backImage && props.professionalData.backImage.length > 0) ? { uri: props.professionalData.backImage + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })        
+    }, [props.professionalData.modified])
 
     const firebasePermission = async () => {
         try {
@@ -310,7 +316,7 @@ function ProfessionalHomeScreen(props) {
 
             {!storiesCarouselOpened &&
                 <React.Fragment>
-                    <HeaderJobs />
+                    <HeaderJobs title='Home'/>
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}>
@@ -438,8 +444,7 @@ function ProfessionalHomeScreen(props) {
                         </View>
                     </ScrollView>
                     <Footer
-                        perfilOnPress={() => props.navigation.navigate('Perfil')}
-                        servicesOnPress={() => props.navigation.navigate('Services')} />
+                        perfilOnPress={() => props.navigation.navigate('Perfil')}/>
                 </React.Fragment>
             }
         </React.Fragment>

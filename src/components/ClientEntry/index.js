@@ -5,6 +5,7 @@ import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
 import ImageResizer from 'react-native-image-resizer'
+import Moment from 'moment'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -61,6 +62,7 @@ function ClientEntry(props) {
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
+    const [imgVersion, setImgVersion] = useState(Moment(props.client.client.modified).toDate().getTime())
 
     useEffect(() => {
         if (requisitou && !props.client.isUpdating) {
@@ -267,7 +269,7 @@ function ClientEntry(props) {
                                 <Avatar
                                     rounded
                                     containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + new Date().getTime() } : { uri: '' }}
+                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + imgVersion } : { uri: '' }}
                                     size={120}
                                     onPress={this.handleAvatarClick}
                                     showEditButton

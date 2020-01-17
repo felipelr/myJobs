@@ -3,25 +3,28 @@ import { ContainerFooter, FooterButton, ItemRounded } from './styles'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { white, gold, purple } from '../common/util/colors'
 
-export default function Footer(props) {
+export default function Footer({ selected, ...props }) {
+
+    const itemSelected = selected ? selected : 'home'
+
     return (
         <ContainerFooter>
             <FooterButton onPress={props.homeOnPress}>
-                <Icon name="home" size={25} color={gold} />
+                <Icon name="home" size={25} color={itemSelected === 'home' ? gold : white} />
             </FooterButton>
             <FooterButton onPress={props.offersOnPress}>
-                <Icon name="local-offer" size={25} color={white} />
+                <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
             </FooterButton>
             <FooterButton>
                 <ItemRounded backColor={white}>
-                    <Icon name="favorite" size={15} color={purple} style={{ alignSelf: 'center' }} />
+                    <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={itemSelected === 'favorite' ? gold : purple} />
                 </ItemRounded>
             </FooterButton>
             <FooterButton onPress={props.servicesOnPress}>
-                <Icon name="gavel" size={25} color={white} />
+                <Icon name="gavel" size={25} color={itemSelected === 'services' ? gold : white} />
             </FooterButton>
             <FooterButton onPress={props.perfilOnPress}>
-                <Icon name="person-outline" size={25} color={white} />
+                <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? gold : white} />
             </FooterButton>
         </ContainerFooter>
     )

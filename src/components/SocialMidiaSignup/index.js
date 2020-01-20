@@ -39,7 +39,7 @@ function SocialMidiaSignup(props) {
         }
     ])
     const [form, setForm] = useState({
-        userType: 1,
+        userType: props.socialMidiaSignup.user.client == null ? 2 : 1,
         phone: '',
         document: '',
         date_birth: '',
@@ -76,7 +76,13 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            props.ownProps.navigation.navigate('CategoriesSearch')
+            if (props.socialMidiaSignup.user.userType == 2) {
+                props.ownProps.navigation.navigate('ProfessionalHome')
+            }
+            else {
+                props.ownProps.navigation.navigate('CategoriesSearch')
+            }
+
             props.ownProps.onPressLogin()
         }
         else if (props.auth.error) {
@@ -232,6 +238,7 @@ function SocialMidiaSignup(props) {
                                 name='document'
                                 onChangeText={handleOnChange}
                                 placeholder='CPF'
+                                keyboardType='number-pad'
                                 invalidValue={invalidField === 'document'} />
 
                             <TextInputJobs

@@ -46,17 +46,17 @@ function SocialMidia(props) {
                                     })
                                 })
                                 .catch(() => {
-                                    reject('Erro ao receber dados do Facebook.')
+                                    reject('Não foi possível receber as informações do Facebook.')
                                 })
                         })
                     }
                 },
                 function (error) {
-                    alert("Login falhou com o erro: " + error)
+                    alert("Não foi possível realizar o login: " + error)
                 }
             )
         } catch (ex) {
-            alert("Login falhou com o erro: " + ex.message)
+            alert("Não foi possível realizar o login: " + ex.message)
         }
     }
 
@@ -79,7 +79,7 @@ function SocialMidia(props) {
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
                 alert("O Play Services não está instaldo.")
             } else {
-                alert("Login falhou com o erro: " + error.message)
+                alert("Não foi possível realizar o login: " + error.message)
             }
         }
     }

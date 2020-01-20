@@ -33,6 +33,8 @@ setProfessionalData = async (professionalData) => {
 
 function* login(action) {
     try {
+        console.log('Dados login => ', 'email:', action.email, 'senha:', action.password, 'userType:', action.userType)
+
         const login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
             email: action.email,
             password: action.password

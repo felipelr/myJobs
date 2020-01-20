@@ -5,7 +5,6 @@ import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
 import Moment from 'moment'
-import firebase, { RemoteMessage } from 'react-native-firebase'
 
 import useGet from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
@@ -44,8 +43,9 @@ import MenuPicture from '../../components/MenuPicture'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
 function ProfessionalHomeScreen(props) {
-    const [image, setImage] = useState((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })
-    const [backImage, setBackImage] = useState((props.professionalData.backImage && props.professionalData.backImage.length > 0) ? { uri: props.professionalData.backImage + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })
+    const [professionalData, setProfessionalData] = useState(props.professionalData ? props.professionalData : props.professionalSelected)
+    const [image, setImage] = useState((professionalData.photo && professionalData.photo.length > 0) ? { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
+    const [backImage, setBackImage] = useState((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
     const [newStory, setNewStory] = useState('')
     const [newStoryVisible, setNewStoryVisible] = useState(false)
     const [services, setServices] = useState([])
@@ -60,39 +60,15 @@ function ProfessionalHomeScreen(props) {
 
     const pageRef = useRef()
 
-    const getProfessionalServices = useGet(`/professionalServices/view/${props.professionalData.id}.json`, props.token)
-    const getProfessionalComments = useGet(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`, props.token)
-    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=50&page=1`, props.token)
+    const getProfessionalServices = useGet(`/professionalServices/view/${professionalData.id}.json`, props.token)
+    const getProfessionalComments = useGet(`/professionalComments/view/${professionalData.id}/${props.selectedService.id}.json`, props.token)
+    const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`, props.token)
 
     useEffect(() => {
-        firebasePermission()
-
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
-
-        const messageListener = firebase.messaging().onMessage((message) => {
-            // Process your message as required
-            console.log(message)
-        });
-
-        const onTokenRefreshListener = firebase.messaging().onTokenRefresh(fcmToken => {
-            // Process your token as required
-            console.log(fcmToken)
-        });
-
-        firebase.messaging().getToken()
-            .then(fcmToken => {
-                if (fcmToken) {
-                    // user has a device token
-                    console.log(fcmToken)
-                } else {
-                    // user doesn't have a device token yet
-                }
-            });
 
         return () => {
             backHandler.remove()
-            messageListener()
-            onTokenRefreshListener()
         }
     }, [])
 
@@ -122,7 +98,7 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         if (props.selectedService && props.selectedService.id !== 0) {
-            getProfessionalComments.refetch(`/professionalComments/view/${props.professionalData.id}/${props.selectedService.id}.json`)
+            getProfessionalComments.refetch(`/professionalComments/view/${professionalData.id}/${props.selectedService.id}.json`)
         }
     }, [props.selectedService])
 
@@ -158,32 +134,20 @@ function ProfessionalHomeScreen(props) {
     }, [storiesCarouselOpened])
 
     useEffect(() => {
-        setImage((props.professionalData.photo && props.professionalData.photo.length > 0) ? { uri: props.professionalData.photo + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })
-        setBackImage((props.professionalData.backImage && props.professionalData.backImage.length > 0) ? { uri: props.professionalData.backImage + '?v=' + Moment(props.professionalData.modified).toDate().getTime() } : { uri: '' })        
-    }, [props.professionalData.modified])
+        if (props.professionalData)
+            setProfessionalData(props.professionalData)
+    }, [props.professionalData])
 
-    const firebasePermission = async () => {
-        try {
-            const enabled = await firebase.messaging().hasPermission();
-            if (enabled) {
-                // user has permissions
-                console.log('has permissions')
-            } else {
-                // user doesn't have permission
-                try {
-                    await firebase.messaging().requestPermission();
-                    console.log('has authorised')
-                    // User has authorised
-                } catch (error) {
-                    // User has rejected permissions
-                    console.log('User has rejected permissions', error)
-                }
-            }
-        } catch (error) {
-            // User has rejected permissions
-            console.log('User has rejected permissions', error)
-        }
-    }
+
+    useEffect(() => {
+        if (props.professionalSelected)
+            setProfessionalData(props.professionalSelected)
+    }, [props.professionalSelected])
+
+    useEffect(() => {
+        setImage((professionalData.photo && professionalData.photo.length > 0) ? { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
+        setBackImage((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
+    }, [professionalData.modified])
 
     const handleBackPress = async () => {
         console.log('professional home back')
@@ -293,7 +257,7 @@ function ProfessionalHomeScreen(props) {
         setCameraOpened(false)
         setFolderImagesOpened(false)
         setModalOpened(false)
-        getStories.refetch(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=1`)
+        getStories.refetch(`/stories/viewSingle/${professionalData.id}.json?limit=5&page=1`)
     }
 
     handleOpenCarousel = (imageUri, index) => {
@@ -316,7 +280,7 @@ function ProfessionalHomeScreen(props) {
 
             {!storiesCarouselOpened &&
                 <React.Fragment>
-                    <HeaderJobs title='Home'/>
+                    <HeaderJobs title='Home' />
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}>
@@ -329,7 +293,7 @@ function ProfessionalHomeScreen(props) {
                                     <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
                                 </VwContainerRating>
                                 <TxtTitle size={24}>
-                                    {props.professionalData.name}
+                                    {professionalData.name}
                                 </TxtTitle>
                             </VwContainerTitle>
 
@@ -337,7 +301,7 @@ function ProfessionalHomeScreen(props) {
                                 <VwContainerStories>
                                     <TxtTitle size={14}>Stories</TxtTitle>
                                     <Stories
-                                        novaImagem
+                                        novaImagem={props.professionalData ? true : false}
                                         stories={stories}
                                         onPressNewStory={handleNewStoryClick}
                                         onPressStory={(imageUri, index) => handleOpenCarousel(imageUri, index)} />
@@ -444,7 +408,7 @@ function ProfessionalHomeScreen(props) {
                         </View>
                     </ScrollView>
                     <Footer
-                        perfilOnPress={() => props.navigation.navigate('Perfil')}/>
+                        perfilOnPress={() => props.navigation.navigate('Perfil')} />
                 </React.Fragment>
             }
         </React.Fragment>

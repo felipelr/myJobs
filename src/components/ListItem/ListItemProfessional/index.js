@@ -3,16 +3,25 @@ import { View } from 'react-native'
 import ListItem from '../index'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
+import { connect } from 'react-redux'
 
 import { purple } from '../../../components/common/util/colors'
 import { TitleProfessional, InfoProfessional } from './styles'
 import RatingJobs from '../../RatingJobs/index'
 
-export default function ListItemProfessional(props) {
+import ActionCreators from '../../../store/actionCreators'
+
+function ListItemProfessional(props) {
     const { profissional } = props
+
+    const onPress = (profissionalItem) => {  
+        props.professionalSelected(profissionalItem) 
+        props.itemOnPress()
+    }
+
     return (
         <ListItem
-            itemOnPress={props.itemOnPress}
+            itemOnPress={() => onPress(profissional)}
             leftContent={
                 <Avatar 
                     containerStyle={{ alignSelf: 'center' }}
@@ -38,3 +47,19 @@ export default function ListItemProfessional(props) {
         />
     )
 }
+
+const mapStateToProps = (state, ownProps) => {  
+    return {
+        token: state.auth.token,
+        isAuth: state.auth.isAuth, 
+        ownProps: ownProps
+    } 
+};
+
+const mapDispatchToProps = dispatch => { 
+    return {
+        professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListItemProfessional)

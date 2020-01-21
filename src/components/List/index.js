@@ -9,7 +9,6 @@ export default function List(props) {
     const { titulo } = props
     const { itens } = props
     const { tipo } = props
-    console.log('chamou aqui ========' + JSON.stringify(props))
 
     return (
         <React.Fragment>

@@ -26,8 +26,7 @@ function* getHighlightsLoadBySubcategoryRequest(action) {
             headers: {
                 Authorization: 'Bearer ' + action.token
             }
-        })  
-        console.log('teste = ' + request.data)
+        })
 
         let { highlights } = request.data   
         
@@ -40,7 +39,6 @@ function* getHighlightsLoadBySubcategoryRequest(action) {
 } 
 
 export default function* rootHighlights() { 
-    console.log("chegou na saga")
     yield all([
         takeLatest(Types.HIGHLIGHTS_LOAD_REQUEST, getHighlights),
         takeLatest(Types.HIGHLIGHTS_LOAD_BY_SUBCATEGORY_REQUEST, getHighlightsLoadBySubcategoryRequest)

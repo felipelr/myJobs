@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, Keyboard, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, BackHandler } from 'react-native'
 import { Input } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { connect } from 'react-redux'
 
 import { gray, white, lightpurple } from '../../components/common/util/colors'
 import { ViewContainerInfo, TextInfo, ViewContainerChat, ViewContainerNewMessage, TouchIcon } from './styles'
 import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
 
-///////
+import ActionCreators from '../../store/actionCreators'
+
+///////ChatMessages
 import { ScrollViewContainerMessages } from './styles'
 
-///////
+///////ChatTextDate
 import { ViewChatDate, TextChatDate } from './styles'
 
-///////
+///////ChatItem
 import { ViewChatItem, ViewChatText, TextMessage, ViewArrowLeft, ViewArrowRight } from './styles'
 
 function ChatMessages(props) {
@@ -31,8 +34,20 @@ function ChatMessages(props) {
                             </React.Fragment>
                         )
                     }
-
-                    return <ChateItem key={index} mensagem={item} />
+                    else {
+                        const previousItem = mensagens[index - 1]
+                        if (previousItem.data != item.data) {
+                            return (
+                                <React.Fragment key={index} >
+                                    <ChatTextDate mensagem={item} />
+                                    <ChateItem mensagem={item} />
+                                </React.Fragment>
+                            )
+                        }
+                        else {
+                            return <ChateItem key={index} mensagem={item} />
+                        }
+                    }
                 })
             }
         </ScrollViewContainerMessages>
@@ -51,7 +66,7 @@ function ChatTextDate(props) {
 function ChateItem(props) {
     const { mensagem } = props
     return (
-        <ViewChatItem justifyContent={mensagem.tipo === 'from' ? 'flex-start' : 'flex-end'}>            
+        <ViewChatItem justifyContent={mensagem.tipo === 'from' ? 'flex-start' : 'flex-end'}>
             <ViewChatText
                 backColor={mensagem.tipo === 'from' ? '#D3D4FE' : '#EAEAEA'}
                 marginRight={mensagem.tipo === 'from' ? 50 : 0}
@@ -65,11 +80,10 @@ function ChateItem(props) {
     )
 }
 
-export default function ProfessionalChatScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
+function ProfessionalChatScreen(props) {
     const [mensagens, setMensagens] = useState([
         {
-            data: '29/05/2019',
+            data: '28/05/2019',
             hora: '06:23:57',
             mensagem: 'Olá senhor Miaji, não vou poder ir ao treino hoje, por favor não espere por mim.',
             tipo: 'from'
@@ -83,24 +97,23 @@ export default function ProfessionalChatScreen(props) {
     ])
 
     useEffect(() => {
-        this.kbShow = Keyboard.addListener('keyboardDidShow', () => {
-            setKeyboardIsVisible(true)
-        })
-        this.knHide = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardIsVisible(false)
-        })
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
         return () => {
-            this.kbShow.remove()
-            this.kbShow.remove()
+            backHandler.remove()
         }
     }, [])
+
+    const handleBackPress = async () => {
+        props.navigation.goBack()
+        return true
+    }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back title='Finos e Cheirosos' />
+            <HeaderJobs back={() => handleBackPress()} title='Finos e Cheirosos' />
             <ViewContainerInfo>
                 <TextInfo>Solicitações de Profissionais</TextInfo>
                 <TextInfo>Informações do serviço</TextInfo>
@@ -129,3 +142,23 @@ export default function ProfessionalChatScreen(props) {
 ProfessionalChatScreen.navigationOptions = {
     header: null
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        token: state.auth.token,
+        isAuth: state.auth.isAuth,
+        selectedCategorie: state.categoria.selected,
+        serviceSelected: state.services.selected,
+        professionalSelected: state.professional.selected,
+        ownProps: ownProps
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        //serviceSelected: (service) => dispatch(ActionCreators.serviceSelected(service))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalChatScreen);

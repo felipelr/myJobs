@@ -50,6 +50,7 @@ export const { Types, Creators } = createActions({
     addNewProfessionalAddress: ['token', 'professionalAddress'],
     editProfessionalAddress: ['token', 'professionalAddress'],
     deleteProfessionalAddress: ['token', 'id'],
+    professionalSelected: ['professional'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

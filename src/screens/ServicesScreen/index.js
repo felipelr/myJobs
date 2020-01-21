@@ -56,8 +56,8 @@ function ServicesScreen(props) {
     }, [props.isAuth]);
 
     const back = async () => {
-        console.log('services back')
         props.navigation.goBack()
+        return true
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -82,7 +82,12 @@ function ServicesScreen(props) {
                 />
             </ContainerSearch>
             <ContainerList>
-                {!services.loading && <List tipo='service' titulo={("Serviços de '" + props.selectedSubcategory.description + "'")} itens={servicesSubcategory} itemOnPress={() => props.navigation.navigate('Professionals')} />}
+                {!services.loading &&
+                    <List
+                        tipo='service'
+                        titulo={("Serviços de '" + props.selectedSubcategory.description + "'")}
+                        itens={servicesSubcategory}
+                        itemOnPress={() => props.navigation.navigate('Professionals')} />}
             </ContainerList>
             {services.loading &&
                 <View style={{ alignSelf: 'center' }}>
@@ -91,8 +96,6 @@ function ServicesScreen(props) {
                 </View>
             }
             <Footer
-                homeOnPress={() => props.navigation.navigate('ProfessionalSearch')}
-                servicesOnPress={() => { }}
                 perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </KeyboardAvoidingView>
     )

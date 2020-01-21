@@ -20,12 +20,10 @@ function CategoriesSearchScreen(props) {
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
-        if (this != null)
-            this.backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
         return () => {
-            if (this != null)
-                this.backHandler.remove();
+            backHandler.remove();
         }
     }, [])
 
@@ -52,7 +50,7 @@ function CategoriesSearchScreen(props) {
         props.navigation.navigate('Services')
     };
 
-    handleBackPress = () => {
+    handleBackPress = async () => {
         props.logoutRequest()
         return true
     };
@@ -74,13 +72,18 @@ function CategoriesSearchScreen(props) {
                             </View>
                         ) :
                             (
-                                props.selectedCategorie != null && <List tipo='subcategory' titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"} itens={subcategories.data.subcategories} itemOnPress={() => props.navigation.navigate('Services')} />
+                                props.selectedCategorie != null &&
+                                <List
+                                    tipo='subcategory'
+                                    titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"}
+                                    itens={subcategories.data.subcategories}
+                                    itemOnPress={() => props.navigation.navigate('Services')} />
                             )
                     }
                 </View>
             </ContainerCategorias>
             <Footer
-                perfilOnPress={() => props.navigation.navigate('Perfil') }
+                perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </View>
     )

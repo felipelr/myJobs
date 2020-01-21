@@ -150,7 +150,6 @@ function ProfessionalHomeScreen(props) {
     }, [professionalData.modified])
 
     const handleBackPress = async () => {
-        console.log('professional home back')
         if (pageRef.current === 'storiesCarousel') {
             handleFinishPresentitionCarousel()
             return true

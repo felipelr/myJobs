@@ -37,7 +37,6 @@ const INITIAL_STATE = {
 }
 
 const useGet = (url, token) => {
-    console.log('chegou aqui ------')
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
     const refetch = async (newUrl) => { 
         dispatch({ type: 'REQUEST' })

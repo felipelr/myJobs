@@ -9,7 +9,8 @@ export const INITIAL_STATE = {
     isUpdating: false,
     errorUpdating: false,
     errorMessage: '',
-    professional: {}
+    professional: {},
+    selected: {},
 }
 
 export const professionalsLoadRequest = (state = INITIAL_STATE, action) => {
@@ -135,6 +136,13 @@ export const deleteProfessionalAddress = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const professionalSelected= (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        selected: action.professional
+    }
+}
+
 export const HANDLES = {
     [Types.PROFESSIONALS_LOAD_REQUEST]: professionalsLoadRequest,
     [Types.PROFESSIONALS_LOAD_SUCCESS]: professionalsLoadSuccess,
@@ -150,6 +158,7 @@ export const HANDLES = {
     [Types.ADD_NEW_PROFESSIONAL_ADDRESS]: addNewProfessionalAddress,
     [Types.EDIT_PROFESSIONAL_ADDRESS]: editProfessionalAddress,
     [Types.DELETE_PROFESSIONAL_ADDRESS]: deleteProfessionalAddress,
+    [Types.PROFESSIONAL_SELECTED]: professionalSelected,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

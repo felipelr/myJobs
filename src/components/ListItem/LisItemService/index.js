@@ -50,7 +50,6 @@ function ListItemService(props) {
     )
 }
 
-
 const mapStateToProps = (state, ownProps) => {  
     return {
         token: state.auth.token,

@@ -85,8 +85,6 @@ function ProfessionalChatScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [mensagens, setMensagens] = useState([])
 
-    console.log(props.professionalSelected)
-
     const getMessages = useGet(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=0`, props.token)
 
     useEffect(() => {

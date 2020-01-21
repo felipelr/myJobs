@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, BackHandler } from 'react-native'
+import { KeyboardAvoidingView, Platform, BackHandler, Keyboard } from 'react-native'
 import { Input } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
@@ -8,6 +8,7 @@ import { gray, white, lightpurple } from '../../components/common/util/colors'
 import { ViewContainerInfo, TextInfo, ViewContainerChat, ViewContainerNewMessage, TouchIcon } from './styles'
 import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
+import useGet from '../../services/restServices';
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -18,7 +19,7 @@ import { ScrollViewContainerMessages } from './styles'
 import { ViewChatDate, TextChatDate } from './styles'
 
 ///////ChatItem
-import { ViewChatItem, ViewChatText, TextMessage, ViewArrowLeft, ViewArrowRight } from './styles'
+import { ViewChatItem, ViewChatText, TextMessage } from './styles'
 
 function ChatMessages(props) {
     const { mensagens } = props
@@ -36,7 +37,7 @@ function ChatMessages(props) {
                     }
                     else {
                         const previousItem = mensagens[index - 1]
-                        if (previousItem.data != item.data) {
+                        if (previousItem.date != item.date) {
                             return (
                                 <React.Fragment key={index} >
                                     <ChatTextDate mensagem={item} />
@@ -58,7 +59,7 @@ function ChatTextDate(props) {
     const { mensagem } = props
     return (
         <ViewChatDate>
-            <TextChatDate>{mensagem.data}</TextChatDate>
+            <TextChatDate>{mensagem.date}</TextChatDate>
         </ViewChatDate>
     )
 }
@@ -66,14 +67,14 @@ function ChatTextDate(props) {
 function ChateItem(props) {
     const { mensagem } = props
     return (
-        <ViewChatItem justifyContent={mensagem.tipo === 'from' ? 'flex-start' : 'flex-end'}>
+        <ViewChatItem justifyContent={mensagem.from === 'client' ? 'flex-start' : 'flex-end'}>
             <ViewChatText
-                backColor={mensagem.tipo === 'from' ? '#D3D4FE' : '#EAEAEA'}
-                marginRight={mensagem.tipo === 'from' ? 50 : 0}
-                marginLeft={mensagem.tipo === 'from' ? 0 : 50}
+                backColor={mensagem.from === 'client' ? '#D3D4FE' : '#EAEAEA'}
+                marginRight={mensagem.from === 'client' ? 50 : 0}
+                marginLeft={mensagem.from === 'client' ? 0 : 50}
             >
                 <TextMessage>
-                    {mensagem.mensagem}
+                    {mensagem.message}
                 </TextMessage>
             </ViewChatText>
         </ViewChatItem>
@@ -81,28 +82,34 @@ function ChateItem(props) {
 }
 
 function ProfessionalChatScreen(props) {
-    const [mensagens, setMensagens] = useState([
-        {
-            data: '28/05/2019',
-            hora: '06:23:57',
-            mensagem: 'Olá senhor Miaji, não vou poder ir ao treino hoje, por favor não espere por mim.',
-            tipo: 'from'
-        },
-        {
-            data: '29/05/2019',
-            hora: '06:28:42',
-            mensagem: 'Olá Daniel San, amanhã terá duas vezes mais para chão limpar e cercas para pintar.',
-            tipo: 'to'
-        }
-    ])
+    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
+    const [mensagens, setMensagens] = useState([])
+
+    console.log(props.professionalSelected)
+
+    const getMessages = useGet(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=0`, props.token)
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+        const kbShow = Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardIsVisible(true)
+        })
+        const knHide = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardIsVisible(false)
+        })
 
         return () => {
             backHandler.remove()
+            kbShow.remove()
+            knHide.remove()
         }
     }, [])
+
+    useEffect(() => {
+        if (getMessages.data && getMessages.data.chatMessages) {
+            setMensagens(getMessages.data.chatMessages);
+        }
+    }, [getMessages.data]);
 
     const handleBackPress = async () => {
         props.navigation.goBack()
@@ -121,10 +128,7 @@ function ProfessionalChatScreen(props) {
             <ViewContainerChat>
                 <ChatMessages mensagens={mensagens} />
             </ViewContainerChat>
-            <ViewContainerNewMessage>
-                <TouchIcon>
-                    <Icon name='tag-faces' size={25} color={gray} />
-                </TouchIcon>
+            <ViewContainerNewMessage style={{ marginBottom: keyboardIsVisible ? 35 : 0 }}>
                 <Input
                     placeholder='Digite sua mensagem'
                     placeholderTextColor={white}
@@ -147,6 +151,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
+        user: state.auth.userType === 'client' ? state.client.client : state.professional.professional,
         selectedCategorie: state.categoria.selected,
         serviceSelected: state.services.selected,
         professionalSelected: state.professional.selected,

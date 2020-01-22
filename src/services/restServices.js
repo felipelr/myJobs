@@ -40,8 +40,7 @@ const useGet = (url, token) => {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
     const refetch = async (newUrl) => { 
         dispatch({ type: 'REQUEST' })
-        try {
-            console.log('URL Requisitada = ' + `${urlMyJobsAPI}` + newUrl)
+        try { 
             const resposta = await axios.get(`${urlMyJobsAPI}` + newUrl, {
                 headers: {
                     Authorization: 'Bearer ' + token
@@ -49,8 +48,7 @@ const useGet = (url, token) => {
             })
             
             dispatch({ type: 'SUCCESS', data: resposta.data })
-        } catch (e) {
-            console.log(newUrl)
+        } catch (e) { 
             dispatch({ type: 'ERROR', errorMessage: e.message })
         }
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler } from 'react-native'
+import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler, Picker } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
@@ -122,6 +122,11 @@ function ServiceHireScreen(props) {
                                     <TextHireService>Abrindo chamado...</TextHireService>
                                     <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
                                         <React.Fragment>
+                                            <Picker
+                                                style={{ height: 50, width: 100 }} >
+                                                <Picker.Item label="Java" value="java" />
+                                                <Picker.Item label="JavaScript" value="js" />
+                                            </Picker>
                                             <TexService>Profissional</TexService>
                                             <TextName>{props.selectedCategorie.description} - {props.selectedSubcategory.description}</TextName>
                                             <TexService>Categoria</TexService>

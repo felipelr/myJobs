@@ -88,6 +88,7 @@ function CategoriesSearchScreen(props) {
             </ContainerCategorias>
             <Footer
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
+                offersOnPress={() => props.navigation.navigate('NewCall')}
             />
         </View>
     )

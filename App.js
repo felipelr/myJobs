@@ -12,8 +12,10 @@ import ProfessionalHomeScreen from './src/screens/ProfessionalHomeScreen/index'
 import ServiceHireScreen from './src/screens/ServiceHireScreen'
 import ProfessionalChatScreen from './src/screens/ProfessionalChatScreen/index'
 import SplashScreen from './src/screens/SplashScreen'
+import NewCallScreen from './src/screens/NewCallScreen'
 
 import store from './src/store'
+
 
 const MainNavigator = createStackNavigator({
   Splash: { screen: SplashScreen },
@@ -25,7 +27,8 @@ const MainNavigator = createStackNavigator({
   ServiceHome: { screen: ServiceHomeScreen },
   ProfessionalHome: { screen: ProfessionalHomeScreen },
   ServiceHire: { screen: ServiceHireScreen },
-  ProfessionalChat: { screen: ProfessionalChatScreen }
+  ProfessionalChat: { screen: ProfessionalChatScreen },
+  NewCall: { screen: NewCallScreen }
 }, { initialRouteName: 'Splash' });
 
 let Navigation = createAppContainer(MainNavigator)

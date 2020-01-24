@@ -407,7 +407,8 @@ function ProfessionalHomeScreen(props) {
                         </View>
                     </ScrollView>
                     <Footer
-                        perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                        perfilOnPress={() => props.navigation.navigate('Perfil')}
+                        offersOnPress={() => props.navigation.navigate('NewCall')} />
                 </React.Fragment>
             }
         </React.Fragment>

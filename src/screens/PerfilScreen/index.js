@@ -263,10 +263,11 @@ function PerfilScreen(props) {
             </View>
 
             <Footer
+                type={props.userType}
                 selected={'perfil'}
-                homeOnPress={() => props.userType === 'client' ? props.ownProps.navigation.navigate('CategoriesSearch') : props.ownProps.navigation.navigate('ProfessionalHome')}
-                servicesOnPress={() => { }}
-                perfilOnPress={() => { }} />
+                homeOnPress={() => props.userType === 'client' ? props.navigation.navigate('CategoriesSearch') : props.navigation.navigate('ProfessionalHome')}
+                chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
+            />
         </React.Fragment>
     )
 }

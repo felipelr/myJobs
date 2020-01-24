@@ -13,6 +13,7 @@ import ServiceHireScreen from './src/screens/ServiceHireScreen'
 import ProfessionalChatScreen from './src/screens/ProfessionalChatScreen/index'
 import SplashScreen from './src/screens/SplashScreen'
 import NewCallScreen from './src/screens/NewCallScreen'
+import ProfessionalListChatScreen from './src/screens/ProfessionalListChatScreen'
 
 import store from './src/store'
 
@@ -28,7 +29,8 @@ const MainNavigator = createStackNavigator({
   ProfessionalHome: { screen: ProfessionalHomeScreen },
   ServiceHire: { screen: ServiceHireScreen },
   ProfessionalChat: { screen: ProfessionalChatScreen },
-  NewCall: { screen: NewCallScreen }
+  NewCall: { screen: NewCallScreen },
+  ProfessionalListChat: { screen: ProfessionalListChatScreen }
 }, { initialRouteName: 'Splash' });
 
 let Navigation = createAppContainer(MainNavigator)

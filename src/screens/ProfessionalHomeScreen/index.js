@@ -407,8 +407,10 @@ function ProfessionalHomeScreen(props) {
                         </View>
                     </ScrollView>
                     <Footer
+                        type={props.userType}
                         perfilOnPress={() => props.navigation.navigate('Perfil')}
-                        offersOnPress={() => props.navigation.navigate('NewCall')} />
+                        offersOnPress={() => props.navigation.navigate('NewCall')}
+                        chatOnPress={() => props.navigation.navigate('ProfessionalListChat')} />
                 </React.Fragment>
             }
         </React.Fragment>
@@ -422,6 +424,7 @@ ProfessionalHomeScreen.navigationOptions = {
 const mapStateToProps = (state, ownProps) => {
     return {
         isAuth: state.auth.isAuth,
+        userType: state.auth.userType,
         token: state.auth.token,
         professionalCtr: state.professional,
         professionalData: state.professional.professional,

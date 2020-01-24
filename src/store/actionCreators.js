@@ -92,6 +92,14 @@ export const { Types, Creators } = createActions({
     storiesClearError: null,
     storiesNextSelfPage: null,
     storiesRestartSelfPage: null,
+
+    //Chat
+    chatSendNewMessage: ['token', 'message'],
+    chatSendNewMessageSuccess: ['message'],
+    chatSendNewMessageError: ['error'],
+    chatSetFcmToken: ['fcmToken'],
+    chatSetReceivedMessage: ['message'],
+    chatUpdateUserFcmToken: ['token', 'userId', 'fcmToken'],
 })
 
 export default Creators

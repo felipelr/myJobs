@@ -48,11 +48,11 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         //verificar se já existe cadastro do facebook
-        if (props.socialMidiaSignup.user.facebook_id) {
-            props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.facebook_id, 'facebook')
+        if (props.socialMidiaSignup.user.facebook_token) {
+            props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.facebook_token, 'facebook')
         }
-        else if (props.socialMidiaSignup.user.google_id) {
-            props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.google_id, 'google')
+        else if (props.socialMidiaSignup.user.google_token) {
+            props.socialMidiaVerifyAccount(props.socialMidiaSignup.user.google_token, 'google')
         }
     }, [])
 
@@ -157,27 +157,27 @@ function SocialMidiaSignup(props) {
         let date = form.date_birth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
 
-        if (props.socialMidiaSignup.user.facebook_id) {
+        if (props.socialMidiaSignup.user.facebook_token) {
             let user = {
                 ...form,
                 name: props.socialMidiaSignup.user.name,
                 email: props.socialMidiaSignup.user.email,
-                password: props.socialMidiaSignup.user.facebook_id,
+                password: props.socialMidiaSignup.user.facebook_token,
                 date_birth: dateFormatted,
-                facebook_id: props.socialMidiaSignup.user.facebook_id
+                facebook_token: props.socialMidiaSignup.user.facebook_token
             }
 
             props.socialMidiaSignupRequest(user)
         }
-        else if (props.socialMidiaSignup.user.google_id) {
+        else if (props.socialMidiaSignup.user.google_token) {
             let user = {
                 ...form,
                 name: props.socialMidiaSignup.user.name,
                 email: props.socialMidiaSignup.user.email,
-                password: props.socialMidiaSignup.user.google_id,
+                password: props.socialMidiaSignup.user.google_token,
                 date_birth: dateFormatted,
                 gender: props.socialMidiaSignup.user.gender,
-                google_id: props.socialMidiaSignup.user.google_id
+                google_token: props.socialMidiaSignup.user.google_token
             }
 
             props.socialMidiaSignupRequest(user)

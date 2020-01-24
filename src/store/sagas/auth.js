@@ -40,8 +40,7 @@ function* login(action) {
             password: action.password
         })
 
-        const { data } = login.data
-        token = data.token
+        const token = login.data.data.token
         const user = jwtDecode(token)
 
         //salvar token

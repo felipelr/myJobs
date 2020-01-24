@@ -22,6 +22,10 @@ function CategoriesSearchScreen(props) {
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
+        if (props.fcmToken) {
+            props.chatUpdateUserFcmToken(props.token, props.user.sub, props.fcmToken)
+        }
+
         return () => {
             backHandler.remove();
         }
@@ -93,6 +97,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
+        user: state.auth.user,
+        fcmToken: state.chat.fcmToken,
         selectedCategorie: state.categoria.selected,
         userType: state.auth.userType,
         professional: state.professional.professional,
@@ -103,7 +109,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
-        categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie))
+        categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie)),
+        chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
     }
 };
 

@@ -10,6 +10,7 @@ import * as clientSagas from './client'
 import * as highlightsSagas from './highlights'
 import * as professionalsSagas from './professional'
 import * as storiesSagas from './stories'
+import * as chatSagas from './chat'
 
 export default function* rootSaga() {
     yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
         ...Object.values(highlightsSagas),
         ...Object.values(professionalsSagas),
         ...Object.values(storiesSagas),
+        ...Object.values(chatSagas),
     ].map(fork))
 }

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import firebase from 'react-native-firebase'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -7,6 +8,38 @@ import ActionCreators from '../../store/actionCreators'
 import { ViewContainer } from './styles'
 
 function SplashScreen(props) {
+
+    useEffect(() => {
+        getUserData()
+        firebasePermission()
+
+        const messageListener = firebase.messaging().onMessage((message) => {
+            // Process your message as required
+            console.log(message)
+        })
+
+        const notificationListener = firebase.notifications().onNotification((notification) => {
+            // Process your notification as required
+            console.log('New Notification => ', notification.data)
+            props.chatSetReceivedMessage(notification.data.message)
+        })
+
+        firebase.messaging().getToken()
+            .then(fcmToken => {
+                if (fcmToken) {
+                    // user has a device token
+                    console.log(fcmToken)
+                    props.chatSetFcmToken(fcmToken)
+                } else {
+                    // user doesn't have a device token yet
+                }
+            });
+
+        return () => {
+            messageListener()
+            notificationListener()
+        }
+    }, [])
 
     const getUserData = async () => {
         try {
@@ -41,9 +74,28 @@ function SplashScreen(props) {
         }
     }
 
-    useEffect(() => {
-        getUserData()
-    }, [])
+    const firebasePermission = async () => {
+        try {
+            const enabled = await firebase.messaging().hasPermission();
+            if (enabled) {
+                // user has permissions
+                console.log('has permissions')
+            } else {
+                // user doesn't have permission
+                try {
+                    await firebase.messaging().requestPermission();
+                    console.log('has authorised')
+                    // User has authorised
+                } catch (error) {
+                    // User has rejected permissions
+                    console.log('User has rejected permissions', error)
+                }
+            }
+        } catch (error) {
+            // User has rejected permissions
+            console.log('User has rejected permissions', error)
+        }
+    }
 
     return (
         <ViewContainer>
@@ -66,6 +118,8 @@ const mapDispatchToProps = dispatch => {
         clientUpdateSuccess: (dados) => dispatch(ActionCreators.clientUpdateSuccess(dados)),
         professionalUpdateSuccess: (dados) => dispatch(ActionCreators.professionalUpdateSuccess(dados)),
         authSuccess: (dados) => dispatch(ActionCreators.authSuccess(dados)),
+        chatSetFcmToken: (fcmToken) => dispatch(ActionCreators.chatSetFcmToken(fcmToken)),
+        chatSetReceivedMessage: (message) => dispatch(ActionCreators.chatSetReceivedMessage(message)),
     }
 }
 

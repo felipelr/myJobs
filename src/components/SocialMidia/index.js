@@ -14,11 +14,11 @@ function SocialMidia(props) {
     const [user, setUser] = useState({})
 
     useEffect(() => {
-        if (user.facebook_id) {
+        if (user.facebook_token) {
             props.socialMidiaSignupInit(user)
             props.ownProps.goToSocialMidiaSignup()
         }
-        else if (user.google_id) {
+        else if (user.google_token) {
             props.socialMidiaSignupInit(user)
             props.ownProps.goToSocialMidiaSignup()
         }
@@ -38,7 +38,7 @@ function SocialMidia(props) {
                                 .then((response) => response.json())
                                 .then((json) => {
                                     setUser({
-                                        facebook_id: json.id,
+                                        facebook_token: json.id,
                                         name: json.name,
                                         email: json.email,
                                         birthday: json.birthday,
@@ -65,7 +65,7 @@ function SocialMidia(props) {
             await GoogleSignin.hasPlayServices()
             const userInfo = await GoogleSignin.signIn()
             setUser({
-                google_id: userInfo.user.id,
+                google_token: userInfo.user.id,
                 name: userInfo.user.name,
                 email: userInfo.user.email,
                 birthday: '',

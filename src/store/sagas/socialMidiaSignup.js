@@ -17,7 +17,7 @@ setUserData = async (userData) => {
 function* signup(action) {
     try {
         let signup = null
-        if (action.user.facebook_id) {
+        if (action.user.facebook_token) {
             signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
                 userType: action.user.userType,
                 email: action.user.email,
@@ -29,13 +29,13 @@ function* signup(action) {
                 gender: action.user.gender,
                 latitude: action.user.latitude,
                 longitude: action.user.longitude,
-                facebook_id: action.user.facebook_id,
+                facebook_token: action.user.facebook_token,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
         }
-        else if (action.user.google_id) {
+        else if (action.user.google_token) {
             signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
                 userType: action.user.userType,
                 email: action.user.email,
@@ -47,7 +47,7 @@ function* signup(action) {
                 gender: action.user.gender,
                 latitude: action.user.latitude,
                 longitude: action.user.longitude,
-                google_id: action.user.google_id,
+                google_token: action.user.google_token,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }

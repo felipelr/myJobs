@@ -95,8 +95,10 @@ function ServicesScreen(props) {
                     <TextLoading>Loading...</TextLoading>
                 </View>
             }
-            <Footer
-                perfilOnPress={() => props.navigation.navigate('Perfil')} />
+            <Footer                       
+                perfilOnPress={() => props.navigation.navigate('Perfil')}
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                chatOnPress={() => props.navigation.navigate('ClientListChat')} />
         </KeyboardAvoidingView>
     )
 }

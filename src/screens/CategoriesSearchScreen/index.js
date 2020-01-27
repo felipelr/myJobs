@@ -89,6 +89,7 @@ function CategoriesSearchScreen(props) {
             <Footer
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
                 offersOnPress={() => props.navigation.navigate('NewCall')}
+                chatOnPress={() => props.navigation.navigate('ClientListChat')}
             />
         </View>
     )

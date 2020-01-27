@@ -18,10 +18,10 @@ import {
     ViewContainer
 } from './styles'
 
-function ProfessionalListChatScreen(props) {
+function ClientListChatScreen(props) {
     const [chats, setChats] = useState([])
 
-    const getChatsProfessional = useGet(`/chatMessages/professionalChats.json?professional_id=${props.professionalData.id}`, props.token)
+    const getChatsClient = useGet(`/chatMessages/clientChats.json?client_id=${props.clientData.id}`, props.token)
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
@@ -32,11 +32,11 @@ function ProfessionalListChatScreen(props) {
     }, [])
 
     useEffect(() => {
-        console.log(getChatsProfessional.data)
-        if (getChatsProfessional.data && getChatsProfessional.data.chatMessages) {
-            setChats(getChatsProfessional.data.chatMessages)
+        console.log(getChatsClient.data)
+        if (getChatsClient.data && getChatsClient.data.chatMessages) {
+            setChats(getChatsClient.data.chatMessages)
         }
-    }, [getChatsProfessional.data])
+    }, [getChatsClient.data])
 
     const handleBackPress = async () => {
         props.navigation.goBack()
@@ -44,7 +44,7 @@ function ProfessionalListChatScreen(props) {
     }
 
     const handleClickItem = (item) => {
-        props.clientSelected(item.client)
+        props.professionalSelected(item.professional)
         props.navigation.navigate('ProfessionalChat')
     }
 
@@ -60,9 +60,9 @@ function ProfessionalListChatScreen(props) {
                             <ListItem
                                 key={i}
                                 containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                title={item.client.name}
+                                title={item.professional.name}
                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.professional.photo }} />}
                                 onPress={() => { handleClickItem(item) }}
                             />
                         ))
@@ -70,16 +70,15 @@ function ProfessionalListChatScreen(props) {
                 </ViewContainer>
             </ScrollViewContainer>
             <Footer
-                type={props.userType}
                 selected={'chat'}
-                homeOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </React.Fragment>
     )
 }
 
-ProfessionalListChatScreen.navigationOptions = {
+ClientListChatScreen.navigationOptions = {
     header: null
 }
 
@@ -88,14 +87,14 @@ const mapStateToProps = (state, ownProps) => {
         ownProps: ownProps,
         userType: state.auth.userType,
         token: state.auth.token,
-        professionalData: state.professional.professional,
+        clientData: state.client.client,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
+        professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalListChatScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ClientListChatScreen)

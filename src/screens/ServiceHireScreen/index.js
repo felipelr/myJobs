@@ -170,9 +170,10 @@ function ServiceHireScreen(props) {
                     </View>
                 </ScrollViewContainer>
             </KeyboardAvoidingView>
-            <Footer                       
+            <Footer
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
-                homeOnPress={() => props.navigation.navigate('CategoriesSearch')} />
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                chatOnPress={() => props.navigation.navigate('ClientListChat')} />
         </React.Fragment>
     )
 }

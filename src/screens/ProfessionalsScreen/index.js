@@ -66,7 +66,10 @@ function ProfessionalsScreen(props) {
                     }
                 </ContainerList>
             </ContainerProfessionals>
-            <Footer />
+            <Footer                       
+                perfilOnPress={() => props.navigation.navigate('Perfil')}
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                chatOnPress={() => props.navigation.navigate('ClientListChat')} />
         </KeyboardAvoidingView>
     )
 }

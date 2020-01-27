@@ -48,12 +48,15 @@ const useGet = (url, token) => {
             })
             
             dispatch({ type: 'SUCCESS', data: resposta.data })
-        } catch (e) { 
-            dispatch({ type: 'ERROR', errorMessage: e.message })
+        } catch (ex) { 
+            const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+            console.log(messageError)
+            dispatch({ type: 'ERROR', errorMessage: messageError })
         }
     }
     useEffect(() => { 
         if (url !== '') {
+            console.log(url)
             refetch(url);
         }
     }, [url])

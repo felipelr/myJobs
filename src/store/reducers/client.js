@@ -6,6 +6,7 @@ export const INITIAL_STATE = {
     isUpdating: false,
     errorUpdating: false,
     errorMessage: '',
+    selected: {}
 }
 
 export const clientUpdateRequest = (state = INITIAL_STATE, action) => {
@@ -97,6 +98,13 @@ export const clientNewServiceOrderError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const clientSelected= (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        selected: action.client
+    }
+}
+
 export const HANDLERS = {
     [Types.CLIENT_UPDATE_REQUEST]: clientUpdateRequest,
     [Types.CLIENT_UPDATE_SUCCESS]: clientUpdateSuccess,
@@ -108,6 +116,7 @@ export const HANDLERS = {
     [Types.CLIENT_NEW_SERVICE_ORDER_REQUEST]: clientNewServiceOrderRequest,
     [Types.CLIENT_NEW_SERVICE_ORDER_SUCCESS]: clientNewServiceOrderSuccess,
     [Types.CLIENT_NEW_SERVICE_ORDER_ERROR]: clientNewServiceOrderError,
+    [Types.CLIENT_SELECTED]: clientSelected,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

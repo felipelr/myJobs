@@ -113,21 +113,41 @@ function ProfessionalChatScreen(props) {
 
     const carregarMensagens = async () => {
         try {
-            const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-            const messagesStr = await AsyncStorage.getItem(storageName)
-            let _last = 0;
-            if (messagesStr != null) {
-                const messages_ = JSON.parse(messagesStr)
-                if (messages_ && messages_.length) {
-                    setMensagens(messages_)
-                    if (messages_.length > 0) {
-                        const lastIndex = messages_.length - 1;
-                        _last = messages_[lastIndex].id
+            if (props.professionalSelected.id) {
+                const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+                const messagesStr = await AsyncStorage.getItem(storageName)
+                let _last = 0;
+                if (messagesStr != null) {
+                    const messages_ = JSON.parse(messagesStr)
+                    if (messages_ && messages_.length) {
+                        setMensagens(messages_)
+                        if (messages_.length > 0) {
+                            const lastIndex = messages_.length - 1;
+                            _last = messages_[lastIndex].id
+                        }
                     }
                 }
+
+                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
+            }
+            else {
+                const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+                const messagesStr = await AsyncStorage.getItem(storageName)
+                let _last = 0;
+                if (messagesStr != null) {
+                    const messages_ = JSON.parse(messagesStr)
+                    if (messages_ && messages_.length) {
+                        setMensagens(messages_)
+                        if (messages_.length > 0) {
+                            const lastIndex = messages_.length - 1;
+                            _last = messages_[lastIndex].id
+                        }
+                    }
+                }
+
+                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${_last}`)
             }
 
-            getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
         } catch (e) {
             console.log(e)
         }
@@ -135,20 +155,32 @@ function ProfessionalChatScreen(props) {
 
     useEffect(() => {
         if (getMessages.data && getMessages.data.chatMessages) {
-            console.log('newMessages => ', getMessages.data.chatMessages)
             setMensagens(mensagens.concat(getMessages.data.chatMessages))
 
             if (getMessages.data.chatMessages.length > 0) {
                 try {
-                    const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-                    AsyncStorage.getItem(storageName, (err, result) => {
-                        if (result !== null) {
-                            const arrayMessages = JSON.parse(result).concat(getMessages.data.chatMessages)
-                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
-                        } else {
-                            AsyncStorage.setItem(storageName, JSON.stringify(getMessages.data.chatMessages))
-                        }
-                    })
+                    if (props.professionalSelected.id) {
+                        const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+                        AsyncStorage.getItem(storageName, (err, result) => {
+                            if (result !== null) {
+                                const arrayMessages = JSON.parse(result).concat(getMessages.data.chatMessages)
+                                AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                            } else {
+                                AsyncStorage.setItem(storageName, JSON.stringify(getMessages.data.chatMessages))
+                            }
+                        })
+                    }
+                    else {
+                        const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+                        AsyncStorage.getItem(storageName, (err, result) => {
+                            if (result !== null) {
+                                const arrayMessages = JSON.parse(result).concat(getMessages.data.chatMessages)
+                                AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                            } else {
+                                AsyncStorage.setItem(storageName, JSON.stringify(getMessages.data.chatMessages))
+                            }
+                        })
+                    }
                 } catch (e) {
                     console.log(e)
                 }
@@ -158,18 +190,38 @@ function ProfessionalChatScreen(props) {
 
     useEffect(() => {
         if (props.sendedMessage && props.sendedMessage.id) {
-            console.log('props.sendedMessage => ', props.receivedMessage)
             try {
-                const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-                AsyncStorage.getItem(storageName, (err, result) => {
-                    const newMessage = [props.receivedMessage]
-                    if (result !== null) {
-                        const arrayMessages = JSON.parse(result).concat(newMessage)
-                        AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
-                    } else {
-                        AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
-                    }
-                })
+                console.log('props.sendedMessage => ', props.sendedMessage)
+                const sendedMessage = {
+                    date: Moment().format('DD/MM/YYYY'),
+                    time: Moment().format('HH:mm:ss'), 
+                    ...props.sendedMessage
+                }
+                if (props.professionalSelected.id) {
+                    const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+                    AsyncStorage.getItem(storageName, (err, result) => {
+                        const newMessage = [sendedMessage]
+                        if (result !== null) {
+                            const arrayMessages = JSON.parse(result).concat(newMessage)
+                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                        } else {
+                            AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                        }
+                    })
+                }
+                else {
+                    const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+                    AsyncStorage.getItem(storageName, (err, result) => {
+                        const newMessage = [sendedMessage]
+                        if (result !== null) {
+                            const arrayMessages = JSON.parse(result).concat(newMessage)
+                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                        } else {
+                            AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                        }
+                    })
+                }
+                props.chatCleanSendedMessage()
             } catch (e) {
                 console.log(e)
             }
@@ -213,7 +265,22 @@ function ProfessionalChatScreen(props) {
                     ...form
                 }])
             } else {
-
+                const form = {
+                    client_id: props.clientSelected.id,
+                    professional_id: props.user.id,
+                    message: newMessage,
+                    date_time: Moment().format('YYYY-MM-DD HH:mm:ss'),
+                    msg_from: 'professional',
+                }
+                props.chatSendNewMessage(props.token, form)
+                inputMsgRef.current.clear()
+                Keyboard.dismiss()
+                setMensagens([...mensagens, {
+                    id: 0,
+                    date: Moment().format('DD/MM/YYYY'),
+                    time: Moment().format('HH:mm:ss'),
+                    ...form
+                }])
             }
         }
     }
@@ -260,6 +327,7 @@ const mapStateToProps = (state, ownProps) => {
         selectedCategorie: state.categoria.selected,
         serviceSelected: state.services.selected,
         professionalSelected: state.professional.selected,
+        clientSelected: state.client.selected,
         lastId: state.chat.lastId,
         fcmToken: state.chat.fcmToken,
         sendedMessage: state.chat.sendedMessage,
@@ -269,7 +337,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        chatSendNewMessage: (token, message) => dispatch(ActionCreators.chatSendNewMessage(token, message))
+        chatSendNewMessage: (token, message) => dispatch(ActionCreators.chatSendNewMessage(token, message)),
+        chatCleanSendedMessage : () => dispatch(ActionCreators.chatCleanSendedMessage()),
     }
 }
 

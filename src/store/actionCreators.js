@@ -78,6 +78,7 @@ export const { Types, Creators } = createActions({
     clientNewServiceOrderRequest: ['token', 'serviceOrder'],
     clientNewServiceOrderSuccess: ['serviceOrder'],
     clientNewServiceOrderError: ['error'],
+    clientSelected: ['client'],
 
     //Services
     serviceSelected: ['service'],
@@ -100,6 +101,7 @@ export const { Types, Creators } = createActions({
     chatSetFcmToken: ['fcmToken'],
     chatSetReceivedMessage: ['message'],
     chatUpdateUserFcmToken: ['token', 'userId', 'fcmToken'],
+    chatCleanSendedMessage: null,
 })
 
 export default Creators

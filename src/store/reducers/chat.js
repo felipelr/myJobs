@@ -59,6 +59,15 @@ export const chatUpdateUserFcmToken = (state = INITIAL_STATE, action) => {
     }
 }
 
+
+
+export const chatCleanSendedMessage = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        sendedMessage: {}
+    }
+}
+
 export const HANDLES = {
     [Types.CHAT_SEND_NEW_MESSAGE]: chatSendNewMessage,
     [Types.CHAT_SEND_NEW_MESSAGE_SUCCESS]: chatSendNewMessageSuccess,
@@ -66,6 +75,7 @@ export const HANDLES = {
     [Types.CHAT_SET_FCM_TOKEN]: chatSetFcmToken,
     [Types.CHAT_SET_RECEIVED_MESSAGE]: chatSetReceivedMessage,
     [Types.CHAT_UPDATE_USER_FCM_TOKEN]: chatUpdateUserFcmToken,
+    [Types.CHAT_CLEAN_SENDED_MESSAGE]: chatCleanSendedMessage,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

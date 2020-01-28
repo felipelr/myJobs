@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { AppState } from 'react-native'
 import firebase from 'react-native-firebase'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -8,10 +9,17 @@ import ActionCreators from '../../store/actionCreators'
 import { ViewContainer } from './styles'
 
 function SplashScreen(props) {
+    const chatVisibleRef = useRef()
+    const appStateRef = useRef()
 
     useEffect(() => {
         getUserData()
         firebasePermission()
+        appStateRef.current = 'active'
+
+        AppState.addEventListener('change', (nextAppState) => {
+            appStateRef.current = nextAppState
+        })
 
         const channel = new firebase.notifications.Android.Channel('myjobs-channel', 'MyJobs', firebase.notifications.Android.Importance.Max)
             .setDescription('MyJobs channel');
@@ -28,12 +36,9 @@ function SplashScreen(props) {
             // Process your notification as required
             props.chatSetReceivedMessage(JSON.parse(notification.data.message))
 
+            //mostrar notificação
             notification.android.setChannelId(channel.channelId)
-            notification.setSound('default')
-            notification.android.setColorized(true)
-            notification.android.setColor('purple')
-
-            firebase.notifications().displayNotification(notification)
+            showNotification(notification);
         })
 
         firebase.messaging().getToken()
@@ -52,6 +57,20 @@ function SplashScreen(props) {
             notificationListener()
         }
     }, [])
+
+    useEffect(() => {
+        chatVisibleRef.current = props.screenChatVisible
+    }, [props.screenChatVisible])
+
+    const showNotification = (notification) => {
+        if (!chatVisibleRef.current || appStateRef.current.match(/inactive|background/)) {
+            notification.setSound('default')
+            notification.android.setColorized(true)
+            notification.android.setColor('purple')
+
+            firebase.notifications().displayNotification(notification)
+        }
+    }
 
     const getUserData = async () => {
         try {
@@ -123,7 +142,8 @@ SplashScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        ownProps: ownProps
+        ownProps: ownProps,
+        screenChatVisible: state.chat.screenChatVisible,
     }
 }
 

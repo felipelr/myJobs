@@ -102,6 +102,7 @@ export const { Types, Creators } = createActions({
     chatSetReceivedMessage: ['message'],
     chatUpdateUserFcmToken: ['token', 'userId', 'fcmToken'],
     chatCleanSendedMessage: null,
+    chatSetScreenChatVisible: ['visible'],
 })
 
 export default Creators

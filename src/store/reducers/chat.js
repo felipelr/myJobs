@@ -8,7 +8,8 @@ export const INITIAL_STATE = {
     lastId: 0,
     fcmToken: '',
     sendedMessage: {},
-    receivedMessage: {}
+    receivedMessage: {},
+    screenChatVisible: false,
 }
 
 export const chatSendNewMessage = (state = INITIAL_STATE, action) => {
@@ -59,12 +60,18 @@ export const chatUpdateUserFcmToken = (state = INITIAL_STATE, action) => {
     }
 }
 
-
-
 export const chatCleanSendedMessage = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         sendedMessage: {}
+    }
+}
+
+export const chatSetScreenChatVisible = (state = INITIAL_STATE, action) => {
+    console.log('setting scree chat visibility => ', action.visible)
+    return {
+        ...state,
+        screenChatVisible: action.visible
     }
 }
 
@@ -76,6 +83,7 @@ export const HANDLES = {
     [Types.CHAT_SET_RECEIVED_MESSAGE]: chatSetReceivedMessage,
     [Types.CHAT_UPDATE_USER_FCM_TOKEN]: chatUpdateUserFcmToken,
     [Types.CHAT_CLEAN_SENDED_MESSAGE]: chatCleanSendedMessage,
+    [Types.CHAT_SET_SCREEN_CHAT_VISIBLE]: chatSetScreenChatVisible,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

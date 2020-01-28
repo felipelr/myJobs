@@ -103,6 +103,8 @@ function ProfessionalChatScreen(props) {
     const getMessages = useGet('', props.token)
 
     useEffect(() => {
+        props.chatSetScreenChatVisible(true)
+
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
         const kbShow = Keyboard.addListener('keyboardDidShow', () => {
             setKeyboardIsVisible(true)
@@ -114,6 +116,7 @@ function ProfessionalChatScreen(props) {
         carregarMensagens()
 
         return () => {
+            props.chatSetScreenChatVisible(false)
             backHandler.remove()
             kbShow.remove()
             knHide.remove()
@@ -348,6 +351,7 @@ const mapDispatchToProps = dispatch => {
     return {
         chatSendNewMessage: (token, message) => dispatch(ActionCreators.chatSendNewMessage(token, message)),
         chatCleanSendedMessage: () => dispatch(ActionCreators.chatCleanSendedMessage()),
+        chatSetScreenChatVisible: (visible) => dispatch(ActionCreators.chatSetScreenChatVisible(visible)),
     }
 }
 

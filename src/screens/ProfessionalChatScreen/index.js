@@ -26,8 +26,17 @@ import { ViewChatItem, ViewChatText, TextMessage } from './styles'
 function ChatMessages(props) {
     const { messages } = props
     const { userType } = props
+
+    const scrollViewRef = useRef()
+
+    const handleContentSizeChange = (contentWidth, contentHeight) => {
+        scrollViewRef.current.scrollTo({ x: 0, y: contentHeight, animated: true })
+    }
+
     return (
-        <ScrollViewContainerMessages>
+        <ScrollViewContainerMessages
+            ref={(c) => scrollViewRef.current = c}
+            onContentSizeChange={handleContentSizeChange}>
             {
                 messages && messages.map((item, index) => {
                     if (index === 0) {
@@ -71,11 +80,11 @@ function ChateItem(props) {
     const { mensagem } = props
     const { userType } = props
     return (
-        <ViewChatItem justifyContent={mensagem.msg_from === userType ? 'flex-start' : 'flex-end'}>
+        <ViewChatItem justifyContent={mensagem.msg_from === userType ? 'flex-end' : 'flex-start'}>
             <ViewChatText
                 backColor={mensagem.msg_from === userType ? '#D3D4FE' : '#EAEAEA'}
-                marginRight={mensagem.msg_from === userType ? 50 : 0}
-                marginLeft={mensagem.msg_from === userType ? 0 : 50}
+                marginRight={mensagem.msg_from === userType ? 0 : 50}
+                marginLeft={mensagem.msg_from === userType ? 50 : 0}
             >
                 <TextMessage>
                     {mensagem.message}
@@ -194,7 +203,7 @@ function ProfessionalChatScreen(props) {
                 console.log('props.sendedMessage => ', props.sendedMessage)
                 const sendedMessage = {
                     date: Moment().format('DD/MM/YYYY'),
-                    time: Moment().format('HH:mm:ss'), 
+                    time: Moment().format('HH:mm:ss'),
                     ...props.sendedMessage
                 }
                 if (props.professionalSelected.id) {
@@ -229,8 +238,8 @@ function ProfessionalChatScreen(props) {
     }, [props.sendedMessage]);
 
     useEffect(() => {
-        if (props.receivedMessage && props.receivedMessage.id) {
-            console.log('props.receivedMessage => ', props.receivedMessage)
+        console.log('props.receivedMessage => ', props.receivedMessage)
+        if (props.receivedMessage.id) {
             setMensagens([...mensagens, {
                 date: Moment().format('DD/MM/YYYY'),
                 time: Moment().format('HH:mm:ss'),
@@ -338,7 +347,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         chatSendNewMessage: (token, message) => dispatch(ActionCreators.chatSendNewMessage(token, message)),
-        chatCleanSendedMessage : () => dispatch(ActionCreators.chatCleanSendedMessage()),
+        chatCleanSendedMessage: () => dispatch(ActionCreators.chatCleanSendedMessage()),
     }
 }
 

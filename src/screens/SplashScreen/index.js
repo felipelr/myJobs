@@ -13,6 +13,12 @@ function SplashScreen(props) {
         getUserData()
         firebasePermission()
 
+        const channel = new firebase.notifications.Android.Channel('myjobs-channel', 'MyJobs', firebase.notifications.Android.Importance.Max)
+            .setDescription('MyJobs channel');
+
+        //cria um channel para poder exibir notificações
+        firebase.notifications().android.createChannel(channel);
+
         const messageListener = firebase.messaging().onMessage((message) => {
             // Process your message as required
             console.log(message)
@@ -20,8 +26,14 @@ function SplashScreen(props) {
 
         const notificationListener = firebase.notifications().onNotification((notification) => {
             // Process your notification as required
-            console.log('New Notification => ', notification.data)
-            props.chatSetReceivedMessage(notification.data.message)
+            props.chatSetReceivedMessage(JSON.parse(notification.data.message))
+
+            notification.android.setChannelId(channel.channelId)
+            notification.setSound('default')
+            notification.android.setColorized(true)
+            notification.android.setColor('purple')
+
+            firebase.notifications().displayNotification(notification)
         })
 
         firebase.messaging().getToken()
@@ -89,11 +101,13 @@ function SplashScreen(props) {
                 } catch (error) {
                     // User has rejected permissions
                     console.log('User has rejected permissions', error)
+                    alert('User has rejected permissions => ' + error.message)
                 }
             }
         } catch (error) {
             // User has rejected permissions
             console.log('User has rejected permissions', error)
+            alert('User has rejected permissions => ' + error.message)
         }
     }
 

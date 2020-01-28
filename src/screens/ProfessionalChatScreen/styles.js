@@ -35,9 +35,9 @@ export const TouchIcon = styled.TouchableOpacity`
 ///////
 export const ScrollViewContainerMessages = styled.ScrollView.attrs({
     horizontal: false,
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
-    showHorizontalScrollIndicator: false,
-    contentContainerStyle: { flexGrow: 1 }
+    showsHorizontalScrollIndicator: false,
+    showsVerticalScrollIndicator: false,
+    contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
 })`
     flex: 1;
 `

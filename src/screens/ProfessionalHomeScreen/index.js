@@ -67,6 +67,12 @@ function ProfessionalHomeScreen(props) {
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
+        if (props.userType == 'professional') {
+            if (props.fcmToken) {
+                props.chatUpdateUserFcmToken(props.token, props.user.sub, props.fcmToken)
+            }
+        }
+
         return () => {
             backHandler.remove()
         }
@@ -423,13 +429,15 @@ ProfessionalHomeScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
+        ownProps: ownProps,
         isAuth: state.auth.isAuth,
         userType: state.auth.userType,
         token: state.auth.token,
         professionalCtr: state.professional,
         professionalData: state.professional.professional,
         selectedService: state.professionalHome.selectedService,
-        ownProps: ownProps
+        user: state.auth.user,
+        fcmToken: state.chat.fcmToken,
     }
 }
 
@@ -438,6 +446,7 @@ const mapDispatchToProps = dispatch => {
         logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
         professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service)),
         storiesRestartSelfPage: () => dispatch(ActionCreators.storiesRestartSelfPage()),
+        chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
     }
 }
 

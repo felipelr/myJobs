@@ -28,7 +28,7 @@ import { ScrollViewContainerMessages } from './styles'
 import { ViewChatDate, TextChatDate } from './styles'
 
 ///////ChatItem
-import { ViewChatItem, ViewChatText, TextMessage } from './styles'
+import { ViewChatItem, ViewChatText, TextMessage, TextTime } from './styles'
 
 function ChatMessages(props) {
     const { messages } = props
@@ -37,7 +37,7 @@ function ChatMessages(props) {
     const scrollViewRef = useRef()
 
     const handleContentSizeChange = (contentWidth, contentHeight) => {
-        scrollViewRef.current.scrollTo({ x: 0, y: contentHeight, animated: false })
+        scrollViewRef.current.scrollTo({ x: 0, y: contentHeight, animated: true })
     }
 
     return (
@@ -93,9 +93,25 @@ function ChateItem(props) {
                 marginRight={mensagem.msg_from === userType ? 0 : 50}
                 marginLeft={mensagem.msg_from === userType ? 50 : 0}
             >
-                <TextMessage>
-                    {mensagem.message}
-                </TextMessage>
+                {mensagem.msg_from === userType &&
+                    <React.Fragment>
+                        <TextTime marginRight={10} marginLeft={0}>
+                            {mensagem.time.substring(0, 5)}
+                        </TextTime>
+                        <TextMessage style={{ marginRight: 20 }}>
+                            {mensagem.message}
+                        </TextMessage>
+                    </React.Fragment>}
+                {mensagem.msg_from !== userType &&
+                    <React.Fragment>
+                        <TextMessage>
+                            {mensagem.message}
+                        </TextMessage>
+                        <TextTime marginRight={0} marginLeft={10}>
+                            {mensagem.time.substring(0, 5)}
+                        </TextTime>
+                    </React.Fragment>}
+
             </ViewChatText>
         </ViewChatItem>
     )
@@ -295,7 +311,7 @@ function ProfessionalChatScreen(props) {
 
     useEffect(() => {
         console.log('props.receivedMessage => ', props.receivedMessage)
-        if (props.receivedMessage.id) {
+        if (props.screenChatVisible && props.receivedMessage.id) {
             if (mensagens.length > 0) {
                 const lastId = mensagens[mensagens.length - 1].id;
                 if (lastId >= props.receivedMessage.id) {
@@ -416,6 +432,7 @@ const mapStateToProps = (state, ownProps) => {
         fcmToken: state.chat.fcmToken,
         sendedMessage: state.chat.sendedMessage,
         receivedMessage: state.chat.receivedMessage,
+        screenChatVisible: state.chat.screenChatVisible,
     }
 };
 

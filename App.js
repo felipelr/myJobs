@@ -19,21 +19,26 @@ import ClientListChatScreen from './src/screens/ClientListChatScreen'
 import store from './src/store'
 
 
-const MainNavigator = createStackNavigator({
-  Splash: { screen: SplashScreen },
-  Login: { screen: LoginScreen },
-  Professionals: { screen: ProfessionalsScreen },
-  CategoriesSearch: { screen: CategoriesSearchScreen },
-  Perfil: { screen: PerfilScreen },
-  Services: { screen: ServicesScreen },
-  ServiceHome: { screen: ServiceHomeScreen },
-  ProfessionalHome: { screen: ProfessionalHomeScreen },
-  ServiceHire: { screen: ServiceHireScreen },
-  ProfessionalChat: { screen: ProfessionalChatScreen },
-  NewCall: { screen: NewCallScreen },
-  ProfessionalListChat: { screen: ProfessionalListChatScreen },
-  ClientListChat: { screen: ClientListChatScreen }
-}, { initialRouteName: 'Splash' });
+const MainNavigator = createStackNavigator(
+  {
+    Splash: { screen: SplashScreen },
+    Login: { screen: LoginScreen },
+    Professionals: { screen: ProfessionalsScreen },
+    CategoriesSearch: { screen: CategoriesSearchScreen },
+    Perfil: { screen: PerfilScreen },
+    Services: { screen: ServicesScreen },
+    ServiceHome: { screen: ServiceHomeScreen },
+    ProfessionalHome: { screen: ProfessionalHomeScreen },
+    ServiceHire: { screen: ServiceHireScreen },
+    ProfessionalChat: { screen: ProfessionalChatScreen },
+    NewCall: { screen: NewCallScreen },
+    ProfessionalListChat: { screen: ProfessionalListChatScreen },
+    ClientListChat: { screen: ClientListChatScreen }
+  },
+  {
+    initialRouteName: 'Splash'
+  }
+);
 
 let Navigation = createAppContainer(MainNavigator)
 

@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { white, purple, lightpurple, black } from '../../components/common/util/colors'
 
+
 export const ViewContainerInfo = styled.View`
     padding: 5px;
     background-color: ${white};
@@ -66,13 +67,14 @@ export const TextChatDate = styled.Text`
 
 /////////
 export const ViewChatItem = styled.View`
-    padding: 2px;
+    margin: 2px;
     width: 100%;
     flex-direction: row;
     justify-content: ${props => `${props.justifyContent}`};
 `
 
 export const ViewChatText = styled.View`
+    flex-direction: row;
     padding: 8px;
     border-radius: 5px;
     background-color: ${props => `${props.backColor}`};
@@ -80,11 +82,21 @@ export const ViewChatText = styled.View`
     margin-right: ${props => `${props.marginRight}`};
     margin-bottom: 5px;
     elevation: 1;
+    
 `
 
 export const TextMessage = styled.Text`
     font-size: 12px;
     color: ${black};
+`
+
+export const TextTime = styled.Text`
+    font-size: 9px;
+    font-weight: bold;
+    color: ${black};
+    align-self: center;
+    margin-left: ${props => `${props.marginLeft}`};
+    margin-right: ${props => `${props.marginRight}`};
 `
 
 export const ViewLoading = styled.View`

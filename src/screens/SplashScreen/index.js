@@ -56,11 +56,11 @@ function SplashScreen(props) {
                     if (props.professional || props.client) {
                         const msg = JSON.parse(notification.data.message)
                         if (msg.msg_from == 'client') {
-                            const client = { id: msg.client_id }
+                            const client = { id: msg.client_id, name: notification.title }
                             props.clientSelected(client)
                         }
                         else {
-                            const professional = { id: msg.professional_id }
+                            const professional = { id: msg.professional_id, name: notification.title }
                             props.professionalSelected(professional)
                         }
                         props.navigation.navigate('ProfessionalChat')

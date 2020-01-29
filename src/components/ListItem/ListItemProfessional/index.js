@@ -26,14 +26,14 @@ function ListItemProfessional(props) {
                 <Avatar 
                     containerStyle={{ alignSelf: 'center' }}
                     size={60}
-                    source={{ uri: profissional.imagem, }}
+                    source={{ uri: profissional.photo, }}
                 />
             }
             centerContent={
                 <View style={{marginLeft:10}}>
-                    <TitleProfessional>{profissional.nome}</TitleProfessional>
+                    <TitleProfessional>{profissional.name}</TitleProfessional>
                     <InfoProfessional>{profissional.info}</InfoProfessional>
-                    <RatingJobs avaliacao={parseFloat(profissional.avaliacao)} qtdeAvaliacoes={profissional.qtdeAvaliacoes} />
+                    <RatingJobs avaliacao={parseFloat(profissional.rating)} qtdeAvaliacoes={profissional.amount_ratings} />
                 </View>
             }
             rightContent={

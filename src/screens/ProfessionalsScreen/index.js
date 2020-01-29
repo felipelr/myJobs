@@ -22,7 +22,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 function ProfessionalsScreen(props) {
     const highlights = useGet(`/highlights/highlightsByService/${props.serviceSelected.id}.json`, props.token);
-    const profissionais = useGet(`/professionals/getByService/${props.serviceSelected.id}.json`, props.token);
+    const getProfessionals = useGet(`/professionals/getByService/${props.serviceSelected.id}.json`, props.token);
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', back)
@@ -51,17 +51,17 @@ function ProfessionalsScreen(props) {
                     </ButtonOrcamento>
                 </ButtonContainer>
                 <ContainerList>
-                    {!profissionais || (profissionais && profissionais.loading) ? (
+                    {!getProfessionals || (getProfessionals && getProfessionals.loading) ? (
                         <View style={{ alignSelf: 'center' }}>
                             <ActivityIndicator size='large' color={purple} />
                             <TextLoading>Loading...</TextLoading>
                         </View>
                     ) :
-                        profissionais && profissionais.data.profissionais &&
+                        getProfessionals && getProfessionals.data.professionals &&
                         <List
                             tipo='professional'
                             titulo='Profissionais/Empresas'
-                            itens={profissionais.data.profissionais} 
+                            itens={getProfessionals.data.professionals} 
                             itemOnPress={() => props.navigation.navigate('ProfessionalChat')} />
                     }
                 </ContainerList>

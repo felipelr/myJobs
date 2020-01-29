@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, TextInput } from 'react-native'
+import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState } from 'react-native'
 import { Input } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
@@ -7,7 +7,14 @@ import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import { gray, white, lightpurple } from '../../components/common/util/colors'
-import { ViewContainerInfo, TextInfo, ViewContainerChat, ViewContainerNewMessage, TouchIcon } from './styles'
+import {
+    ViewContainerInfo,
+    TextInfo,
+    ViewContainerChat,
+    ViewContainerNewMessage,
+    TouchIcon,
+    ViewLoading,
+} from './styles'
 import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import useGet from '../../services/restServices'
@@ -30,7 +37,7 @@ function ChatMessages(props) {
     const scrollViewRef = useRef()
 
     const handleContentSizeChange = (contentWidth, contentHeight) => {
-        scrollViewRef.current.scrollTo({ x: 0, y: contentHeight, animated: true })
+        scrollViewRef.current.scrollTo({ x: 0, y: contentHeight, animated: false })
     }
 
     return (
@@ -99,13 +106,19 @@ function ProfessionalChatScreen(props) {
     const [mensagens, setMensagens] = useState([])
 
     const inputMsgRef = useRef()
+    const appStateRef = useRef()
 
     const getMessages = useGet('', props.token)
 
     useEffect(() => {
+        appStateRef.current = 'active'
+
         props.chatSetScreenChatVisible(true)
 
+        AppState.addEventListener('change', handleAppStateChange)
+
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+
         const kbShow = Keyboard.addListener('keyboardDidShow', () => {
             setKeyboardIsVisible(true)
         })
@@ -120,8 +133,47 @@ function ProfessionalChatScreen(props) {
             backHandler.remove()
             kbShow.remove()
             knHide.remove()
+            AppState.removeEventListener('change', handleAppStateChange)
         }
     }, [])
+
+    const handleAppStateChange = (nextAppState) => {
+        if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
+            reloadMensagens()
+        }
+        appStateRef.current = nextAppState
+    }
+
+    const reloadMensagens = async () => {
+        if (props.professionalSelected.id) {
+            const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+            const messagesStr = await AsyncStorage.getItem(storageName)
+            let _last = 0;
+            if (messagesStr != null) {
+                const _messages = JSON.parse(messagesStr)
+                if (_messages && _messages.length > 0) {
+                    _last = _messages[_messages.length - 1].id
+                }
+            }
+
+            console.log('activeted => lastID: ', _last)
+            getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
+        }
+        else {
+            const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+            const messagesStr = await AsyncStorage.getItem(storageName)
+            let _last = 0;
+            if (messagesStr != null) {
+                const _messages = JSON.parse(messagesStr)
+                if (_messages && _messages.length > 0) {
+                    _last = _messages[_messages.length - 1].id
+                }
+            }
+
+            console.log('activeted => lastID: ', _last)
+            getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${_last}`)
+        }
+    }
 
     const carregarMensagens = async () => {
         try {
@@ -167,6 +219,7 @@ function ProfessionalChatScreen(props) {
 
     useEffect(() => {
         if (getMessages.data && getMessages.data.chatMessages) {
+            console.log('New messages => ', getMessages.data.chatMessages.length)
             setMensagens(mensagens.concat(getMessages.data.chatMessages))
 
             if (getMessages.data.chatMessages.length > 0) {
@@ -243,11 +296,31 @@ function ProfessionalChatScreen(props) {
     useEffect(() => {
         console.log('props.receivedMessage => ', props.receivedMessage)
         if (props.receivedMessage.id) {
-            setMensagens([...mensagens, {
-                date: Moment().format('DD/MM/YYYY'),
-                time: Moment().format('HH:mm:ss'),
-                ...props.receivedMessage
-            }])
+            if (mensagens.length > 0) {
+                const lastId = mensagens[mensagens.length - 1].id;
+                if (lastId >= props.receivedMessage.id) {
+                    if (props.professionalSelected.id) {
+                        getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${lastId}`)
+                    }
+                    else {
+                        getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${lastId}`)
+                    }
+                }
+                else {
+                    setMensagens([...mensagens, {
+                        date: Moment().format('DD/MM/YYYY'),
+                        time: Moment().format('HH:mm:ss'),
+                        ...props.receivedMessage
+                    }])
+                }
+            }
+            else {
+                setMensagens([...mensagens, {
+                    date: Moment().format('DD/MM/YYYY'),
+                    time: Moment().format('HH:mm:ss'),
+                    ...props.receivedMessage
+                }])
+            }
         }
     }, [props.receivedMessage]);
 
@@ -303,8 +376,7 @@ function ProfessionalChatScreen(props) {
             <Container />
             <HeaderJobs back={() => handleBackPress()} title='Finos e Cheirosos' />
             <ViewContainerInfo>
-                <TextInfo>Solicitações de Profissionais</TextInfo>
-                <TextInfo>Informações do serviço</TextInfo>
+                <TextInfo>{props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name}</TextInfo>
             </ViewContainerInfo>
             <ViewContainerChat>
                 <ChatMessages messages={mensagens} userType={props.userType} />

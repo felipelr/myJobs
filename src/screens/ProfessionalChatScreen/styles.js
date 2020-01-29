@@ -86,3 +86,10 @@ export const TextMessage = styled.Text`
     font-size: 12px;
     color: ${black};
 `
+
+export const ViewLoading = styled.View`
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: #ffffff;
+`

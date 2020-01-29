@@ -17,28 +17,56 @@ function SplashScreen(props) {
         firebasePermission()
         appStateRef.current = 'active'
 
-        AppState.addEventListener('change', (nextAppState) => {
-            appStateRef.current = nextAppState
-        })
+        AppState.addEventListener('change', handleAppStateChange)
 
         const channel = new firebase.notifications.Android.Channel('myjobs-channel', 'MyJobs', firebase.notifications.Android.Importance.Max)
-            .setDescription('MyJobs channel');
+            .setDescription('MyJobs channel')
+            .setVibrationPattern([1000, 2000, 3000])
+            .setShowBadge(true);
 
         //cria um channel para poder exibir notificações
-        firebase.notifications().android.createChannel(channel);
-
-        const messageListener = firebase.messaging().onMessage((message) => {
-            // Process your message as required
-            console.log(message)
-        })
+        firebase.notifications().android.createChannel(channel)
 
         const notificationListener = firebase.notifications().onNotification((notification) => {
             // Process your notification as required
-            props.chatSetReceivedMessage(JSON.parse(notification.data.message))
+            if (notification.data.message)
+                props.chatSetReceivedMessage(JSON.parse(notification.data.message))
+
+            notification.setSound('default')
+            notification.android.setDefaults(firebase.notifications.Android.Defaults.All)
+            notification.android.setChannelId(channel.channelId)
+            notification.android.setVibrate(channel.vibrationPattern)
+            notification.android.setPriority(firebase.notifications.Android.Priority.High)
+            notification.android.setSmallIcon('ic_launcher')
+            notification.android.setColorized(true)
+            notification.android.setColor('purple')
 
             //mostrar notificação
-            notification.android.setChannelId(channel.channelId)
             showNotification(notification);
+        })
+
+        const notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+            // Get the action triggered by the notification being opened
+            const action = notificationOpen.action;
+            // Get information about the notification that was opened
+            const notification = notificationOpen.notification
+
+            if (notification.data.message) {
+                if (!chatVisibleRef.current) {
+                    if (props.professional || props.client) {
+                        const msg = JSON.parse(notification.data.message)
+                        if (msg.msg_from == 'client') {
+                            const client = { id: msg.client_id }
+                            props.clientSelected(client)
+                        }
+                        else {
+                            const professional = { id: msg.professional_id }
+                            props.professionalSelected(professional)
+                        }
+                        props.navigation.navigate('ProfessionalChat')
+                    }
+                }
+            }
         })
 
         firebase.messaging().getToken()
@@ -53,8 +81,9 @@ function SplashScreen(props) {
             });
 
         return () => {
-            messageListener()
             notificationListener()
+            notificationOpenedListener()
+            AppState.removeEventListener('change', handleAppStateChange);
         }
     }, [])
 
@@ -64,12 +93,12 @@ function SplashScreen(props) {
 
     const showNotification = (notification) => {
         if (!chatVisibleRef.current || appStateRef.current.match(/inactive|background/)) {
-            notification.setSound('default')
-            notification.android.setColorized(true)
-            notification.android.setColor('purple')
-
             firebase.notifications().displayNotification(notification)
         }
+    }
+
+    const handleAppStateChange = (nextAppState) => {
+        appStateRef.current = nextAppState
     }
 
     const getUserData = async () => {
@@ -94,14 +123,14 @@ function SplashScreen(props) {
                 props.authSuccess(userJson)
 
                 if (userType === 1)
-                    props.ownProps.navigation.navigate('CategoriesSearch')
+                    props.navigation.navigate('CategoriesSearch')
                 else
-                    props.ownProps.navigation.navigate('ProfessionalHome')
+                    props.navigation.navigate('ProfessionalHome')
             } else {
-                props.ownProps.navigation.navigate('Login')
+                props.navigation.navigate('Login')
             }
         } catch (e) {
-            props.ownProps.navigation.navigate('Login')
+            props.navigation.navigate('Login')
         }
     }
 
@@ -144,6 +173,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         ownProps: ownProps,
         screenChatVisible: state.chat.screenChatVisible,
+        client: state.client.client,
+        professional: state.professional.professional,
     }
 }
 
@@ -154,6 +185,8 @@ const mapDispatchToProps = dispatch => {
         authSuccess: (dados) => dispatch(ActionCreators.authSuccess(dados)),
         chatSetFcmToken: (fcmToken) => dispatch(ActionCreators.chatSetFcmToken(fcmToken)),
         chatSetReceivedMessage: (message) => dispatch(ActionCreators.chatSetReceivedMessage(message)),
+        clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
+        professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
     }
 }
 

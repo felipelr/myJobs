@@ -40,6 +40,8 @@ function* login(action) {
             password: action.password
         })
 
+        console.log('login resp => ' , login.data)
+
         const token = login.data.data.token
         const user = jwtDecode(token)
 

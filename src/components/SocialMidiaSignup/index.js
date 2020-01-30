@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, PermissionsAndroid, Platform } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { View, KeyboardAvoidingView, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
@@ -39,12 +39,14 @@ function SocialMidiaSignup(props) {
         }
     ])
     const [form, setForm] = useState({
-        userType: props.socialMidiaSignup.user.client == null ? 2 : 1,
+        userType: props.socialMidiaSignup.user.professional == null ? 1 : 2,
         phone: '',
         document: '',
         date_birth: '',
         gender: 'MASCULINO'
     })
+
+    const scrollViewRef = useRef()
 
     useEffect(() => {
         //verificar se já existe cadastro do facebook
@@ -70,7 +72,7 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         if (props.socialMidiaSignup.error) {
-            this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+            scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
         }
     }, [props.socialMidiaSignup.error])
 
@@ -163,6 +165,7 @@ function SocialMidiaSignup(props) {
                 name: props.socialMidiaSignup.user.name,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.facebook_token,
+                photo: '',
                 date_birth: dateFormatted,
                 facebook_token: props.socialMidiaSignup.user.facebook_token
             }
@@ -175,6 +178,7 @@ function SocialMidiaSignup(props) {
                 name: props.socialMidiaSignup.user.name,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.google_token,
+                photo: '',
                 date_birth: dateFormatted,
                 gender: props.socialMidiaSignup.user.gender,
                 google_token: props.socialMidiaSignup.user.google_token
@@ -184,89 +188,92 @@ function SocialMidiaSignup(props) {
         }
     }
 
+    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
-            <ViewContainer>
-                {(props.socialMidiaSignup.isSigningup || props.socialMidiaSignup.verifyingAcc || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
+                <ViewContainer>
+                    {(props.socialMidiaSignup.isSigningup || props.socialMidiaSignup.verifyingAcc || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
 
-                {(!props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
-                    <CardJobs backColor={white} width='80' height='140' opacity={1}>
-                        <TextSignUpTitle>Complete seu Cadastro</TextSignUpTitle>
-                        {
-                            props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
-                        }
-                        <View>
-                            <ViewContainerRow>
-                                <CheckBox
-                                    title='Cliente'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checkedColor={purple}
-                                    containerStyle={styleSheets.containerCheck}
-                                    checked={form.userType === 1}
-                                    onPress={() => {
+                    {(!props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
+                        <CardJobs backColor={white} width='80' height='140' opacity={1}>
+                            <TextSignUpTitle>Complete seu Cadastro</TextSignUpTitle>
+                            {
+                                props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
+                            }
+                            <View>
+                                <ViewContainerRow>
+                                    <CheckBox
+                                        title='Cliente'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checkedColor={purple}
+                                        containerStyle={styleSheets.containerCheck}
+                                        checked={form.userType === 1}
+                                        onPress={() => {
+                                            setForm({
+                                                ...form,
+                                                'userType': 1
+                                            })
+                                        }} />
+                                    <CheckBox
+                                        title='Profissional'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checkedColor={purple}
+                                        containerStyle={styleSheets.containerCheck}
+                                        checked={form.userType !== 1}
+                                        onPress={() => {
+                                            setForm({
+                                                ...form,
+                                                'userType': 2
+                                            })
+                                        }} />
+                                </ViewContainerRow>
+
+                                <TextInputJobs
+                                    value={form.phone}
+                                    name='phone'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Telefone'
+                                    textContentType='telephoneNumber'
+                                    keyboardType='phone-pad'
+                                    invalidValue={invalidField === 'phone'} />
+
+                                <TextInputJobs
+                                    name='document'
+                                    onChangeText={handleOnChange}
+                                    placeholder='CPF'
+                                    keyboardType='number-pad'
+                                    invalidValue={invalidField === 'document'} />
+
+                                <TextInputJobs
+                                    value={form.date_birth}
+                                    name='date_birth'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Data de Nascimento'
+                                    keyboardType='number-pad'
+                                    invalidValue={invalidField === 'date_birth'} />
+
+                                <PickerJobs
+                                    selectedValue={form.gender}
+                                    onValueChange={(itemValue, itemIndex) => {
                                         setForm({
                                             ...form,
-                                            'userType': 1
+                                            'gender': itemValue
                                         })
-                                    }} />
-                                <CheckBox
-                                    title='Profissional'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checkedColor={purple}
-                                    containerStyle={styleSheets.containerCheck}
-                                    checked={form.userType !== 1}
-                                    onPress={() => {
-                                        setForm({
-                                            ...form,
-                                            'userType': 2
-                                        })
-                                    }} />
-                            </ViewContainerRow>
+                                    }}
+                                    itemsList={genderList} />
 
-                            <TextInputJobs
-                                value={form.phone}
-                                name='phone'
-                                onChangeText={handleOnChange}
-                                placeholder='Telefone'
-                                textContentType='telephoneNumber'
-                                keyboardType='phone-pad'
-                                invalidValue={invalidField === 'phone'} />
-
-                            <TextInputJobs
-                                name='document'
-                                onChangeText={handleOnChange}
-                                placeholder='CPF'
-                                keyboardType='number-pad'
-                                invalidValue={invalidField === 'document'} />
-
-                            <TextInputJobs
-                                value={form.date_birth}
-                                name='date_birth'
-                                onChangeText={handleOnChange}
-                                placeholder='Data de Nascimento'
-                                keyboardType='number-pad'
-                                invalidValue={invalidField === 'date_birth'} />
-
-                            <PickerJobs
-                                selectedValue={form.gender}
-                                onValueChange={(itemValue, itemIndex) => {
-                                    setForm({
-                                        ...form,
-                                        'gender': itemValue
-                                    })
-                                }}
-                                itemsList={genderList} />
-
-                            <ViewContainerButton>
-                                <ButtonPurple onPress={handleClickSignUp}>Continuar</ButtonPurple>
-                            </ViewContainerButton>
-                        </View>
-                    </CardJobs>
-                )}
-            </ViewContainer>
-        </ScrollViewContainerForm>
+                                <ViewContainerButton>
+                                    <ButtonPurple onPress={handleClickSignUp}>Continuar</ButtonPurple>
+                                </ViewContainerButton>
+                            </View>
+                        </CardJobs>
+                    )}
+                </ViewContainer>
+            </ScrollViewContainerForm>
+        </KeyboardAvoidingView>
     )
 }
 

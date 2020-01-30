@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple } from '../common/util/colors'
+import { purple, mediumgray } from '../common/util/colors'
 
 export const TitleList = styled.Text`
     color: ${purple};
@@ -11,6 +11,23 @@ export const TitleList = styled.Text`
 `
 export const ContainerList = styled.ScrollView.attrs({
     horizontal: false,
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
     showHorizontalScrollIndicator: false
 })``
+
+export const ViewTitleEmpty = styled.View`
+    height: 10;
+    background-color: ${mediumgray};
+    width: 200;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+`
+export const ViewSubTitleEmpty = styled.View`
+    height: 10;
+    background-color: ${mediumgray};
+    width: 120;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+`

@@ -1,9 +1,9 @@
 import styled from 'styled-components/native'
-import { lightgray, purple } from '../../components/common/util/colors'
+import { lightgray, purple, white } from '../../components/common/util/colors'
 
 export const ContainerCategorias = styled.View`
     flex: 1;
-    background-color: ${lightgray};
+    background-color: ${white};
     align-content: flex-start;
     padding: 0;
     margin: 0;

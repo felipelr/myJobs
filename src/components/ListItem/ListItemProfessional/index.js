@@ -14,8 +14,8 @@ import ActionCreators from '../../../store/actionCreators'
 function ListItemProfessional(props) {
     const { profissional } = props
 
-    const onPress = (profissionalItem) => {  
-        props.professionalSelected(profissionalItem) 
+    const onPress = (profissionalItem) => {
+        props.professionalSelected(profissionalItem)
         props.itemOnPress()
     }
 
@@ -23,14 +23,14 @@ function ListItemProfessional(props) {
         <ListItem
             itemOnPress={() => onPress(profissional)}
             leftContent={
-                <Avatar 
+                <Avatar
                     containerStyle={{ alignSelf: 'center' }}
-                    size={60}
+                    size={55}
                     source={{ uri: profissional.photo, }}
                 />
             }
             centerContent={
-                <View style={{marginLeft:10}}>
+                <View style={{ marginLeft: 10 }}>
                     <TitleProfessional>{profissional.name}</TitleProfessional>
                     <InfoProfessional>{profissional.info}</InfoProfessional>
                     <RatingJobs avaliacao={parseFloat(profissional.rating)} qtdeAvaliacoes={profissional.amount_ratings} />
@@ -48,15 +48,15 @@ function ListItemProfessional(props) {
     )
 }
 
-const mapStateToProps = (state, ownProps) => {  
+const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
-        isAuth: state.auth.isAuth, 
+        isAuth: state.auth.isAuth,
         ownProps: ownProps
-    } 
+    }
 };
 
-const mapDispatchToProps = dispatch => { 
+const mapDispatchToProps = dispatch => {
     return {
         professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional))
     }

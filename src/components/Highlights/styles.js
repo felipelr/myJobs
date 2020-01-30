@@ -4,8 +4,8 @@ import { purple, white } from '../common/util/colors'
 export const ContainerContent = styled.View`
     padding: 5px;
     background-color: ${white}; 
-    margin-top: 2px; 
-    height: 150px; 
+    margin-top: 2px;
+    height: 150; 
 `
 export const Title = styled.Text`
     font-size: 14px;

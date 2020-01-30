@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black, green, gold } from '../../common/util/colors'
+import { black, green, gold, lightgray } from '../../common/util/colors'
 import {StyleSheet} from 'react-native'
 
 export const TitleService = styled.Text`
@@ -16,9 +16,9 @@ export const InfoService = styled.Text`
     font-size: 10px;
     font-family: 'SF-Pro-Text-Regular';
     flex: 1;
-    margin-left: 10px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 15px;
 `
 
 export const Services = styled.Text`
@@ -36,6 +36,6 @@ export const styles = StyleSheet.create({
         justifyContent:'space-between'
     },
     overlayContainerStyle:{
-        backgroundColor: green
+        backgroundColor: lightgray
     }
 })

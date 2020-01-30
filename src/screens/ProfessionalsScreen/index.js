@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { KeyboardAvoidingView, Platform, ActivityIndicator, View, BackHandler } from 'react-native'
 import { connect } from 'react-redux';
 
@@ -41,7 +41,7 @@ function ProfessionalsScreen(props) {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back={back} filter={true} />
+            <HeaderJobs back={back} title='Profissionais'/>
             <ContainerProfessionals>
                 <Highlights titulo={'Destaques do mês'} highlights={highlights} />
                 <ButtonContainer>
@@ -52,21 +52,18 @@ function ProfessionalsScreen(props) {
                 </ButtonContainer>
                 <ContainerList>
                     {!getProfessionals || (getProfessionals && getProfessionals.loading) ? (
-                        <View style={{ alignSelf: 'center' }}>
-                            <ActivityIndicator size='large' color={purple} />
-                            <TextLoading>Loading...</TextLoading>
-                        </View>
+                        <List itens={[1, 2, 3]} />
                     ) :
                         getProfessionals && getProfessionals.data.professionals &&
                         <List
                             tipo='professional'
                             titulo='Profissionais/Empresas'
-                            itens={getProfessionals.data.professionals} 
+                            itens={getProfessionals.data.professionals}
                             itemOnPress={() => props.navigation.navigate('ProfessionalChat')} />
                     }
                 </ContainerList>
             </ContainerProfessionals>
-            <Footer                       
+            <Footer
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 chatOnPress={() => props.navigation.navigate('ClientListChat')} />
@@ -88,9 +85,9 @@ const mapStateToProps = (state, ownProps) => {
     }
 };
 
-const mapDispatchToProps = dispatch => { 
+const mapDispatchToProps = dispatch => {
     return {
-        
+
     }
 }
 

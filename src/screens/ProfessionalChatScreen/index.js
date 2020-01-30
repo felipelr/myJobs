@@ -390,10 +390,7 @@ function ProfessionalChatScreen(props) {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back={() => handleBackPress()} title='Finos e Cheirosos' />
-            <ViewContainerInfo>
-                <TextInfo>{props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name}</TextInfo>
-            </ViewContainerInfo>
+            <HeaderJobs back={() => handleBackPress()} title={props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name} />
             <ViewContainerChat>
                 <ChatMessages messages={mensagens} userType={props.userType} />
             </ViewContainerChat>

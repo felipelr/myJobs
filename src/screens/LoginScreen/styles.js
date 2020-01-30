@@ -2,9 +2,10 @@ import styled from 'styled-components/native'
 import { purple, white } from '../../components/common/util/colors'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
-export const Container = styled.ScrollView`
-    flex: 1;
-`
+export const Container = styled.ScrollView.attrs({
+    showsHorizontalScrollIndicator: false,
+    showsVerticalScrollIndicator: false,
+})``
 
 export const ContainerContent = styled.View`
     width: 100%;

@@ -1,5 +1,5 @@
 import styled from 'styled-components/native'
-import { white, purple } from '../../components/common/util/colors'
+import { white, purple, black } from '../../components/common/util/colors'
 
 export const ContainerProfessionals = styled.View`
     flex: 1;
@@ -28,7 +28,7 @@ export const ButtonContainer = styled.View`
 
 export const ButtonOrcamento = styled.TouchableOpacity`
     background-color: ${white}; 
-    height: 60px;
+    height: 65;
     margin-top:5px;
     margin-bottom:5px;
     align-items:center;
@@ -37,13 +37,12 @@ export const ButtonOrcamento = styled.TouchableOpacity`
 `
 
 export const TextOrcamento = styled.Text`
-    color: ${purple};
+    color: ${black};
     margin-left:10px;
     margin-right:10px;
     font-size: 14px; 
     text-align: center;
     font-family: 'SF-Pro-Text-Regular';
-    font-weight: bold; 
 `
 export const Title = styled.Text`
     font-size: 14px;

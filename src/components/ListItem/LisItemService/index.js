@@ -1,5 +1,5 @@
 import React from 'react'
-import { View,Text } from 'react-native'
+import { View, Text } from 'react-native'
 import ListItem from '../index'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
@@ -12,8 +12,8 @@ import ActionCreators from '../../../store/actionCreators'
 function ListItemService(props) {
     const { servico } = props
 
-    const onPress = (servicoItem) => {  
-        props.serviceSelected(servicoItem) 
+    const onPress = (servicoItem) => {
+        props.serviceSelected(servicoItem)
         props.itemOnPress()
     }
 
@@ -24,9 +24,10 @@ function ListItemService(props) {
                 <Avatar
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={styles.overlayContainerStyle}
-                    containerStyle={{ alignSelf: 'center' }} 
-                    size={60}
-                    title={servico.title.substring(0,1)}
+                    containerStyle={{ alignSelf: 'center' }}
+                    size={55}
+                    title={servico.title.substring(0, 1)}
+                    titleStyle={{ color: purple }}
                 />
             }
             centerContent={
@@ -34,7 +35,7 @@ function ListItemService(props) {
                     <TitleService>{servico.title}</TitleService>
                     <InfoService>{servico.description}</InfoService>
                     <Services>
-                    {servico.Profissionais}{servico.Profissionais != 1 ? ' profissionais registrados': ' profissional registrado'}   
+                        {servico.Profissionais}{servico.Profissionais != 1 ? ' profissionais registrados' : ' profissional registrado'}
                     </Services>
                 </View>
             }
@@ -50,15 +51,15 @@ function ListItemService(props) {
     )
 }
 
-const mapStateToProps = (state, ownProps) => {  
+const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
-        isAuth: state.auth.isAuth, 
+        isAuth: state.auth.isAuth,
         ownProps: ownProps
-    } 
+    }
 };
 
-const mapDispatchToProps = dispatch => { 
+const mapDispatchToProps = dispatch => {
     return {
         serviceSelected: (service) => dispatch(ActionCreators.serviceSelected(service))
     }

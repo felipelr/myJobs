@@ -64,7 +64,7 @@ function ServicesScreen(props) {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back={back} title='Buscar Serviço' chat />
+            <HeaderJobs back={back} title='Serviços' />
             <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} />
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
@@ -82,20 +82,18 @@ function ServicesScreen(props) {
                 />
             </ContainerSearch>
             <ContainerList>
+                {services.loading &&
+                    <List itens={[1, 2, 3]} />
+                }
                 {!services.loading &&
                     <List
                         tipo='service'
                         titulo={("Serviços de '" + props.selectedSubcategory.description + "'")}
                         itens={servicesSubcategory}
-                        itemOnPress={() => props.navigation.navigate('Professionals')} />}
+                        itemOnPress={() => props.navigation.navigate('Professionals')} />
+                }
             </ContainerList>
-            {services.loading &&
-                <View style={{ alignSelf: 'center' }}>
-                    <ActivityIndicator size='large' color={purple} />
-                    <TextLoading>Loading...</TextLoading>
-                </View>
-            }
-            <Footer                       
+            <Footer
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 chatOnPress={() => props.navigation.navigate('ClientListChat')} />

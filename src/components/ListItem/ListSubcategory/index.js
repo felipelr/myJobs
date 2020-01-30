@@ -25,8 +25,8 @@ function ListSubcategory(props) {
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={styles.overlayContainerStyle}
                     containerStyle={{ alignSelf: 'center' }}
-                    icon={{ name: subcategory.icon, type: 'material-icons' }}
-                    size={60}
+                    icon={{ name: subcategory.icon, type: 'material-icons', color: purple }}
+                    size={55}
                 />
             }
             centerContent={

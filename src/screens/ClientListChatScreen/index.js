@@ -51,7 +51,7 @@ function ClientListChatScreen(props) {
     return (
         <React.Fragment>
             <HeaderJobs
-                title={'Chat'}
+                title={'Conversas'}
                 back={() => props.navigation.goBack()} />
             <ScrollViewContainer>
                 <ViewContainer>

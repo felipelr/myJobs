@@ -70,10 +70,7 @@ function CategoriesSearchScreen(props) {
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
                         subcategories.loading ? (
-                            <View style={{ alignSelf: 'center' }}>
-                                <ActivityIndicator size='large' color={purple} />
-                                <TextLoading>Loading...</TextLoading>
-                            </View>
+                            <List itens={[1, 2, 3]} />
                         ) :
                             (
                                 props.selectedCategorie != null &&

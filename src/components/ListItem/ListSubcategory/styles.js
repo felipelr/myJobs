@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { black, green} from '../../common/util/colors'
+import { black, green, lightgray} from '../../common/util/colors'
 import {StyleSheet} from 'react-native'
 
 export const TitleSubcategory = styled.Text`
@@ -16,17 +16,17 @@ export const InfoSubcategory = styled.Text`
     font-size: 12px;
     font-family: 'SF-Pro-Text-Regular';
     flex: 1;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     padding-left: 15px;
 `
 
 export const styles = StyleSheet.create({
     containerStyle:{
         alignSelf: 'center',
-        justifyContent:'space-between'
+        justifyContent:'space-between',
     },
     overlayContainerStyle:{
-        backgroundColor: green
+        backgroundColor: lightgray
     }
 })

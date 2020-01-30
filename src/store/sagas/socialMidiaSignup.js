@@ -48,6 +48,7 @@ function* signup(action) {
                 latitude: action.user.latitude,
                 longitude: action.user.longitude,
                 google_token: action.user.google_token,
+                photo: action.user.photo,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }

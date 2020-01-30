@@ -1,9 +1,13 @@
 import React from 'react'
-import { TitleList, ContainerList } from './styles'
+import { Avatar } from 'react-native-elements'
 import ListItem from '../ListItem/index'
 import ListItemProfessional from '../ListItem/ListItemProfessional/index'
 import ListItemService from '../ListItem/LisItemService'
 import ListSubcategory from '../ListItem/ListSubcategory'
+
+import { TitleList, ContainerList, ViewTitleEmpty, ViewSubTitleEmpty } from './styles'
+
+import { purple } from '../common/util/colors'
 
 export default function List(props) {
     const { titulo } = props
@@ -17,7 +21,7 @@ export default function List(props) {
                 {
                     itens &&
                     itens.map((item, index) => {
-                        if(tipo === 'professional'){ 
+                        if (tipo === 'professional') {
                             return <ListItemProfessional key={index} profissional={item} itemOnPress={props.itemOnPress} />
                         }
                         else if (tipo === 'service') {
@@ -26,7 +30,22 @@ export default function List(props) {
                         else if (tipo === 'subcategory') {
                             return <ListSubcategory key={index} subcategory={item} itemOnPress={props.itemOnPress} />
                         }
-                        return <ListItem key={index} />
+                        return <ListItem
+                            leftContent={
+                                <Avatar
+                                    size={55}
+                                    title={''}
+                                    titleStyle={{ color: purple }}
+                                />
+                            }
+                            centerContent={
+                                <React.Fragment>
+                                    <ViewTitleEmpty />
+                                    <ViewSubTitleEmpty />
+                                    <ViewSubTitleEmpty />
+                                </React.Fragment>
+                            }
+                        />
                     })
                 }
             </ContainerList>

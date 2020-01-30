@@ -1,10 +1,7 @@
-import React from 'react';
-import { connect } from 'react-redux'
-import { ActivityIndicator, View } from 'react-native'
+import React from 'react'
 
-import { ContainerContent, ContainerItems, TextLoading } from './styles'
+import { ContainerContent, ContainerItems } from './styles'
 import CategorieItem from '../CategorieItem/index'
-import { purple } from '../../components/common/util/colors'
 
 const ArrayVazio = () => {
     let rows = []

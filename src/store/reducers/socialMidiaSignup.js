@@ -22,7 +22,11 @@ export const socialMidiaSignupInit = (state = INITIAL_STATE, action) => {
         isSignup: false,
         newUser: {},
         error: false,
-        errorMessage: ''
+        errorMessage: '',
+        socialMidiaId: '',
+        socialMidiaType: '',
+        accVerified: false,
+        accVerified: -1
     }
 }
 

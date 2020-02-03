@@ -61,12 +61,12 @@ function* login(action) {
         const userType = action.userType
 
         if (userType === 1 && !client) {
-            yield put(ActionCreator.loginError('Você não possui um cadastro de Cliente'))
+            yield put(ActionCreator.loginError('new_as_client'))
             return
         }
 
         if (userType === 2 && !professional) {
-            yield put(ActionCreator.loginError('Você não possui um cadastro de Profissional'))
+            yield put(ActionCreator.loginError('new_as_professional'))
             return
         }
 

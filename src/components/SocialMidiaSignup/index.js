@@ -39,7 +39,7 @@ function SocialMidiaSignup(props) {
         }
     ])
     const [form, setForm] = useState({
-        userType: props.socialMidiaSignup.user.professional == null ? 1 : 2,
+        userType: props.auth.userType === 'professional' ? 2 : 1,
         phone: '',
         document: '',
         date_birth: '',
@@ -88,7 +88,9 @@ function SocialMidiaSignup(props) {
             props.ownProps.onPressLogin()
         }
         else if (props.auth.error) {
-            props.ownProps.onPressLogin()
+            if (props.auth.errorMessage !== 'new_as_client' && props.auth.errorMessage !== 'new_as_professional') {
+                props.ownProps.onPressLogin()
+            }
         }
     }, [props.auth.isAuth, props.auth.error])
 
@@ -159,10 +161,12 @@ function SocialMidiaSignup(props) {
         let date = form.date_birth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
 
+        const name = props.socialMidiaSignup.user.name ? props.socialMidiaSignup.user.name : props.socialMidiaSignup.user.client.name ? props.socialMidiaSignup.user.client.name : props.socialMidiaSignup.user.professional.name
+
         if (props.socialMidiaSignup.user.facebook_token) {
             let user = {
                 ...form,
-                name: props.socialMidiaSignup.user.name,
+                name: name,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.facebook_token,
                 photo: '',
@@ -175,7 +179,7 @@ function SocialMidiaSignup(props) {
         else if (props.socialMidiaSignup.user.google_token) {
             let user = {
                 ...form,
-                name: props.socialMidiaSignup.user.name,
+                name: name,
                 email: props.socialMidiaSignup.user.email,
                 password: props.socialMidiaSignup.user.google_token,
                 photo: '',

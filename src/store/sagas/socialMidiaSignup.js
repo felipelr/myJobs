@@ -17,6 +17,7 @@ setUserData = async (userData) => {
 function* signup(action) {
     try {
         let signup = null
+        console.log('newUser => ', action.user)
         if (action.user.facebook_token) {
             signup = yield axios.post(`${urlMyJobsAPI}/users/add.json`, {
                 userType: action.user.userType,

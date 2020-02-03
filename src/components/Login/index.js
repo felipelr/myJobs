@@ -40,6 +40,14 @@ function Login(props) {
         }
     }, [props.auth.isAuth])
 
+    useEffect(() => {
+        if (form.userType === 1)
+            props.authSetUserType('client')
+        else
+            props.authSetUserType('professional')
+
+    }, [form.userType])
+
     const handleClickLogin = () => {
         props.login(form.email, form.password, form.userType)
     }
@@ -128,7 +136,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType))
+        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType)),
+        authSetUserType: (userType) => dispatch(ActionCreators.authSetUserType(userType)),
     }
 }
 

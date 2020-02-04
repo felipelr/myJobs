@@ -6,13 +6,12 @@ export const LoginTitle = styled.Text`
     font-size: 24px;
     color: ${purple};
     text-align: center;
-    padding-bottom: 16px;
+    padding-bottom: 6px;
     font-family: 'SF-Pro-Text-Regular';
 `
 
 export const ViewContainerFields = styled.View`
     justify-content: space-between;
-    margin-top: 8px;
 `
 
 export const LoginButtonContainer = styled.View`

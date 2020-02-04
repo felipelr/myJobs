@@ -1,11 +1,11 @@
 import React from 'react'
-import { ContainerGray, ContainerPurple } from './styles'
+import { ContainerGray, ContainerPurple, Container } from './styles'
 
 export default function Background(props) {
     return (
-        <React.Fragment>
+        <Container>
             <ContainerPurple />
             <ContainerGray />
-        </React.Fragment>
+        </Container>
     )
 }

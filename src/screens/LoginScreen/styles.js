@@ -5,13 +5,15 @@ import { heightPercentageToDP } from '../../components/common/util/dimensions'
 export const Container = styled.ScrollView.attrs({
     showsHorizontalScrollIndicator: false,
     showsVerticalScrollIndicator: false,
+    contentContainer: {
+        flexGrow: 1
+    }
 })``
 
 export const ContainerContent = styled.View`
     width: 100%;
     height: 100%;
     position: absolute;
-    flex: 1;
 `
 
 export const SocialMidiaText = styled.Text`

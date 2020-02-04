@@ -39,36 +39,34 @@ function LoginScreen(props) {
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <Container contentContainerStyle={{ flexGrow: 1 }}>
+        <KeyboardAvoidingView style={{ height: '100%', width: '100%' }} behavior={behavior}>
+            <Background />
+            <Container>
                 <View style={{ flex: 1 }}>
-                    <Background />
-                    <ContainerContent>
-                        <TextLogoTipo>Logo</TextLogoTipo>
-                        {
-                            showComponent === 'login' &&
-                            <ViewContainerLogin>
-                                <Login navigation={props.navigation} onPressSignup={showSignup} />
-                                <SocialMidiaText>Entrar com</SocialMidiaText>
-                                <SocialMidia goToSocialMidiaSignup={() => setShowComponent('socialMidiaSignup')} />
-                            </ViewContainerLogin>
-                        }
-                        {
-                            showComponent === 'signup' &&
-                            <ViewContainerSignup>
-                                <SignUp navigation={props.navigation} onPressLogin={() => setShowComponent('login')} />
-                            </ViewContainerSignup>
-                        }
-                        {
-                            showComponent === 'socialMidiaSignup' &&
-                            <ViewContainerSignup>
-                                <SocialMidiaSignup navigation={props.navigation} onPressLogin={() => setShowComponent('login')} />
-                            </ViewContainerSignup>
-                        }
-                    </ContainerContent>
-                    <CopyRight />
+                    <TextLogoTipo>Logo</TextLogoTipo>
+                    {
+                        showComponent === 'login' &&
+                        <ViewContainerLogin>
+                            <Login navigation={props.navigation} onPressSignup={showSignup} />
+                            <SocialMidiaText>Entrar com</SocialMidiaText>
+                            <SocialMidia goToSocialMidiaSignup={() => setShowComponent('socialMidiaSignup')} />
+                        </ViewContainerLogin>
+                    }
+                    {
+                        showComponent === 'signup' &&
+                        <ViewContainerSignup>
+                            <SignUp navigation={props.navigation} onPressLogin={() => setShowComponent('login')} />
+                        </ViewContainerSignup>
+                    }
+                    {
+                        showComponent === 'socialMidiaSignup' &&
+                        <ViewContainerSignup>
+                            <SocialMidiaSignup navigation={props.navigation} onPressLogin={() => setShowComponent('login')} />
+                        </ViewContainerSignup>
+                    }
                 </View>
             </Container>
+            <CopyRight />
         </KeyboardAvoidingView>
     )
 }

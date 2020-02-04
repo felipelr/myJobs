@@ -15,7 +15,7 @@ export const ContainerItem = styled.TouchableOpacity`
     padding: 8px 0px 4px 8px;
     margin-right: 10px;
     flex: 1;
-    width: 300px;
+    width: 300;
     elevation: 1;
 `
 
@@ -30,7 +30,7 @@ export const BodyItem = styled.View`
 `
 
 export const TitleItem = styled.Text`
-    font-size: 16px;
+    font-size: 14px;
     color: ${white};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;

@@ -13,7 +13,7 @@ const HighlightsBuy = (props) => {
                 <Avatar
                     containerStyle={styles.containerStyle}
                     rounded
-                    size={55}
+                    size='large'
                     icon={{ name: 'public', type: 'material-icons' }} />
 
                 <ContentInfo>

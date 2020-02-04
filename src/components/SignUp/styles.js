@@ -11,7 +11,7 @@ export const TextSignUpTitle = styled.Text`
     font-size: 24px;
     color: ${purple};
     text-align: center;
-    padding-bottom: 25px;
+    padding-bottom: 5px;
     font-family: 'SF-Pro-Text-Regular';
 `
 

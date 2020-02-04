@@ -16,7 +16,7 @@ export default function ItemHighlight(props) {
                     <Avatar
                         containerStyle={styles.containerStyle}
                         rounded
-                        size={55}
+                        size='large'
                         source={{
                             uri: profissional.imagem,
                         }} />
@@ -25,7 +25,7 @@ export default function ItemHighlight(props) {
                     <Avatar
                         containerStyle={styles.containerStyle}
                         rounded
-                        size={55} />
+                        size='large' />
                 }
 
                 <ContentInfo>

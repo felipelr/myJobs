@@ -24,7 +24,7 @@ const CategorieItem = (props) => {
                     overlayContainerStyle={{ backgroundColor: categoria ? purple : disabled }}
                     rounded
                     icon={{ name: categoria.icon, type: 'material-icons' }}
-                    size={80}
+                    size='large'
                     onPress={categoria ? handleClickCategoria : null} />
             }
             {!categoria &&
@@ -32,7 +32,7 @@ const CategorieItem = (props) => {
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={{ backgroundColor: categoria ? purple : disabled }}
                     rounded 
-                    size={80}
+                    size='large'
                     onPress={categoria ? handleClickCategoria : null} />
             }
         </ContainerBody>

@@ -5,7 +5,7 @@ export const ContainerContent = styled.View`
     padding: 5px;
     background-color: ${white}; 
     margin-top: 2px;
-    height: 150; 
+    height: 145; 
 `
 export const Title = styled.Text`
     font-size: 14px;
@@ -26,6 +26,6 @@ export const TextLoading = styled.Text`
 
 export const ContainerItems = styled.ScrollView.attrs({
     horizontal: true, 
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
-    showHorizontalScrollIndicator: false
+    showsHorizontalScrollIndicator: false, 
+    showsVerticalScrollIndicator: false
 })``

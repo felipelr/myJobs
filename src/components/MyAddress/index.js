@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View, TouchableOpacity, Alert } from 'react-native'
+import { View, TouchableOpacity, Alert, Animated, Dimensions } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
@@ -23,6 +23,8 @@ import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
 function MyAddress(props) {
+    const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
+    const [slideRight] = useState(new Animated.ValueXY())
     const [alterar, setAlterar] = useState(false)
     const [newRequest, setNewRequest] = useState(false)
     const [titleHeader, setTitleHeader] = useState('')
@@ -91,6 +93,7 @@ function MyAddress(props) {
         setTitleHeader('Novo Endereço')
         setShowForm(true)
         props.ownProps.changeVisiblityPerfilHeader(false)
+        inAnimation()
     }
 
     const handleOnChange = (name, text) => {
@@ -122,6 +125,7 @@ function MyAddress(props) {
     const gotoAddressList = () => {
         setShowForm(false)
         props.ownProps.changeVisiblityPerfilHeader(true)
+        outAnimation()
     }
 
     const handleClickConfimar = () => {
@@ -152,7 +156,7 @@ function MyAddress(props) {
                 setSelectedState(clientAddress[0].city.state.id)
                 setShowForm(true)
                 props.ownProps.changeVisiblityPerfilHeader(false)
-                console.log(clientAddress)
+                inAnimation()
             }
         }
         else {
@@ -164,9 +168,33 @@ function MyAddress(props) {
                 setSelectedState(professionalAddress[0].city.state.id)
                 setShowForm(true)
                 props.ownProps.changeVisiblityPerfilHeader(false)
-                console.log(professionalAddress)
+                inAnimation()
             }
         }
+    }
+
+    const inAnimation = () => {
+        Animated.spring(slideLeft, {
+            toValue: { x: 0, y: 0 },
+            delay: 0
+        }).start()
+
+        Animated.spring(slideRight, {
+            toValue: { x: (Dimensions.get('screen').width * -1), y: 0 },
+            delay: 0
+        }).start()
+    }
+
+    const outAnimation = () => {
+        Animated.spring(slideLeft, {
+            toValue: { x: Dimensions.get('screen').width, y: 0 },
+            delay: 0
+        }).start()
+
+        Animated.spring(slideRight, {
+            toValue: { x: 0, y: 0 },
+            delay: 0
+        }).start()
     }
 
     const handleDeleteClick = (id) => {
@@ -212,101 +240,104 @@ function MyAddress(props) {
                         {props.isUpdating && <Loading size='large' color={purple} height='330' error={props.errorUpdating} />}
 
                         {(!props.isUpdating && !showForm) && (
-                            <ContainerLista>
-                                {
-                                    (props.userType === 'client' && props.client.clientsAddresses) && props.client.clientsAddresses.map((address) => (
-                                        <ListItem
-                                            key={address.id}
-                                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                            title={address.street + ', ' + address.street_number}
-                                            rightIcon={<Icon name="chevron-right" size={30} color={purple} />}
-                                            leftElement={
-                                                <TouchableOpacity onPress={() => handleDeleteClick(address.id)}>
-                                                    <Icon name="delete" size={30} color={purple} />
-                                                </TouchableOpacity>
-                                            }
-                                            onPress={() => handleAddressClick(address.id)}
-                                        />
-                                    ))
-                                }
-                                {
-                                    (props.userType !== 'client' && props.professional.professionalsAddresses) && props.professional.professionalsAddresses.map((address) => (
-                                        <ListItem
-                                            key={address.id}
-                                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                            title={address.street + ', ' + address.street_number}
-                                            rightIcon={<Icon name="chevron-right" size={30} color={purple} />}
-                                            leftElement={
-                                                <TouchableOpacity onPress={() => handleDeleteClick(address.id)}>
-                                                    <Icon name="delete" size={30} color={purple} />
-                                                </TouchableOpacity>
-                                            }
-                                            onPress={() => handleAddressClick(address.id)}
-                                        />
-                                    ))
-                                }
-                                <ListItem
-                                    key={0}
-                                    containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                    title={'Novo Endereço'}
-                                    rightIcon={<Icon name="add" size={30} color={purple} />}
-                                    onPress={() => handleNewAddressClick()}
-                                />
-                            </ContainerLista>
+                            <Animated.View style={slideRight.getLayout()}>
+                                <ContainerLista>
+                                    {
+                                        (props.userType === 'client' && props.client.clientsAddresses) && props.client.clientsAddresses.map((address) => (
+                                            <ListItem
+                                                key={address.id}
+                                                containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                title={address.street + ', ' + address.street_number}
+                                                rightIcon={<Icon name="chevron-right" size={30} color={purple} />}
+                                                leftElement={
+                                                    <TouchableOpacity onPress={() => handleDeleteClick(address.id)}>
+                                                        <Icon name="delete" size={30} color={purple} />
+                                                    </TouchableOpacity>
+                                                }
+                                                onPress={() => handleAddressClick(address.id)}
+                                            />
+                                        ))
+                                    }
+                                    {
+                                        (props.userType !== 'client' && props.professional.professionalsAddresses) && props.professional.professionalsAddresses.map((address) => (
+                                            <ListItem
+                                                key={address.id}
+                                                containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                title={address.street + ', ' + address.street_number}
+                                                rightIcon={<Icon name="chevron-right" size={30} color={purple} />}
+                                                leftElement={
+                                                    <TouchableOpacity onPress={() => handleDeleteClick(address.id)}>
+                                                        <Icon name="delete" size={30} color={purple} />
+                                                    </TouchableOpacity>
+                                                }
+                                                onPress={() => handleAddressClick(address.id)}
+                                            />
+                                        ))
+                                    }
+                                    <ListItem
+                                        key={0}
+                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                        title={'Novo Endereço'}
+                                        rightIcon={<Icon name="add" size={30} color={purple} />}
+                                        onPress={() => handleNewAddressClick()}
+                                    />
+                                </ContainerLista>
+                            </Animated.View>
                         )}
 
                         {(!props.isUpdating && showForm) && (
-                            <ContainerLista>
-                                {props.errorUpdating && <TextError>{props.errorMessage}</TextError>}
+                            <Animated.View style={slideLeft.getLayout()}>
+                                <ContainerLista>
+                                    {props.errorUpdating && <TextError>{props.errorMessage}</TextError>}
 
-                                <TextInputJobs
-                                    value={form.street}
-                                    name='street'
-                                    onChangeText={handleOnChange}
-                                    placeholder='Rua, Av, etc'
-                                    invalidValue={invalidField === 'street'} />
+                                    <TextInputJobs
+                                        value={form.street}
+                                        name='street'
+                                        onChangeText={handleOnChange}
+                                        placeholder='Rua, Av, etc'
+                                        invalidValue={invalidField === 'street'} />
 
-                                <TextInputJobs
-                                    value={form.street_number}
-                                    name='street_number'
-                                    onChangeText={handleOnChange}
-                                    placeholder='Número'
-                                    keyboardType='phone-pad'
-                                    invalidValue={invalidField === 'street_number'} />
+                                    <TextInputJobs
+                                        value={form.street_number}
+                                        name='street_number'
+                                        onChangeText={handleOnChange}
+                                        placeholder='Número'
+                                        keyboardType='phone-pad'
+                                        invalidValue={invalidField === 'street_number'} />
 
-                                <TextInputJobs
-                                    value={form.neighborhood}
-                                    name='neighborhood'
-                                    onChangeText={handleOnChange}
-                                    placeholder='Bairro'
-                                    invalidValue={invalidField === 'neighborhood'} />
+                                    <TextInputJobs
+                                        value={form.neighborhood}
+                                        name='neighborhood'
+                                        onChangeText={handleOnChange}
+                                        placeholder='Bairro'
+                                        invalidValue={invalidField === 'neighborhood'} />
 
-                                <PickerJobs
-                                    selectedValue={selectedState}
-                                    onValueChange={(state, itemIndex) => {
-                                        if (state) {
-                                            setSelectedState(state)
-                                        }
-                                    }}
-                                    itemsList={getStates.data.states ? getStates.data.states : []} />
+                                    <PickerJobs
+                                        selectedValue={selectedState}
+                                        onValueChange={(state, itemIndex) => {
+                                            if (state) {
+                                                setSelectedState(state)
+                                            }
+                                        }}
+                                        itemsList={getStates.data.states ? getStates.data.states : []} />
 
-                                <PickerJobs
-                                    selectedValue={form.city_id}
-                                    onValueChange={(city, itemIndex) => {
-                                        if (city) {
-                                            setForm({
-                                                ...form,
-                                                city_id: city
-                                            })
-                                        }
-                                    }}
-                                    itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
+                                    <PickerJobs
+                                        selectedValue={form.city_id}
+                                        onValueChange={(city, itemIndex) => {
+                                            if (city) {
+                                                setForm({
+                                                    ...form,
+                                                    city_id: city
+                                                })
+                                            }
+                                        }}
+                                        itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
 
-                                <ViewContainerButton>
-                                    <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
-                                </ViewContainerButton>
-
-                            </ContainerLista>
+                                    <ViewContainerButton>
+                                        <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                                    </ViewContainerButton>
+                                </ContainerLista>
+                            </Animated.View>
                         )}
 
                     </View>

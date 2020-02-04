@@ -12,13 +12,13 @@ const ArrayVazio = () => {
 }
 
 const Categories = (props) => {  
-    let { categories } = props.data 
+    const { itens } = props 
     return (
-        categories != null ?
+        itens != null ?
             <ContainerContent>
                 <ContainerItems>
                     {
-                        categories.map((item) => (
+                        itens.map((item) => (
                             <CategorieItem key={item.id} categoria={item} />
                         ))
                     }

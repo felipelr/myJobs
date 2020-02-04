@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Platform, BackHandler, ActivityIndicator } from 'react-native';
-import { ContainerCategorias, TextLoading } from './styles';
+import { View, Text, Platform, BackHandler } from 'react-native';
+import { ContainerCategorias } from './styles';
 import { connect } from 'react-redux';
 
 import ActionCreators from '../../store/actionCreators';
@@ -14,9 +14,12 @@ import { purple } from '../../components/common/util/colors';
 import useGet from '../../services/restServices';
 
 function CategoriesSearchScreen(props) {
+    const [categories, setCategories] = useState([])
+    const [subCategories, setSubCategories] = useState([])
+    const [filterText, setFilterText] = useState('')
 
-    const categories = useGet('/categories/index.json', props.token); //Carrega as categorias do sistema
-    const subcategories = useGet('', props.token); //Passa o parametro URL como vazio para que não seja feita nenhuma requisição porém gera os Hooks normalmente
+    const getCategories = useGet('/categories/index.json', props.token); //Carrega as categorias do sistema
+    const getSubcategories = useGet('', props.token); //Passa o parametro URL como vazio para que não seja feita nenhuma requisição porém gera os Hooks normalmente
     const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
@@ -27,22 +30,34 @@ function CategoriesSearchScreen(props) {
         }
 
         return () => {
-            backHandler.remove();
+            backHandler.remove()
         }
     }, [])
 
     useEffect(() => {
-        if (categories.data && categories.data.categories) {
-            props.categoriaSelected(categories.data.categories[0]);
+        if (getCategories.data && getCategories.data.categories) {
+            setCategories(getCategories.data.categories)
+            props.categoriaSelected(getCategories.data.categories[0])
         }
-    }, [categories.data]); //Quando houver alteração nas categorias
+    }, [getCategories.data]) //Quando houver alteração nas categorias
 
+    useEffect(() => {
+        if (getSubcategories.data && getSubcategories.data.subcategories) {
+            if (filterText.length) {
+                const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(filterText.toUpperCase()))
+                setSubCategories(filteredSubCategories)
+            }
+            else {
+                setSubCategories(getSubcategories.data.subcategories)
+            }
+        }
+    }, [getSubcategories.data]) //Quando houver alteração nas subcategorias
 
     useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
-            subcategories.refetch(`/subcategories/view/${props.selectedCategorie.id}.json`);
+            getSubcategories.refetch(`/subcategories/view/${props.selectedCategorie.id}.json`);
         }
-    }, [props.selectedCategorie]); //Quando trocar a categoria selecionada
+    }, [props.selectedCategorie]) //Quando trocar a categoria selecionada
 
     useEffect(() => {
         if (!props.isAuth) {
@@ -57,19 +72,30 @@ function CategoriesSearchScreen(props) {
     handleBackPress = async () => {
         props.logoutRequest()
         return true
-    };
+    }
+
+    const handleFilterChangeText = (text) => {
+        setFilterText(text)
+        if (text.length) {
+            const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(text.toUpperCase()))
+            setSubCategories(filteredSubCategories)
+        }
+        else {
+            setSubCategories(getSubcategories.data.subcategories)
+        }
+    }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <View style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJob filter={true} />
+            <HeaderJob filter={true} onChangeText={handleFilterChangeText} />
             <ContainerCategorias>
                 <Highlights titulo={'Destaques do mês'} highlights={highlights} />
-                <Categories data={categories.data} />
+                <Categories itens={categories} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
-                        subcategories.loading ? (
+                        getSubcategories.loading ? (
                             <List itens={[1, 2, 3]} />
                         ) :
                             (
@@ -77,7 +103,7 @@ function CategoriesSearchScreen(props) {
                                 <List
                                     tipo='subcategory'
                                     titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"}
-                                    itens={subcategories.data.subcategories}
+                                    itens={subCategories}
                                     itemOnPress={() => props.navigation.navigate('Services')} />
                             )
                     }

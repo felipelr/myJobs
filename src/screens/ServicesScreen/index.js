@@ -22,11 +22,10 @@ import useGet from '../../services/restServices';
 import ActionCreators from '../../store/actionCreators'
 
 function ServicesScreen(props) {
-    const [search, setSearch] = useState('');
-    const [servicesSubcategory, setServicesSubcategory] = useState([]);
-    const services = useGet(`/services/getBySubcategory/${props.selectedSubcategory.id}.json`, props.token);
-    const highlights = useGet(`/highlights/highlightsBySubcategory/${props.selectedSubcategory.id}.json`, props.token);
-
+    const [search, setSearch] = useState('')
+    const [servicesSubcategory, setServicesSubcategory] = useState([])
+    const services = useGet(`/services/getBySubcategory/${props.selectedSubcategory.id}.json`, props.token)
+    const highlights = useGet(`/highlights/highlightsBySubcategory/${props.selectedSubcategory.id}.json`, props.token)
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', back)
@@ -40,11 +39,11 @@ function ServicesScreen(props) {
         if (services.data && services.data.services) {
             if (search.length > 0) {
                 var filtrados = services.data.services.filter((obj) => {
-                    return obj.title.toUpperCase().includes(search.toUpperCase()) || obj.description.toUpperCase().includes(search.toUpperCase());
+                    return obj.title.toUpperCase().includes(search.toUpperCase()) || obj.description.toUpperCase().includes(search.toUpperCase())
                 })
-                setServicesSubcategory(filtrados);
+                setServicesSubcategory(filtrados)
             } else {
-                setServicesSubcategory(services.data.services);
+                setServicesSubcategory(services.data.services)
             }
         }
     }, [search, services.data]);

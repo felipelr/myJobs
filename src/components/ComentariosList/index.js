@@ -23,6 +23,21 @@ const ComentariosList = ({ comments, loading, ...props }) => {
                     ))
                 }
                 {
+                    (!loading && !comments.length) && <React.Fragment>
+                        <VwContainerComentario>
+                            <View>
+                                <Avatar
+                                    rounded
+                                    size={60} />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <VwEmpty />
+                                <VwEmpty2 />
+                            </View>
+                        </VwContainerComentario>
+                    </React.Fragment>
+                }
+                {
                     loading && (
                         <VwContainerComentario>
                             <View>

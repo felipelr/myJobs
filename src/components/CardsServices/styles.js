@@ -42,16 +42,24 @@ export const VwRodapeContent = styled.View`
     justify-content: space-between;
 `
 
+export const VwEmptyTitle = styled.View`
+    width: 100px;
+    height: 8px;
+    margin: 6px 0px 6px 6px;
+    background-color: ${mediumgray};
+    border-radius: 5px;
+`
+
 export const VwEmpty = styled.View`
-    height: 10px;
-    margin: 6px;
+    height: 8px;
+    margin: 6px 6px 6px 6px;
     background-color: ${mediumgray};
     border-radius: 5px;
 `
 
 export const VwEmpty2 = styled.View`
-    height: 10px;
-    margin: 0px 30px 3px 6px;
+    height: 8px;
+    margin: 2px 30px 0px 6px;
     background-color: ${mediumgray};
     border-radius: 5px;
 `

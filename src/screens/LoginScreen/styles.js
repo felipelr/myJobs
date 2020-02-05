@@ -26,12 +26,12 @@ export const SocialMidiaText = styled.Text`
 
 export const ViewContainerLogin = styled.View`    
     flex: 1;
-    padding-top: ${heightPercentageToDP('5%')};
+    padding-top: ${heightPercentageToDP('3%')};
 `
 
 export const ViewContainerSignup = styled.View`    
     flex: 1;
-    padding-top: ${heightPercentageToDP('5%')};
+    padding-top: ${heightPercentageToDP('3%')};
 `
 
 export const TextLogoTipo = styled.Text`
@@ -40,4 +40,9 @@ export const TextLogoTipo = styled.Text`
     text-align: center;
     font-size: 72px;
     color: ${white};
+`
+
+export const ImgLogoTipo = styled.Image`
+    margin-top: ${heightPercentageToDP('3%')};
+    align-self: center;
 `

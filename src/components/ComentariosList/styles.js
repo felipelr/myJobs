@@ -13,14 +13,14 @@ export const SvwContainerComentarios = styled.ScrollView.attrs({
 `
 
 export const VwEmpty = styled.View`
-    height: 10px;
-    margin: 6px;
+    height: 8;
+    margin: 6px 0px 10px 6px; 
     background-color: ${mediumgray};
     border-radius: 5px;
 `
 
 export const VwEmpty2 = styled.View`
-    height: 10px;
+    height: 8;
     margin: 0px 30px 3px 6px;
     background-color: ${mediumgray};
     border-radius: 5px;
@@ -29,6 +29,6 @@ export const VwContainerComentario = styled.View`
     flex-direction: row;
     width: ${widthPercentageToDP('50%')}; 
     background-color: white;
-    margin-bottom: 5;
-    margin-right:7;
+    margin-bottom: 5px;
+    margin-right: 7px;
 `

@@ -9,6 +9,7 @@ import {
     VwTitleCard,
     VwEmpty,
     VwEmpty2,
+    VwEmptyTitle
 } from './styles'
 
 import CardService from '../../components/CardService/index'
@@ -25,7 +26,19 @@ function CardsServices({ services, loading, selectedService, ...props }) {
                         onPress={() => props.professionalHomeSetSelectedService(item)} />
                 ))
             }
-
+            {
+                (!loading && !services.length) && <React.Fragment>
+                    <VwContainerCard>
+                        <VwTitleCard>
+                            <VwEmptyTitle />
+                        </VwTitleCard>
+                        <VwSubTitle>
+                            <VwEmpty />
+                            <VwEmpty2 />
+                        </VwSubTitle>
+                    </VwContainerCard>
+                </React.Fragment>
+            }
             {
                 loading && (
                     <VwContainerCard>

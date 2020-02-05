@@ -12,9 +12,16 @@ import SignUp from '../../components/SignUp/index'
 import SocialMidiaSignup from '../../components/SocialMidiaSignup/index'
 
 import {
-    Container, ContainerContent, SocialMidiaText,
-    ViewContainerLogin, ViewContainerSignup, TextLogoTipo
+    Container,
+    ContainerContent,
+    SocialMidiaText,
+    ViewContainerLogin,
+    ViewContainerSignup,
+    TextLogoTipo,
+    ImgLogoTipo
 } from './styles'
+
+import assets from './assets'
 
 function LoginScreen(props) {
     const [showComponent, setShowComponent] = useState('login')
@@ -43,7 +50,7 @@ function LoginScreen(props) {
             <Background />
             <Container>
                 <View style={{ flex: 1 }}>
-                    <TextLogoTipo>Logo</TextLogoTipo>
+                    <ImgLogoTipo source={assets.myjobs} />
                     {
                         showComponent === 'login' &&
                         <ViewContainerLogin>

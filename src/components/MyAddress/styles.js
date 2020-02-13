@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, white } from '../common/util/colors'
+import { white } from '../common/util/colors'
 
 export const ViewContainer = styled.View`
     padding: 8px;

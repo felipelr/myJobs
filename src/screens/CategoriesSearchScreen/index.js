@@ -18,9 +18,9 @@ function CategoriesSearchScreen(props) {
     const [subCategories, setSubCategories] = useState([])
     const [filterText, setFilterText] = useState('')
 
-    const getCategories = useGet('/categories/index.json', props.token); //Carrega as categorias do sistema
+    const getCategories = useGet('/categories/all.json', props.token); //Carrega as categorias do sistema
     const getSubcategories = useGet('', props.token); //Passa o parametro URL como vazio para que não seja feita nenhuma requisição porém gera os Hooks normalmente
-    const highlights = useGet('/highlights/highlights.json', props.token); // Lista os Highliths gerais
+    const highlights = useGet('/highlights/all.json', props.token); // Lista os Highliths gerais
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -55,7 +55,7 @@ function CategoriesSearchScreen(props) {
 
     useEffect(() => {
         if (props.selectedCategorie !== null && props.selectedCategorie.id > 0) {
-            getSubcategories.refetch(`/subcategories/view/${props.selectedCategorie.id}.json`);
+            getSubcategories.refetch(`/subcategories/getByCategory/${props.selectedCategorie.id}.json`);
         }
     }, [props.selectedCategorie]) //Quando trocar a categoria selecionada
 

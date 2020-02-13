@@ -60,8 +60,8 @@ function ProfessionalHomeScreen(props) {
 
     const pageRef = useRef()
 
-    const getProfessionalServices = useGet(`/professionalServices/view/${professionalData.id}.json`, props.token)
-    const getProfessionalComments = useGet(`/professionalComments/view/${professionalData.id}/${props.selectedService.id}.json`, props.token)
+    const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
+    const getProfessionalComments = useGet(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`, props.token)
     const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`, props.token)
 
     useEffect(() => {

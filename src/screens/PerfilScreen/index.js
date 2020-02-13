@@ -28,6 +28,7 @@ import ChangePassword from '../../components/ChangePassword/index'
 import SuggestCompany from '../../components/SuggestCompany/index'
 import MyAddress from '../../components/MyAddress/index'
 import ProfessionalEntry from '../../components/ProfessionalEntry/index'
+import MyServices from '../../components/MyServices'
 
 function PerfilScreen(props) {
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
@@ -36,7 +37,7 @@ function PerfilScreen(props) {
     const [title, setTitle] = useState('Perfil')
     const [image, setImage] = useState((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + Moment(props.user.modified).toDate().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
-    const [list, setList] = useState([
+    const [listClient] = useState([
         {
             title: 'Dados Cadastrais', //mvp -> alterar info do usuario
             icon: 'account-circle'
@@ -60,6 +61,36 @@ function PerfilScreen(props) {
         {
             title: 'Sugerir Profissionais/Empresas', //mvp -> colher dados de contato do indicado
             icon: 'thumb-up'
+        },
+        {
+            title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
+            icon: 'share'
+        },
+        {
+            title: 'Sorteios',
+            icon: 'redeem'
+        }
+    ])
+    const [listProfessional] = useState([
+        {
+            title: 'Dados Cadastrais', //mvp -> alterar info do usuario
+            icon: 'account-circle'
+        },
+        {
+            title: 'Meus Endereços', //mvp -> alterar endereço
+            icon: 'room'
+        },
+        {
+            title: 'Meus Serviços',
+            icon: 'build',
+        },
+        {
+            title: 'Segurança', //mvp -> alteração de senha
+            icon: 'lock'
+        },
+        {
+            title: 'Avisos', //mvp
+            icon: 'notifications-active'
         },
         {
             title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
@@ -99,6 +130,9 @@ function PerfilScreen(props) {
                 break
             case 'sugerirEmpresa':
                 setTitle('Sugerir Empresa/Profissional')
+                break
+            case 'servicos':
+                setTitle('Meus Serviços')
                 break
             default:
                 setTitle('Perfil')
@@ -140,6 +174,11 @@ function PerfilScreen(props) {
             case 'Convidar Amigos':
                 handleClickShare()
                 break
+            case 'Meus Serviços':
+                setShow('servicos')
+                pageRef.current = 'servicos'
+                doAnimation = true
+                break
             default:
                 setShow('menu')
                 pageRef.current = 'menu'
@@ -160,22 +199,24 @@ function PerfilScreen(props) {
     }
 
     const handleClickBack = () => {
-        if (pageRef.current === 'menu') {
-            props.navigation.goBack()
-        }
-        else {
-            setShow('menu')
-            pageRef.current = 'menu'
+        if (showHeader) {
+            if (pageRef.current === 'menu') {
+                props.navigation.goBack()
+            }
+            else {
+                setShow('menu')
+                pageRef.current = 'menu'
 
-            Animated.spring(slideLeft, {
-                toValue: { x: Dimensions.get('screen').width, y: 0 },
-                delay: 0
-            }).start()
+                Animated.spring(slideLeft, {
+                    toValue: { x: Dimensions.get('screen').width, y: 0 },
+                    delay: 0
+                }).start()
 
-            Animated.spring(slideRight, {
-                toValue: { x: 0, y: 0 },
-                delay: 0
-            }).start()
+                Animated.spring(slideRight, {
+                    toValue: { x: 0, y: 0 },
+                    delay: 0
+                }).start()
+            }
         }
     }
 
@@ -229,7 +270,20 @@ function PerfilScreen(props) {
                                     <View>
                                         <ContainerLista>
                                             {
-                                                list.map((item, i) => (
+                                                props.userType === 'client' && listClient.map((item, i) => (
+                                                    <ListItem
+                                                        key={i}
+                                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                        title={item.title}
+                                                        rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                                                        leftIcon={{ name: item.icon }}
+                                                        onPress={() => { handleClickMenu(item.title) }}
+                                                        onLongPress={() => { handleClickMenu(item.title) }}
+                                                    />
+                                                ))
+                                            }
+                                            {
+                                                props.userType === 'professional' && listProfessional.map((item, i) => (
                                                     <ListItem
                                                         key={i}
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
@@ -253,6 +307,8 @@ function PerfilScreen(props) {
                 <Animated.View style={slideLeft.getLayout()}>
                     {(show === 'cadastro' && props.userType === 'client') && <ClientEntry onUpdate={handleClickBack} />}
                     {(show === 'cadastro' && props.userType === 'professional') && <ProfessionalEntry onUpdate={handleClickBack} />}
+
+                    {show === 'servicos' && <MyServices onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
 
                     {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 

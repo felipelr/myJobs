@@ -7,7 +7,7 @@ import { urlMyJobsAPI } from '../../config/config'
 
 function* getSubCategoriesByCategory(action) { 
     try {
-        let request = yield axios.get(`${urlMyJobsAPI}/subcategories/view/${action.category.id}.json`, {
+        let request = yield axios.get(`${urlMyJobsAPI}/subcategories/getByCategory/${action.category.id}.json`, {
             headers: {
                 Authorization: 'Bearer ' + action.token
             }

@@ -85,6 +85,10 @@ function PerfilScreen(props) {
             icon: 'build',
         },
         {
+            title: 'Sugerir Serviços',
+            icon: 'public',
+        },
+        {
             title: 'Segurança', //mvp -> alteração de senha
             icon: 'lock'
         },
@@ -279,6 +283,7 @@ function PerfilScreen(props) {
                                                         leftIcon={{ name: item.icon }}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
+                                                        bottomDivider
                                                     />
                                                 ))
                                             }
@@ -292,6 +297,7 @@ function PerfilScreen(props) {
                                                         leftIcon={{ name: item.icon }}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
+                                                        bottomDivider
                                                     />
                                                 ))
                                             }

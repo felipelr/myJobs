@@ -19,7 +19,7 @@ export const ContainerLista = styled.View`
 export const ViewContainerButton = styled.View`
     width: 150px;
     align-self: center;
-    padding-bottom: 16px;
+    padding: 16px 0px 16px 0px;
 `
 
 export const ViewContainerCategory = styled.View`
@@ -32,11 +32,11 @@ export const ViewContainerSubcategory = styled.View`
     flex-direction: column;
     border-bottom-width: 1px;
     border-bottom-color: ${lightgray};
-    margin: 4px 0px 4px 16px;
+    margin: 0px 0px 4px 8px;
 `
 
 export const ViewTitleCategory = styled.View`
-    padding: 2px 2px 8px 2px;
+    padding: 0px 2px 8px 2px;
     flex-direction: column;
     flex: 1;
 `
@@ -46,7 +46,7 @@ export const TxtCategory = styled.Text`
     color: ${black};
     font-family: 'SF-Pro-Text-Regular';
     font-weight: bold;
-    margin: 4px 0px 4px 0px;
+    margin: 8px 0px 4px 0px;
 `
 
 export const TxtTileCategory = styled.Text`
@@ -57,12 +57,13 @@ export const TxtTileCategory = styled.Text`
 `
 
 export const TxtTileSubcategory = styled.Text`
+    background-color: ${purple};
+    color: ${white};
+    padding: 10px 16px 10px 16px;
+    border-radius: 20px;
     font-size: 14px;
-    color: ${purple};
     font-family: 'SF-Pro-Text-Regular';
-    padding-left: 16px;
     font-weight: bold;
-    margin-bottom: 4px;
 `
 
 export const BtnEditServices = styled.TouchableOpacity`

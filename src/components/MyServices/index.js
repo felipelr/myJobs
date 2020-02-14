@@ -27,9 +27,7 @@ import {
 import { lightgray, purple, white, black } from '../common/util/colors'
 
 import HeaderJobs from '../../components/HeaderJobs/index'
-import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
-import ButtonPurple from '../ButtonPurple/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
@@ -49,6 +47,7 @@ function MyServices(props) {
     })
     const [selectedCategory, setSelectedCategory] = useState(-1)
     const [selectedSubcategory, setSelectedSubcategory] = useState(-1)
+    const [newRequest, setNewRequest] = useState(false)
 
     const getProfessionalServices = useGet(`/professionalServices/services/${props.professionalData.id}.json?type=1`, props.token)
     const getCategories = useGet('', props.token)
@@ -141,6 +140,32 @@ function MyServices(props) {
         }
     }, [selectedSubcategory])
 
+    useEffect(() => {
+        if (newRequest && !props.loading) {
+            if (props.error)
+                setNewRequest(false)
+            else {
+                if (props.newServicesConfig) {
+                    const array = props.newServicesConfig.map(item => {
+                        return {
+                            ...item.service
+                        }
+                    })
+                    const arraySubcategories = props.newServicesConfig.map(item => {
+                        return {
+                            ...item.service.subcategory
+                        }
+                    })
+                    const arrayNew = arraySubcategories.filter((item, index) => arraySubcategories.findIndex(item_ => item_.id === item.id) === index);
+
+                    setServices(array)
+                    setSubcategories(arrayNew)
+                }
+                handleClickBack()
+            }
+        }
+    }, [props.loading])
+
     const handleClickBack = () => {
         props.ownProps.changeVisiblityPerfilHeader(true)
         setShowForm(false)
@@ -171,6 +196,13 @@ function MyServices(props) {
         }).start()
     }
 
+    const renderIconService = (id) => {
+        if (form.services.some(item => item.id === id))
+            return <Icon name="check-box" size={30} color={purple} />
+        else
+            return <Icon name="check-box-outline-blank" size={30} color={purple} />
+    }
+
     const handleEditCategory = () => {
         setForm({
             professional_id: props.professionalData.id,
@@ -186,15 +218,34 @@ function MyServices(props) {
             getCategories.refetch(`/categories/all.json`)
     }
 
-    const handleClickService = (id) => {
-
+    const handleClickService = (service) => {
+        if (service) {
+            if (form.services.some(item => item.id === service.id)) {
+                setForm({
+                    ...form,
+                    services: form.services.filter(item => item.id !== service.id),
+                })
+            }
+            else {
+                setForm({
+                    ...form,
+                    services: [...form.services, service]
+                })
+            }
+        }
     }
 
-    const renderIconService = (id) => {
-        if (form.services.some((item) => item.id === id))
-            return <Icon name="check-box" size={30} color={purple} />
-        else
-            return <Icon name="check-box-outline-blank" size={30} color={purple} />
+    const handleConfirmPress = () => {
+        if (selectedCategory > 0) {
+            setNewRequest(true)
+            setForm({
+                ...form,
+                professional_id: props.professionalData.id,
+                category_id: selectedCategory
+            })
+
+            props.professionalConfigCategory(props.token, form)
+        }
     }
 
     return (
@@ -203,6 +254,7 @@ function MyServices(props) {
                 <HeaderJobs
                     title='Configurar Categoria'
                     back={handleClickBack}
+                    confirm={handleConfirmPress}
                 />}
             <ViewContainer>
                 <ScrollViewContainer>
@@ -222,14 +274,17 @@ function MyServices(props) {
                                 </ViewContainerCategory>
                                 {subcategories.length > 0 && (
                                     <ViewTitleCategory>
-                                        <TxtCategory>Serviços</TxtCategory>
                                         {
                                             subcategories.map(subcategory => (
-                                                <React.Fragment>
-                                                    <TxtTileSubcategory>{subcategory.description}</TxtTileSubcategory>
+                                                <React.Fragment key={'sub' + subcategory.id}>
+                                                    <TxtCategory>Subcategoria</TxtCategory>
+                                                    <ScrollViewSubcategory>
+                                                        <TxtTileSubcategory>{subcategory.description}</TxtTileSubcategory>
+                                                    </ScrollViewSubcategory>
+                                                    <TxtCategory>Serviços</TxtCategory>
                                                     <ViewContainerSubcategory>
                                                         {
-                                                            services.filter(item => item.subcategory.id === subcategory.id).map((service) => <TxtTileCategory>{service.title}</TxtTileCategory>)
+                                                            services.filter(item => item.subcategory.id === subcategory.id).map((service) => <TxtTileCategory key={'s' + service.id}>{service.title}</TxtTileCategory>)
                                                         }
                                                     </ViewContainerSubcategory>
                                                 </React.Fragment>
@@ -242,45 +297,54 @@ function MyServices(props) {
                         }
                         {showForm &&
                             <Animated.View style={slideLeft.getLayout()}>
-                                <TxtCategory>Categoria</TxtCategory>
-                                <PickerJobs
-                                    selectedValue={selectedCategory}
-                                    onValueChange={(item, index) => {
-                                        if (item) {
-                                            setSelectedCategory(item)
-                                        }
-                                    }}
-                                    itemsList={categoriesForm ? categoriesForm : []} />
+                                {props.loading && <Loading size='large' color={purple} height='330' error={props.errorUpdating} />}
 
-                                <TxtCategory>Subcategorias</TxtCategory>
-                                <ScrollViewSubcategory>
-                                    {(!getSubcategories.loading && subcategoriesForm.length > 0) && subcategoriesForm.map(item =>
-                                        <TouchTabSubcategory
-                                            onPress={() => setSelectedSubcategory(item.id)}
-                                            backgroundColor={item.id === selectedSubcategory ? purple : lightgray} >
-                                            <TxtTabSubcategory
-                                                color={item.id === selectedSubcategory ? white : black} >
-                                                {item.name}
-                                            </TxtTabSubcategory>
-                                        </TouchTabSubcategory>)
-                                    }
-                                    {getSubcategories.loading && <ViewTabEmpty />}
-                                </ScrollViewSubcategory>
+                                {!props.loading &&
+                                    <React.Fragment>
+                                        {props.error && <TextError>{props.errorMessage}</TextError>}
+                                        <TxtCategory>Categoria</TxtCategory>
+                                        <PickerJobs
+                                            selectedValue={selectedCategory}
+                                            onValueChange={(item, index) => {
+                                                if (item) {
+                                                    setSelectedCategory(item)
+                                                }
+                                            }}
+                                            itemsList={categoriesForm ? categoriesForm : []} />
 
-                                <TxtCategory>Serviços</TxtCategory>
-                                {
-                                    !getServices.loading && servicesForm.map(item =>
-                                        <ListItem
-                                            key={item.id}
-                                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                            title={item.title}
-                                            rightIcon={renderIconService(item.id)}
-                                            onPress={() => handleClickService(item.id)}
-                                        />)
+                                        <TxtCategory>Subcategorias</TxtCategory>
+                                        <ScrollViewSubcategory>
+                                            {(!getSubcategories.loading && subcategoriesForm.length > 0) && subcategoriesForm.map(item =>
+                                                <TouchTabSubcategory
+                                                    key={'sub' + item.id}
+                                                    onPress={() => setSelectedSubcategory(item.id)}
+                                                    backgroundColor={item.id === selectedSubcategory ? purple : lightgray} >
+                                                    <TxtTabSubcategory
+                                                        color={item.id === selectedSubcategory ? white : black} >
+                                                        {item.name}
+                                                    </TxtTabSubcategory>
+                                                </TouchTabSubcategory>)
+                                            }
+                                            {getSubcategories.loading && <ViewTabEmpty />}
+                                        </ScrollViewSubcategory>
+
+                                        <TxtCategory>Serviços</TxtCategory>
+                                        <View style={{ flex: 1 }}>
+                                            {
+                                                !getServices.loading && servicesForm.map(item =>
+                                                    <ListItem
+                                                        key={'s' + item.id}
+                                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                        title={item.title}
+                                                        rightIcon={renderIconService(item.id)}
+                                                        onPress={() => handleClickService(item)}
+                                                    />)
+                                            }
+                                        </View>
+                                    </React.Fragment>
                                 }
                             </Animated.View>
                         }
-
                     </View>
                 </ScrollViewContainer>
             </ViewContainer>
@@ -294,12 +358,16 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         userType: state.auth.userType,
         professionalData: state.professional.professional,
+        loading: state.professional.loading,
+        error: state.professional.error,
+        errorMessage: state.professional.errorMessage,
+        newServicesConfig: state.professional.newServicesConfig,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        addNewClientAddress: (token, clientAddress) => dispatch(ActionCreators.addNewClientAddress(token, clientAddress)),
+        professionalConfigCategory: (token, config) => dispatch(ActionCreators.professionalConfigCategory(token, config)),
     }
 }
 

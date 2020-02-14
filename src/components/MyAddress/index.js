@@ -10,7 +10,6 @@ import {
     ViewContainer,
     ScrollViewContainer,
     ContainerLista,
-    ViewContainerButton
 } from './styles'
 
 import { lightgray, purple } from '../common/util/colors'
@@ -18,7 +17,6 @@ import { lightgray, purple } from '../common/util/colors'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
-import ButtonPurple from '../ButtonPurple/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 
@@ -231,6 +229,7 @@ function MyAddress(props) {
                     <HeaderJobs
                         title={titleHeader}
                         back={gotoAddressList}
+                        confirm={handleClickConfimar}
                     />
                 )
             }
@@ -332,10 +331,6 @@ function MyAddress(props) {
                                             }
                                         }}
                                         itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
-
-                                    <ViewContainerButton>
-                                        <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
-                                    </ViewContainerButton>
                                 </ContainerLista>
                             </Animated.View>
                         )}

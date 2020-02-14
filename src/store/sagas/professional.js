@@ -149,6 +149,35 @@ function* deleteProfessionalAddress(action) {
     }
 }
 
+function* professionalConfigCategory(action) {
+    try {
+        const postResp = yield axios.post(`${urlMyJobsAPI}/professionalServices/config.json`,
+            {
+                ...action.config
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+        
+        console.log('post data => ', postResp.data)
+
+        if (postResp.data.error) {
+            yield put(ActionCreator.professionalConfigCategoryError(postResp.data.errorMessage))
+        }
+        else {
+            yield put(ActionCreator.professionalConfigCategorySuccess(postResp.data.config))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
+        console.log('post messageError => ', messageError)
+        yield put(ActionCreator.professionalConfigCategoryError(messageError))
+    }
+}
+
 export default function* rootProfessionals() {
     yield all([
         takeLatest(Types.PROFESSIONALS_SEND_NEW_SUGGEST, sendNewSuggest),
@@ -156,5 +185,6 @@ export default function* rootProfessionals() {
         takeLatest(Types.ADD_NEW_PROFESSIONAL_ADDRESS, addNewProfessionalAddress),
         takeLatest(Types.EDIT_PROFESSIONAL_ADDRESS, editProfessionalAddress),
         takeLatest(Types.DELETE_PROFESSIONAL_ADDRESS, deleteProfessionalAddress),
+        takeLatest(Types.PROFESSIONAL_CONFIG_CATEGORY, professionalConfigCategory),
     ])
 }

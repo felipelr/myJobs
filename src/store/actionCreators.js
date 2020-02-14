@@ -51,6 +51,9 @@ export const { Types, Creators } = createActions({
     editProfessionalAddress: ['token', 'professionalAddress'],
     deleteProfessionalAddress: ['token', 'id'],
     professionalSelected: ['professional'],
+    professionalConfigCategory: ['token', 'config'],
+    professionalConfigCategorySuccess: ['config'],
+    professionalConfigCategoryError: ['error'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

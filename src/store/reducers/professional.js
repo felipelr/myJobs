@@ -11,6 +11,7 @@ export const INITIAL_STATE = {
     errorMessage: '',
     professional: {},
     selected: {},
+    newServicesConfig: {}
 }
 
 export const professionalsLoadRequest = (state = INITIAL_STATE, action) => {
@@ -136,10 +137,39 @@ export const deleteProfessionalAddress = (state = INITIAL_STATE, action) => {
     }
 }
 
-export const professionalSelected= (state = INITIAL_STATE, action) => {
+export const professionalSelected = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         selected: action.professional
+    }
+}
+
+export const professionalConfigCategory = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: true,
+        error: false,
+        errorMessage: '',
+        newServicesConfig: {},
+    }
+}
+
+export const professionalConfigCategorySuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: false,
+        error: false,
+        errorMessage: '',
+        newServicesConfig: action.config,
+    }
+}
+
+export const professionalConfigCategoryError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: false,
+        error: true,
+        errorMessage: action.error,
     }
 }
 
@@ -159,6 +189,9 @@ export const HANDLES = {
     [Types.EDIT_PROFESSIONAL_ADDRESS]: editProfessionalAddress,
     [Types.DELETE_PROFESSIONAL_ADDRESS]: deleteProfessionalAddress,
     [Types.PROFESSIONAL_SELECTED]: professionalSelected,
+    [Types.PROFESSIONAL_CONFIG_CATEGORY]: professionalConfigCategory,
+    [Types.PROFESSIONAL_CONFIG_CATEGORY_SUCCESS]: professionalConfigCategorySuccess,
+    [Types.PROFESSIONAL_CONFIG_CATEGORY_ERROR]: professionalConfigCategoryError,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

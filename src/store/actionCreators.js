@@ -54,6 +54,9 @@ export const { Types, Creators } = createActions({
     professionalConfigCategory: ['token', 'config'],
     professionalConfigCategorySuccess: ['config'],
     professionalConfigCategoryError: ['error'],
+    newProfessionalCallRequest: ['token', 'call'],
+    newProfessionalCallError: ['error'],
+    newProfessionalCallSuccess: ['call'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

@@ -172,6 +172,35 @@ export const professionalConfigCategoryError = (state = INITIAL_STATE, action) =
         errorMessage: action.error,
     }
 }
+ 
+export const newProfessionalCallRequest = (state = INITIAL_STATE, action) => {
+    console.log('chamou o reducer newProfessionalCallRequest')
+    return {
+        ...state,
+        isUpdating: true,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const newProfessionalCallSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const newProfessionalCallError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: true,
+        errorMessage: action.error
+    }
+}
+
 
 export const HANDLES = {
     [Types.PROFESSIONALS_LOAD_REQUEST]: professionalsLoadRequest,
@@ -192,6 +221,9 @@ export const HANDLES = {
     [Types.PROFESSIONAL_CONFIG_CATEGORY]: professionalConfigCategory,
     [Types.PROFESSIONAL_CONFIG_CATEGORY_SUCCESS]: professionalConfigCategorySuccess,
     [Types.PROFESSIONAL_CONFIG_CATEGORY_ERROR]: professionalConfigCategoryError,
+    [Types.NEW_PROFESSIONAL_CALL_REQUEST]: newProfessionalCallRequest,  
+    [Types.NEW_PROFESSIONAL_CALL_SUCCESS]: newProfessionalCallSuccess,  
+    [Types.NEW_PROFESSIONAL_CALL_ERROR]: newProfessionalCallError,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

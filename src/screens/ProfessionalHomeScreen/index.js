@@ -415,6 +415,7 @@ function ProfessionalHomeScreen(props) {
                     <Footer
                         type={props.userType}
                         perfilOnPress={() => props.navigation.navigate('Perfil')}
+                        offersOnPress={() => props.navigation.navigate('NewCall')}
                         chatOnPress={() => props.navigation.navigate('ProfessionalListChat')} />
                 </React.Fragment>
             }

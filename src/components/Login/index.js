@@ -26,8 +26,8 @@ import ButtonPurple from '../ButtonPurple/index'
 
 function Login(props) {
     const [form, setForm] = useState({
-        email: 'felipe.lima.flr@gmail.com',
-        password: '101762866218022699799',
+        email: 'brunobersan13@gmail.com',
+        password: 'bulas123',
         userType: props.auth.userType === 'client' ? 1 : 2
     })
 

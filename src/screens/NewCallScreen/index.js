@@ -23,15 +23,14 @@ import Loading from '../../components/Loading/index'
 import TextError from '../../components/TextError/index'
 import ButtonPurple from '../../components/ButtonPurple/index'
 
-function ServiceHireScreen(props) {
+function NewCallScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [invalidField, setInvalidField] = useState('')
     const [requisitou, setRequisitou] = useState(false)
     const [form, setForm] = useState({
         client_id: props.client.id,
+        professional_id: props.professional.id,
         service_id: props.serviceSelected.id,
-        client_address_id: (props.enderecos && props.enderecos.length > 0) ? props.enderecos[0].id : 0,
-        quantity: "",
         description: "",
     })
 
@@ -74,30 +73,15 @@ function ServiceHireScreen(props) {
             [name]: text
         })
 
-        if (!validateField(name, text))
-            setInvalidField(name)
-        else
-            setInvalidField('')
-    }
-
-    validateField = (field, value) => {
-        switch (field) {
-            case 'quantity':
-                if (value <= 0)
-                    return false
-                break
-            default:
-                break
-        }
-        return true
+        setInvalidField('')
     }
 
     handleClickConfimar = () => {
-        if (invalidField === '') {
-            setRequisitou(true)
-            props.clientNewServiceOrderRequest(props.token, form)
-        }
+        console.log('chamou o handleClickConfimar')
+        setRequisitou(true)
+        props.newProfessionalCallRequest(props.token, form)
     }
+
 
     handleAddressOnPress = (id) => {
         setForm({
@@ -122,11 +106,6 @@ function ServiceHireScreen(props) {
                                     <TextHireService>Abrindo chamado...</TextHireService>
                                     <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
                                         <React.Fragment>
-                                            <Picker
-                                                style={{ height: 50, width: 100 }} >
-                                                <Picker.Item label="Java" value="java" />
-                                                <Picker.Item label="JavaScript" value="js" />
-                                            </Picker>
                                             <TexService>Profissional</TexService>
                                             <TextName>{props.selectedCategorie.description} - {props.selectedSubcategory.description}</TextName>
                                             <TexService>Categoria</TexService>
@@ -136,17 +115,14 @@ function ServiceHireScreen(props) {
                                             <TexService>Cliente</TexService>
                                             <TextName>{props.client.name}</TextName>
                                             <TextName>{props.client.phone}</TextName>
-                                            <TexService>Endereço</TexService>
-                                            {(props.enderecos && props.enderecos.length > 0) && props.enderecos.map((item) =>
-                                                <CheckBox
-                                                    key={item.id}
-                                                    title={item.street + ', ' + item.street_number}
-                                                    checkedColor='purple'
-                                                    checked={item.id === form.client_address_id}
-                                                    checkedIcon='dot-circle-o'
-                                                    uncheckedIcon='circle-o'
-                                                    onPress={() => handleAddressOnPress(item.id)}
-                                                />)}
+                                            <TextInputJobs
+                                                name='description'
+                                                placeholder='Descreva brevemente o procedimento a ser executado'
+                                                value={form.description}
+                                                onChangeText={handleOnChange}
+                                                invalidValue={invalidField === 'description'}
+                                                multiline={true}
+                                                numberOfLines={2} />
 
                                             <ViewContainerConfirmar>
                                                 <ButtonPurple onPress={handleClickConfimar}>Concluir</ButtonPurple>
@@ -166,7 +142,7 @@ function ServiceHireScreen(props) {
     )
 }
 
-ServiceHireScreen.navigationOptions = {
+NewCallScreen.navigationOptions = {
     header: null
 }
 
@@ -176,6 +152,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         client: state.client.client,
         clientCtr: state.client,
+        professional: state.professional.professional,
         serviceSelected: state.services.selected,
         selectedSubcategory: state.subcategory.selected,
         selectedCategorie: state.categoria.selected,
@@ -185,8 +162,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        clientNewServiceOrderRequest: (token, serviceOrder) => dispatch(ActionCreators.clientNewServiceOrderRequest(token, serviceOrder)),
+        newProfessionalCallRequest: (token, call) => dispatch(ActionCreators.newProfessionalCallRequest(token, call)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceHireScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(NewCallScreen)

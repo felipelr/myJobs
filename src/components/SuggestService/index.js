@@ -7,8 +7,9 @@ import ActionCreators from '../../store/actionCreators'
 import useGet from '../../services/restServices'
 
 import {
-    ViewContainer,
     ScrollViewContainer,
+    ViewContainer,
+    TxtTitle,
 } from './styles'
 
 import { lightgray, purple, white, black } from '../common/util/colors'
@@ -86,9 +87,13 @@ function SuggestService(props) {
     }, [selectedCategory])
 
     const handleClickBack = () => {
-        props.ownProps.changeVisiblityPerfilHeader(false)
-        setShowForm(true)
-        outAnimation()
+        if (showForm) {
+            props.onUpdate()
+        }
+        else {
+            setShowForm(true)
+            outAnimation()
+        }
     }
 
     const handleConfirmPress = () => {
@@ -143,6 +148,7 @@ function SuggestService(props) {
                     <View style={{ flex: 1 }}>
                         {showForm &&
                             <Animated.View style={slideRight.getLayout()}>
+                                <TxtTitle>Categoria</TxtTitle>
                                 <PickerJobs
                                     selectedValue={selectedCategory}
                                     onValueChange={(item, index) => {
@@ -152,6 +158,7 @@ function SuggestService(props) {
                                     }}
                                     itemsList={categoriesForm ? categoriesForm : []} />
 
+                                <TxtTitle>Subcategoria</TxtTitle>
                                 <PickerJobs
                                     selectedValue={form.subcategory_id}
                                     onValueChange={(item, index) => {

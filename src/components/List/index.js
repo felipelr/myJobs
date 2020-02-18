@@ -31,6 +31,7 @@ export default function List(props) {
                             return <ListSubcategory key={index} subcategory={item} itemOnPress={props.itemOnPress} />
                         }
                         return <ListItem
+                            key={index}
                             leftContent={
                                 <Avatar
                                     size={55}
@@ -39,7 +40,7 @@ export default function List(props) {
                                 />
                             }
                             centerContent={
-                                <React.Fragment>
+                                <React.Fragment key={index}>
                                     <ViewTitleEmpty />
                                     <ViewSubTitleEmpty />
                                     <ViewSubTitleEmpty />

@@ -213,23 +213,27 @@ function PerfilScreen(props) {
 
     const handleClickBack = () => {
         if (showHeader) {
-            if (pageRef.current === 'menu') {
-                props.navigation.goBack()
-            }
-            else {
-                setShow('menu')
-                pageRef.current = 'menu'
+            handleBackToMenu()
+        }
+    }
 
-                Animated.spring(slideLeft, {
-                    toValue: { x: Dimensions.get('screen').width, y: 0 },
-                    delay: 0
-                }).start()
+    const handleBackToMenu = () => {
+        if (pageRef.current === 'menu') {
+            props.navigation.goBack()
+        }
+        else {
+            setShow('menu')
+            pageRef.current = 'menu'
 
-                Animated.spring(slideRight, {
-                    toValue: { x: 0, y: 0 },
-                    delay: 0
-                }).start()
-            }
+            Animated.spring(slideLeft, {
+                toValue: { x: Dimensions.get('screen').width, y: 0 },
+                delay: 0
+            }).start()
+
+            Animated.spring(slideRight, {
+                toValue: { x: 0, y: 0 },
+                delay: 0
+            }).start()
         }
     }
 
@@ -324,7 +328,7 @@ function PerfilScreen(props) {
                     {(show === 'cadastro' && props.userType === 'professional') && <ProfessionalEntry onUpdate={handleClickBack} />}
 
                     {show === 'servicos' && <MyServices onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
-                    {show === 'sugerir_servicos' && <SuggestService onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
+                    {show === 'sugerir_servicos' && <SuggestService onUpdate={handleBackToMenu} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
 
                     {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 

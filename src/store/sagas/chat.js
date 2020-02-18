@@ -43,7 +43,6 @@ function* chatSendNewMessage(action) {
         console.log('chatSendNewMessage => ', postReq.data)
 
         if (postReq.data.error) {
-            console.log(postReq.data.errorMessage)
             yield put(ActionCreator.chatSendNewMessageError(postReq.data.errorMessage))
         }
         else {

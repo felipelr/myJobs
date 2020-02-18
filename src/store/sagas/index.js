@@ -11,6 +11,7 @@ import * as highlightsSagas from './highlights'
 import * as professionalsSagas from './professional'
 import * as storiesSagas from './stories'
 import * as chatSagas from './chat'
+import * as serviceSagas from './service'
 
 export default function* rootSaga() {
     yield all([
@@ -24,5 +25,6 @@ export default function* rootSaga() {
         ...Object.values(professionalsSagas),
         ...Object.values(storiesSagas),
         ...Object.values(chatSagas),
+        ...Object.values(serviceSagas),
     ].map(fork))
 }

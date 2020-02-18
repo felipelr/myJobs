@@ -80,7 +80,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
         selectedCategorie: state.categoria.selected,
-        serviceSelected: state.services.selected,
+        serviceSelected: state.service.selected,
         ownProps: ownProps
     }
 };

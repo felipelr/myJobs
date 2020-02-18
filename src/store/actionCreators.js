@@ -88,6 +88,9 @@ export const { Types, Creators } = createActions({
 
     //Services
     serviceSelected: ['service'],
+    serviceNewSuggestion: ['token', 'serviceSuggestion'],
+    serviceNewSuggestionSuccess: ['serviceSuggestion'],
+    serviceNewSuggestionError: ['error'],
 
     //ProfessionalHome
     professionalHomeSetSelectedService: ['service'],

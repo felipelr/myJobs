@@ -26,6 +26,7 @@ function SuggestService(props) {
     const [slideRight] = useState(new Animated.ValueXY())
     const [showForm, setShowForm] = useState(true)
     const [form, setForm] = useState({
+        professional_id: props.professionalData.id,
         subcategory_id: 0,
         title: '',
         description: '',
@@ -86,6 +87,16 @@ function SuggestService(props) {
         }
     }, [selectedCategory])
 
+    useEffect(() => {
+        if (newRequest && !props.loading) {
+            if (props.error)
+                setNewRequest(false)
+            else {
+                handleClickBack()
+            }
+        }
+    }, [props.loading])
+
     const handleClickBack = () => {
         if (showForm) {
             props.onUpdate()
@@ -97,7 +108,10 @@ function SuggestService(props) {
     }
 
     const handleConfirmPress = () => {
-
+        if (invalidField === '') {
+            setNewRequest(true)
+            props.serviceNewSuggestion(props.token, form)
+        }
     }
 
     const inAnimation = () => {
@@ -136,6 +150,19 @@ function SuggestService(props) {
             setInvalidField('')
     }
 
+    const validateField = (field, value) => {
+        switch (field) {
+            case 'title':
+            case 'description':
+                if (value < 2)
+                    return false
+                break
+            default:
+                break
+        }
+        return true
+    }
+
     return (
         <React.Fragment>
             <HeaderJobs
@@ -148,37 +175,42 @@ function SuggestService(props) {
                     <View style={{ flex: 1 }}>
                         {showForm &&
                             <Animated.View style={slideRight.getLayout()}>
-                                <TxtTitle>Categoria</TxtTitle>
-                                <PickerJobs
-                                    selectedValue={selectedCategory}
-                                    onValueChange={(item, index) => {
-                                        if (item) {
-                                            setSelectedCategory(item)
-                                        }
-                                    }}
-                                    itemsList={categoriesForm ? categoriesForm : []} />
+                                {props.loading && <Loading size='large' color={purple} height='330' error={props.errorUpdating} />}
 
-                                <TxtTitle>Subcategoria</TxtTitle>
-                                <PickerJobs
-                                    selectedValue={form.subcategory_id}
-                                    onValueChange={(item, index) => {
-                                        if (item) {
-                                            setForm({ ...form, subcategory_id: item })
-                                        }
-                                    }}
-                                    itemsList={subcategoriesForm ? subcategoriesForm : []} />
+                                {!props.loading &&
+                                    <React.Fragment>
+                                        <TxtTitle>Categoria</TxtTitle>
+                                        <PickerJobs
+                                            selectedValue={selectedCategory}
+                                            onValueChange={(item, index) => {
+                                                if (item) {
+                                                    setSelectedCategory(item)
+                                                }
+                                            }}
+                                            itemsList={categoriesForm ? categoriesForm : []} />
 
-                                <TextInputJobs
-                                    name='title'
-                                    onChangeText={handleOnChange}
-                                    placeholder='Título'
-                                    invalidValue={invalidField === 'title'} />
+                                        <TxtTitle>Subcategoria</TxtTitle>
+                                        <PickerJobs
+                                            selectedValue={form.subcategory_id}
+                                            onValueChange={(item, index) => {
+                                                if (item) {
+                                                    setForm({ ...form, subcategory_id: item })
+                                                }
+                                            }}
+                                            itemsList={subcategoriesForm ? subcategoriesForm : []} />
 
-                                <TextInputJobs
-                                    name='description'
-                                    onChangeText={handleOnChange}
-                                    placeholder='Descrição'
-                                    invalidValue={invalidField === 'description'} />
+                                        <TextInputJobs
+                                            name='title'
+                                            onChangeText={handleOnChange}
+                                            placeholder='Título'
+                                            invalidValue={invalidField === 'title'} />
+
+                                        <TextInputJobs
+                                            name='description'
+                                            onChangeText={handleOnChange}
+                                            placeholder='Descrição'
+                                            invalidValue={invalidField === 'description'} />
+                                    </React.Fragment>}
                             </Animated.View>
                         }
                         {!showForm &&
@@ -198,16 +230,16 @@ const mapStateToProps = (state, ownProps) => {
         ownProps: ownProps,
         token: state.auth.token,
         userType: state.auth.userType,
+        loading: state.service.loading,
+        error: state.service.error,
+        errorMessage: state.service.errorMessage,
         professionalData: state.professional.professional,
-        loading: state.professional.loading,
-        error: state.professional.error,
-        errorMessage: state.professional.errorMessage,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        professionalConfigCategory: (token, config) => dispatch(ActionCreators.professionalConfigCategory(token, config)),
+        serviceNewSuggestion: (token, suggestion) => dispatch(ActionCreators.serviceNewSuggestion(token, suggestion)),
     }
 }
 

@@ -88,6 +88,7 @@ export const professionalUpdateSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         professional: action.professional,
+        selected: {},
         isUpdating: false
     }
 }

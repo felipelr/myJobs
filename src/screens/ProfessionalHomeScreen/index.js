@@ -43,7 +43,7 @@ import MenuPicture from '../../components/MenuPicture'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
 function ProfessionalHomeScreen(props) {
-    const [professionalData, setProfessionalData] = useState(props.professionalData ? props.professionalData : props.professionalSelected)
+    const [professionalData, setProfessionalData] = useState(props.professionalData)
     const [image, setImage] = useState((professionalData.photo && professionalData.photo.length > 0) ? { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
     const [backImage, setBackImage] = useState((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
     const [newStory, setNewStory] = useState('')
@@ -66,6 +66,8 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
+
+        console.log('backImage', professionalData)
 
         if (props.userType == 'professional') {
             if (props.fcmToken) {
@@ -104,7 +106,7 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         if (props.selectedService && props.selectedService.id !== 0) {
-            getProfessionalComments.refetch(`/professionalComments/view/${professionalData.id}/${props.selectedService.id}.json`)
+            getProfessionalComments.refetch(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`)
         }
     }, [props.selectedService])
 
@@ -140,19 +142,22 @@ function ProfessionalHomeScreen(props) {
     }, [storiesCarouselOpened])
 
     useEffect(() => {
-        if (props.professionalData)
+        if (props.professionalData.id)
             setProfessionalData(props.professionalData)
     }, [props.professionalData])
 
 
     useEffect(() => {
-        if (props.professionalSelected)
+        if (props.professionalSelected.id) {
             setProfessionalData(props.professionalSelected)
+            setImage((props.professionalSelected.photo && props.professionalSelected.photo.length > 0) ? { uri: props.professionalSelected.photo + '?v=' + Moment(props.professionalSelected.modified).toDate().getTime() } : { uri: '' })
+            setBackImage((props.professionalSelected.backImage && props.professionalSelected.backImage.length > 0) ? { uri: props.professionalSelected.backImage + '?v=' + Moment(props.professionalSelected.modified).toDate().getTime() } : { uri: '' })
+        }
     }, [props.professionalSelected])
 
     useEffect(() => {
         setImage((professionalData.photo && professionalData.photo.length > 0) ? { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
-        setBackImage((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
+            setBackImage((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
     }, [professionalData.modified])
 
     const handleBackPress = async () => {
@@ -285,7 +290,7 @@ function ProfessionalHomeScreen(props) {
 
             {!storiesCarouselOpened &&
                 <React.Fragment>
-                    {props.professionalData.id && <HeaderJobs title='Home' />}
+                    {!props.professionalSelected.id && <HeaderJobs title='Home' />}
                     {props.professionalSelected.id && <HeaderJobs title='Profissional' chat={() => props.navigation.navigate('ProfessionalChat')} />}
 
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
@@ -308,7 +313,7 @@ function ProfessionalHomeScreen(props) {
                                 <VwContainerStories>
                                     <TxtTitle size={14}>Stories</TxtTitle>
                                     <Stories
-                                        novaImagem={props.professionalData.id ? true : false}
+                                        novaImagem={props.professionalSelected.id ? false : true}
                                         stories={stories}
                                         onPressNewStory={handleNewStoryClick}
                                         onPressStory={(imageUri, index) => handleOpenCarousel(imageUri, index)} />

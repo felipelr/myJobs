@@ -22,6 +22,7 @@ export const clientUpdateSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         client: action.client,
+        selected: {},
         isUpdating: false
     }
 }

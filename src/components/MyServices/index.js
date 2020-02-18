@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { View, Animated, Dimensions, Alert } from 'react-native'
+import { View, Animated, Dimensions } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
@@ -9,7 +9,6 @@ import useGet from '../../services/restServices'
 import {
     ViewContainer,
     ScrollViewContainer,
-    ViewContainerButton,
     ViewContainerCategory,
     ViewTitleCategory,
     TxtCategory,

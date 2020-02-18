@@ -29,6 +29,7 @@ import SuggestCompany from '../../components/SuggestCompany/index'
 import MyAddress from '../../components/MyAddress/index'
 import ProfessionalEntry from '../../components/ProfessionalEntry/index'
 import MyServices from '../../components/MyServices'
+import SuggestService from '../../components/SuggestService'
 
 function PerfilScreen(props) {
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
@@ -138,6 +139,9 @@ function PerfilScreen(props) {
             case 'servicos':
                 setTitle('Meus Serviços')
                 break
+            case 'sugerir_servicos':
+                setTitle('Sugerir Serviços')
+                break
             default:
                 setTitle('Perfil')
                 break
@@ -181,6 +185,11 @@ function PerfilScreen(props) {
             case 'Meus Serviços':
                 setShow('servicos')
                 pageRef.current = 'servicos'
+                doAnimation = true
+                break
+            case 'Sugerir Serviços':
+                setShow('sugerir_servicos')
+                pageRef.current = 'sugerir_servicos'
                 doAnimation = true
                 break
             default:
@@ -315,6 +324,7 @@ function PerfilScreen(props) {
                     {(show === 'cadastro' && props.userType === 'professional') && <ProfessionalEntry onUpdate={handleClickBack} />}
 
                     {show === 'servicos' && <MyServices onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
+                    {show === 'sugerir_servicos' && <SuggestService onUpdate={handleClickBack} changeVisiblityPerfilHeader={(show) => setShowHeader(show)} />}
 
                     {show === 'alterarSenha' && <ChangePassword onUpdate={handleClickBack} />}
 

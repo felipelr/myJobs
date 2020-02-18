@@ -14,7 +14,7 @@ export default function HeaderJobs({ title, filter, back, chat, imagem, confirm,
         <Header
             containerStyle={styles.headerContainerStyle}
             centerComponent={title != null ? <Title imagem={imagem} title={title} /> : filter ? <Search onChangeText={props.onChangeText} /> : null}
-            rightComponent={chat ? <Chat /> : confirm ? <Confirm onPress={confirm} /> : null}
+            rightComponent={chat ? <Chat onPress={chat}/> : confirm ? <Confirm onPress={confirm} /> : null}
             leftComponent={back && <Back onPress={back} />}
         >
         </Header>

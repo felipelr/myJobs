@@ -1,17 +1,11 @@
 import React from 'react'
-import { View } from 'react-native'
+import { TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default Chat = () => {
+export default Chat = (props) => {
     return (
-        <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity> 
-                <Icon name='list' size={24} color='white' />
-            </TouchableOpacity>
-            <TouchableOpacity style={{marginLeft: 15}}> 
-                <Icon name='chat' size={24} color='white' />
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.onPress}>
+            <Icon name='chat' size={24} color='white' />
+        </TouchableOpacity>
     )
 }

@@ -285,7 +285,9 @@ function ProfessionalHomeScreen(props) {
 
             {!storiesCarouselOpened &&
                 <React.Fragment>
-                    <HeaderJobs title='Home' />
+                    {props.professionalData.id && <HeaderJobs title='Home' />}
+                    {props.professionalSelected.id && <HeaderJobs title='Profissional' chat={() => props.navigation.navigate('ProfessionalChat')} />}
+
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}>
@@ -306,7 +308,7 @@ function ProfessionalHomeScreen(props) {
                                 <VwContainerStories>
                                     <TxtTitle size={14}>Stories</TxtTitle>
                                     <Stories
-                                        novaImagem={props.professionalData ? true : false}
+                                        novaImagem={props.professionalData.id ? true : false}
                                         stories={stories}
                                         onPressNewStory={handleNewStoryClick}
                                         onPressStory={(imageUri, index) => handleOpenCarousel(imageUri, index)} />
@@ -435,6 +437,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         professionalCtr: state.professional,
         professionalData: state.professional.professional,
+        professionalSelected: state.professional.selected,
         selectedService: state.professionalHome.selectedService,
         user: state.auth.user,
         fcmToken: state.chat.fcmToken,

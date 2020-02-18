@@ -59,7 +59,7 @@ function ProfessionalsScreen(props) {
                             tipo='professional'
                             titulo='Profissionais/Empresas'
                             itens={getProfessionals.data.professionals}
-                            itemOnPress={() => props.navigation.navigate('ProfessionalChat')} />
+                            itemOnPress={() => props.navigation.navigate('ProfessionalHome')} />
                     }
                 </ContainerList>
             </ContainerProfessionals>

@@ -2,12 +2,13 @@ import React from 'react'
 import { Picker } from 'react-native'
 import { ViewContainer, PickerCustom } from './styles'
 
-export default function PickerJobs({ onValueChange, selectedValue, itemsList }) {
+export default function PickerJobs({ onValueChange, selectedValue, itemsList, style }) {
     return (
 
         <ViewContainer> 
             <PickerCustom
                 selectedValue={selectedValue}
+                style={style}
                 onValueChange={onValueChange}>
                 {
                     itemsList &&

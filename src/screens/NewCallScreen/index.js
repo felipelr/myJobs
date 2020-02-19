@@ -22,16 +22,24 @@ import TextInputJobs from '../../components/TextInputJobs/index'
 import Loading from '../../components/Loading/index'
 import TextError from '../../components/TextError/index'
 import ButtonPurple from '../../components/ButtonPurple/index'
+import useGet from '../../services/restServices';
+import PickerJobs from '../../components/PickerJobs'
 
 function NewCallScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [invalidField, setInvalidField] = useState('')
+    const getCategory = useGet(`/categories/getByIdProfessional/${props.professional.id}.json`, props.token)
+    const getSubcategories = useGet('', props.token);
+    const getServices = useGet('', props.token);
+
     const [requisitou, setRequisitou] = useState(false)
     const [form, setForm] = useState({
         client_id: props.client.id,
         professional_id: props.professional.id,
-        service_id: props.serviceSelected.id,
+        service_id: 0,
         description: "",
+        subcategory_id:0,
+        subcategory_description:""
     })
 
     const scrollViewContainer = useRef(null);
@@ -67,6 +75,13 @@ function NewCallScreen(props) {
         }
     }, [props.clientCtr.isUpdating])
 
+    useEffect(() => {  
+        if (getCategory.data != null && getCategory.data.categories != null && getCategory.data.categories[0].id > 0) {
+            getSubcategories.refetch(`/subcategories/getByCategory/${getCategory.data.categories[0].id}.json`);
+        }
+    }, [getCategory.data]) //Quando trocar a categoria selecionada
+
+
     handleOnChange = (name, text) => {
         setForm({
             ...form,
@@ -76,8 +91,7 @@ function NewCallScreen(props) {
         setInvalidField('')
     }
 
-    handleClickConfimar = () => {
-        console.log('chamou o handleClickConfimar')
+    handleClickConfimar = () => { 
         setRequisitou(true)
         props.newProfessionalCallRequest(props.token, form)
     }
@@ -107,11 +121,17 @@ function NewCallScreen(props) {
                                     <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
                                         <React.Fragment>
                                             <TexService>Profissional</TexService>
-                                            <TextName>{props.selectedCategorie.description} - {props.selectedSubcategory.description}</TextName>
+                                            <TextName>{props.professional.name}</TextName>
                                             <TexService>Categoria</TexService>
-                                            <TextName>{props.selectedCategorie.description} - {props.selectedSubcategory.description}</TextName>
+                                            {getCategory.loading || getCategory.data == null || getCategory.data.categories == null ? <TextName>Carregando...</TextName> : <TextName>{getCategory.data.categories[0].description}</TextName>}
+                                            <TexService>Subcategoria</TexService>
+                                            {getSubcategories.loading || getSubcategories.data == null || getSubcategories.data.subcategories ==null ? 
+                                                <TextName>Carregando...</TextName> :
+                                                <PickerJobs onValueChange={handleOnChange} selectedValue={form.subcategory_description} itemsList={getSubcategories.data.subcategories}></PickerJobs>
+                                            }
+                                            <TextName>{JSON.stringify(getSubcategories)}</TextName>
                                             <TexService>Serviço</TexService>
-                                            <TextName>{props.serviceSelected.title}</TextName>
+                                            <TextName>Nenhum</TextName>
                                             <TexService>Cliente</TexService>
                                             <TextName>{props.client.name}</TextName>
                                             <TextName>{props.client.phone}</TextName>
@@ -153,9 +173,6 @@ const mapStateToProps = (state, ownProps) => {
         client: state.client.client,
         clientCtr: state.client,
         professional: state.professional.professional,
-        serviceSelected: state.services.selected,
-        selectedSubcategory: state.subcategory.selected,
-        selectedCategorie: state.categoria.selected,
         enderecos: state.client.client.clientsAddresses,
     }
 }

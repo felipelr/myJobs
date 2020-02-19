@@ -46,11 +46,11 @@ const useGet = (url, token) => {
                     Authorization: 'Bearer ' + token
                 }
             })
-            console.log('Sucesso  = ' + resposta.data)
+            
             dispatch({ type: 'SUCCESS', data: resposta.data })
         } catch (ex) { 
             const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-            console.log('Erro requisição = ' + messageError)
+            console.log(messageError)
             dispatch({ type: 'ERROR', errorMessage: messageError })
         }
     }

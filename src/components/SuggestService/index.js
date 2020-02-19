@@ -10,9 +10,11 @@ import {
     ScrollViewContainer,
     ViewContainer,
     TxtTitle,
+    TouchContainerServicos,
+    TxtServices,
 } from './styles'
 
-import { lightgray, purple, white, black } from '../common/util/colors'
+import { purple, lightgray } from '../common/util/colors'
 
 import HeaderJobs from '../../components/HeaderJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
@@ -35,9 +37,11 @@ function SuggestService(props) {
     const [selectedCategory, setSelectedCategory] = useState(0)
     const [categoriesForm, setCategoriesForm] = useState([])
     const [subcategoriesForm, setSubcategoriesForm] = useState([])
+    const [serviceSuggestions, setServiceSuggestions] = useState([])
 
     const getCategories = useGet('/categories/all.json', props.token)
     const getSubcategories = useGet('', props.token)
+    const getServiceSuggestions = useGet('', props.token)
 
     useEffect(() => {
         props.ownProps.changeVisiblityPerfilHeader(false)
@@ -97,6 +101,17 @@ function SuggestService(props) {
         }
     }, [props.loading])
 
+    useEffect(() => {
+        if (getServiceSuggestions.data) {
+            if (getServiceSuggestions.data.serviceSuggestions) {
+                setServiceSuggestions(getServiceSuggestions.data.serviceSuggestions)
+            }
+            else {
+                setServiceSuggestions([])
+            }
+        }
+    }, [getServiceSuggestions.data])
+
     const handleClickBack = () => {
         if (showForm) {
             props.onUpdate()
@@ -109,8 +124,10 @@ function SuggestService(props) {
 
     const handleConfirmPress = () => {
         if (invalidField === '') {
-            setNewRequest(true)
-            props.serviceNewSuggestion(props.token, form)
+            if (form.subcategory_id !== 0 && form.title.length > 0) {
+                setNewRequest(true)
+                props.serviceNewSuggestion(props.token, form)
+            }
         }
     }
 
@@ -163,13 +180,27 @@ function SuggestService(props) {
         return true
     }
 
+    const handleViewSuggestions = () => {
+        setShowForm(false)
+        inAnimation()
+        if (serviceSuggestions.length == 0)
+            getServiceSuggestions.refetch(`/serviceSuggestions/professional/${props.professionalData.id}.json`)
+    }
+
     return (
         <React.Fragment>
-            <HeaderJobs
-                title='Sugerir Serviços'
-                back={handleClickBack}
-                confirm={handleConfirmPress}
-            />
+            {showForm &&
+                <HeaderJobs
+                    title='Sugerir Serviços'
+                    back={handleClickBack}
+                    confirm={handleConfirmPress}
+                />}
+
+            {!showForm &&
+                <HeaderJobs
+                    title='Sugerir Serviços'
+                    back={handleClickBack}
+                />}
             <ViewContainer>
                 <ScrollViewContainer>
                     <View style={{ flex: 1 }}>
@@ -179,6 +210,12 @@ function SuggestService(props) {
 
                                 {!props.loading &&
                                     <React.Fragment>
+                                        <TouchContainerServicos onPress={() => handleViewSuggestions()}>
+                                            <TxtServices>Sugestões aguardando aprovação</TxtServices>
+                                            <Icon name="chevron-right" size={30} color={purple} />
+                                        </TouchContainerServicos>
+
+                                        {props.error && <TextError>{props.errorMessage}</TextError>}
                                         <TxtTitle>Categoria</TxtTitle>
                                         <PickerJobs
                                             selectedValue={selectedCategory}
@@ -215,7 +252,13 @@ function SuggestService(props) {
                         }
                         {!showForm &&
                             <Animated.View style={slideLeft.getLayout()}>
-
+                                <TxtTitle>Sugestões aguardando aprovação</TxtTitle>
+                                {serviceSuggestions.map(item =>
+                                    <ListItem
+                                        key={item.id}
+                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                        title={item.title}
+                                    />)}
                             </Animated.View>
                         }
                     </View>

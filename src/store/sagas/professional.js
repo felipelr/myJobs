@@ -183,7 +183,7 @@ function* newProfessionalCallRequest(action) {
     console.log("chamou newProfessionalCallRequest")
 
     try {
-        const postResp = yield axios.post(`${urlMyJobsAPI}/calls/add.json`,
+        const postResp = yield axios.post(`${urlMyJobsAPI}/calls/addCall.json`,
             {
                 ...action.call
             },
@@ -196,7 +196,7 @@ function* newProfessionalCallRequest(action) {
         )
 
         if (postResp.data.error) {
-            console.log('error = ' + postResp.data.errorMessage)
+            console.log('error = ' + JSON.stringify(postResp))
             yield put(ActionCreator.newProfessionalCallError(postResp.data.errorMessage))
         }
         else {
@@ -205,8 +205,8 @@ function* newProfessionalCallRequest(action) {
             yield put(ActionCreator.newProfessionalCallRequest(calls))
         }
     } catch (ex) {
-        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
-        console.log('erro' + messageError)
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido' 
+        console.log('erro = ' + messageError)
         yield put(ActionCreator.newProfessionalCallError(messageError))
     }
 }

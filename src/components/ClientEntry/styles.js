@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, gray } from '../../components/common/util/colors'
+import { purple, gray, black } from '../../components/common/util/colors'
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
@@ -61,4 +61,17 @@ export const ContinueButtonText = styled.Text`
 export const ContainerAvatar = styled.View`
     padding-bottom: 10px;
     margin-bottom: 10px;
+`
+
+export const FlipCameraButtonContainer = styled.TouchableOpacity`
+    position: absolute;
+    background-color: ${black};
+    border-radius: 5px;
+    bottom: 20;
+    right: 20;
+    width: 50px;
+    height: 50px;
+    padding: 2px;
+    align-items: center;
+    justify-content: center;
 `

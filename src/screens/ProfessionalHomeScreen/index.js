@@ -5,6 +5,7 @@ import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
 import Moment from 'moment'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import useGet from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
@@ -28,8 +29,11 @@ import {
     CancelButtonText,
     ContinueButtonText,
     ImageNewStory,
+    FlipCameraButtonContainer,
     styles
 } from './styles'
+
+import { white } from '../../components/common/util/colors'
 
 import RatingJobs from '../../components/RatingJobs/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
@@ -44,8 +48,10 @@ import StoriesCarousel from '../../components/StoriesCarousel'
 
 function ProfessionalHomeScreen(props) {
     const [professionalData, setProfessionalData] = useState(props.professionalData)
-    const [image, setImage] = useState((professionalData.photo && professionalData.photo.length > 0) ? { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
-    const [backImage, setBackImage] = useState((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
+    const [images, setImages] = useState({
+        image: { uri: '' },
+        backImage: { uri: '' },
+    })
     const [newStory, setNewStory] = useState('')
     const [newStoryVisible, setNewStoryVisible] = useState(false)
     const [services, setServices] = useState([])
@@ -57,8 +63,10 @@ function ProfessionalHomeScreen(props) {
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
     const [storiesCarouselOpened, setStoriesCarouselOpened] = useState(false)
     const [firstImageCarousel, setFirstImageCarousel] = useState('')
+    const [cameraType, setCameraType] = useState('front')
 
     const pageRef = useRef()
+    const cameraRef = useRef()
 
     const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`, props.token)
@@ -67,7 +75,18 @@ function ProfessionalHomeScreen(props) {
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
-        console.log('backImage', professionalData)
+        let _image = { uri: '' }
+        let _backImage = { uri: '' }
+
+        if (professionalData.photo && professionalData.photo.length > 0) {
+            _image = { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() }
+        }
+
+        if (professionalData.backImage && professionalData.backImage.length > 0) {
+            _backImage = { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() }
+        }
+
+        setImages({ image: _image, backImage: _backImage })
 
         if (props.userType == 'professional') {
             if (props.fcmToken) {
@@ -79,6 +98,11 @@ function ProfessionalHomeScreen(props) {
             backHandler.remove()
         }
     }, [])
+
+    useEffect(() => {
+        console.log('imagem => ', images.image)
+        console.log('backImage => ', images.backImage)
+    }, [images])
 
     useEffect(() => {
         if (getProfessionalServices.data) {
@@ -150,14 +174,35 @@ function ProfessionalHomeScreen(props) {
     useEffect(() => {
         if (props.professionalSelected.id) {
             setProfessionalData(props.professionalSelected)
-            setImage((props.professionalSelected.photo && props.professionalSelected.photo.length > 0) ? { uri: props.professionalSelected.photo + '?v=' + Moment(props.professionalSelected.modified).toDate().getTime() } : { uri: '' })
-            setBackImage((props.professionalSelected.backImage && props.professionalSelected.backImage.length > 0) ? { uri: props.professionalSelected.backImage + '?v=' + Moment(props.professionalSelected.modified).toDate().getTime() } : { uri: '' })
+
+            let _image = { uri: '' }
+            let _backImage = { uri: '' }
+
+            if (props.professionalSelected.photo && props.professionalSelected.photo.length > 0) {
+                _image = { uri: props.professionalSelected.photo + '?v=' + Moment(props.professionalSelected.modified).toDate().getTime() }
+            }
+
+            if (props.professionalSelected.backImage && props.professionalSelected.backImage.length > 0) {
+                _backImage = { uri: props.professionalSelected.backImage + '?v=' + Moment(props.professionalSelected.modified).toDate().getTime() }
+            }
+
+            setImages({ image: _image, backImage: _backImage })
         }
     }, [props.professionalSelected])
 
     useEffect(() => {
-        setImage((professionalData.photo && professionalData.photo.length > 0) ? { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
-            setBackImage((professionalData.backImage && professionalData.backImage.length > 0) ? { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() } : { uri: '' })
+        let _image = { uri: '' }
+        let _backImage = { uri: '' }
+
+        if (professionalData.photo && professionalData.photo.length > 0) {
+            _image = { uri: professionalData.photo + '?v=' + Moment(professionalData.modified).toDate().getTime() }
+        }
+
+        if (professionalData.backImage && professionalData.backImage.length > 0) {
+            _backImage = { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() }
+        }
+
+        setImages({ image: _image, backImage: _backImage })
     }, [professionalData.modified])
 
     const handleBackPress = async () => {
@@ -170,7 +215,7 @@ function ProfessionalHomeScreen(props) {
         return true
     }
 
-    handleNewStoryClick = () => {
+    const handleNewStoryClick = () => {
         setNewStory('')
         setNewStoryVisible(false)
         if (Platform.OS === 'ios') {
@@ -199,22 +244,22 @@ function ProfessionalHomeScreen(props) {
         }
     }
 
-    handleShowMenu = () => {
+    const handleShowMenu = () => {
         setModalOpened(true)
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
     }
 
-    handleTakePicture = async () => {
-        if (this.camera) {
+    const handleTakePicture = async () => {
+        if (cameraRef.current) {
             const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true, pauseAfterCapture: true };
-            const data = await this.camera.takePictureAsync(options)
+            const data = await cameraRef.current.takePictureAsync(options)
             setNewStory(data)
         }
     }
 
-    handleModalClose = () => {
+    const handleModalClose = () => {
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
@@ -223,27 +268,27 @@ function ProfessionalHomeScreen(props) {
         setNewStoryVisible(false)
     }
 
-    handleCameraModalConfirm = () => {
+    const handleCameraModalConfirm = () => {
         if (newStory !== '') {
             //finalizar o cadastro da new story
             setNewStoryVisible(true)
         }
     }
 
-    handleShowCamera = () => {
-        if (this.camera)
-            this.camera.resumePreview()
+    const handleShowCamera = () => {
+        if (cameraRef.current)
+            cameraRef.current.resumePreview()
 
         setMenuOpened(false)
         setCameraOpened(true)
     }
 
-    handleShowFolder = () => {
+    const handleShowFolder = () => {
         setMenuOpened(false)
         setFolderImagesOpened(true)
     }
 
-    handleSelectPicture = (item) => {
+    const handleSelectPicture = (item) => {
         RNFetchBlob.fs.readFile(item.uri, 'base64')
             .then(data => {
                 item = {
@@ -260,7 +305,7 @@ function ProfessionalHomeScreen(props) {
             })
     }
 
-    handleNewStorySuccess = () => {
+    const handleNewStorySuccess = () => {
         setNewStory('')
         setNewStoryVisible(false)
         setMenuOpened(true)
@@ -270,14 +315,18 @@ function ProfessionalHomeScreen(props) {
         getStories.refetch(`/stories/viewSingle/${professionalData.id}.json?limit=5&page=1`)
     }
 
-    handleOpenCarousel = (imageUri, index) => {
+    const handleOpenCarousel = (imageUri, index) => {
         setFirstImageCarousel({ uri: imageUri, index: index })
         setStoriesCarouselOpened(true)
     }
 
-    handleFinishPresentitionCarousel = () => {
+    const handleFinishPresentitionCarousel = () => {
         setStoriesCarouselOpened(false)
         props.storiesRestartSelfPage()
+    }
+
+    const handleFlipCamera = () => {
+        setCameraType(cameraType === 'front' ? 'back' : 'front')
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -297,8 +346,8 @@ function ProfessionalHomeScreen(props) {
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}>
                         <View style={{ flex: 1 }} behavior={behavior}>
-                            {backImage.uri.length > 0 && <Capa source={{ uri: backImage.uri }} />}
-                            {backImage.uri.length <= 0 && <CapaEmpty />}
+                            {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
+                            {images.backImage.uri.length <= 0 && <CapaEmpty />}
 
                             <VwContainerTitle>
                                 <VwContainerRating>
@@ -331,14 +380,14 @@ function ProfessionalHomeScreen(props) {
                             </VwContainerContent>
 
                             <ContainerAvatar>
-                                {image.uri.length > 0 &&
+                                {images.image.uri.length > 0 &&
                                     <Avatar
                                         rounded
                                         containerStyle={styles}
-                                        source={{ uri: image.uri }}
+                                        source={{ uri: images.image.uri }}
                                         size={120} />}
 
-                                {image.uri.length <= 0 &&
+                                {images.image.uri.length <= 0 &&
                                     <Avatar
                                         rounded
                                         containerStyle={styles}
@@ -361,9 +410,9 @@ function ProfessionalHomeScreen(props) {
                                     <ModalContainer>
                                         <ModalContainer>
                                             <RNCamera
-                                                ref={camera => { this.camera = camera; }}
+                                                ref={camera => { cameraRef.current = camera; }}
                                                 style={{ flex: 1 }}
-                                                type={RNCamera.Constants.Type.front}
+                                                type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
                                                 autoFocus={RNCamera.Constants.AutoFocus.on}
                                                 flashMode={RNCamera.Constants.FlashMode.off}
                                                 androidCameraPermissionOptions={{
@@ -386,9 +435,14 @@ function ProfessionalHomeScreen(props) {
                                                 />
                                             )}
                                             {newStory === '' && (
-                                                <TakePictureButtonContainer onPress={handleTakePicture}>
-                                                    <TakePictureButtonLabel />
-                                                </TakePictureButtonContainer>
+                                                <React.Fragment>
+                                                    <TakePictureButtonContainer onPress={handleTakePicture}>
+                                                        <TakePictureButtonLabel />
+                                                    </TakePictureButtonContainer>
+                                                    <FlipCameraButtonContainer onPress={handleFlipCamera}>
+                                                        <Icon name="switch-camera" size={40} color={white} />
+                                                    </FlipCameraButtonContainer>
+                                                </React.Fragment>
                                             )}
                                         </ModalContainer>
                                         <ModalButtons>

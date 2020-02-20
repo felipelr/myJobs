@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Modal, PermissionsAndroid, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
@@ -6,6 +6,7 @@ import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
 import ImageResizer from 'react-native-image-resizer'
 import Moment from 'moment'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -22,9 +23,10 @@ import {
     CancelButtonText,
     ContinueButtonText,
     ContainerAvatar,
+    FlipCameraButtonContainer,
 } from './styles'
 
-import { purple } from '../common/util/colors'
+import { purple, white } from '../common/util/colors'
 
 import TextInputJobs from '../TextInputJobs/index'
 import PickerJobs from '../PickerJobs/index'
@@ -54,21 +56,23 @@ function ClientEntry(props) {
         ...props.client.client,
         date_birth: props.client.client.date_birth.substring(0, 10).split('-').reverse().join(''),
     })
-
     const [image, setImage] = useState(props.client.client.photo ? { uri: props.client.client.photo } : { uri: '' })
-
     const [requisitou, setRequisitou] = useState(false)
     const [modalOpened, setModalOpened] = useState(false)
     const [menuOpened, setMenuOpened] = useState(true)
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
-    const [imgVersion, setImgVersion] = useState(Moment(props.client.client.modified).toDate().getTime())
+    const [imgVersion] = useState(Moment(props.client.client.modified).toDate().getTime())
+    const [cameraType, setCameraType] = useState('front')
+
+    const scrollViewRef = useRef()
+    const cameraRef = useRef()
 
     useEffect(() => {
         if (requisitou && !props.client.isUpdating) {
             if (props.client.errorUpdating) {
                 setRequisitou(false)
-                this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+                scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
             }
             else
                 props.ownProps.onUpdate()
@@ -99,19 +103,7 @@ function ClientEntry(props) {
         }
     }, [form.phone])
 
-    handleOnChange = (name, text) => {
-        setForm({
-            ...form,
-            [name]: text
-        })
-
-        if (!validateField(name, text))
-            setInvalidField(name)
-        else
-            setInvalidField('')
-    }
-
-    validateField = (field, value) => {
+    const validateField = (field, value) => {
         switch (field) {
             case 'name':
             case 'document':
@@ -136,7 +128,19 @@ function ClientEntry(props) {
         return true
     }
 
-    handleAvatarClick = () => {
+    const handleOnChange = (name, text) => {
+        setForm({
+            ...form,
+            [name]: text
+        })
+
+        if (!validateField(name, text))
+            setInvalidField(name)
+        else
+            setInvalidField('')
+    }
+
+    const handleAvatarClick = () => {
         if (Platform.OS === 'ios') {
             handleShowMenu()
         } else {
@@ -163,7 +167,7 @@ function ClientEntry(props) {
         }
     }
 
-    handleClickConfimar = () => {
+    const handleClickConfimar = () => {
         if (invalidField === '') {
             let clientData = {
                 ...props.client.client,
@@ -176,10 +180,10 @@ function ClientEntry(props) {
         }
     }
 
-    handleTakePicture = async () => {
-        if (this.camera) {
-            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true };
-            const data = await this.camera.takePictureAsync(options)
+    const handleTakePicture = async () => {
+        if (cameraRef.current) {
+            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true, pauseAfterCapture: true };
+            const data = await cameraRef.current.takePictureAsync(options)
             ImageResizer.createResizedImage(data.uri, 250, 250, 'JPEG', 100)
                 .then(({ uri }) => {
                     RNFetchBlob.fs.readFile(uri, 'base64')
@@ -198,7 +202,7 @@ function ClientEntry(props) {
         }
     }
 
-    handleSelectPicture = (item) => {
+    const handleSelectPicture = (item) => {
         ImageResizer.createResizedImage(item.uri, 250, 250, 'JPEG', 100)
             .then(({ uri }) => {
                 RNFetchBlob.fs.readFile(uri, 'base64')
@@ -223,14 +227,14 @@ function ClientEntry(props) {
             })
     }
 
-    handleShowMenu = () => {
+    const handleShowMenu = () => {
         setModalOpened(true)
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
     }
 
-    handleModalClose = () => {
+    const handleModalClose = () => {
         setImage(props.client.client.photo ? { uri: props.client.client.photo } : { uri: '' })
         setMenuOpened(true)
         setCameraOpened(false)
@@ -238,25 +242,29 @@ function ClientEntry(props) {
         setModalOpened(false)
     }
 
-    handleCameraModalConfirm = () => {
+    const handleCameraModalConfirm = () => {
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
         setModalOpened(false)
     }
 
-    handleShowCamera = () => {
+    const handleShowCamera = () => {
         setMenuOpened(false)
         setCameraOpened(true)
     }
 
-    handleShowFolder = () => {
+    const handleShowFolder = () => {
         setMenuOpened(false)
         setFolderImagesOpened(true)
     }
 
+    const handleFlipCamera = () => {
+        setCameraType(cameraType === 'front' ? 'back' : 'front')
+    }
+
     return (
-        <ScrollViewContainer ref={(c) => this.scrollViewContainer = c}>
+        <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
             <View style={{ flex: 1, padding: 8 }}>
                 {props.client.isUpdating && <Loading size='large' color={purple} height='330' error={props.client.errorUpdating} />}
 
@@ -271,7 +279,7 @@ function ClientEntry(props) {
                                     containerStyle={{ elevation: 2, alignSelf: "center" }}
                                     source={image.uri.length > 0 ? { uri: image.uri + '?v=' + imgVersion } : { uri: '' }}
                                     size={120}
-                                    onPress={this.handleAvatarClick}
+                                    onPress={handleAvatarClick}
                                     showEditButton
                                     editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
 
@@ -280,7 +288,7 @@ function ClientEntry(props) {
                                     rounded
                                     containerStyle={{ elevation: 2, alignSelf: "center" }}
                                     size={120}
-                                    onPress={this.handleAvatarClick}
+                                    onPress={handleAvatarClick}
                                     showEditButton
                                     editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
 
@@ -335,7 +343,7 @@ function ClientEntry(props) {
                             visible={modalOpened}
                             transparent={menuOpened}
                             animationType="fade"
-                            onRequestClose={this.handleModalClose}>
+                            onRequestClose={handleModalClose}>
 
                             {menuOpened &&
                                 <MenuPicture
@@ -347,9 +355,9 @@ function ClientEntry(props) {
                                 <ModalContainer>
                                     <ModalContainer>
                                         <RNCamera
-                                            ref={camera => { this.camera = camera; }}
+                                            ref={camera => { cameraRef.current = camera; }}
                                             style={{ flex: 1 }}
-                                            type={RNCamera.Constants.Type.front}
+                                            type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
                                             autoFocus={RNCamera.Constants.AutoFocus.on}
                                             flashMode={RNCamera.Constants.FlashMode.off}
                                             androidCameraPermissionOptions={{
@@ -365,15 +373,18 @@ function ClientEntry(props) {
                                                 buttonNegative: 'Cancel',
                                             }}
                                         />
-                                        <TakePictureButtonContainer onPress={this.handleTakePicture}>
+                                        <TakePictureButtonContainer onPress={handleTakePicture}>
                                             <TakePictureButtonLabel />
                                         </TakePictureButtonContainer>
+                                        <FlipCameraButtonContainer onPress={handleFlipCamera}>
+                                            <Icon name="switch-camera" size={40} color={white} />
+                                        </FlipCameraButtonContainer>
                                     </ModalContainer>
                                     <ModalButtons>
-                                        <CameraButtonContainer onPress={this.handleModalClose}>
+                                        <CameraButtonContainer onPress={handleModalClose}>
                                             <CancelButtonText>Cancelar</CancelButtonText>
                                         </CameraButtonContainer>
-                                        <CameraButtonContainer onPress={this.handleCameraModalConfirm}>
+                                        <CameraButtonContainer onPress={handleCameraModalConfirm}>
                                             <ContinueButtonText>Continuar</ContinueButtonText>
                                         </CameraButtonContainer>
                                     </ModalButtons>
@@ -384,7 +395,7 @@ function ClientEntry(props) {
                                 <ModalContainer>
                                     <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
                                     <ModalButtons>
-                                        <CameraButtonContainer onPress={this.handleModalClose}>
+                                        <CameraButtonContainer onPress={handleModalClose}>
                                             <CancelButtonText>Cancelar</CancelButtonText>
                                         </CameraButtonContainer>
                                     </ModalButtons>

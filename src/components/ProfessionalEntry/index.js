@@ -26,9 +26,10 @@ import {
     ImageCapa,
     ViewCapa,
     ViewIcon,
+    FlipCameraButtonContainer,
 } from './styles'
 
-import { purple, lightgray } from '../common/util/colors'
+import { purple, lightgray, white } from '../common/util/colors'
 
 import TextInputJobs from '../TextInputJobs/index'
 import ButtonPurple from '../ButtonPurple/index'
@@ -51,9 +52,11 @@ function ProfessionalEntry(props) {
     const [cameraOpened, setCameraOpened] = useState(false)
     const [folderImagesOpened, setFolderImagesOpened] = useState(false)
     const [typeImage, setTypeImage] = useState(false)
-    const [imgVersion, setImgVersion] = useState(Moment(props.professional.professional.modified).toDate().getTime())
+    const [imgVersion] = useState(Moment(props.professional.professional.modified).toDate().getTime())
+    const [cameraType, setCameraType] = useState('front')
 
     const scrollViewRef = useRef()
+    const cameraRef = useRef()
 
     useEffect(() => {
         if (requisitou && !props.professional.isUpdating) {
@@ -107,7 +110,7 @@ function ProfessionalEntry(props) {
         return true
     }
 
-    handleAvatarClick = (type) => {
+    const handleAvatarClick = (type) => {
         setTypeImage(type)
         if (Platform.OS === 'ios') {
             handleShowMenu()
@@ -135,7 +138,7 @@ function ProfessionalEntry(props) {
         }
     }
 
-    handleClickConfimar = () => {
+    const handleClickConfimar = () => {
         if (invalidField === '') {
             let professionalData = {
                 ...props.professional.professional,
@@ -149,10 +152,10 @@ function ProfessionalEntry(props) {
         }
     }
 
-    handleTakePicture = async () => {
-        if (this.camera) {
-            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true };
-            const data = await this.camera.takePictureAsync(options)
+    const handleTakePicture = async () => {
+        if (cameraRef.current) {
+            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true, pauseAfterCapture: true };
+            const data = await cameraRef.current.takePictureAsync(options)
             if (typeImage === 'backImage') {
                 ImageResizer.createResizedImage(data.uri, 1024, 1024, 'JPEG', 100)
                     .then(({ uri }) => {
@@ -190,7 +193,7 @@ function ProfessionalEntry(props) {
         }
     }
 
-    handleSelectPicture = (item) => {
+    const handleSelectPicture = (item) => {
         ImageResizer.createResizedImage(item.uri, 250, 250, 'JPEG', 100)
             .then(({ uri }) => {
                 RNFetchBlob.fs.readFile(uri, 'base64')
@@ -224,14 +227,14 @@ function ProfessionalEntry(props) {
             })
     }
 
-    handleShowMenu = () => {
+    const handleShowMenu = () => {
         setModalOpened(true)
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
     }
 
-    handleModalClose = () => {
+    const handleModalClose = () => {
         if (image != props.professional.professional.photo)
             setImage(props.professional.professional.photo ? { uri: props.professional.professional.photo } : { uri: '' })
 
@@ -244,21 +247,25 @@ function ProfessionalEntry(props) {
         setModalOpened(false)
     }
 
-    handleCameraModalConfirm = () => {
+    const handleCameraModalConfirm = () => {
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
         setModalOpened(false)
     }
 
-    handleShowCamera = () => {
+    const handleShowCamera = () => {
         setMenuOpened(false)
         setCameraOpened(true)
     }
 
-    handleShowFolder = () => {
+    const handleShowFolder = () => {
         setMenuOpened(false)
         setFolderImagesOpened(true)
+    }
+
+    const handleFlipCamera = () => {
+        setCameraType(cameraType === 'front' ? 'back' : 'front')
     }
 
     return (
@@ -354,9 +361,9 @@ function ProfessionalEntry(props) {
                                 <ModalContainer>
                                     <ModalContainer>
                                         <RNCamera
-                                            ref={camera => { this.camera = camera; }}
+                                            ref={camera => { cameraRef.current = camera; }}
                                             style={{ flex: 1 }}
-                                            type={RNCamera.Constants.Type.front}
+                                            type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
                                             autoFocus={RNCamera.Constants.AutoFocus.on}
                                             flashMode={RNCamera.Constants.FlashMode.off}
                                             androidCameraPermissionOptions={{
@@ -375,6 +382,9 @@ function ProfessionalEntry(props) {
                                         <TakePictureButtonContainer onPress={handleTakePicture}>
                                             <TakePictureButtonLabel />
                                         </TakePictureButtonContainer>
+                                        <FlipCameraButtonContainer onPress={handleFlipCamera}>
+                                            <Icon name="switch-camera" size={40} color={white} />
+                                        </FlipCameraButtonContainer>
                                     </ModalContainer>
                                     <ModalButtons>
                                         <CameraButtonContainer onPress={handleModalClose}>

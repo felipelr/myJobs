@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, gray, lightgray, white } from '../../components/common/util/colors'
+import { purple, gray, lightgray, white, black } from '../../components/common/util/colors'
 import { heightPercentageToDP, widthPercentageToDP } from '../../components/common/util/dimensions'
 import { StyleSheet } from 'react-native'
 
@@ -132,6 +132,19 @@ export const ImageNewStory = styled.Image`
     top: 0;
     left: 0;
     background-color: ${white};
+`
+
+export const FlipCameraButtonContainer = styled.TouchableOpacity`
+    position: absolute;
+    background-color: ${black};
+    border-radius: 5px;
+    bottom: 20;
+    right: 20;
+    width: 50px;
+    height: 50px;
+    padding: 2px;
+    align-items: center;
+    justify-content: center;
 `
 
 export const styles = StyleSheet.create({

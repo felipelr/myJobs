@@ -175,11 +175,10 @@ export const professionalConfigCategoryError = (state = INITIAL_STATE, action) =
 }
  
 export const newProfessionalCallRequest = (state = INITIAL_STATE, action) => {
-    console.log('chamou o reducer newProfessionalCallRequest')
     return {
         ...state,
-        isUpdating: true,
-        errorUpdating: false,
+        loading: true,
+        error: false,
         errorMessage: ''
     }
 }
@@ -187,8 +186,8 @@ export const newProfessionalCallRequest = (state = INITIAL_STATE, action) => {
 export const newProfessionalCallSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isUpdating: false,
-        errorUpdating: false,
+        loading: false,
+        error: false,
         errorMessage: ''
     }
 }
@@ -196,8 +195,8 @@ export const newProfessionalCallSuccess = (state = INITIAL_STATE, action) => {
 export const newProfessionalCallError = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        isUpdating: false,
-        errorUpdating: true,
+        loading: false,
+        error: true,
         errorMessage: action.error
     }
 }

@@ -27,24 +27,28 @@ import PickerJobs from '../../components/PickerJobs'
 function NewCallScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [invalidField, setInvalidField] = useState('')
+    const [categories, setCategories] = useState([])
+    const [subcategories, setSubcategories] = useState([])
+    const [services, setServices] = useState([])
+
     const getCategory = useGet(`/categories/getByIdProfessional/${props.professional.id}.json`, props.token)
     const getSubcategories = useGet('', props.token);
     const getServices = useGet('', props.token);
 
     const [requisitou, setRequisitou] = useState(false)
     const [form, setForm] = useState({
-        client_id: 53,
+        client_id: props.client.id,
         professional_id: props.professional.id,
         service_id: 0,
         description: "",
         subcategory_id: 0,
     })
 
-    const scrollViewContainer = useRef(null);
+    const scrollViewRef = useRef()
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {
-            props.navigation.navigate('CategoriesSearch')
+            props.navigation.goBack()
             return true
         })
         const kbShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -62,24 +66,60 @@ function NewCallScreen(props) {
     }, [])
 
     useEffect(() => {
-        if (requisitou) { 
-            setRequisitou(false)
-            scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true }) 
+        if (requisitou && !props.professionalCtr.loading) {
+            if (props.professionalCtr.error) {
+                setRequisitou(false)
+                scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
+            }
+            else {
+                //finalizar com sucesso
+                props.navigation.goBack()
+            }
         }
-    }, [requisitou])
+    }, [props.professionalCtr.loading])
 
     useEffect(() => {
-        if (getCategory.data != null && getCategory.data.categories != null && getCategory.data.categories[0].id > 0) {
+        if (getCategory.data && getCategory.data.categories && getCategory.data.categories[0].id > 0) {
+            setCategories(getCategory.data.categories)
             getSubcategories.refetch(`/subcategories/getByCategory/${getCategory.data.categories[0].id}.json`);
         }
     }, [getCategory.data]) //Quando trocar a categoria selecionada
 
     useEffect(() => {
-        if (getSubcategories.data != null && getSubcategories.data.subcategories != null) {
-            setForm({ ...form, 'subcategory_id': getSubcategories.data.subcategories[0].id })
+        if (getSubcategories.data) {
+            if (getSubcategories.data.subcategories) {
+                setSubcategories(getSubcategories.data.subcategories.map(item => {
+                    return {
+                        id: item.id,
+                        name: item.description
+                    }
+                }))
+                setForm({ ...form, 'subcategory_id': getSubcategories.data.subcategories[0].id })
+            }
+            else {
+                setSubcategories([])
+                setForm({ ...form, 'subcategory_id': 0 })
+            }
         }
     }, [getSubcategories.data])
 
+    useEffect(() => {
+        if (getServices.data) {
+            if (getServices.data.services) {
+                setServices(getServices.data.services.map(item => {
+                    return {
+                        id: item.id,
+                        name: item.title
+                    }
+                }))
+                setForm({ ...form, 'service_id': getServices.data.services[0].id })
+            }
+            else {
+                setServices([])
+                setForm({ ...form, 'service_id': 0 })
+            }
+        }
+    }, [getServices.data])
 
     useEffect(() => {
         if (form.subcategory_id != 0) {
@@ -88,7 +128,7 @@ function NewCallScreen(props) {
     }, [form.subcategory_id])
 
 
-    handleOnChange = (name, text) => {
+    const handleOnChange = (name, text) => {
         setForm({
             ...form,
             [name]: text
@@ -97,7 +137,7 @@ function NewCallScreen(props) {
         setInvalidField('')
     }
 
-    handleClickConfimar = () => {
+    const handleClickConfimar = () => {
         setRequisitou(true)
         props.newProfessionalCallRequest(props.token, form)
     }
@@ -107,14 +147,14 @@ function NewCallScreen(props) {
     return (
         <React.Fragment>
             <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-                <ScrollViewContainer ref={scrollViewContainer}>
+                <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
                     <View style={{ flex: 1 }}>
                         <ViewCardContainer>
-                            {props.clientCtr.isUpdating && <Loading size='large' color={purple} height='330' error={props.clientCtr.errorUpdating} />}
+                            {props.professionalCtr.loading && <Loading size='large' color={purple} height='330' error={props.professionalCtr.error} />}
 
-                            {props.clientCtr.errorUpdating && <TextError>{props.clientCtr.errorMessage}</TextError>}
+                            {props.professionalCtr.error && <TextError>{props.professionalCtr.errorMessage}</TextError>}
 
-                            {!props.clientCtr.isUpdating && (
+                            {!props.professionalCtr.loading && (
                                 <React.Fragment>
                                     <TextHireService>Abrindo chamado...</TextHireService>
                                     <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
@@ -122,44 +162,28 @@ function NewCallScreen(props) {
                                             <TexService>Profissional</TexService>
                                             <TextName>{props.professional.name}</TextName>
                                             <TexService>Categoria</TexService>
-                                            {getCategory.loading || getCategory.data == null || getCategory.data.categories == null ? <TextName>Carregando...</TextName> : <TextName>{getCategory.data.categories[0].description}</TextName>}
+                                            <TextName>{categories.length > 0 ? getCategory.data.categories[0].description : ''}</TextName>
                                             <TexService>Subcategoria</TexService>
-                                            {getSubcategories.loading || getSubcategories.data == null || getSubcategories.data.subcategories == null ?
-                                                <TextName>Carregando...</TextName> :
-                                                <PickerJobs
-                                                    onValueChange={(item, index) => {
-                                                        if (item) {
-                                                            setForm({ ...form, subcategory_id: item })
-                                                        }
-                                                    }}
-                                                    selectedValue={form.subcategory_id}
-                                                    itemsList={getSubcategories.data.subcategories.map(item => {
-                                                        return {
-                                                            id: item.id,
-                                                            name: item.description
-                                                        }
-                                                    })}></PickerJobs>
-                                            }
+                                            <PickerJobs
+                                                onValueChange={(item, index) => {
+                                                    if (item) {
+                                                        setForm({ ...form, subcategory_id: item })
+                                                    }
+                                                }}
+                                                selectedValue={form.subcategory_id}
+                                                itemsList={subcategories} />
                                             <TexService>Serviço</TexService>
-                                            {getServices.loading || getServices.data == null || getServices.data.services == null ?
-                                                <TextName>Carregando...</TextName> :
-                                                <PickerJobs
-                                                    onValueChange={(item, index) => {
-                                                        if (item) {
-                                                            setForm({ ...form, service_id: item })
-                                                        }
-                                                    }}
-                                                    selectedValue={form.service_id}
-                                                    itemsList={getServices.data.services.map(item => {
-                                                        return {
-                                                            id: item.id,
-                                                            name: item.title
-                                                        }
-                                                    })}></PickerJobs>
-                                            }
+                                            <PickerJobs
+                                                onValueChange={(item, index) => {
+                                                    if (item) {
+                                                        setForm({ ...form, service_id: item })
+                                                    }
+                                                }}
+                                                selectedValue={form.service_id}
+                                                itemsList={services} />
                                             <TexService>Cliente</TexService>
-                                            <TextName>{props.clientCtr.name}</TextName>
-                                            <TextName>{props.clientCtr.phone}</TextName>
+                                            <TextName>{props.client.name}</TextName>
+                                            <TextName>{props.client.phone}</TextName>
                                             <TexService>Descrição</TexService>
                                             <TextInputJobs
                                                 name='description'
@@ -171,7 +195,7 @@ function NewCallScreen(props) {
                                                 numberOfLines={2} />
 
                                             <ViewContainerConfirmar>
-                                                <ButtonPurple onPress={handleClickConfimar}>Concluir</ButtonPurple>
+                                                <ButtonPurple onPress={() => handleClickConfimar()}>Concluir</ButtonPurple>
                                             </ViewContainerConfirmar>
                                         </React.Fragment>
                                     </CardJobs>
@@ -196,10 +220,9 @@ const mapStateToProps = (state, ownProps) => {
     return {
         ownProps: ownProps,
         token: state.auth.token,
-        client: state.client.client,
-        clientCtr: state.client,
+        client: state.client.selected,
         professional: state.professional.professional,
-        enderecos: state.client.client.clientsAddresses,
+        professionalCtr: state.professional,
     }
 }
 

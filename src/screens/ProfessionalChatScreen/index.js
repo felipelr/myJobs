@@ -123,8 +123,11 @@ function ProfessionalChatScreen(props) {
 
     const inputMsgRef = useRef()
     const appStateRef = useRef()
+    const wsRef = useRef()
+    const messagesRef = useRef()
 
     const getMessages = useGet('', props.token)
+
 
     useEffect(() => {
         appStateRef.current = 'active'
@@ -142,7 +145,62 @@ function ProfessionalChatScreen(props) {
             setKeyboardIsVisible(false)
         })
 
-        carregarMensagens()
+        carregarMensagens(true)
+
+        const type_ = props.userType;
+        const from_ = props.user.id;
+        const to_ = props.userType === 'client' ? props.professionalSelected.id : props.clientSelected.id;
+        const token_ = props.token;
+        wsRef.current = new WebSocket(`ws://67.205.160.187:8080?type=${type_}&from=${from_}&to=${to_}&token=${token_}`);
+
+        wsRef.current.onopen = (e) => {
+            console.log('Socket Opened')
+        };
+
+        wsRef.current.onclose = (e) => {
+            console.log('Socket Closed')
+        };
+
+        wsRef.current.onmessage = (e) => {
+            try {
+                const messageObj = {
+                    ...JSON.parse(e.data),
+                    date: Moment().format('DD/MM/YYYY'),
+                    time: Moment().format('HH:mm:ss')
+                }
+
+                if (props.userType !== messageObj.msg_from) {
+                    setMensagens([...messagesRef.current, messageObj])
+                }
+
+                if (props.professionalSelected.id) {
+                    const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+                    AsyncStorage.getItem(storageName, (err, result) => {
+                        const newMessage = [messageObj]
+                        if (result !== null) {
+                            const arrayMessages = JSON.parse(result).concat(newMessage)
+                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                        } else {
+                            AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                        }
+                    })
+                }
+                else {
+                    const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+                    AsyncStorage.getItem(storageName, (err, result) => {
+                        const newMessage = [messageObj]
+                        if (result !== null) {
+                            const arrayMessages = JSON.parse(result).concat(newMessage)
+                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                        } else {
+                            AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                        }
+                    })
+                }
+            } catch (ex) {
+                console.log(ex)
+            }
+        };
 
         return () => {
             props.chatSetScreenChatVisible(false)
@@ -150,88 +208,13 @@ function ProfessionalChatScreen(props) {
             kbShow.remove()
             knHide.remove()
             AppState.removeEventListener('change', handleAppStateChange)
+            wsRef.current.close()
         }
     }, [])
 
-    const handleAppStateChange = (nextAppState) => {
-        if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
-            reloadMensagens()
-        }
-        appStateRef.current = nextAppState
-    }
-
-    const reloadMensagens = async () => {
-        if (props.professionalSelected.id) {
-            const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-            const messagesStr = await AsyncStorage.getItem(storageName)
-            let _last = 0;
-            if (messagesStr != null) {
-                const _messages = JSON.parse(messagesStr)
-                if (_messages && _messages.length > 0) {
-                    _last = _messages[_messages.length - 1].id
-                }
-            }
-
-            console.log('activeted => lastID: ', _last)
-            getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
-        }
-        else {
-            const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
-            const messagesStr = await AsyncStorage.getItem(storageName)
-            let _last = 0;
-            if (messagesStr != null) {
-                const _messages = JSON.parse(messagesStr)
-                if (_messages && _messages.length > 0) {
-                    _last = _messages[_messages.length - 1].id
-                }
-            }
-
-            console.log('activeted => lastID: ', _last)
-            getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${_last}`)
-        }
-    }
-
-    const carregarMensagens = async () => {
-        try {
-            if (props.professionalSelected.id) {
-                const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-                const messagesStr = await AsyncStorage.getItem(storageName)
-                let _last = 0;
-                if (messagesStr != null) {
-                    const messages_ = JSON.parse(messagesStr)
-                    if (messages_ && messages_.length) {
-                        setMensagens(messages_)
-                        if (messages_.length > 0) {
-                            const lastIndex = messages_.length - 1;
-                            _last = messages_[lastIndex].id
-                        }
-                    }
-                }
-
-                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
-            }
-            else {
-                const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
-                const messagesStr = await AsyncStorage.getItem(storageName)
-                let _last = 0;
-                if (messagesStr != null) {
-                    const messages_ = JSON.parse(messagesStr)
-                    if (messages_ && messages_.length) {
-                        setMensagens(messages_)
-                        if (messages_.length > 0) {
-                            const lastIndex = messages_.length - 1;
-                            _last = messages_[lastIndex].id
-                        }
-                    }
-                }
-
-                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${_last}`)
-            }
-
-        } catch (e) {
-            console.log(e)
-        }
-    }
+    useEffect(() => {
+        messagesRef.current = mensagens
+    }, [mensagens])
 
     useEffect(() => {
         if (getMessages.data && getMessages.data.chatMessages) {
@@ -262,14 +245,14 @@ function ProfessionalChatScreen(props) {
                             }
                         })
                     }
-                } catch (e) {
-                    console.log(e)
+                } catch (ex) {
+                    console.log(ex)
                 }
             }
         }
     }, [getMessages.data]);
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (props.sendedMessage && props.sendedMessage.id) {
             try {
                 console.log('props.sendedMessage => ', props.sendedMessage)
@@ -307,9 +290,9 @@ function ProfessionalChatScreen(props) {
                 console.log(e)
             }
         }
-    }, [props.sendedMessage]);
+    }, [props.sendedMessage]); */
 
-    useEffect(() => {
+    /* useEffect(() => {
         console.log('props.receivedMessage => ', props.receivedMessage)
         if (props.screenChatVisible && props.receivedMessage.id) {
             if (mensagens.length > 0) {
@@ -338,7 +321,57 @@ function ProfessionalChatScreen(props) {
                 }])
             }
         }
-    }, [props.receivedMessage]);
+    }, [props.receivedMessage]); */
+
+    const handleAppStateChange = (nextAppState) => {
+        if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
+            carregarMensagens(false)
+        }
+        appStateRef.current = nextAppState
+    }
+
+    const carregarMensagens = async (changeState) => {
+        try {
+            if (props.professionalSelected.id) {
+                const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+                const messagesStr = await AsyncStorage.getItem(storageName)
+                let _last = 0;
+                if (messagesStr != null) {
+                    const messages_ = JSON.parse(messagesStr)
+                    if (messages_ && messages_.length) {
+                        if (changeState) {
+                            setMensagens(messages_)
+                        }
+                        if (messages_.length > 0) {
+                            const lastIndex = messages_.length - 1;
+                            _last = messages_[lastIndex].id
+                        }
+                    }
+                }
+                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
+            }
+            else {
+                const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+                const messagesStr = await AsyncStorage.getItem(storageName)
+                let _last = 0;
+                if (messagesStr != null) {
+                    const messages_ = JSON.parse(messagesStr)
+                    if (messages_ && messages_.length) {
+                        if (changeState) {
+                            setMensagens(messages_)
+                        }
+                        if (messages_.length > 0) {
+                            const lastIndex = messages_.length - 1;
+                            _last = messages_[lastIndex].id
+                        }
+                    }
+                }
+                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${_last}`)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const handleBackPress = async () => {
         props.navigation.goBack()
@@ -356,7 +389,9 @@ function ProfessionalChatScreen(props) {
                     date_time: Moment().format('YYYY-MM-DD HH:mm:ss'),
                     msg_from: 'client',
                 }
-                props.chatSendNewMessage(props.token, form)
+                //props.chatSendNewMessage(props.token, form)
+                wsRef.current.send(JSON.stringify(form));
+
                 inputMsgRef.current.clear()
                 Keyboard.dismiss()
                 setMensagens([...mensagens, {
@@ -373,7 +408,9 @@ function ProfessionalChatScreen(props) {
                     date_time: Moment().format('YYYY-MM-DD HH:mm:ss'),
                     msg_from: 'professional',
                 }
-                props.chatSendNewMessage(props.token, form)
+                //props.chatSendNewMessage(props.token, form)
+                wsRef.current.send(JSON.stringify(form));
+
                 inputMsgRef.current.clear()
                 Keyboard.dismiss()
                 setMensagens([...mensagens, {
@@ -386,11 +423,19 @@ function ProfessionalChatScreen(props) {
         }
     }
 
+    const handlePressNewCall = () => {
+        props.navigation.navigate('NewCall')
+    }
+
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back={() => handleBackPress()} title={props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name} />
+            <HeaderJobs
+                title={props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name}
+                back={() => handleBackPress()}
+                newCall={props.clientSelected ? () => handlePressNewCall() : null}
+            />
             <ViewContainerChat>
                 <ChatMessages messages={mensagens} userType={props.userType} />
             </ViewContainerChat>
@@ -422,7 +467,7 @@ const mapStateToProps = (state, ownProps) => {
         user: state.auth.userType === 'client' ? state.client.client : state.professional.professional,
         userType: state.auth.userType,
         selectedCategorie: state.categoria.selected,
-        serviceSelected: state.services.selected,
+        serviceSelected: state.service.selected,
         professionalSelected: state.professional.selected,
         clientSelected: state.client.selected,
         lastId: state.chat.lastId,

@@ -28,28 +28,19 @@ function Login(props) {
     const [form, setForm] = useState({
         email: 'felipe.lima.flr@gmail.com',
         password: '101762866218022699799',
-        userType: props.auth.userType === 'client' ? 1 : 2
     })
 
     useEffect(() => {
         if (props.auth.isAuth) {
-            if (form.userType === 1)
+            if (props.auth.userType === 'client')
                 props.ownProps.navigation.navigate('CategoriesSearch')
             else
                 props.ownProps.navigation.navigate('ProfessionalHome')
         }
     }, [props.auth.isAuth])
 
-    useEffect(() => {
-        if (form.userType === 1)
-            props.authSetUserType('client')
-        else
-            props.authSetUserType('professional')
-
-    }, [form.userType])
-
     const handleClickLogin = () => {
-        props.login(form.email, form.password, form.userType)
+        props.login(form.email, form.password)
     }
 
     handleOnChange = (name, text) => {
@@ -70,34 +61,6 @@ function Login(props) {
                         props.auth.error && <TextError>{props.auth.errorMessage}</TextError>
                     }
                     <ViewContainerFields>
-                        <ViewContainerRow>
-                            <CheckBox
-                                title='Cliente'
-                                checkedIcon='dot-circle-o'
-                                uncheckedIcon='circle-o'
-                                checkedColor={purple}
-                                containerStyle={styleSheets.containerCheck}
-                                checked={form.userType === 1}
-                                onPress={() => {
-                                    setForm({
-                                        ...form,
-                                        'userType': 1
-                                    })
-                                }} />
-                            <CheckBox
-                                title='Profissional'
-                                checkedIcon='dot-circle-o'
-                                uncheckedIcon='circle-o'
-                                checkedColor={purple}
-                                containerStyle={styleSheets.containerCheck}
-                                checked={form.userType !== 1}
-                                onPress={() => {
-                                    setForm({
-                                        ...form,
-                                        'userType': 2
-                                    })
-                                }} />
-                        </ViewContainerRow>
                         <TextInputJobs
                             value={form.email}
                             name='email'
@@ -136,8 +99,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType)),
-        authSetUserType: (userType) => dispatch(ActionCreators.authSetUserType(userType)),
+        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }
 }
 

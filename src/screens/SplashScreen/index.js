@@ -108,7 +108,7 @@ function SplashScreen(props) {
                 const clientData = await AsyncStorage.getItem('@clientData')
                 const professionalData = await AsyncStorage.getItem('@professionalData')
 
-                let userType = professionalData ? 2 : 1
+                let userType = professionalData ? 'professional' : 'client'
 
                 const userJson = { ...JSON.parse(userData), userType }
                 const clientJson = clientData ? JSON.parse(clientData) : null
@@ -122,7 +122,7 @@ function SplashScreen(props) {
 
                 props.authSuccess(userJson)
 
-                if (userType === 1)
+                if (userType === 'client')
                     props.navigation.navigate('CategoriesSearch')
                 else
                     props.navigation.navigate('ProfessionalHome')

@@ -32,6 +32,8 @@ function* signup(action) {
             }
         })
 
+        console.log(signup.data)
+
         if (signup.data.error) {
             console.log(signup.data.errorMessage)
             yield put(ActionCreator.signupError(signup.data.errorMessage))

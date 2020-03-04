@@ -33,14 +33,12 @@ setProfessionalData = async (professionalData) => {
 
 function* login(action) {
     try {
-        console.log('Dados login => ', 'email:', action.email, 'senha:', action.password, 'userType:', action.userType)
+        console.log('Dados login => ', 'email:', action.email, 'senha:', action.password)
 
         const login = yield axios.post(`${urlMyJobsAPI}/users/login.json`, {
             email: action.email,
             password: action.password
         })
-
-        console.log('login resp => ' , login.data)
 
         const token = login.data.data.token
         const user = jwtDecode(token)
@@ -58,17 +56,7 @@ function* login(action) {
         const { client } = view.data.user
         const { professional } = view.data.user
 
-        const userType = action.userType
-
-        if (userType === 1 && !client) {
-            yield put(ActionCreator.loginError('new_as_client'))
-            return
-        }
-
-        if (userType === 2 && !professional) {
-            yield put(ActionCreator.loginError('new_as_professional'))
-            return
-        }
+        let userType = 'client'
 
         if (client) {
             setClientData(client)
@@ -76,6 +64,7 @@ function* login(action) {
         }
 
         if (professional) {
+            userType = 'professional'
             setProfessionalData(professional)
             yield put(ActionCreator.professionalUpdateSuccess(professional))
         }

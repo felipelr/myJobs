@@ -2,7 +2,7 @@ import { createActions } from 'reduxsauce'
 
 export const { Types, Creators } = createActions({
     //Auth Actions
-    loginRequest: ['email', 'password', 'userType'],
+    loginRequest: ['email', 'password'],
     loginSuccess: ['data'],
     loginError: ['error'],
     loginCleanError: null,
@@ -112,7 +112,6 @@ export const { Types, Creators } = createActions({
     chatUpdateUserFcmToken: ['token', 'userId', 'fcmToken'],
     chatCleanSendedMessage: null,
     chatSetScreenChatVisible: ['visible'],
-    authSetUserType: ['userType'],
 })
 
 export default Creators

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
@@ -30,6 +30,7 @@ import {
 import { styleSheets } from './styles'
 
 function SignUp(props) {
+    const [newRequest, setNewRequest] = useState(false)
     const [invalidField, setInvalidField] = useState('')
     const [genderList, setGenderList] = useState([
         {
@@ -57,26 +58,31 @@ function SignUp(props) {
         gender: 'MASCULINO'
     })
 
+    const scrollViewRef = useRef()
+
     useEffect(() => {
 
     }, [])
 
     useEffect(() => {
         if (props.signup.isSignup) {
-            props.login(props.signup.user.email, props.signup.user.password, form.userType)
+            props.login(props.signup.user.email, props.signup.user.password)
         }
     }, [props.signup.isSignup])
 
     useEffect(() => {
         if (props.signup.error) {
-            this.scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+            scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
         }
     }, [props.signup.error])
 
     useEffect(() => {
         if (props.auth.isAuth) {
             props.ownProps.onPressLogin()
-            props.ownProps.navigation.navigate('CategoriesSearch')
+            if (props.auth.userType === 'client')
+                props.ownProps.navigation.navigate('CategoriesSearch')
+            else
+                props.ownProps.navigation.navigate('ProfessionalHome')
         }
         else if (props.auth.error) {
             props.ownProps.onPressLogin()
@@ -171,7 +177,7 @@ function SignUp(props) {
     }
 
     return (
-        <ScrollViewContainerForm ref={(c) => this.scrollViewContainer = c}>
+        <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
             <View style={{ paddingBottom: 50 }}>
                 {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
 
@@ -180,34 +186,17 @@ function SignUp(props) {
                         <TextSignUpTitle>Cadastre-se</TextSignUpTitle>
                         {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
                         <View>
-                            <ViewContainerRow>
-                                <CheckBox
-                                    title='Cliente'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checkedColor={purple}
-                                    containerStyle={styleSheets.containerCheck}
-                                    checked={form.userType === 1}
-                                    onPress={() => {
-                                        setForm({
-                                            ...form,
-                                            'userType': 1
-                                        })
-                                    }} />
-                                <CheckBox
-                                    title='Profissional'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checkedColor={purple}
-                                    containerStyle={styleSheets.containerCheck}
-                                    checked={form.userType !== 1}
-                                    onPress={() => {
-                                        setForm({
-                                            ...form,
-                                            'userType': 2
-                                        })
-                                    }} />
-                            </ViewContainerRow>
+                            <CheckBox
+                                title='Oferecer serviços no aplicativo'
+                                checkedColor={purple}
+                                containerStyle={styleSheets.containerCheck}
+                                checked={form.userType === 2}
+                                onPress={() => {
+                                    setForm({
+                                        ...form,
+                                        'userType': form.userType === 2 ? 1 : 2
+                                    })
+                                }} />
                             <TextInputJobs
                                 name='name'
                                 onChangeText={handleOnChange}
@@ -293,16 +282,16 @@ function SignUp(props) {
 
 const mapStateToProps = (state, ownProps) => {
     return {
+        ownProps: ownProps,
         signup: state.signup,
         auth: state.auth,
-        ownProps: ownProps,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         signupRequest: (user) => dispatch(ActionCreators.signupRequest(user)),
-        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType)),
+        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }
 }
 

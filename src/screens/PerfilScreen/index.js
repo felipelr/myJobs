@@ -305,7 +305,9 @@ function PerfilScreen(props) {
                                 <Space />
                                 <ContainerTitle>
                                     {doubleUser &&
-                                        <ViewSlider activeOpacity={1} onPress={() => hadleUserTypePress()}>
+                                        <ViewSlider
+                                            activeOpacity={1}
+                                            onPress={() => hadleUserTypePress()}>
                                             <TxtSlider color={selectUserType === 0 ? purple : black}>Cliente</TxtSlider>
                                             <Slider
                                                 value={selectUserType}

@@ -10,18 +10,23 @@ import ActionCreators from '../../store/actionCreators'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 
-import { purple, lightgray } from '../../components/common/util/colors'
+import { purple, lightgray, gold } from '../../components/common/util/colors'
 
 import {
     styles,
     ScrollViewContainer,
-    ViewContainer
+    ViewContainer,
+    ViewTabControl,
+    TouchTab,
+    TxtTab,
 } from './styles'
 
 function ProfessionalCallsScreen(props) {
-    const [chats, setChats] = useState([])
+    const [calls, setCalls] = useState([])
+    const [finishedCalls, setFinishedCalls] = useState([])
+    const [tabSelected, setTabSelected] = useState(0)
 
-    const getChatsProfessional = useGet(`/chatMessages/professionalChats.json?professional_id=${props.professionalData.id}`, props.token)
+    const getCalls = useGet(`/calls/professional/${props.professionalData.id}.json?`, props.token)
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
@@ -32,11 +37,10 @@ function ProfessionalCallsScreen(props) {
     }, [])
 
     useEffect(() => {
-        console.log(getChatsProfessional.data)
-        if (getChatsProfessional.data && getChatsProfessional.data.chatMessages) {
-            setChats(getChatsProfessional.data.chatMessages)
+        if (getCalls.data && getCalls.data.calls) {
+            setCalls(getCalls.data.calls)
         }
-    }, [getChatsProfessional.data])
+    }, [getCalls.data])
 
     const handleBackPress = async () => {
         props.navigation.goBack()
@@ -44,36 +48,62 @@ function ProfessionalCallsScreen(props) {
     }
 
     const handleClickItem = (item) => {
-        props.clientSelected(item.client)
-        props.navigation.navigate('ProfessionalChat')
+        //props.clientSelected(item.client)
+        //props.navigation.navigate('ProfessionalChat')
     }
 
     return (
         <React.Fragment>
             <HeaderJobs
-                title={'Conversas'}
+                title={'Chamados'}
                 back={() => props.navigation.goBack()} />
+
+            <ViewTabControl>
+                <TouchTab
+                    activeOpacity={1}
+                    onPress={() => setTabSelected(0)}
+                    borderColor={tabSelected === 0 ? gold : purple}
+                >
+                    <TxtTab>ABERTOS</TxtTab>
+                </TouchTab>
+                <TouchTab
+                    activeOpacity={1}
+                    onPress={() => setTabSelected(1)}
+                    borderColor={tabSelected === 1 ? gold : purple}
+                >
+                    <TxtTab>FINALIZADOS</TxtTab>
+                </TouchTab>
+            </ViewTabControl>
             <ScrollViewContainer>
                 <ViewContainer>
-                    {
-                        chats.map((item, i) => (
-                            <ListItem
-                                key={i}
-                                containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                title={item.client.name}
-                                rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
-                                onPress={() => { handleClickItem(item) }}
-                            />
-                        ))
-                    }
+                    {tabSelected === 0 && calls.map((item, i) => (
+                        <ListItem
+                            key={i}
+                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
+                            title={item.client.name}
+                            rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                            leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                            onPress={() => { handleClickItem(item) }}
+                        />
+                    ))}
+                    {tabSelected === 1 && finishedCalls.map((item, i) => (
+                        <ListItem
+                            key={i}
+                            containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
+                            title={item.client.name}
+                            rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
+                            leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                            onPress={() => { handleClickItem(item) }}
+                        />
+                    ))}
                 </ViewContainer>
             </ScrollViewContainer>
             <Footer
                 type={props.userType}
-                selected={'chat'}
+                selected={'favorite'}
                 homeOnPress={() => props.navigation.navigate('ProfessionalHome')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
+                chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
             />
         </React.Fragment>
     )

@@ -1,3 +1,5 @@
-export const urlMyJobsAPI = 'http://myjobs.servicos.ws/ws/api'
+//export const urlMyJobsAPI = 'http://myjobs.servicos.ws/ws/api'
+//export const urlMyJobs = 'http://myjobs.servicos.ws/ws'
 export const urlFacebookGraph = 'https://graph.facebook.com/v2.5'
-export const urlMyJobs = 'http://myjobs.servicos.ws/ws'
+export const urlMyJobsAPI = 'http://67.205.160.187/ws/api'
+export const urlMyJobs = 'http://67.205.160.187/ws'

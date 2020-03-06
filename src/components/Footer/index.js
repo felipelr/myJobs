@@ -18,8 +18,8 @@ export default function Footer({ type, selected, ...props }) {
                     <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
                 </FooterButton>
                 <FooterButton onPress={props.favoriteOnPress}>
-                    <ItemRounded backColor={white}>
-                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={itemSelected === 'favorite' ? gold : purple} />
+                    <ItemRounded backColor={itemSelected === 'favorite' ? gold : white}>
+                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={purple} />
                     </ItemRounded>
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
@@ -41,8 +41,8 @@ export default function Footer({ type, selected, ...props }) {
                     <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
                 </FooterButton>
                 <FooterButton onPress={props.favoriteOnPress}>
-                    <ItemRounded backColor={white}>
-                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={itemSelected === 'favorite' ? gold : purple} />
+                    <ItemRounded backColor={itemSelected === 'favorite' ? gold : white}>
+                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={purple} />
                     </ItemRounded>
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>

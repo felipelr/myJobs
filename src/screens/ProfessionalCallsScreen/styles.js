@@ -15,3 +15,22 @@ export const ViewContainer = styled.View`
     background-color: ${white};
     flex: 1;
 `
+
+export const ViewTabControl = styled.View`
+    flex-direction: row;
+    height: 35px;
+`
+
+export const TouchTab = styled.TouchableOpacity`
+    flex: 1;
+    background-color: ${purple};
+    padding: 4px;
+    border-bottom-width: 3px;
+    border-bottom-color: ${props => `${props.borderColor}`};
+`
+
+export const TxtTab = styled.Text`
+    color: ${white};
+    font-size: 14;
+    align-self: center;
+`

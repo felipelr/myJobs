@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View } from 'react-native'
+import { View, KeyboardAvoidingView, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
@@ -176,107 +176,110 @@ function SignUp(props) {
         props.signupRequest(user)
     }
 
+    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
-            <View style={{ paddingBottom: 50 }}>
-                {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
+        <KeyboardAvoidingView>
+            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
+                <View style={{ paddingBottom: 50 }}>
+                    {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
 
-                {(!props.signup.isSigningup && !props.auth.isLogingin) && (
-                    <CardJobs backColor={white} width='80' height='140' opacity={1}>
-                        <TextSignUpTitle>Cadastre-se</TextSignUpTitle>
-                        {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
-                        <View>
-                            <CheckBox
-                                title='Oferecer serviços no aplicativo'
-                                checkedColor={purple}
-                                containerStyle={styleSheets.containerCheck}
-                                checked={form.userType === 2}
-                                onPress={() => {
-                                    setForm({
-                                        ...form,
-                                        'userType': form.userType === 2 ? 1 : 2
-                                    })
-                                }} />
-                            <TextInputJobs
-                                name='name'
-                                onChangeText={handleOnChange}
-                                placeholder='Nome'
-                                invalidValue={invalidField === 'name'} />
+                    {(!props.signup.isSigningup && !props.auth.isLogingin) && (
+                        <CardJobs backColor={white} width='80' height='140' opacity={1}>
+                            <TextSignUpTitle>Cadastre-se</TextSignUpTitle>
+                            {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
+                            <View>
+                                <CheckBox
+                                    title='Oferecer serviços no aplicativo'
+                                    checkedColor={purple}
+                                    containerStyle={styleSheets.containerCheck}
+                                    checked={form.userType === 2}
+                                    onPress={() => {
+                                        setForm({
+                                            ...form,
+                                            'userType': form.userType === 2 ? 1 : 2
+                                        })
+                                    }} />
+                                <TextInputJobs
+                                    name='name'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Nome'
+                                    invalidValue={invalidField === 'name'} />
 
-                            <TextInputJobs
-                                value={form.phone}
-                                name='phone'
-                                onChangeText={handleOnChange}
-                                placeholder='Telefone'
-                                textContentType='telephoneNumber'
-                                keyboardType='phone-pad'
-                                invalidValue={invalidField === 'phone'} />
+                                <TextInputJobs
+                                    value={form.phone}
+                                    name='phone'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Telefone'
+                                    textContentType='telephoneNumber'
+                                    keyboardType='phone-pad'
+                                    invalidValue={invalidField === 'phone'} />
 
-                            <TextInputJobs
-                                name='document'
-                                onChangeText={handleOnChange}
-                                keyboardType='number-pad'
-                                placeholder='CPF'
-                                invalidValue={invalidField === 'document'} />
+                                <TextInputJobs
+                                    name='document'
+                                    onChangeText={handleOnChange}
+                                    keyboardType='number-pad'
+                                    placeholder='CPF'
+                                    invalidValue={invalidField === 'document'} />
 
-                            <TextInputJobs
-                                value={form.date_birth}
-                                name='date_birth'
-                                onChangeText={handleOnChange}
-                                placeholder='Data de Nascimento'
-                                keyboardType='number-pad'
-                                invalidValue={invalidField === 'date_birth'} />
+                                <TextInputJobs
+                                    value={form.date_birth}
+                                    name='date_birth'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Data de Nascimento'
+                                    keyboardType='number-pad'
+                                    invalidValue={invalidField === 'date_birth'} />
 
-                            <PickerJobs
-                                selectedValue={form.gender}
-                                onValueChange={(itemValue, itemIndex) => {
-                                    setForm({
-                                        ...form,
-                                        'gender': itemValue
-                                    })
-                                }}
-                                itemsList={genderList} />
+                                <PickerJobs
+                                    selectedValue={form.gender}
+                                    onValueChange={(itemValue, itemIndex) => {
+                                        setForm({
+                                            ...form,
+                                            'gender': itemValue
+                                        })
+                                    }}
+                                    itemsList={genderList} />
 
-                            <TextInputJobs
-                                name='email'
-                                onChangeText={handleOnChange}
-                                placeholder='Email'
-                                textContentType='emailAddress'
-                                keyboardType='email-address'
-                                invalidValue={invalidField === 'email'} />
+                                <TextInputJobs
+                                    name='email'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Email'
+                                    textContentType='emailAddress'
+                                    keyboardType='email-address'
+                                    invalidValue={invalidField === 'email'} />
 
-                            <TextInputJobs
-                                name='password'
-                                onChangeText={handleOnChange}
-                                placeholder='Senha'
-                                textContentType='password'
-                                secureTextEntry={true}
-                                invalidValue={invalidField === 'password'} />
+                                <TextInputJobs
+                                    name='password'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Senha'
+                                    textContentType='password'
+                                    secureTextEntry={true}
+                                    invalidValue={invalidField === 'password'} />
 
-                            <TextInputJobs
-                                name='confirmPassword'
-                                onChangeText={handleOnChange}
-                                placeholder='Confirme a Senha'
-                                textContentType='password'
-                                secureTextEntry={true}
-                                invalidValue={invalidField === 'confirmPassword'} />
+                                <TextInputJobs
+                                    name='confirmPassword'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Confirme a Senha'
+                                    textContentType='password'
+                                    secureTextEntry={true}
+                                    invalidValue={invalidField === 'confirmPassword'} />
 
-                            <ViewContainerButton>
-                                <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
-                            </ViewContainerButton>
+                                <ViewContainerButton>
+                                    <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
+                                </ViewContainerButton>
 
-                            <ViewContainerGotoLogin>
-                                <TextGotoLogin>Já possui cadastro?</TextGotoLogin>
-                                <ButtonGotoLogin onPress={props.ownProps.onPressLogin}>
-                                    <TextGotoLoginButton>Fazer Login</TextGotoLoginButton>
-                                </ButtonGotoLogin>
-                            </ViewContainerGotoLogin>
-                        </View>
-                    </CardJobs>
-                )}
-            </View>
+                                <ViewContainerGotoLogin>
+                                    <TextGotoLogin>Já possui cadastro?</TextGotoLogin>
+                                    <ButtonGotoLogin onPress={props.ownProps.onPressLogin}>
+                                        <TextGotoLoginButton>Fazer Login</TextGotoLoginButton>
+                                    </ButtonGotoLogin>
+                                </ViewContainerGotoLogin>
+                            </View>
+                        </CardJobs>
+                    )}
+                </View>
 
-        </ScrollViewContainerForm>
+            </ScrollViewContainerForm>
+        </KeyboardAvoidingView>
     )
 }
 

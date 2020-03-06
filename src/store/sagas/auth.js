@@ -78,9 +78,18 @@ function* login(action) {
 
 function* logOut() {
     try {
-        yield AsyncStorage.removeItem('@userData')
-        yield AsyncStorage.removeItem('@clientData')
-        yield AsyncStorage.removeItem('@professionalData')
+        yield AsyncStorage.removeItem('@userData', (err, response) => {
+            console.log('user response => ', response)
+            console.log('user err => ', err)
+        })
+        yield AsyncStorage.removeItem('@clientData', (err, response) => {
+            console.log('client response => ', response)
+            console.log('client err => ', err)
+        })
+        yield AsyncStorage.removeItem('@professionalData', (err, response) => {
+            console.log('professional response => ', response)
+            console.log('professional err => ', err)
+        })
 
         yield put(ActionCreator.logoutSuccess())
     } catch (ex) {

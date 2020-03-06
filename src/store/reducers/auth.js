@@ -112,6 +112,15 @@ export const authCleanErrors = (state = INITIAL_STATE, action) => {
     }
 }
 
+
+
+export const authSetUserType = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        userType: action.userType
+    }
+}
+
 export const HANDLERS = {
     [Types.LOGIN_REQUEST]: loginRequest,
     [Types.LOGIN_SUCCESS]: loginSuccess,
@@ -124,6 +133,7 @@ export const HANDLERS = {
     [Types.CHANGE_PASSWORD_SUCCESS]: changePasswordSuccess,
     [Types.CHANGE_PASSWORD_ERROR]: changePasswordError,
     [Types.AUTH_CLEAN_ERRORS]: authCleanErrors,
+    [Types.AUTH_SET_USER_TYPE]: authSetUserType,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

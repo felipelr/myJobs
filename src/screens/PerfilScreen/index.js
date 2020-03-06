@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { View, BackHandler, Animated, Dimensions } from 'react-native'
-import { ListItem, Avatar } from 'react-native-elements'
+import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
 import Moment from 'moment'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { purple, lightgray } from '../../components/common/util/colors'
+import { purple, lightgray, mediumgray, black } from '../../components/common/util/colors'
 
 import {
     ScrollViewContainer,
@@ -18,6 +18,8 @@ import {
     Title,
     ContainerLista,
     ContainerAvatar,
+    ViewSlider,
+    TxtSlider,
     styles
 } from './styles'
 
@@ -32,11 +34,14 @@ import MyServices from '../../components/MyServices'
 import SuggestService from '../../components/SuggestService'
 
 function PerfilScreen(props) {
+    const [doubleUser] = useState(props.client.id && props.professional.id)
+    const [user, setUser] = useState(props.userType === 'client' ? props.client : props.professional)
+    const [selectUserType, setSelectedUserType] = useState(props.userType === 'client' ? 0 : 1)
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
     const [slideRight] = useState(new Animated.ValueXY())
     const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
-    const [image, setImage] = useState((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + Moment(props.user.modified).toDate().getTime() } : { uri: '' })
+    const [image, setImage] = useState((user.photo && user.photo.length > 0) ? { uri: user.photo + '?v=' + Moment(user.modified).toDate().getTime() } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [listClient] = useState([
         {
@@ -113,14 +118,37 @@ function PerfilScreen(props) {
         pageRef.current = 'menu'
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
+        console.log('userType', props.userType)
+
         return () => {
             backHandler.remove()
         }
     }, [])
 
     useEffect(() => {
-        setImage((props.user.photo && props.user.photo.length > 0) ? { uri: props.user.photo + '?v=' + Moment(props.user.modified).toDate().getTime() } : { uri: '' })
-    }, [props.user.modified])
+        if (props.userType === 'client') {
+            setUser(props.client)
+            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + Moment(props.client.modified).toDate().getTime() } : { uri: '' })
+        }
+    }, [props.client.modified])
+
+    useEffect(() => {
+        if (props.userType === 'professional') {
+            setUser(props.professional)
+            setImage((props.professional.photo && props.professional.photo.length > 0) ? { uri: props.professional.photo + '?v=' + Moment(props.professional.modified).toDate().getTime() } : { uri: '' })
+        }
+    }, [props.professional.modified])
+
+    useEffect(() => {
+        if (props.userType === 'client') {
+            setUser(props.client)
+            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + Moment(props.client.modified).toDate().getTime() } : { uri: '' })
+        }
+        else {
+            setUser(props.professional)
+            setImage((props.professional.photo && props.professional.photo.length > 0) ? { uri: props.professional.photo + '?v=' + Moment(props.professional.modified).toDate().getTime() } : { uri: '' })
+        }
+    }, [props.userType])
 
     useEffect(() => {
         switch (show) {
@@ -248,6 +276,17 @@ function PerfilScreen(props) {
             .catch((err) => { err && console.log(err) })
     }
 
+    const hadleUserTypePress = () => {
+        if (selectUserType == 0) {
+            setSelectedUserType(1)
+            props.authSetUserType('professional')
+        }
+        else {
+            setSelectedUserType(0)
+            props.authSetUserType('client')
+        }
+    }
+
     return (
         <React.Fragment>
             {
@@ -265,7 +304,23 @@ function PerfilScreen(props) {
                             <ContainerContent>
                                 <Space />
                                 <ContainerTitle>
-                                    <Title>{props.user.name}</Title>
+                                    {doubleUser &&
+                                        <ViewSlider activeOpacity={1} onPress={() => hadleUserTypePress()}>
+                                            <TxtSlider color={selectUserType === 0 ? purple : black}>Cliente</TxtSlider>
+                                            <Slider
+                                                value={selectUserType}
+                                                disabled={true}
+                                                maximumTrackTintColor={mediumgray}
+                                                minimumTrackTintColor={mediumgray}
+                                                thumbTintColor={purple}
+                                                thumbTouchSize={{ width: 60, height: 60 }}
+                                                trackStyle={{ height: 12, borderRadius: 10 }}
+                                                style={{ width: 40 }}
+                                            />
+                                            <TxtSlider color={selectUserType === 1 ? purple : black}>Profissional</TxtSlider>
+                                        </ViewSlider>}
+
+                                    <Title>{user.name}</Title>
                                 </ContainerTitle>
                                 <ContainerAvatar>
                                     {image.uri.length > 0 &&
@@ -354,7 +409,8 @@ PerfilScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        user: state.auth.userType === 'client' ? state.client.client : state.professional.professional,
+        client: state.client.client,
+        professional: state.professional.professional,
         userType: state.auth.userType,
         ownProps: ownProps,
     }
@@ -365,6 +421,7 @@ const mapDispatchToProps = dispatch => {
         clientClearErrors: () => dispatch(ActionCreators.clientClearErrors()),
         authCleanErrors: () => dispatch(ActionCreators.authCleanErrors()),
         professionalsCleanErrors: () => dispatch(ActionCreators.professionalsCleanErrors()),
+        authSetUserType: (userType) => dispatch(ActionCreators.authSetUserType(userType)),
     }
 }
 

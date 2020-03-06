@@ -60,13 +60,13 @@ function SocialMidiaSignup(props) {
 
     useEffect(() => {
         if (props.socialMidiaSignup.accVerified === 1) {
-            props.login(props.socialMidiaSignup.user.email, props.socialMidiaSignup.user.password, form.userType)
+            props.login(props.socialMidiaSignup.user.email, props.socialMidiaSignup.user.password)
         }
     }, [props.socialMidiaSignup.accVerified])
 
     useEffect(() => {
         if (props.socialMidiaSignup.isSignup) {
-            props.login(props.socialMidiaSignup.newUser.email, props.socialMidiaSignup.newUser.password, form.userType)
+            props.login(props.socialMidiaSignup.newUser.email, props.socialMidiaSignup.newUser.password)
         }
     }, [props.socialMidiaSignup.isSignup])
 
@@ -206,34 +206,17 @@ function SocialMidiaSignup(props) {
                                 props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
                             }
                             <View>
-                                <ViewContainerRow>
-                                    <CheckBox
-                                        title='Cliente'
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        checkedColor={purple}
-                                        containerStyle={styleSheets.containerCheck}
-                                        checked={form.userType === 1}
-                                        onPress={() => {
-                                            setForm({
-                                                ...form,
-                                                'userType': 1
-                                            })
-                                        }} />
-                                    <CheckBox
-                                        title='Profissional'
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        checkedColor={purple}
-                                        containerStyle={styleSheets.containerCheck}
-                                        checked={form.userType !== 1}
-                                        onPress={() => {
-                                            setForm({
-                                                ...form,
-                                                'userType': 2
-                                            })
-                                        }} />
-                                </ViewContainerRow>
+                                <CheckBox
+                                    title='Oferecer serviços no aplicativo'
+                                    checkedColor={purple}
+                                    containerStyle={styleSheets.containerCheck}
+                                    checked={form.userType === 2}
+                                    onPress={() => {
+                                        setForm({
+                                            ...form,
+                                            'userType': form.userType === 2 ? 1 : 2
+                                        })
+                                    }} />
 
                                 <TextInputJobs
                                     value={form.phone}
@@ -294,7 +277,7 @@ const mapDispatchToProps = dispatch => {
         socialMidiaSignupInit: (user) => dispatch(ActionCreators.socialMidiaSignupInit(user)),
         socialMidiaSignupRequest: (user) => dispatch(ActionCreators.socialMidiaSignupRequest(user)),
         socialMidiaVerifyAccount: (socialMidiaId, socialMidiaType) => dispatch(ActionCreators.socialMidiaVerifyAccount(socialMidiaId, socialMidiaType)),
-        login: (email, password, userType) => dispatch(ActionCreators.loginRequest(email, password, userType)),
+        login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }
 }
 

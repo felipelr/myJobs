@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, white } from '../../components/common/util/colors'
+import { purple, white, black } from '../../components/common/util/colors'
 import { StyleSheet } from 'react-native'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
@@ -19,10 +19,10 @@ export const ContainerContent = styled.View`
     flex: 1;
 `
 export const Space = styled.View`
-    height:${heightPercentageToDP('16%')};
+    height:${heightPercentageToDP('14%')};
 `
 export const ContainerTitle = styled.View`
-    height:${heightPercentageToDP('15%')};
+    height:${heightPercentageToDP('16%')};
     background-color: white;
     border-top-right-radius: 20; 
     border-top-left-radius: 20;
@@ -46,6 +46,21 @@ export const ContainerAvatar = styled.View`
     align-items: center;
     top: ${heightPercentageToDP('4%')};
 `
+
+export const ViewSlider = styled.TouchableOpacity`
+    width: 200;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+`
+
+export const TxtSlider = styled.Text`
+    font-size: 14;
+    color: ${props => `${props.color}`};
+    margin-bottom: 10px;
+    margin-top: 6px;
+`
+
 export const styles = StyleSheet.create({
     elevation: 2
 })

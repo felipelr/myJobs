@@ -17,7 +17,7 @@ export default function Footer({ type, selected, ...props }) {
                 <FooterButton onPress={props.offersOnPress}>
                     <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
                 </FooterButton>
-                <FooterButton>
+                <FooterButton onPress={props.favoriteOnPress}>
                     <ItemRounded backColor={white}>
                         <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={itemSelected === 'favorite' ? gold : purple} />
                     </ItemRounded>
@@ -40,7 +40,7 @@ export default function Footer({ type, selected, ...props }) {
                 <FooterButton onPress={props.offersOnPress}>
                     <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
                 </FooterButton>
-                <FooterButton>
+                <FooterButton onPress={props.favoriteOnPress}>
                     <ItemRounded backColor={white}>
                         <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={itemSelected === 'favorite' ? gold : purple} />
                     </ItemRounded>

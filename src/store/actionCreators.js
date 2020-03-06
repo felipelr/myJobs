@@ -13,6 +13,7 @@ export const { Types, Creators } = createActions({
     changePasswordSuccess: null,
     changePasswordError: ['error'],
     authCleanErrors: null,
+    authSetUserType: ['userType'],
 
     //SignUp Actions
     signupRequest: ['user'],

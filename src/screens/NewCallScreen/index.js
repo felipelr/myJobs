@@ -30,11 +30,6 @@ function NewCallScreen(props) {
     const [categories, setCategories] = useState([])
     const [subcategories, setSubcategories] = useState([])
     const [services, setServices] = useState([])
-
-    const getCategory = useGet(`/categories/getByIdProfessional/${props.professional.id}.json`, props.token)
-    const getSubcategories = useGet('', props.token);
-    const getServices = useGet('', props.token);
-
     const [requisitou, setRequisitou] = useState(false)
     const [form, setForm] = useState({
         client_id: props.client.id,
@@ -43,6 +38,10 @@ function NewCallScreen(props) {
         description: "",
         subcategory_id: 0,
     })
+
+    const getCategory = useGet(`/categories/getByIdProfessional/${props.professional.id}.json`, props.token)
+    const getSubcategories = useGet('', props.token);
+    const getServices = useGet('', props.token);
 
     const scrollViewRef = useRef()
 

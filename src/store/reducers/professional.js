@@ -201,6 +201,33 @@ export const newProfessionalCallError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const professionalFinishCallRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: true,
+        error: false,
+        errorMessage: '',
+    }
+}
+
+export const professionalFinishCallError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: false,
+        error: true,
+        errorMessage: action.error,
+    }
+}
+
+export const professionalFinishCallSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: false,
+        error: false,
+        errorMessage: '',
+    }
+}
+
 
 export const HANDLES = {
     [Types.PROFESSIONALS_LOAD_REQUEST]: professionalsLoadRequest,
@@ -224,6 +251,9 @@ export const HANDLES = {
     [Types.NEW_PROFESSIONAL_CALL_REQUEST]: newProfessionalCallRequest,  
     [Types.NEW_PROFESSIONAL_CALL_SUCCESS]: newProfessionalCallSuccess,  
     [Types.NEW_PROFESSIONAL_CALL_ERROR]: newProfessionalCallError,
+    [Types.PROFESSIONAL_FINISH_CALL_REQUEST]: professionalFinishCallRequest,
+    [Types.PROFESSIONAL_FINISH_CALL_ERROR]: professionalFinishCallError,
+    [Types.PROFESSIONAL_FINISH_CALL_SUCCESS]: professionalFinishCallSuccess,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

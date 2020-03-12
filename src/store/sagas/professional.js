@@ -207,6 +207,36 @@ function* newProfessionalCallRequest(action) {
     }
 }
 
+function* professionalFinishCallRequest(action){
+    try {
+        console.log(action.call)
+        const postResp = yield axios.post(`${urlMyJobsAPI}/calls/finish.json`,
+            {
+                ...action.call
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + action.token,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        )
+
+        if (postResp.data.error) {
+            console.log('error => ', JSON.stringify(postResp.data.errorMessage))
+            yield put(ActionCreator.professionalFinishCallError(postResp.data.errorMessage))
+        }
+        else {
+            console.log('Success => ' + JSON.stringify(postResp.data))
+            yield put(ActionCreator.professionalFinishCallSuccess(postResp.data.call))
+        }
+    } catch (ex) {
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido' 
+        console.log('erro => ' + messageError)
+        yield put(ActionCreator.professionalFinishCallError(messageError))
+    }
+}
+
 
 export default function* rootProfessionals() {
     yield all([
@@ -217,5 +247,6 @@ export default function* rootProfessionals() {
         takeLatest(Types.DELETE_PROFESSIONAL_ADDRESS, deleteProfessionalAddress),
         takeLatest(Types.PROFESSIONAL_CONFIG_CATEGORY, professionalConfigCategory),
         takeLatest(Types.NEW_PROFESSIONAL_CALL_REQUEST, newProfessionalCallRequest),
+        takeLatest(Types.PROFESSIONAL_FINISH_CALL_REQUEST, professionalFinishCallRequest),
     ])
 }

@@ -105,6 +105,12 @@ function ProfessionalCallsScreen(props) {
         inAnimation()
     }
 
+    const handleCallFinished = (call) => {
+        setFinishedCalls([...finishedCalls, call])
+        setCalls(calls.filter(item => item.id !== call.id))
+        handleBackPress()
+    }
+
     return (
         <React.Fragment>
             <HeaderJobs
@@ -158,7 +164,7 @@ function ProfessionalCallsScreen(props) {
                     {showCall &&
                         <Animated.View style={slideLeft.getLayout()}>
                             <React.Fragment>
-                                <Call call={selectedCall} />
+                                <Call call={selectedCall} onFinished={(call) => handleCallFinished(call)} />
                             </React.Fragment>
                         </Animated.View>
                     }

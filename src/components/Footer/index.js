@@ -41,9 +41,7 @@ export default function Footer({ type, selected, ...props }) {
                     <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
                 </FooterButton>
                 <FooterButton onPress={props.favoriteOnPress}>
-                    <ItemRounded backColor={itemSelected === 'favorite' ? gold : white}>
-                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={purple} />
-                    </ItemRounded>
+                    <Icon name="book" size={25} color={itemSelected === 'favorite' ? gold : white}  />
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
                     <Icon name="chat" size={25} color={itemSelected === 'chat' ? gold : white} />

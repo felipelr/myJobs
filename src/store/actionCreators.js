@@ -58,6 +58,9 @@ export const { Types, Creators } = createActions({
     newProfessionalCallRequest: ['token', 'call'],
     newProfessionalCallError: ['error'],
     newProfessionalCallSuccess: ['call'],
+    professionalFinishCallRequest: ['token', 'call'],
+    professionalFinishCallError: ['error'],
+    professionalFinishCallSuccess: ['call'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

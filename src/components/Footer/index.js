@@ -37,11 +37,11 @@ export default function Footer({ type, selected, ...props }) {
                 <FooterButton onPress={props.homeOnPress}>
                     <Icon name="home" size={25} color={itemSelected === 'home' ? gold : white} />
                 </FooterButton>
-                <FooterButton onPress={props.offersOnPress}>
-                    <Icon name="local-offer" size={25} color={itemSelected === 'hire-service' ? gold : white} />
+                <FooterButton onPress={props.callsOnPress}>
+                    <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? gold : white}  />
                 </FooterButton>
-                <FooterButton onPress={props.favoriteOnPress}>
-                    <Icon name="book" size={25} color={itemSelected === 'favorite' ? gold : white}  />
+                <FooterButton onPress={props.professionalProfileOnPress}>
+                    <Icon name="control-point" size={25} color={itemSelected === 'professional-profile' ? gold : white} />
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
                     <Icon name="chat" size={25} color={itemSelected === 'chat' ? gold : white} />

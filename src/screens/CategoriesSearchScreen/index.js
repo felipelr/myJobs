@@ -70,7 +70,10 @@ function CategoriesSearchScreen(props) {
     };
 
     handleBackPress = async () => {
-        props.logoutRequest()
+        if (props.userType == 'client')
+            props.logoutRequest()
+        else
+            props.navigation.goBack()
         return true
     }
 
@@ -110,8 +113,12 @@ function CategoriesSearchScreen(props) {
                 </View>
             </ContainerCategorias>
             <Footer
+                type={props.userType}
+                selected={'home'}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
-                chatOnPress={() => props.navigation.navigate('ClientListChat')}
             />
         </View>
     )

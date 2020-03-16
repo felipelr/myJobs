@@ -211,7 +211,10 @@ function ProfessionalHomeScreen(props) {
             return true
         }
 
-        props.logoutRequest()
+        if (props.professionalSelected.id)
+            props.logoutRequest()
+        else
+            props.navigation.goBack()
         return true
     }
 
@@ -475,9 +478,11 @@ function ProfessionalHomeScreen(props) {
                     </ScrollView>
                     <Footer
                         type={props.userType}
-                        perfilOnPress={() => props.navigation.navigate('Perfil')}
-                        favoriteOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                        selected={'professional-profile'}
+                        homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                        callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
                         chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
+                        perfilOnPress={() => props.navigation.navigate('Perfil')}
                     />
                 </React.Fragment>
             }

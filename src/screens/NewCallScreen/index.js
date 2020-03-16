@@ -205,8 +205,12 @@ function NewCallScreen(props) {
                 </ScrollViewContainer>
             </KeyboardAvoidingView>
             <Footer
-                perfilOnPress={() => props.navigation.navigate('Perfil')}
-                homeOnPress={() => props.navigation.navigate('CategoriesSearch')} />
+                type={props.userType}
+                selected={'home'}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
+                perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </React.Fragment>
     )
 }
@@ -219,6 +223,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         ownProps: ownProps,
         token: state.auth.token,
+        userType: state.auth.userType,
         client: state.client.selected,
         professional: state.professional.professional,
         professionalCtr: state.professional,

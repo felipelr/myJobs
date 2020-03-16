@@ -70,6 +70,7 @@ function ClientListChatScreen(props) {
                 </ViewContainer>
             </ScrollViewContainer>
             <Footer
+                type={props.userType}
                 selected={'chat'}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}

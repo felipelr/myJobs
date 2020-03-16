@@ -72,7 +72,9 @@ function ProfessionalListChatScreen(props) {
             <Footer
                 type={props.userType}
                 selected={'chat'}
-                homeOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </React.Fragment>

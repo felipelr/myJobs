@@ -41,7 +41,7 @@ function ProfessionalsScreen(props) {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
-            <HeaderJobs back={back} title='Profissionais'/>
+            <HeaderJobs back={back} title='Profissionais' />
             <ContainerProfessionals>
                 <Highlights titulo={'Destaques do mês'} highlights={highlights} />
                 <ButtonContainer>
@@ -64,9 +64,12 @@ function ProfessionalsScreen(props) {
                 </ContainerList>
             </ContainerProfessionals>
             <Footer
-                perfilOnPress={() => props.navigation.navigate('Perfil')}
-                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
-                chatOnPress={() => props.navigation.navigate('ClientListChat')} />
+                type={props.userType}
+                selected={'home'}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
+                perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </KeyboardAvoidingView>
     )
 }
@@ -79,6 +82,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         isAuth: state.auth.isAuth,
+        userType: state.auth.userType,
         selectedCategorie: state.categoria.selected,
         serviceSelected: state.service.selected,
         ownProps: ownProps

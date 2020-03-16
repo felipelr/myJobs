@@ -173,8 +173,9 @@ function ProfessionalCallsScreen(props) {
 
             <Footer
                 type={props.userType}
-                selected={'favorite'}
-                homeOnPress={() => props.navigation.navigate('ProfessionalHome')}
+                selected={'calls'}
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
                 chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
             />

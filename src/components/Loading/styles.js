@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { white } from '../common/util/colors'
+import { white, purple } from '../common/util/colors'
 
 export const ViewContainer = styled.View`
     align-self: center;
@@ -8,7 +8,13 @@ export const ViewContainer = styled.View`
     padding: 16px;
     border-radius: 10px;
     background-color: ${white};
-    elevation: 2;    
+`
+
+export const ViewContainer2 = styled.View`
+    align-self: center;
+    justify-content: center;
+    width: 200px;
+    padding: 16px;
 `
 
 export const ViewContainerBack = styled.View`

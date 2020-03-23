@@ -106,6 +106,33 @@ export const clientSelected= (state = INITIAL_STATE, action) => {
     }
 }
 
+export const clientCallRateRequest = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: true,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const clientCallRateSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: false,
+        errorMessage: ''
+    }
+}
+
+export const clientCallRateError = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        isUpdating: false,
+        errorUpdating: true,
+        errorMessage: action.error
+    }
+}
+
 export const HANDLERS = {
     [Types.CLIENT_UPDATE_REQUEST]: clientUpdateRequest,
     [Types.CLIENT_UPDATE_SUCCESS]: clientUpdateSuccess,
@@ -118,6 +145,9 @@ export const HANDLERS = {
     [Types.CLIENT_NEW_SERVICE_ORDER_SUCCESS]: clientNewServiceOrderSuccess,
     [Types.CLIENT_NEW_SERVICE_ORDER_ERROR]: clientNewServiceOrderError,
     [Types.CLIENT_SELECTED]: clientSelected,
+    [Types.CLIENT_CALL_RATE_REQUEST]: clientCallRateRequest,
+    [Types.CLIENT_CALL_RATE_SUCCESS]: clientCallRateSuccess,
+    [Types.CLIENT_CALL_RATE_ERROR]: clientCallRateError,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

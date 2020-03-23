@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { Overlay } from 'react-native-elements'
+import { Overlay, Avatar, AirbnbRating } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -15,19 +15,24 @@ import {
     TouchButtton,
     TxtButtton,
     TxtOverlay,
+    ViewContainerCenter,
+    ViewGray,
 } from './styles'
 
 import CardJobs from '../CardJobs'
 import ButtonPurple from '../ButtonPurple'
 import Loading from '../Loading'
 import TextError from '../TextError'
+import RatingJobs from '../RatingJobs'
 
-import { white, purple, black } from '../common/util/colors'
+import { white, purple, black, lightgray } from '../common/util/colors'
 
 function Call(props) {
     const [call] = useState(props.ownProps.call)
     const [overlayVisible, setOverlayVisible] = useState(false)
+    const [overlayRatingVisible, setOverlayRatingVisible] = useState(false)
     const [requisitou, setRequisitou] = useState(false)
+    const [rate, setRate] = useState(5)
 
     const scrollViewRef = useRef()
 
@@ -51,58 +56,147 @@ function Call(props) {
         }
     }, [props.professionalCtr.loading])
 
+    useEffect(() => {
+        if (requisitou && !props.clientCtr.isUpdating) {
+            if (props.clientCtr.errorUpdating) {
+                setRequisitou(false)
+                scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
+            }
+            else {
+                //finalizar com sucesso
+                setOverlayRatingVisible(false)
+                props.ownProps.onFinished()
+            }
+        }
+    }, [props.clientCtr.isUpdating])
+
     const handleConfirmFinishCall = () => {
         setOverlayVisible(false)
         setRequisitou(true)
         props.professionalFinishCallRequest(props.token, call)
     }
 
+    const handleRateCall = () => {
+        const rating = {
+            rate: rate,
+            professional_id: call.professional.id,
+            client_id: props.clientData.id,
+            call_id: call.id,
+        }
+        setRequisitou(true)
+        props.clientCallRateRequest(props.token, rating)
+    }
+
     return (
-        <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
-            <ViewContainer>
-                {props.professionalCtr.loading && <Loading size='large' color={purple} height='330' error={props.professionalCtr.error} />}
+        <ViewGray>
+            <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
+                <ViewContainer>
+                    {props.professionalCtr.loading && <Loading size='large' color={purple} height='330' error={props.professionalCtr.error} />}
 
-                {!props.professionalCtr.loading && (
-                    <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
+                    {!props.professionalCtr.loading && (
+                        <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
 
-                        {props.professionalCtr.error && <TextError>{props.professionalCtr.errorMessage}</TextError>}
+                            {props.professionalCtr.error && <TextError>{props.professionalCtr.errorMessage}</TextError>}
 
-                        <TxtTitle>Cliente</TxtTitle>
-                        <TxtDescription>{call.client.name}</TxtDescription>
-                        <TxtDescription>{call.client.phone}</TxtDescription>
-                        <TxtTitle>Categoria</TxtTitle>
-                        <TxtDescription>{call.service.subcategory.category.description}</TxtDescription>
-                        <TxtTitle>Subcategoria</TxtTitle>
-                        <TxtDescription>{call.service.subcategory.description}</TxtDescription>
-                        <TxtTitle>Serviço</TxtTitle>
-                        <TxtDescription>{call.service.title}</TxtDescription>
-                        <TxtTitle>Detalhes</TxtTitle>
-                        <TxtDescription>{call.description}</TxtDescription>
-                        <ViewContainerButton>
-                            <ButtonPurple onPress={() => setOverlayVisible(true)}>Finalizar Chamado</ButtonPurple>
-                        </ViewContainerButton>
-                    </CardJobs>
-                )}
+                            {call.client &&
+                                <React.Fragment>
+                                    <TxtTitle>Cliente</TxtTitle>
+                                    <TxtDescription>{call.client.name}</TxtDescription>
+                                    <TxtDescription>{call.client.phone}</TxtDescription>
+                                </React.Fragment>
+                            }
+                            {call.professional &&
+                                <React.Fragment>
+                                    <TxtTitle>Professional</TxtTitle>
+                                    <TxtDescription>{call.professional.name}</TxtDescription>
+                                    <TxtDescription>{call.professional.description}</TxtDescription>
+                                </React.Fragment>
+                            }
+                            <TxtTitle>Categoria</TxtTitle>
+                            <TxtDescription>{call.service.subcategory.category.description}</TxtDescription>
+                            <TxtTitle>Subcategoria</TxtTitle>
+                            <TxtDescription>{call.service.subcategory.description}</TxtDescription>
+                            <TxtTitle>Serviço</TxtTitle>
+                            <TxtDescription>{call.service.title}</TxtDescription>
+                            <TxtTitle>Detalhes</TxtTitle>
+                            <TxtDescription>{call.description}</TxtDescription>
+                            {call.client && call.status === 1 &&
+                                <ViewContainerButton>
+                                    <ButtonPurple onPress={() => setOverlayVisible(true)}>Finalizar Chamado</ButtonPurple>
+                                </ViewContainerButton>
+                            }
+                            {call.professional && call.status === 2 &&
+                                <ViewContainerButton>
+                                    <ButtonPurple onPress={() => setOverlayRatingVisible(true)}>Avaliar Chamado</ButtonPurple>
+                                </ViewContainerButton>
+                            }
+                        </CardJobs>
+                    )}
 
-                <Overlay
-                    height={200}
-                    isVisible={overlayVisible}
-                    onBackdropPress={() => setOverlayVisible(false)}
-                >
-                    <ViewContainerOverlay>
-                        <TxtOverlay>Deseja confirma a finalização deste chamado?</TxtOverlay>
-                        <ViewContainerButtonOverlay>
-                            <TouchButtton backColor={purple} onPress={() => handleConfirmFinishCall()}>
-                                <TxtButtton color={white}>SIM</TxtButtton>
-                            </TouchButtton>
-                            <TouchButtton backColor={white} onPress={() => setOverlayVisible(false)}>
-                                <TxtButtton color={black}>NÃO</TxtButtton>
-                            </TouchButtton>
-                        </ViewContainerButtonOverlay>
-                    </ViewContainerOverlay>
-                </Overlay>
-            </ViewContainer>
-        </ScrollViewContainer>
+                    <Overlay
+                        height={200}
+                        isVisible={overlayVisible}
+                        onBackdropPress={() => setOverlayVisible(false)}
+                    >
+                        <ViewContainerOverlay>
+                            <TxtOverlay>Deseja confirma a finalização deste chamado?</TxtOverlay>
+                            <ViewContainerButtonOverlay>
+                                <TouchButtton backColor={purple} onPress={() => handleConfirmFinishCall()}>
+                                    <TxtButtton color={white}>SIM</TxtButtton>
+                                </TouchButtton>
+                                <TouchButtton backColor={white} onPress={() => setOverlayVisible(false)}>
+                                    <TxtButtton color={black}>NÃO</TxtButtton>
+                                </TouchButtton>
+                            </ViewContainerButtonOverlay>
+                        </ViewContainerOverlay>
+                    </Overlay>
+
+                    <Overlay
+                        height={350}
+                        isVisible={overlayRatingVisible}
+                        onBackdropPress={() => setOverlayRatingVisible(false)}
+                    >
+                        <React.Fragment>
+                            {props.clientCtr.isUpdating && <Loading elevation={0} size='large' color={purple} height='330' error={props.clientCtr.errorUpdating} />}
+
+                            {!props.clientCtr.isUpdating && (
+                                <ViewContainerOverlay>
+                                    <ViewContainerCenter>
+                                        {props.clientCtr.errorUpdating && <TextError>{props.clientCtr.errorMessage}</TextError>}
+
+                                        {call.professional &&
+                                            <React.Fragment>
+                                                <Avatar
+                                                    rounded
+                                                    size={100}
+                                                    source={{ uri: call.professional.photo }} />
+
+                                                <TxtTitle>{call.professional.name}</TxtTitle>
+
+                                            </React.Fragment>
+                                        }
+
+                                        <AirbnbRating
+                                            count={5}
+                                            reviews={["Péssimo", "Ruim", "Regular", "Bom", "Muito Bom"]}
+                                            defaultRating={5}
+                                            size={40}
+                                            onFinishRating={(value) => setRate(value)}
+                                        />
+                                    </ViewContainerCenter>
+                                    <ViewContainerButtonOverlay>
+                                        <TouchButtton backColor={purple} onPress={() => handleRateCall()}>
+                                            <TxtButtton color={white}>AVALIAR</TxtButtton>
+                                        </TouchButtton>
+                                    </ViewContainerButtonOverlay>
+                                </ViewContainerOverlay>
+                            )}
+                        </React.Fragment>
+                    </Overlay>
+                </ViewContainer>
+            </ScrollViewContainer>
+        </ViewGray>
+
     )
 }
 
@@ -113,12 +207,15 @@ const mapStateToProps = (state, ownProps) => {
         userType: state.auth.userType,
         professionalData: state.professional.professional,
         professionalCtr: state.professional,
+        clientData: state.client.client,
+        clientCtr: state.client,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         professionalFinishCallRequest: (token, call) => dispatch(ActionCreators.professionalFinishCallRequest(token, call)),
+        clientCallRateRequest: (token, rate) => dispatch(ActionCreators.clientCallRateRequest(token, rate)),
     }
 }
 

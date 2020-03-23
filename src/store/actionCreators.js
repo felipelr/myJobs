@@ -89,6 +89,9 @@ export const { Types, Creators } = createActions({
     clientNewServiceOrderSuccess: ['serviceOrder'],
     clientNewServiceOrderError: ['error'],
     clientSelected: ['client'],
+    clientCallRateRequest: ['token', 'rate'],
+    clientCallRateSuccess: ['rate'],
+    clientCallRateError: ['error'],
 
     //Services
     serviceSelected: ['service'],

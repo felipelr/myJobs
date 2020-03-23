@@ -1,9 +1,9 @@
-export const purple = '#6467C8'
+export const purple = '#7132FF'
 export const gray = '#767575'
 export const lightgray = '#EAEAEA'
 export const black = '#646464'
 export const white = '#FFFFFF'
-export const gold = '#FFB300';
+export const gold = '#FFD631';
 export const lightpurple = '#7476c2'
 export const orange = '#DC8503'
 //export const green = '#28A745'

@@ -43,6 +43,6 @@ export const TextLogoTipo = styled.Text`
 `
 
 export const ImgLogoTipo = styled.Image`
-    margin-top: ${heightPercentageToDP('3%')};
+    margin-top: ${heightPercentageToDP('7%')};
     align-self: center;
 `

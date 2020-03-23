@@ -400,7 +400,7 @@ function PerfilScreen(props) {
                 selected={'perfil'}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientCalls') : props.navigation.navigate('ProfessionalCalls')}
                 chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
             />
         </React.Fragment>

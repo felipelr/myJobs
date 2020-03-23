@@ -116,7 +116,7 @@ function CategoriesSearchScreen(props) {
                 type={props.userType}
                 selected={'home'}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientCalls') : props.navigation.navigate('ProfessionalCalls')}
                 chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
             />

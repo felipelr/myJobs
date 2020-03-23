@@ -144,7 +144,7 @@ function ProfessionalCallsScreen(props) {
                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
                                         title={item.client.name}
                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                        leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                        leftIcon={<Avatar rounded size={45} source={{ uri: item.client.photo }} />}
                                         onPress={() => { handleClickItem(item) }}
                                     />
                                 ))}
@@ -154,7 +154,7 @@ function ProfessionalCallsScreen(props) {
                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
                                         title={item.client.name}
                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                        leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                        leftIcon={<Avatar rounded size={45} source={{ uri: item.client.photo }} />}
                                         onPress={() => { handleClickItem(item) }}
                                     />
                                 ))}
@@ -198,7 +198,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
+        
     }
 }
 

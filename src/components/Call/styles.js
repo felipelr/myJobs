@@ -45,6 +45,16 @@ export const ViewContainerButtonOverlay = styled.View`
     justify-content: space-around;
 `
 
+export const ViewContainerCenter = styled.View`
+    align-items: center;
+    justify-content: space-around;
+    flex: 1;
+`
+
+export const ViewGray = styled.View`
+    flex: 1;
+`
+
 export const TouchButtton = styled.TouchableOpacity.attrs({
     activeOpacity: 0.5,
 })`

@@ -11,6 +11,8 @@ import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import Call from '../../components/Call/index'
 
+import Moment from 'moment'
+
 import { purple, lightgray, gold } from '../../components/common/util/colors'
 
 import {
@@ -20,6 +22,10 @@ import {
     ViewTabControl,
     TouchTab,
     TxtTab,
+    ViewCallDate,
+    TxtCallDate,
+    TxtCallProfessional,
+    TxtCallService,
 } from './styles'
 
 function ProfessionalCallsScreen(props) {
@@ -142,7 +148,15 @@ function ProfessionalCallsScreen(props) {
                                     <ListItem
                                         key={i}
                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                        title={item.client.name}
+                                        title={
+                                            <React.Fragment>
+                                                <ViewCallDate>
+                                                    <TxtCallService>{item.service.title}</TxtCallService>
+                                                    <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
+                                                </ViewCallDate>
+                                                <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                            </React.Fragment>
+                                        }
                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                         leftIcon={<Avatar rounded size={45} source={{ uri: item.client.photo }} />}
                                         onPress={() => { handleClickItem(item) }}
@@ -152,7 +166,15 @@ function ProfessionalCallsScreen(props) {
                                     <ListItem
                                         key={i}
                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                        title={item.client.name}
+                                        title={
+                                            <React.Fragment>
+                                                <ViewCallDate>
+                                                    <TxtCallService>{item.service.title}</TxtCallService>
+                                                    <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
+                                                </ViewCallDate>
+                                                <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                            </React.Fragment>
+                                        }
                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                         leftIcon={<Avatar rounded size={45} source={{ uri: item.client.photo }} />}
                                         onPress={() => { handleClickItem(item) }}
@@ -198,7 +220,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        
+
     }
 }
 

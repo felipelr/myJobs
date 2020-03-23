@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { Overlay, Avatar, AirbnbRating } from 'react-native-elements'
+import { Overlay, Avatar, AirbnbRating, Rating } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -17,6 +17,7 @@ import {
     TxtOverlay,
     ViewContainerCenter,
     ViewGray,
+    TxtRatingName,
 } from './styles'
 
 import CardJobs from '../CardJobs'
@@ -33,6 +34,8 @@ function Call(props) {
     const [overlayRatingVisible, setOverlayRatingVisible] = useState(false)
     const [requisitou, setRequisitou] = useState(false)
     const [rate, setRate] = useState(5)
+    const [rating, setRating] = useState({})
+    const [ratingNames] = useState(["Péssimo", "Ruim", "Regular", "Bom", "Muito Bom"])
 
     const scrollViewRef = useRef()
 
@@ -65,7 +68,7 @@ function Call(props) {
             else {
                 //finalizar com sucesso
                 setOverlayRatingVisible(false)
-                props.ownProps.onFinished()
+                props.ownProps.onFinished(rating)
             }
         }
     }, [props.clientCtr.isUpdating])
@@ -77,14 +80,15 @@ function Call(props) {
     }
 
     const handleRateCall = () => {
-        const rating = {
+        const form = {
             rate: rate,
             professional_id: call.professional.id,
             client_id: props.clientData.id,
             call_id: call.id,
         }
+        setRating(form)
         setRequisitou(true)
-        props.clientCallRateRequest(props.token, rating)
+        props.clientCallRateRequest(props.token, form)
     }
 
     return (
@@ -120,15 +124,25 @@ function Call(props) {
                             <TxtDescription>{call.service.title}</TxtDescription>
                             <TxtTitle>Detalhes</TxtTitle>
                             <TxtDescription>{call.description}</TxtDescription>
-                            {call.client && call.status === 1 &&
+                            {(call.client && call.status === 1) &&
                                 <ViewContainerButton>
                                     <ButtonPurple onPress={() => setOverlayVisible(true)}>Finalizar Chamado</ButtonPurple>
                                 </ViewContainerButton>
                             }
-                            {call.professional && call.status === 2 &&
+                            {(call.professional && call.status === 2 && !call.rating) &&
                                 <ViewContainerButton>
                                     <ButtonPurple onPress={() => setOverlayRatingVisible(true)}>Avaliar Chamado</ButtonPurple>
                                 </ViewContainerButton>
+                            }
+                            {(call.professional && call.status === 2 && call.rating) &&
+                                <React.Fragment>
+                                    <TxtRatingName>{ratingNames[call.rating.rate - 1]}</TxtRatingName>
+                                    <Rating
+                                        startingValue={call.rating.rate}
+                                        imageSize={40}
+                                        readonly={true}
+                                    />
+                                </React.Fragment>
                             }
                         </CardJobs>
                     )}
@@ -178,7 +192,7 @@ function Call(props) {
 
                                         <AirbnbRating
                                             count={5}
-                                            reviews={["Péssimo", "Ruim", "Regular", "Bom", "Muito Bom"]}
+                                            reviews={ratingNames}
                                             defaultRating={5}
                                             size={40}
                                             onFinishRating={(value) => setRate(value)}

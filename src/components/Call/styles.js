@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { white, purple, black, lightgray } from '../common/util/colors'
+import { gold } from '../common/util/colors'
 
 export const ViewContainer = styled.View`
     flex: 1;
@@ -73,4 +73,12 @@ export const TxtOverlay = styled.Text`
     font-size: 16px;
     text-align: center;
     padding: 6px;
+`
+
+export const TxtRatingName = styled.Text`
+    font-size: 32px;
+    text-align: center;
+    padding: 6px;
+    font-weight: bold;
+    color: #f1c40f;
 `

@@ -11,6 +11,8 @@ import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import Call from '../../components/Call/index'
 
+import Moment from 'moment'
+
 import { purple, lightgray, gold } from '../../components/common/util/colors'
 
 import {
@@ -20,6 +22,10 @@ import {
     ViewTabControl,
     TouchTab,
     TxtTab,
+    ViewCallDate,
+    TxtCallDate,
+    TxtCallProfessional,
+    TxtCallService,
 } from './styles'
 
 function ClientCallsScreen(props) {
@@ -105,7 +111,13 @@ function ClientCallsScreen(props) {
         inAnimation()
     }
 
-    const handleCallFinished = () => {
+    const handleCallFinished = (rating) => {
+        for (let i = 0; i < finishedCalls.length; i++) {
+            if (finishedCalls[i].id === rating.call_id) {
+                finishedCalls[i].rating = rating;
+                break;
+            }
+        }
         handleBackPress()
     }
 
@@ -140,7 +152,15 @@ function ClientCallsScreen(props) {
                                     <ListItem
                                         key={i}
                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                        title={item.professional.name}
+                                        title={
+                                            <React.Fragment>
+                                                <ViewCallDate>
+                                                    <TxtCallService>{item.service.title}</TxtCallService>
+                                                    <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
+                                                </ViewCallDate>
+                                                <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                            </React.Fragment>
+                                        }
                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                         leftIcon={<Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
                                         onPress={() => { handleClickItem(item) }}
@@ -150,7 +170,15 @@ function ClientCallsScreen(props) {
                                     <ListItem
                                         key={i}
                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                        title={item.professional.name}
+                                        title={
+                                            <React.Fragment>
+                                                <ViewCallDate>
+                                                    <TxtCallService>{item.service.title}</TxtCallService>
+                                                    <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
+                                                </ViewCallDate>
+                                                <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                            </React.Fragment>
+                                        }
                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                         leftIcon={<Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
                                         onPress={() => { handleClickItem(item) }}
@@ -162,7 +190,7 @@ function ClientCallsScreen(props) {
                     {showCall &&
                         <Animated.View style={slideLeft.getLayout()}>
                             <React.Fragment>
-                                <Call call={selectedCall} onFinished={() => handleCallFinished()} />
+                                <Call call={selectedCall} onFinished={(rating) => handleCallFinished(rating)} />
                             </React.Fragment>
                         </Animated.View>
                     }
@@ -195,7 +223,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        
+
     }
 }
 

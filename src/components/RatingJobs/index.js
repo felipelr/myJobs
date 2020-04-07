@@ -29,8 +29,8 @@ export default function RatingJobs(props) {
     const qtdeAvaliacoesAbbr = abbrNum(qtdeAvaliacoes, 2)
     return (
         <ContainerRating>
-            {backPurple && <Rating readonly type='custom' imageSize={10} fractions={1} ratingImage={assets.star} startingValue={avaliacao} />}
-            {!backPurple && <Rating readonly type='custom' imageSize={10} fractions={1} startingValue={avaliacao} ratingBackgroundColor='#F5F5F5'/>}
+            {backPurple && <Rating readonly type='custom' imageSize={15} fractions={1} ratingImage={assets.star} startingValue={avaliacao} />}
+            {!backPurple && <Rating readonly type='custom' imageSize={15} fractions={1} startingValue={avaliacao} ratingBackgroundColor='#FFFFFF'/>}
             <RatingText color={backPurple ? white : black}>{qtdeAvaliacoesAbbr}</RatingText>
         </ContainerRating>
     )

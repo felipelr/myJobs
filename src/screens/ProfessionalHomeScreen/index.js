@@ -64,6 +64,7 @@ function ProfessionalHomeScreen(props) {
     const [storiesCarouselOpened, setStoriesCarouselOpened] = useState(false)
     const [firstImageCarousel, setFirstImageCarousel] = useState('')
     const [cameraType, setCameraType] = useState('front')
+    const [professionalRate, setProfessionalRate] = useState({ avg: 0, count: 0 })
 
     const pageRef = useRef()
     const cameraRef = useRef()
@@ -71,6 +72,7 @@ function ProfessionalHomeScreen(props) {
     const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`, props.token)
     const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`, props.token)
+    const getRate = useGet(`/ratings/professional/${professionalData.id}.json`, props.token)
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
@@ -204,6 +206,12 @@ function ProfessionalHomeScreen(props) {
 
         setImages({ image: _image, backImage: _backImage })
     }, [professionalData.modified])
+
+    useEffect(() => {
+        if (getRate.data && getRate.data.rate) {
+            setProfessionalRate(getRate.data.rate)
+        }
+    }, [getRate.data])
 
     const handleBackPress = async () => {
         if (pageRef.current === 'storiesCarousel') {
@@ -354,7 +362,7 @@ function ProfessionalHomeScreen(props) {
 
                             <VwContainerTitle>
                                 <VwContainerRating>
-                                    <RatingJobs avaliacao={5} qtdeAvaliacoes={130000} />
+                                    <RatingJobs avaliacao={professionalRate.rate} qtdeAvaliacoes={professionalRate.count} />
                                 </VwContainerRating>
                                 <TxtTitle size={24}>
                                     {professionalData.name}

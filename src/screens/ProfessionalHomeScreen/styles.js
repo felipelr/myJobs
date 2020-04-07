@@ -18,13 +18,13 @@ export const VwContainerTitle = styled.View`
     border-radius: 10;
     align-items: center;
     justify-content: flex-end;
-    margin:0;
+    margin: 0;
 `
 
 export const TxtTitle = styled.Text`
     font-size: ${props => props.size};
     color: ${props => props.color ? props.color : purple};
-    margin-top: 5px;
+    margin-top: 10px;
     margin-bottom: 5px;
     font-weight: bold;
 `
@@ -32,7 +32,7 @@ export const TxtTitle = styled.Text`
 export const VwContainerRating = styled.View`
     flex: 1;
     align-self: flex-start;
-    margin-top: 5% ;
+    margin-top: 5px;
 `
 
 export const VwContainerContent = styled.View`
@@ -65,7 +65,7 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${heightPercentageToDP('4%')};
+    top: ${heightPercentageToDP('6%')};
 `
 
 export const ContentComentarios = styled.View` 

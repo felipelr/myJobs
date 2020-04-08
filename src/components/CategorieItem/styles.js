@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
 
 export const Title = styled.Text`
     color: ${purple};
+    font-size: 12px;
 `
 
 export const ContainerBody = styled.View`

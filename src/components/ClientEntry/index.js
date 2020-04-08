@@ -74,8 +74,9 @@ function ClientEntry(props) {
                 setRequisitou(false)
                 scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
             }
-            else
+            else {
                 props.ownProps.onUpdate()
+            }
         }
     }, [props.client.isUpdating])
 

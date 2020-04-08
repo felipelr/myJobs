@@ -21,7 +21,7 @@ export const ContainerItem = styled.TouchableOpacity`
 
 export const ContentInfo = styled.View`
     flex: 1;
-    padding: 8px;
+    padding: 4px 4px 4px 8px;
 `
 
 export const BodyItem = styled.View`
@@ -30,14 +30,14 @@ export const BodyItem = styled.View`
 `
 
 export const TitleItem = styled.Text`
-    font-size: 14px;
+    font-size: 12px;
     color: ${white};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;
     margin-bottom: 5px;
 `
 export const DescriptionItem = styled.Text`
-    font-size: 12px;
+    font-size: 10px;
     font-family: 'SF-Pro-Text-Regular';
     color: ${white};
     flex: 1;
@@ -65,13 +65,13 @@ export const ServicesAmount = styled.Text`
 `
 export const TextoVazio = styled.View`
     background-color: ${disabled};
-    height: 25;  
+    height: 20;  
     border-radius: 5;
 `
 
 export const DescricaoVazia = styled.View`
     background-color: ${disabled};
-    height: 40;  
+    height: 35;  
     border-radius: 5;
     margin-top:10;
 `

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Avatar } from 'react-native-elements'
-import { TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
 import { styles, Title, ContainerBody } from './styles'
 import { purple, disabled } from '../common/util/colors'
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 const CategorieItem = (props) => {
     const { categoria } = props
@@ -24,7 +24,7 @@ const CategorieItem = (props) => {
                     overlayContainerStyle={{ backgroundColor: categoria ? purple : disabled }}
                     rounded
                     icon={{ name: categoria.icon, type: 'material-icons' }}
-                    size='large'
+                    size={heightPercentageToDP('11%')}
                     onPress={categoria ? handleClickCategoria : null} />
             }
             {!categoria &&
@@ -32,7 +32,7 @@ const CategorieItem = (props) => {
                     containerStyle={styles.containerStyle}
                     overlayContainerStyle={{ backgroundColor: categoria ? purple : disabled }}
                     rounded 
-                    size='large'
+                    size={heightPercentageToDP('11%')}
                     onPress={categoria ? handleClickCategoria : null} />
             }
         </ContainerBody>

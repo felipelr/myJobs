@@ -5,20 +5,24 @@ import { StyleSheet } from 'react-native'
 
 export const Capa = styled.Image`
     width: 100%;
-    height: ${heightPercentageToDP('18%')};
+    height: ${heightPercentageToDP('20%')};
+    position: absolute;
 `
 
 export const CapaEmpty = styled.View`
     width: 100%;
-    height: ${heightPercentageToDP('18%')};
+    height: ${heightPercentageToDP('20%')};
+    background-color: ${lightgray};
+    position: absolute;
 `
 
 export const VwContainerTitle = styled.View` 
+    margin-top: ${heightPercentageToDP('17%')};
     background-color: white;
-    border-radius: 10;
+    border-top-left-radius: 20;
+    border-top-right-radius: 20;
     align-items: center;
     justify-content: flex-end;
-    margin: 0;
 `
 
 export const TxtTitle = styled.Text`
@@ -32,7 +36,8 @@ export const TxtTitle = styled.Text`
 export const VwContainerRating = styled.View`
     flex: 1;
     align-self: flex-start;
-    margin-top: 5px;
+    margin-top: 25px;
+    margin-left: 5px;
 `
 
 export const VwContainerContent = styled.View`
@@ -65,7 +70,7 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${heightPercentageToDP('6%')};
+    top: ${heightPercentageToDP('3%')};
 `
 
 export const ContentComentarios = styled.View` 

@@ -1,11 +1,12 @@
 import styled from 'styled-components/native'
 import { purple, white } from '../common/util/colors'
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ContainerContent = styled.View`
     padding: 5px;
     background-color: ${white}; 
     margin-top: 2px;
-    height: 145; 
+    height: ${heightPercentageToDP('21%')};
 `
 export const Title = styled.Text`
     font-size: 14px;
@@ -17,7 +18,7 @@ export const Title = styled.Text`
 
 export const TextLoading = styled.Text`
     color: ${purple};
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
     font-family: 'SF-Pro-Text-Regular';
     font-weight: bold;

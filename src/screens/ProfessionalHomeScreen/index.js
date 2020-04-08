@@ -46,6 +46,8 @@ import GaleryMyJobs from '../../components/GaleryMyJobs'
 import MenuPicture from '../../components/MenuPicture'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
+
 function ProfessionalHomeScreen(props) {
     const [professionalData, setProfessionalData] = useState(props.professionalData)
     const [images, setImages] = useState({
@@ -402,13 +404,15 @@ function ProfessionalHomeScreen(props) {
                                         rounded
                                         containerStyle={styles}
                                         source={{ uri: images.image.uri }}
-                                        size={120} />}
+                                        size={heightPercentageToDP('20%')} />
+                                }
 
                                 {images.image.uri.length <= 0 &&
                                     <Avatar
                                         rounded
                                         containerStyle={styles}
-                                        size={120} />}
+                                        size={heightPercentageToDP('20%')} />
+                                }
                             </ContainerAvatar>
 
                             <Modal

@@ -33,6 +33,8 @@ import ProfessionalEntry from '../../components/ProfessionalEntry/index'
 import MyServices from '../../components/MyServices'
 import SuggestService from '../../components/SuggestService'
 
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
+
 function PerfilScreen(props) {
     const [doubleUser] = useState(props.client.id && props.professional.id)
     const [user, setUser] = useState(props.userType === 'client' ? props.client : props.professional)
@@ -320,8 +322,8 @@ function PerfilScreen(props) {
                                                 style={{ width: 40 }}
                                             />
                                             <TxtSlider color={selectUserType === 1 ? purple : black}>Profissional</TxtSlider>
-                                        </ViewSlider>}
-
+                                        </ViewSlider>
+                                    }
                                     <Title>{user.name}</Title>
                                 </ContainerTitle>
                                 <ContainerAvatar>
@@ -330,13 +332,15 @@ function PerfilScreen(props) {
                                             rounded
                                             containerStyle={styles}
                                             source={{ uri: image.uri }}
-                                            size={120} />}
+                                            size={heightPercentageToDP('20%')} />
+                                    }
 
                                     {image.uri.length <= 0 &&
                                         <Avatar
                                             rounded
                                             containerStyle={styles}
-                                            size={120} />}
+                                            size={heightPercentageToDP('20%')} />
+                                    }
 
                                 </ContainerAvatar>
 

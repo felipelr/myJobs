@@ -30,14 +30,14 @@ export const BodyItem = styled.View`
 `
 
 export const TitleItem = styled.Text`
-    font-size: 14px;
+    font-size: 12px;
     color: ${gray};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;
     margin-bottom: 5px;
 `
 export const DescriptionItem = styled.Text`
-    font-size: 12px;
+    font-size: 10px;
     font-family: 'SF-Pro-Text-Regular';
     color: ${gray};
     flex: 1;

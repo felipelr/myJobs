@@ -5,7 +5,7 @@ import { Avatar } from 'react-native-elements'
 import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, Services, ServicesAmount, TextoVazio, DescricaoVazia, styles } from './styles'
 import { white } from '../common/util/colors'
 
-
+import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export default function ItemHighlight(props) {
     const { profissional } = props
@@ -16,7 +16,7 @@ export default function ItemHighlight(props) {
                     <Avatar
                         containerStyle={styles.containerStyle}
                         rounded
-                        size='large'
+                        size={heightPercentageToDP('10%')}
                         source={{
                             uri: profissional.imagem,
                         }} />
@@ -25,7 +25,7 @@ export default function ItemHighlight(props) {
                     <Avatar
                         containerStyle={styles.containerStyle}
                         rounded
-                        size='large' />
+                        size={heightPercentageToDP('10%')} />
                 }
 
                 <ContentInfo>

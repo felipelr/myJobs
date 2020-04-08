@@ -22,7 +22,7 @@ export const Space = styled.View`
     height:${heightPercentageToDP('14%')};
 `
 export const ContainerTitle = styled.View`
-    height:${heightPercentageToDP('16%')};
+    padding-top:${heightPercentageToDP('10%')};
     background-color: white;
     border-top-right-radius: 20; 
     border-top-left-radius: 20;
@@ -44,7 +44,7 @@ export const ContainerAvatar = styled.View`
     right: 0;  
     left: 0;
     align-items: center;
-    top: ${heightPercentageToDP('4%')};
+    top: ${heightPercentageToDP('3%')};
 `
 
 export const ViewSlider = styled.TouchableOpacity`

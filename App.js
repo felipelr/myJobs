@@ -32,6 +32,7 @@ const MainNavigator = createStackNavigator(
     Services: { screen: ServicesScreen },
     ServiceHome: { screen: ServiceHomeScreen },
     ProfessionalHome: { screen: ProfessionalHomeScreen },
+    ProfessionalHomeView: { screen: ProfessionalHomeScreen },
     ServiceHire: { screen: ServiceHireScreen },
     ProfessionalChat: { screen: ProfessionalChatScreen },
     NewCall: { screen: NewCallScreen },

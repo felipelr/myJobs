@@ -68,7 +68,7 @@ function ServiceHireScreen(props) {
         }
     }, [props.clientCtr.isUpdating])
 
-    handleOnChange = (name, text) => {
+    const handleOnChange = (name, text) => {
         setForm({
             ...form,
             [name]: text
@@ -80,7 +80,7 @@ function ServiceHireScreen(props) {
             setInvalidField('')
     }
 
-    validateField = (field, value) => {
+    const validateField = (field, value) => {
         switch (field) {
             case 'quantity':
                 if (value <= 0)
@@ -92,14 +92,14 @@ function ServiceHireScreen(props) {
         return true
     }
 
-    handleClickConfimar = () => {
+    const handleClickConfimar = () => {
         if (invalidField === '') {
             setRequisitou(true)
             props.clientNewServiceOrderRequest(props.token, form)
         }
     }
 
-    handleAddressOnPress = (id) => {
+    const handleAddressOnPress = (id) => {
         setForm({
             ...form,
             client_address_id: id
@@ -192,7 +192,7 @@ const mapStateToProps = (state, ownProps) => {
         userType: state.auth.userType,
         client: state.client.client,
         clientCtr: state.client,
-        serviceSelected: state.services.selected,
+        serviceSelected: state.service.selected,
         selectedSubcategory: state.subcategory.selected,
         selectedCategorie: state.categoria.selected,
         enderecos: state.client.client.clientsAddresses,

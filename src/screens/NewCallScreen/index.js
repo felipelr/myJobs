@@ -80,7 +80,7 @@ function NewCallScreen(props) {
     useEffect(() => {
         if (getCategory.data && getCategory.data.categories && getCategory.data.categories[0].id > 0) {
             setCategories(getCategory.data.categories)
-            getSubcategories.refetch(`/subcategories/getByCategory/${getCategory.data.categories[0].id}.json`);
+            getSubcategories.refetch(`/subcategories/getByCategory/${getCategory.data.categories[0].id}.json?professional_id=${props.professional.id}`);
         }
     }, [getCategory.data]) //Quando trocar a categoria selecionada
 
@@ -122,7 +122,7 @@ function NewCallScreen(props) {
 
     useEffect(() => {
         if (form.subcategory_id != 0) {
-            getServices.refetch(`/services/getBySubcategory/${form.subcategory_id}.json`);
+            getServices.refetch(`/services/getBySubcategory/${form.subcategory_id}.json?professional_id=${props.professional.id}`);
         }
     }, [form.subcategory_id])
 

@@ -44,12 +44,14 @@ function ProfessionalsScreen(props) {
             <HeaderJobs back={back} title='Profissionais' />
             <ContainerProfessionals>
                 <Highlights titulo={'Destaques do mês'} highlights={highlights} />
-                <ButtonContainer>
-                    <ButtonOrcamento onPress={() => props.navigation.navigate('ServiceHire')}>
-                        <TextOrcamento>Solicitar Orçamentos para todos os profissionais</TextOrcamento>
-                        <Icon name='chevron-right' size={24} color={purple} />
-                    </ButtonOrcamento>
-                </ButtonContainer>
+                {props.userType === 'client' &&
+                    <ButtonContainer>
+                        <ButtonOrcamento onPress={() => props.navigation.navigate('ServiceHire')}>
+                            <TextOrcamento>Solicitar Orçamentos para todos os profissionais</TextOrcamento>
+                            <Icon name='chevron-right' size={24} color={purple} />
+                        </ButtonOrcamento>
+                    </ButtonContainer>
+                }
                 <ContainerList>
                     {!getProfessionals || (getProfessionals && getProfessionals.loading) ? (
                         <List itens={[1, 2, 3]} />
@@ -59,7 +61,7 @@ function ProfessionalsScreen(props) {
                             tipo='professional'
                             titulo='Profissionais/Empresas'
                             itens={getProfessionals.data.professionals}
-                            itemOnPress={() => props.navigation.navigate('ProfessionalHome')} />
+                            itemOnPress={() => props.navigation.navigate('ProfessionalHomeView')} />
                     }
                 </ContainerList>
             </ContainerProfessionals>

@@ -68,6 +68,7 @@ function ProfessionalHomeScreen(props) {
 
     const pageRef = useRef()
     const cameraRef = useRef()
+    const professionalSelectedRef = useRef()
 
     const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
     const getProfessionalComments = useGet(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`, props.token)
@@ -159,7 +160,7 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         if (!props.isAuth) {
-            props.ownProps.navigation.navigate('Login')
+            props.navigation.navigate('Login')
         }
     }, [props.isAuth])
 
@@ -190,6 +191,7 @@ function ProfessionalHomeScreen(props) {
 
             setImages({ image: _image, backImage: _backImage })
         }
+        professionalSelectedRef.current = props.professionalSelected
     }, [props.professionalSelected])
 
     useEffect(() => {
@@ -219,10 +221,13 @@ function ProfessionalHomeScreen(props) {
             return true
         }
 
-        if (props.professionalSelected.id)
+        if (!professionalSelectedRef.current.id) {
             props.logoutRequest()
-        else
+        }
+        else {
+            props.professionalSelectedRequest({})
             props.navigation.goBack()
+        }
         return true
     }
 
@@ -351,7 +356,8 @@ function ProfessionalHomeScreen(props) {
             {!storiesCarouselOpened &&
                 <React.Fragment>
                     {!props.professionalSelected.id && <HeaderJobs title='Home' />}
-                    {props.professionalSelected.id && <HeaderJobs title='Profissional' chat={() => props.navigation.navigate('ProfessionalChat')} />}
+                    {(props.professionalSelected.id && props.userType === 'client') && <HeaderJobs title='Profissional' chat={() => props.navigation.navigate('ProfessionalChat')} />}
+                    {(props.professionalSelected.id && props.userType === 'professional') && <HeaderJobs title='Profissional' />}
 
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                         showsHorizontalScrollIndicator={false}
@@ -523,6 +529,7 @@ const mapDispatchToProps = dispatch => {
         professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service)),
         storiesRestartSelfPage: () => dispatch(ActionCreators.storiesRestartSelfPage()),
         chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional))
     }
 }
 

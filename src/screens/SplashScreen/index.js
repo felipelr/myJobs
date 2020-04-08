@@ -6,7 +6,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { ViewContainer } from './styles'
+import { ViewContainer, ImgLogoTipo } from './styles'
+
+import assets from './assets'
 
 function SplashScreen(props) {
     const chatVisibleRef = useRef()
@@ -103,32 +105,34 @@ function SplashScreen(props) {
 
     const getUserData = async () => {
         try {
-            const userData = await AsyncStorage.getItem('@userData')
-            if (userData) {
-                const clientData = await AsyncStorage.getItem('@clientData')
-                const professionalData = await AsyncStorage.getItem('@professionalData')
+            setTimeout(async () => {
+                const userData = await AsyncStorage.getItem('@userData')
+                if (userData) {
+                    const clientData = await AsyncStorage.getItem('@clientData')
+                    const professionalData = await AsyncStorage.getItem('@professionalData')
 
-                let userType = professionalData ? 'professional' : 'client'
+                    let userType = professionalData ? 'professional' : 'client'
 
-                const userJson = { ...JSON.parse(userData), userType }
-                const clientJson = clientData ? JSON.parse(clientData) : null
-                const professionalJson = professionalData ? JSON.parse(professionalData) : null
+                    const userJson = { ...JSON.parse(userData), userType }
+                    const clientJson = clientData ? JSON.parse(clientData) : null
+                    const professionalJson = professionalData ? JSON.parse(professionalData) : null
 
-                if (clientJson !== null)
-                    props.clientUpdateSuccess(clientJson)
+                    if (clientJson !== null)
+                        props.clientUpdateSuccess(clientJson)
 
-                if (professionalJson !== null)
-                    props.professionalUpdateSuccess(professionalJson)
+                    if (professionalJson !== null)
+                        props.professionalUpdateSuccess(professionalJson)
 
-                props.authSuccess(userJson)
+                    props.authSuccess(userJson)
 
-                if (userType === 'client')
-                    props.navigation.navigate('CategoriesSearch')
-                else
-                    props.navigation.navigate('ProfessionalHome')
-            } else {
-                props.navigation.navigate('Login')
-            }
+                    if (userType === 'client')
+                        props.navigation.navigate('CategoriesSearch')
+                    else
+                        props.navigation.navigate('ProfessionalHome')
+                } else {
+                    props.navigation.navigate('Login')
+                }
+            }, 2000)
         } catch (e) {
             props.navigation.navigate('Login')
         }
@@ -161,6 +165,7 @@ function SplashScreen(props) {
 
     return (
         <ViewContainer>
+            <ImgLogoTipo source={assets.myjobs} />
         </ViewContainer>
     )
 }

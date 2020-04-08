@@ -6,3 +6,7 @@ export const ViewContainer = styled.View`
     background-color: ${purple};
     justify-content: space-evenly;
 `
+
+export const ImgLogoTipo = styled.Image`
+    align-self: center;
+`

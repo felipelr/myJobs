@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
 
 import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, Services, styles } from './styles'
-import { white } from '../common/util/colors'
+import { gray } from '../common/util/colors'
 
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
@@ -26,7 +26,7 @@ const HighlightsBuy = (props) => {
                             <DescriptionItem>Já pensou você aqui entre os 5 mais tops do aplicativo todo ? Clique e anuncie!</DescriptionItem>
                     }
                 </ContentInfo>
-                <Icon name="chevron-right" size={30} color={white} style={{ alignSelf: 'center' }} />
+                <Icon name="chevron-right" size={30} color={gray} style={{ alignSelf: 'center' }} />
             </BodyItem>
             <Services>
                 disponível por tempo limitado!

@@ -34,7 +34,7 @@ function SplashScreen(props) {
             if (notification.data.message)
                 props.chatSetReceivedMessage(JSON.parse(notification.data.message))
 
-            notification.setSound('default')
+            notification.setSound('sound_1.mp3')
             notification.android.setDefaults(firebase.notifications.Android.Defaults.All)
             notification.android.setChannelId(channel.channelId)
             notification.android.setVibrate(channel.vibrationPattern)

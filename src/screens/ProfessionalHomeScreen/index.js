@@ -49,7 +49,7 @@ import StoriesCarousel from '../../components/StoriesCarousel'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 function ProfessionalHomeScreen(props) {
-    const [professionalData, setProfessionalData] = useState(props.professionalData)
+    const [professionalData, setProfessionalData] = useState(props.professionalSelected.id ? props.professionalSelected : props.professionalData)
     const [images, setImages] = useState({
         image: { uri: '' },
         backImage: { uri: '' },
@@ -178,6 +178,9 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         if (props.professionalSelected.id) {
+            setServices([])
+            setComments([])
+            setStories([])
             setProfessionalData(props.professionalSelected)
 
             let _image = { uri: '' }
@@ -192,6 +195,12 @@ function ProfessionalHomeScreen(props) {
             }
 
             setImages({ image: _image, backImage: _backImage })
+        }
+        else {
+            setServices([])
+            setComments([])
+            setStories([])
+            setProfessionalData(props.professionalData)
         }
         professionalSelectedRef.current = props.professionalSelected
     }, [props.professionalSelected])

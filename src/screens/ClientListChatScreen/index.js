@@ -73,6 +73,7 @@ function ClientListChatScreen(props) {
                 type={props.userType}
                 selected={'chat'}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
+                callsOnPress={() => props.navigation.navigate('ClientCalls')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </React.Fragment>

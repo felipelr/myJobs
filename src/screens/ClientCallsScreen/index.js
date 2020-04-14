@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { BackHandler, Animated, Dimensions } from 'react-native'
+import { BackHandler, Animated, Dimensions, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import useGet from '../../services/restServices'
-import ActionCreators from '../../store/actionCreators'
 
 import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
@@ -123,6 +122,7 @@ function ClientCallsScreen(props) {
 
     return (
         <React.Fragment>
+            <StatusBar backgroundColor={purple} />
             <HeaderJobs
                 title={'Chamados'}
                 back={() => handleBackPress()} />

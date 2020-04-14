@@ -24,7 +24,6 @@ import CardJobs from '../CardJobs'
 import ButtonPurple from '../ButtonPurple'
 import Loading from '../Loading'
 import TextError from '../TextError'
-import RatingJobs from '../RatingJobs'
 
 import { white, purple, black, lightgray } from '../common/util/colors'
 
@@ -191,6 +190,7 @@ function Call(props) {
                                         }
 
                                         <AirbnbRating
+                                            showRating={true}
                                             count={5}
                                             reviews={ratingNames}
                                             defaultRating={5}

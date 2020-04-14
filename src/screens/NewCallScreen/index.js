@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler, Picker } from 'react-native'
+import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
@@ -145,6 +145,7 @@ function NewCallScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
+            <StatusBar backgroundColor={purple} />
             <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
                 <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
                     <View style={{ flex: 1 }}>
@@ -208,7 +209,7 @@ function NewCallScreen(props) {
                 type={props.userType}
                 selected={'home'}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.navigation.navigate('CallsList')}
                 chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </React.Fragment>

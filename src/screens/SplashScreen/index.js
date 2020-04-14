@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react'
-import { AppState } from 'react-native'
+import { AppState, StatusBar } from 'react-native'
 import firebase from 'react-native-firebase'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import ActionCreators from '../../store/actionCreators'
+
+import { purple } from '../../components/common/util/colors'
 
 import { ViewContainer, ImgLogoTipo } from './styles'
 
@@ -165,6 +167,7 @@ function SplashScreen(props) {
 
     return (
         <ViewContainer>
+            <StatusBar backgroundColor={purple} />
             <ImgLogoTipo source={assets.myjobs} />
         </ViewContainer>
     )

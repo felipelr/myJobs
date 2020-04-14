@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BackHandler } from 'react-native'
+import { BackHandler, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -50,6 +50,7 @@ function ProfessionalListChatScreen(props) {
 
     return (
         <React.Fragment>
+            <StatusBar backgroundColor={purple} />
             <HeaderJobs
                 title={'Conversas'}
                 back={() => props.navigation.goBack()} />
@@ -74,7 +75,7 @@ function ProfessionalListChatScreen(props) {
                 selected={'chat'}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.navigation.navigate('CallsList')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
             />
         </React.Fragment>

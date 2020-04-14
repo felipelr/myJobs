@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Platform, BackHandler } from 'react-native';
+import { View, Text, Platform, BackHandler, StatusBar } from 'react-native';
 import { ContainerCategorias } from './styles';
 import { connect } from 'react-redux';
 
@@ -10,8 +10,10 @@ import Highlights from '../../components/Highlights/index';
 import HeaderJob from '../../components/HeaderJobs/index';
 import Categories from '../../components/Categories/index';
 import List from '../../components/List/index';
-import { purple } from '../../components/common/util/colors';
+
 import useGet from '../../services/restServices';
+
+import { purple } from '../../components/common/util/colors';
 
 function CategoriesSearchScreen(props) {
     const [categories, setCategories] = useState([])
@@ -91,6 +93,7 @@ function CategoriesSearchScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <View style={{ flex: 1 }} behavior={behavior}>
+            <StatusBar backgroundColor={purple} />
             <Container />
             <HeaderJob filter={true} onChangeText={handleFilterChangeText} />
             <ContainerCategorias>
@@ -116,7 +119,7 @@ function CategoriesSearchScreen(props) {
                 type={props.userType}
                 selected={'home'}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientCalls') : props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.navigation.navigate('CallsList')}
                 chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
             />

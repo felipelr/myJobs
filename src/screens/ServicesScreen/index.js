@@ -3,23 +3,26 @@ import {
     KeyboardAvoidingView,
     Platform,
     BackHandler,
-    ActivityIndicator,
     TouchableOpacity,
-    View
+    StatusBar
 } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 
-import styles, { ContainerList, ContainerSearch, TextLoading } from './styles'
+import useGet from '../../services/restServices'
+
+import ActionCreators from '../../store/actionCreators'
+
+import { purple } from '../../components/common/util/colors'
+
+import styles, { ContainerList, ContainerSearch } from './styles'
+
 import HeaderJobs from '../../components/HeaderJobs'
 import Footer from '../../components/Footer/index'
 import Container from '../../components/Container/index'
 import List from '../../components/List/index'
 import Highlights from '../../components/Highlights/index'
-import { purple } from '../../components/common/util/colors'
-import useGet from '../../services/restServices';
-import ActionCreators from '../../store/actionCreators'
 
 function ServicesScreen(props) {
     const [search, setSearch] = useState('')
@@ -62,6 +65,7 @@ function ServicesScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+            <StatusBar backgroundColor={purple} />
             <Container />
             <HeaderJobs back={back} title='Serviços' />
             <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} />
@@ -96,7 +100,7 @@ function ServicesScreen(props) {
                 type={props.userType}
                 selected={'home'}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.navigation.navigate('CallsList')}
                 chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')} />
         </KeyboardAvoidingView>

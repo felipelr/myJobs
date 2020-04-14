@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { BackHandler, Animated, Dimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { BackHandler, Animated, Dimensions, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -16,7 +16,6 @@ import Moment from 'moment'
 import { purple, lightgray, gold } from '../../components/common/util/colors'
 
 import {
-    styles,
     ScrollViewContainer,
     ViewContainer,
     ViewTabControl,
@@ -119,6 +118,7 @@ function ProfessionalCallsScreen(props) {
 
     return (
         <React.Fragment>
+            <StatusBar backgroundColor={purple} />
             <HeaderJobs
                 title={'Chamados'}
                 back={() => handleBackPress()} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View } from 'react-native'
+import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
@@ -33,7 +33,7 @@ import {
     styles
 } from './styles'
 
-import { white } from '../../components/common/util/colors'
+import { white, purple } from '../../components/common/util/colors'
 
 import RatingJobs from '../../components/RatingJobs/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
@@ -178,9 +178,6 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         if (props.professionalSelected.id) {
-            setServices([])
-            setComments([])
-            setStories([])
             setProfessionalData(props.professionalSelected)
 
             let _image = { uri: '' }
@@ -197,9 +194,6 @@ function ProfessionalHomeScreen(props) {
             setImages({ image: _image, backImage: _backImage })
         }
         else {
-            setServices([])
-            setComments([])
-            setStories([])
             setProfessionalData(props.professionalData)
         }
         professionalSelectedRef.current = props.professionalSelected
@@ -236,6 +230,9 @@ function ProfessionalHomeScreen(props) {
             props.logoutRequest()
         }
         else {
+            setServices([])
+            setComments([])
+            setStories([])
             props.professionalSelectedRequest({})
             props.navigation.goBack()
         }
@@ -359,6 +356,7 @@ function ProfessionalHomeScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
+            <StatusBar backgroundColor={purple} />
             {storiesCarouselOpened &&
                 <StoriesCarousel
                     firstImage={firstImageCarousel}
@@ -379,7 +377,7 @@ function ProfessionalHomeScreen(props) {
 
                             <VwContainerTitle>
                                 <VwContainerRating>
-                                    <RatingJobs avaliacao={professionalRate.rate} qtdeAvaliacoes={professionalRate.count} />
+                                    <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
                                 </VwContainerRating>
                                 <TxtTitle size={24}>
                                     {professionalData.name}
@@ -507,7 +505,7 @@ function ProfessionalHomeScreen(props) {
                         type={props.userType}
                         selected={'professional-profile'}
                         homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
-                        callsOnPress={() => props.navigation.navigate('ProfessionalCalls')}
+                        callsOnPress={() => props.navigation.navigate('CallsList')}
                         chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
                         perfilOnPress={() => props.navigation.navigate('Perfil')}
                     />

@@ -23,6 +23,7 @@ export const ContainerItem = styled.TouchableOpacity`
 export const ContentInfo = styled.View`
     flex: 1;
     padding: 4px 4px 4px 8px;
+    justify-content: space-evenly;
 `
 
 export const BodyItem = styled.View`
@@ -35,13 +36,11 @@ export const TitleItem = styled.Text`
     color: ${gray};
     font-family: 'SF-Pro-Text-Bold';
     font-weight: bold;
-    margin-bottom: 5px;
 `
 export const DescriptionItem = styled.Text`
     font-size: ${heightPercentageToDP('1.7%')};
     font-family: 'SF-Pro-Text-Regular';
     color: ${gray};
-    flex: 1;
 `
 
 export const ContainerDescription = styled.ScrollView.attrs({

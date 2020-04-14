@@ -33,7 +33,7 @@ function ListItemProfessional(props) {
                 <View style={{ marginLeft: 10 }}>
                     <TitleProfessional>{profissional.name}</TitleProfessional>
                     <InfoProfessional>{profissional.info}</InfoProfessional>
-                    <RatingJobs avaliacao={parseFloat(profissional.rating)} qtdeAvaliacoes={profissional.amount_ratings} />
+                    <RatingJobs avaliacao={profissional.rating} qtdeAvaliacoes={profissional.amount_ratings} />
                 </View>
             }
             rightContent={

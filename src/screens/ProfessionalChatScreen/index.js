@@ -1,19 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState } from 'react-native'
+import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState, StatusBar } from 'react-native'
 import { Input } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { gray, white, lightpurple } from '../../components/common/util/colors'
+import { gray, white, lightpurple, purple } from '../../components/common/util/colors'
 import {
-    ViewContainerInfo,
-    TextInfo,
     ViewContainerChat,
     ViewContainerNewMessage,
     TouchIcon,
-    ViewLoading,
 } from './styles'
 import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
@@ -41,22 +38,14 @@ function ChatMessages(props) {
     }
 
     return (
-        <ScrollViewContainerMessages
-            ref={(c) => scrollViewRef.current = c}
-            onContentSizeChange={handleContentSizeChange}>
-            {
-                messages && messages.map((item, index) => {
-                    if (index === 0) {
-                        return (
-                            <React.Fragment key={index} >
-                                <ChatTextDate mensagem={item} />
-                                <ChateItem mensagem={item} userType={userType} />
-                            </React.Fragment>
-                        )
-                    }
-                    else {
-                        const previousItem = messages[index - 1]
-                        if (previousItem.date != item.date) {
+        <React.Fragment>
+            <StatusBar backgroundColor={purple} />
+            <ScrollViewContainerMessages
+                ref={(c) => scrollViewRef.current = c}
+                onContentSizeChange={handleContentSizeChange}>
+                {
+                    messages && messages.map((item, index) => {
+                        if (index === 0) {
                             return (
                                 <React.Fragment key={index} >
                                     <ChatTextDate mensagem={item} />
@@ -65,12 +54,24 @@ function ChatMessages(props) {
                             )
                         }
                         else {
-                            return <ChateItem key={index} mensagem={item} userType={userType} />
+                            const previousItem = messages[index - 1]
+                            if (previousItem.date != item.date) {
+                                return (
+                                    <React.Fragment key={index} >
+                                        <ChatTextDate mensagem={item} />
+                                        <ChateItem mensagem={item} userType={userType} />
+                                    </React.Fragment>
+                                )
+                            }
+                            else {
+                                return <ChateItem key={index} mensagem={item} userType={userType} />
+                            }
                         }
-                    }
-                })
-            }
-        </ScrollViewContainerMessages>
+                    })
+                }
+            </ScrollViewContainerMessages>
+        </React.Fragment>
+
     )
 }
 

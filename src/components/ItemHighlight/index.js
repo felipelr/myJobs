@@ -6,6 +6,7 @@ import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, Servi
 import { white } from '../common/util/colors'
 
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
+import RatingJobs from '../RatingJobs'
 
 export default function ItemHighlight(props) {
     const { profissional } = props
@@ -40,9 +41,7 @@ export default function ItemHighlight(props) {
             </BodyItem>
             {
                 profissional &&
-                <Services>
-                    Oferece <ServicesAmount>{profissional.qtdeServices}</ServicesAmount> {profissional.qtdeServices > 1 ? 'serviços' : 'serviço'}
-                </Services>
+                <RatingJobs backPurple={true} avaliacao={profissional.rating} qtdeAvaliacoes={profissional.amount_ratings} />
             }
 
         </ContainerItem>

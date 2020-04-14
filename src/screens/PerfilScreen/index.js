@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { View, BackHandler, Animated, Dimensions } from 'react-native'
+import { View, BackHandler, Animated, Dimensions, StatusBar } from 'react-native'
 import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
@@ -282,6 +282,7 @@ function PerfilScreen(props) {
         if (selectUserType == 0) {
             setSelectedUserType(1)
             props.authSetUserType('professional')
+            props.professionalSelectedRequest({})
         }
         else {
             setSelectedUserType(0)
@@ -291,6 +292,7 @@ function PerfilScreen(props) {
 
     return (
         <React.Fragment>
+            <StatusBar backgroundColor={purple} />
             {
                 showHeader && (
                     <HeaderJobs
@@ -404,7 +406,7 @@ function PerfilScreen(props) {
                 selected={'perfil'}
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientCalls') : props.navigation.navigate('ProfessionalCalls')}
+                callsOnPress={() => props.navigation.navigate('CallsList')}
                 chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
             />
         </React.Fragment>
@@ -430,6 +432,7 @@ const mapDispatchToProps = dispatch => {
         authCleanErrors: () => dispatch(ActionCreators.authCleanErrors()),
         professionalsCleanErrors: () => dispatch(ActionCreators.professionalsCleanErrors()),
         authSetUserType: (userType) => dispatch(ActionCreators.authSetUserType(userType)),
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional))
     }
 }
 

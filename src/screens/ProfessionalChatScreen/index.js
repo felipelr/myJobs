@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState, StatusBar } from 'react-native'
+import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState } from 'react-native'
 import { Input } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { gray, white, lightpurple, purple } from '../../components/common/util/colors'
+import { gray, white, lightpurple } from '../../components/common/util/colors'
 import {
     ViewContainerChat,
     ViewContainerNewMessage,
@@ -39,7 +39,6 @@ function ChatMessages(props) {
 
     return (
         <React.Fragment>
-            <StatusBar backgroundColor={purple} />
             <ScrollViewContainerMessages
                 ref={(c) => scrollViewRef.current = c}
                 onContentSizeChange={handleContentSizeChange}>
@@ -146,6 +145,7 @@ function ProfessionalChatScreen(props) {
             setKeyboardIsVisible(false)
         })
 
+        updateChatBadge()
         carregarMensagens(true)
 
         const type_ = props.userType;
@@ -324,11 +324,19 @@ function ProfessionalChatScreen(props) {
         }
     }, [props.receivedMessage]); */
 
-    const handleAppStateChange = (nextAppState) => {
-        if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
-            carregarMensagens(false)
+    const updateChatBadge = async () => {
+        try {
+            if (props.professionalSelected.id) {
+                const storageName = `@badge_c_${props.user.id}_p_${props.professionalSelected.id}`
+                await AsyncStorage.setItem(storageName, '0')
+            }
+            else {
+                const storageName = `@badge_c_${props.clientSelected.id}_p_${props.user.id}`
+                await AsyncStorage.setItem(storageName, '0')
+            }
+        } catch (e) {
+
         }
-        appStateRef.current = nextAppState
     }
 
     const carregarMensagens = async (changeState) => {
@@ -377,6 +385,13 @@ function ProfessionalChatScreen(props) {
     const handleBackPress = async () => {
         props.navigation.goBack()
         return true
+    }
+
+    const handleAppStateChange = (nextAppState) => {
+        if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
+            carregarMensagens(false)
+        }
+        appStateRef.current = nextAppState
     }
 
     const handleSendPress = () => {
@@ -435,7 +450,7 @@ function ProfessionalChatScreen(props) {
             <HeaderJobs
                 title={props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name}
                 back={() => handleBackPress()}
-                newCall={props.clientSelected ? () => handlePressNewCall() : null}
+                newCall={props.clientSelected.id ? () => handlePressNewCall() : null}
             />
             <ViewContainerChat>
                 <ChatMessages messages={mensagens} userType={props.userType} />
@@ -465,8 +480,8 @@ const mapStateToProps = (state, ownProps) => {
         ownProps: ownProps,
         token: state.auth.token,
         isAuth: state.auth.isAuth,
-        user: state.auth.userType === 'client' ? state.client.client : state.professional.professional,
-        userType: state.auth.userType,
+        user: state.professional.selected.id ? state.client.client : state.professional.professional,
+        userType: state.professional.selected.id ? 'client' : 'professional',
         selectedCategorie: state.categoria.selected,
         serviceSelected: state.service.selected,
         professionalSelected: state.professional.selected,

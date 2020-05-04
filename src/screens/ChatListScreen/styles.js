@@ -22,14 +22,19 @@ export const ViewTabControl = styled.View`
 
 export const TouchTab = styled.TouchableOpacity`
     flex: 1;
-    background-color: ${purple};
+    background-color: ${white};
     padding: 4px;
     border-bottom-width: 3px;
     border-bottom-color: ${props => `${props.borderColor}`};
 `
 
 export const TxtTab = styled.Text`
-    color: ${white};
+    color: ${purple};
     font-size: 14;
     align-self: center;
+`
+
+export const ViewListItem = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
 `

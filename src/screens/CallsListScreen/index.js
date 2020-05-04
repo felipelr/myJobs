@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BackHandler, Animated, Dimensions, StatusBar, View } from 'react-native'
+import { BackHandler, Animated, Dimensions, View } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -12,11 +12,9 @@ import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import Call from '../../components/Call/index'
 
-import { purple, gray, lightgray, white, gold, black } from '../../components/common/util/colors'
+import { purple, lightgray, white, gold, black } from '../../components/common/util/colors'
 
 import {
-    ScrollViewContainer,
-    ViewContainer,
     ViewTabControl,
     TouchTab,
     TxtTab,
@@ -63,6 +61,10 @@ function CallsListScreen(props) {
             return true
         })
 
+        if (tabSelected === 1 && callsClient.length === 0) {
+            getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
+        }
+
         return () => {
             backHandler.remove()
         }
@@ -77,6 +79,9 @@ function CallsListScreen(props) {
     useEffect(() => {
         if (getFinishedCalls.data && getFinishedCalls.data.calls) {
             setFinishedCalls(getFinishedCalls.data.calls)
+            //verificar se não há calls presentes em finalizados na lista de abertos
+            const difference = calls.filter(x => !getFinishedCalls.data.calls.some(y => y.id === x.id));
+            setCalls(difference)
         }
     }, [getFinishedCalls.data])
 
@@ -89,6 +94,9 @@ function CallsListScreen(props) {
     useEffect(() => {
         if (getFinishedCallsClient.data && getFinishedCallsClient.data.calls) {
             setFinishedCallsClient(getFinishedCallsClient.data.calls)
+            //verificar se não há calls presentes em finalizados na lista de abertos
+            const difference = callsClient.filter(x => !getFinishedCallsClient.data.calls.some(y => y.id === x.id));
+            setCallsClient(difference)
         }
     }, [getFinishedCallsClient.data])
 
@@ -202,19 +210,27 @@ function CallsListScreen(props) {
     }
 
     const handleClickItem = (item) => {
+        props.professionalsCleanErrors()
+        props.clientClearErrors()
         setSelectedCall(item)
         setShowCall(true)
     }
 
     const handleCallFinished = (call) => {
-        setFinishedCalls([...finishedCalls, call])
-        setCalls(calls.filter(item => item.id !== call.id))
+        if (tabSelected === 0) {
+            setFinishedCalls([call, ...finishedCalls])
+            setCalls(calls.filter(item => item.id !== call.id))
+        }
+        else {
+            setFinishedCallsClient([call, ...finishedCallsClient])
+            setCallsClient(callsClient.filter(item => item.id !== call.id))
+        }
+
         handleBackPress()
     }
 
     return (
         <React.Fragment>
-            <StatusBar backgroundColor={purple} />
             <HeaderJobs
                 title={'Chamados'}
                 back={() => handleBackPress()} />
@@ -226,14 +242,14 @@ function CallsListScreen(props) {
                             <TouchTab
                                 activeOpacity={1}
                                 onPress={() => handleClickTab(0)}
-                                borderColor={tabSelected === 0 ? gold : purple}
+                                borderColor={tabSelected === 0 ? purple : white}
                             >
                                 <TxtTab>PROFISSIONAL</TxtTab>
                             </TouchTab>
                             <TouchTab
                                 activeOpacity={1}
                                 onPress={() => handleClickTab(1)}
-                                borderColor={tabSelected === 1 ? gold : purple}
+                                borderColor={tabSelected === 1 ? purple : white}
                             >
                                 <TxtTab>CLIENTE</TxtTab>
                             </TouchTab>
@@ -369,7 +385,7 @@ function CallsListScreen(props) {
                 homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                 professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
                 perfilOnPress={() => props.navigation.navigate('Perfil')}
-                chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
+                chatOnPress={() => props.navigation.navigate('ChatList')}
             />
         </React.Fragment>
     )
@@ -391,7 +407,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        professionalsCleanErrors: () => dispatch(ActionCreators.professionalsCleanErrors()),
+        clientClearErrors: () => dispatch(ActionCreators.clientClearErrors()),
     }
 }
 

@@ -17,6 +17,7 @@ function SplashScreen(props) {
     const appStateRef = useRef()
 
     useEffect(() => {
+
         getUserData()
         firebasePermission()
         appStateRef.current = 'active'
@@ -44,6 +45,9 @@ function SplashScreen(props) {
             notification.android.setSmallIcon('ic_launcher')
             notification.android.setColorized(true)
             notification.android.setColor('purple')
+
+            //salvar badge do chat
+            updateChatBadge(JSON.parse(notification.data.message))
 
             //mostrar notificação
             showNotification(notification);
@@ -105,6 +109,23 @@ function SplashScreen(props) {
         appStateRef.current = nextAppState
     }
 
+    const updateChatBadge = async (msg) => {
+        try {
+            const storageName = `@badge_c_${msg.client_id}_p_${msg.professional_id}`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            let badge = 0;
+            if (strBadge) {
+                badge = parseInt(strBadge) + 1;
+            }
+            else {
+                badge = 1;
+            }
+            await AsyncStorage.setItem(storageName, badge.toString());
+        } catch (e) {
+
+        }
+    }
+
     const getUserData = async () => {
         try {
             setTimeout(async () => {
@@ -119,23 +140,38 @@ function SplashScreen(props) {
                     const clientJson = clientData ? JSON.parse(clientData) : null
                     const professionalJson = professionalData ? JSON.parse(professionalData) : null
 
-                    if (clientJson !== null)
+                    if (clientJson !== null && clientJson.id)
                         props.clientUpdateSuccess(clientJson)
 
-                    if (professionalJson !== null)
+                    if (professionalJson !== null && professionalJson.id)
                         props.professionalUpdateSuccess(professionalJson)
 
-                    props.authSuccess(userJson)
+                    if (!professionalJson.id && !clientJson.id) {
+                        await AsyncStorage.setItem('@userData', JSON.stringify({}));
+                        await AsyncStorage.setItem('@clientData', JSON.stringify({}));
+                        await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
+                        props.navigation.navigate('Login')
+                    }
+                    else {
+                        props.authSuccess(userJson)
 
-                    if (userType === 'client')
-                        props.navigation.navigate('CategoriesSearch')
-                    else
-                        props.navigation.navigate('ProfessionalHome')
+                        if (userType === 'client')
+                            props.navigation.navigate('CategoriesSearch')
+                        else
+                            props.navigation.navigate('ProfessionalHome')
+                    }
+
                 } else {
+                    await AsyncStorage.setItem('@userData', JSON.stringify({}));
+                    await AsyncStorage.setItem('@clientData', JSON.stringify({}));
+                    await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
                     props.navigation.navigate('Login')
                 }
             }, 2000)
         } catch (e) {
+            await AsyncStorage.setItem('@userData', JSON.stringify({}));
+            await AsyncStorage.setItem('@clientData', JSON.stringify({}));
+            await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
             props.navigation.navigate('Login')
         }
     }

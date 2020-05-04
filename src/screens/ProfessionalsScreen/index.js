@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, BackHandler, StatusBar } from 'react-native'
+import { KeyboardAvoidingView, Platform, BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -40,7 +40,6 @@ function ProfessionalsScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <StatusBar backgroundColor={purple} />
             <Container />
             <HeaderJobs back={back} title='Profissionais' />
             <ContainerProfessionals>

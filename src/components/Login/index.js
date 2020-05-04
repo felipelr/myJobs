@@ -25,6 +25,10 @@ import TextError from '../TextError/index'
 import ButtonPurple from '../ButtonPurple/index'
 
 function Login(props) {
+    /* const [form, setForm] = useState({
+        email: '',
+        password: '',
+    }) */
     const [form, setForm] = useState({
         email: 'felipe.lima.flr@gmail.com',
         password: '101762866218022699799',

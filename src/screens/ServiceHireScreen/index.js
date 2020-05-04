@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler, StatusBar } from 'react-native'
+import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
@@ -109,7 +109,6 @@ function ServiceHireScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            <StatusBar backgroundColor={purple} />
             <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
                 <ScrollViewContainer ref={scrollViewContainer}>
                     <View style={{ flex: 1 }}>

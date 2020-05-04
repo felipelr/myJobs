@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Platform, BackHandler, StatusBar } from 'react-native';
-import { ContainerCategorias } from './styles';
+import { View, Platform, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import ActionCreators from '../../store/actionCreators';
 import Footer from '../../components/Footer/index';
@@ -13,7 +13,13 @@ import List from '../../components/List/index';
 
 import useGet from '../../services/restServices';
 
-import { purple } from '../../components/common/util/colors';
+import { mediumgray } from '../../components/common/util/colors';
+
+import {
+    ContainerCategorias,
+    ViewInfoCategoria,
+    TextInfoCategoria,
+} from './styles';
 
 function CategoriesSearchScreen(props) {
     const [categories, setCategories] = useState([])
@@ -27,6 +33,8 @@ function CategoriesSearchScreen(props) {
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
+        props.categoriaSelected(null)
+
         if (props.fcmToken) {
             props.chatUpdateUserFcmToken(props.token, props.user.sub, props.fcmToken)
         }
@@ -39,7 +47,7 @@ function CategoriesSearchScreen(props) {
     useEffect(() => {
         if (getCategories.data && getCategories.data.categories) {
             setCategories(getCategories.data.categories)
-            props.categoriaSelected(getCategories.data.categories[0])
+            //props.categoriaSelected(getCategories.data.categories[0])
         }
     }, [getCategories.data]) //Quando houver alteração nas categorias
 
@@ -67,11 +75,11 @@ function CategoriesSearchScreen(props) {
         }
     }, [props.isAuth]);
 
-    selectSubcategoryRedirect = () => {
+    const selectSubcategoryRedirect = () => {
         props.navigation.navigate('Services')
     };
 
-    handleBackPress = async () => {
+    const handleBackPress = async () => {
         if (props.userType == 'client')
             props.logoutRequest()
         else
@@ -82,18 +90,20 @@ function CategoriesSearchScreen(props) {
     const handleFilterChangeText = (text) => {
         setFilterText(text)
         if (text.length) {
-            const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(text.toUpperCase()))
-            setSubCategories(filteredSubCategories)
+            if (getSubcategories.data.subcategories) {
+                const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(text.toUpperCase()))
+                setSubCategories(filteredSubCategories)
+            }
         }
         else {
-            setSubCategories(getSubcategories.data.subcategories)
+            if (getSubcategories.data.subcategories)
+                setSubCategories(getSubcategories.data.subcategories)
         }
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <View style={{ flex: 1 }} behavior={behavior}>
-            <StatusBar backgroundColor={purple} />
             <Container />
             <HeaderJob filter={true} onChangeText={handleFilterChangeText} />
             <ContainerCategorias>
@@ -101,17 +111,22 @@ function CategoriesSearchScreen(props) {
                 <Categories itens={categories} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
-                        getSubcategories.loading ? (
-                            <List itens={[1, 2, 3]} />
-                        ) :
-                            (
-                                props.selectedCategorie != null &&
-                                <List
-                                    tipo='subcategory'
-                                    titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"}
-                                    itens={subCategories}
-                                    itemOnPress={() => props.navigation.navigate('Services')} />
-                            )
+                        getSubcategories.loading && <List itens={[1, 2, 3]} />
+                    }
+                    {
+                        (!getSubcategories.loading && props.selectedCategorie != null && props.selectedCategorie.id != 0) &&
+                        <List
+                            tipo='subcategory'
+                            titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"}
+                            itens={subCategories}
+                            itemOnPress={() => props.navigation.navigate('Services')} />
+                    }
+                    {
+                        (!getSubcategories.loading && !(props.selectedCategorie != null && props.selectedCategorie.id != 0)) &&
+                        <ViewInfoCategoria>
+                            <Icon name='info' size={72} color={mediumgray} />
+                            <TextInfoCategoria>Selecione uma categoria acima para visualizar mais detalhes dos serviços</TextInfoCategoria>
+                        </ViewInfoCategoria>
                     }
                 </View>
             </ContainerCategorias>

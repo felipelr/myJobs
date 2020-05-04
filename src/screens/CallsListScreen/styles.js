@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { StyleSheet } from 'react-native'
-import { purple, white, black, green } from '../../components/common/util/colors'
+import { purple, white, black, green, } from '../../components/common/util/colors'
 
 export const styles = StyleSheet.create({
     elevation: 2
@@ -23,14 +23,14 @@ export const ViewTabControl = styled.View`
 
 export const TouchTab = styled.TouchableOpacity`
     flex: 1;
-    background-color: ${purple};
+    background-color: ${white};
     padding: 4px;
     border-bottom-width: 3px;
     border-bottom-color: ${props => `${props.borderColor}`};
 `
 
 export const TxtTab = styled.Text`
-    color: ${white};
+    color: ${purple};
     font-size: 14;
     align-self: center;
 `

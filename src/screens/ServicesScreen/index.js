@@ -4,7 +4,6 @@ import {
     Platform,
     BackHandler,
     TouchableOpacity,
-    StatusBar
 } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -13,8 +12,6 @@ import { connect } from 'react-redux'
 import useGet from '../../services/restServices'
 
 import ActionCreators from '../../store/actionCreators'
-
-import { purple } from '../../components/common/util/colors'
 
 import styles, { ContainerList, ContainerSearch } from './styles'
 
@@ -65,7 +62,6 @@ function ServicesScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <StatusBar backgroundColor={purple} />
             <Container />
             <HeaderJobs back={back} title='Serviços' />
             <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} />

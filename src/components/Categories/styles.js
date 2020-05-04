@@ -1,5 +1,5 @@
 import styled from 'styled-components/native'
-import { purple, white } from '../common/util/colors'
+import { purple, lightgray } from '../common/util/colors'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 export const ContainerContent = styled.View`
@@ -7,6 +7,8 @@ export const ContainerContent = styled.View`
     height: ${heightPercentageToDP('16%')};
     background-color: white;
     margin-top: 2px; 
+    border-bottom-width: 2;
+    border-bottom-color: ${lightgray};
 `
 export const ContainerItems = styled.ScrollView.attrs({
     horizontal: true,

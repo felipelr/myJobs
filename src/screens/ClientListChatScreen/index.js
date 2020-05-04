@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BackHandler, StatusBar } from 'react-native'
+import { BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -50,7 +50,6 @@ function ClientListChatScreen(props) {
 
     return (
         <React.Fragment>
-            <StatusBar backgroundColor={purple} />
             <HeaderJobs
                 title={'Conversas'}
                 back={() => props.navigation.goBack()} />

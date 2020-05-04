@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
 import { styles, Title, ContainerBody } from './styles'
-import { purple, disabled } from '../common/util/colors'
+import { purple, disabled, mediumgray } from '../common/util/colors'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
 const CategorieItem = (props) => {
@@ -18,10 +18,19 @@ const CategorieItem = (props) => {
         <ContainerBody>
             {categoria && <Title>{categoria.description}</Title>}
  
-            {categoria &&
+            {(categoria && props.selectedCategorie != null && categoria.id === props.selectedCategorie.id) &&
                 <Avatar
                     containerStyle={styles.containerStyle}
-                    overlayContainerStyle={{ backgroundColor: categoria ? purple : disabled }}
+                    overlayContainerStyle={{ backgroundColor: purple }}
+                    rounded
+                    icon={{ name: categoria.icon, type: 'material-icons' }}
+                    size={heightPercentageToDP('11%')}
+                    onPress={categoria ? handleClickCategoria : null} />
+            }
+            {(categoria && !(props.selectedCategorie != null && categoria.id === props.selectedCategorie.id)) &&
+                <Avatar
+                    containerStyle={styles.containerStyle}
+                    overlayContainerStyle={{ backgroundColor: mediumgray }}
                     rounded
                     icon={{ name: categoria.icon, type: 'material-icons' }}
                     size={heightPercentageToDP('11%')}
@@ -41,7 +50,8 @@ const CategorieItem = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        ownProps: ownProps
+        ownProps: ownProps,
+        selectedCategorie: state.categoria.selected,
     }
 }
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple, white, black } from '../../components/common/util/colors'
+import { purple, white, lightgray } from '../../components/common/util/colors'
 import { StyleSheet } from 'react-native'
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 
@@ -7,15 +7,13 @@ export const ScrollViewContainer = styled.ScrollView.attrs({
     showsHorizontalScrollIndicator: false,
     showsVerticalScrollIndicator: false,
     contentContainerStyle: { flexGrow: 1 },
-})`
-    background-color: white;
-`
+})``
 
 export const ContainerContent = styled.View`
     width: 100%;
     height: 100%;
     position: absolute;
-    background-color: ${purple};
+    background-color: ${lightgray};
     flex: 1;
 `
 export const Space = styled.View`
@@ -28,6 +26,8 @@ export const ContainerTitle = styled.View`
     border-top-left-radius: 20;
     align-items: center;
     justify-content: flex-end;
+    border-bottom-width: 1;
+    border-bottom-color: white;
 `
 
 export const Title = styled.Text`

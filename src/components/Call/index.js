@@ -66,8 +66,9 @@ function Call(props) {
             }
             else {
                 //finalizar com sucesso
+                const edtCall = { ...call, rating: rating }
                 setOverlayRatingVisible(false)
-                props.ownProps.onFinished(rating)
+                props.ownProps.onFinished(edtCall)
             }
         }
     }, [props.clientCtr.isUpdating])

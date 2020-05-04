@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, StatusBar } from 'react-native'
+import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
@@ -33,7 +33,7 @@ import {
     styles
 } from './styles'
 
-import { white, purple } from '../../components/common/util/colors'
+import { white } from '../../components/common/util/colors'
 
 import RatingJobs from '../../components/RatingJobs/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
@@ -356,7 +356,6 @@ function ProfessionalHomeScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            <StatusBar backgroundColor={purple} />
             {storiesCarouselOpened &&
                 <StoriesCarousel
                     firstImage={firstImageCarousel}
@@ -365,8 +364,10 @@ function ProfessionalHomeScreen(props) {
             {!storiesCarouselOpened &&
                 <React.Fragment>
                     {!props.professionalSelected.id && <HeaderJobs title='Home' />}
-                    {(props.professionalSelected.id && props.userType === 'client') && <HeaderJobs title='Profissional' chat={() => props.navigation.navigate('ProfessionalChat')} />}
-                    {(props.professionalSelected.id && props.userType === 'professional') && <HeaderJobs title='Profissional' />}
+                    {props.professionalSelected.id && <HeaderJobs title='Profissional' chat={() => {
+                        props.clientSelectedRequest({})
+                        props.navigation.navigate('ProfessionalChat')
+                    }} />}
 
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
                         showsHorizontalScrollIndicator={false}
@@ -506,7 +507,7 @@ function ProfessionalHomeScreen(props) {
                         selected={'professional-profile'}
                         homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
                         callsOnPress={() => props.navigation.navigate('CallsList')}
-                        chatOnPress={() => props.navigation.navigate('ProfessionalListChat')}
+                        chatOnPress={() => props.navigation.navigate('ChatList')}
                         perfilOnPress={() => props.navigation.navigate('Perfil')}
                     />
                 </React.Fragment>
@@ -540,7 +541,8 @@ const mapDispatchToProps = dispatch => {
         professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service)),
         storiesRestartSelfPage: () => dispatch(ActionCreators.storiesRestartSelfPage()),
         chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
-        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional))
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        clientSelectedRequest: (client) => dispatch(ActionCreators.clientSelected(client)),
     }
 }
 

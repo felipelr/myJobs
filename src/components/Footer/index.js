@@ -1,7 +1,7 @@
 import React from 'react'
 import { ContainerFooter, FooterButton, ItemRounded } from './styles'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { white, gold, purple } from '../common/util/colors'
+import { white, purple, gray } from '../common/util/colors'
 
 export default function Footer({ type, selected, ...props }) {
 
@@ -12,21 +12,21 @@ export default function Footer({ type, selected, ...props }) {
         return (
             <ContainerFooter>
                 <FooterButton onPress={props.homeOnPress}>
-                    <Icon name="home" size={25} color={itemSelected === 'home' ? gold : white} />
+                    <Icon name="home" size={25} color={itemSelected === 'home' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.callsOnPress}>
-                    <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? gold : white}  />
+                    <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.favoriteOnPress}>
-                    <ItemRounded backColor={itemSelected === 'favorite' ? gold : white}>
-                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={purple} />
+                    <ItemRounded backColor={itemSelected === 'favorite' ? purple : gray}>
+                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={white} />
                     </ItemRounded>
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
-                    <Icon name="chat" size={25} color={itemSelected === 'chat' ? gold : white} />
+                    <Icon name="chat" size={25} color={itemSelected === 'chat' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.perfilOnPress}>
-                    <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? gold : white} />
+                    <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? purple : gray} />
                 </FooterButton>
             </ContainerFooter>
         )
@@ -35,19 +35,19 @@ export default function Footer({ type, selected, ...props }) {
         return (
             <ContainerFooter>
                 <FooterButton onPress={props.homeOnPress}>
-                    <Icon name="home" size={25} color={itemSelected === 'home' ? gold : white} />
+                    <Icon name="home" size={25} color={itemSelected === 'home' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.callsOnPress}>
-                    <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? gold : white}  />
+                    <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.professionalProfileOnPress}>
-                    <Icon name="control-point" size={25} color={itemSelected === 'professional-profile' ? gold : white} />
+                    <Icon name="control-point" size={25} color={itemSelected === 'professional-profile' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
-                    <Icon name="chat" size={25} color={itemSelected === 'chat' ? gold : white} />
+                    <Icon name="chat" size={25} color={itemSelected === 'chat' ? purple : gray} />
                 </FooterButton>
                 <FooterButton onPress={props.perfilOnPress}>
-                    <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? gold : white} />
+                    <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? purple : gray} />
                 </FooterButton>
             </ContainerFooter>
         )

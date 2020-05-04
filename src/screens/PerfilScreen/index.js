@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { View, BackHandler, Animated, Dimensions, StatusBar } from 'react-native'
+import { View, BackHandler, Animated, Dimensions } from 'react-native'
 import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
@@ -292,7 +292,6 @@ function PerfilScreen(props) {
 
     return (
         <React.Fragment>
-            <StatusBar backgroundColor={purple} />
             {
                 showHeader && (
                     <HeaderJobs
@@ -353,7 +352,7 @@ function PerfilScreen(props) {
                                                 props.userType === 'client' && listClient.map((item, i) => (
                                                     <ListItem
                                                         key={i}
-                                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
+                                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, margin: 0 }}
                                                         title={item.title}
                                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                                         leftIcon={{ name: item.icon }}

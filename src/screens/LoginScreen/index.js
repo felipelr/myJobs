@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, KeyboardAvoidingView, Platform, BackHandler, StatusBar } from 'react-native'
+import { View, KeyboardAvoidingView, Platform, BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
@@ -10,8 +10,6 @@ import SocialMidia from '../../components/SocialMidia/index'
 import CopyRight from '../../components/CopyRight/index'
 import SignUp from '../../components/SignUp/index'
 import SocialMidiaSignup from '../../components/SocialMidiaSignup/index'
-
-import { purple } from '../../components/common/util/colors'
 
 import {
     Container,
@@ -47,7 +45,6 @@ function LoginScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ height: '100%', width: '100%' }} behavior={behavior}>
-            <StatusBar backgroundColor={purple} />
             <Background />
             <Container>
                 <View style={{ flex: 1 }}>

@@ -64,7 +64,7 @@ function ServicesScreen(props) {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJobs back={back} title='Serviços' />
-            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} />
+            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} navigation={props.navigation}/>
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'

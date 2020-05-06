@@ -20,12 +20,20 @@ function NewCall(props) {
     )
 }
 
-export default function HeaderJobs({ title, filter, back, chat, imagem, confirm, newCall, ...props }) {
+function Calls(props) {
+    return (
+        <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.onPress}>
+            <Icon name='playlist-add-check' size={24} color={purple} />
+        </TouchableOpacity>
+    )
+}
+
+export default function HeaderJobs({ title, filter, back, chat, imagem, confirm, newCall, titlePress, calls, ...props }) {
     return (
         <Header
             containerStyle={styles.headerContainerStyle}
-            centerComponent={title != null ? <Title imagem={imagem} title={title} /> : filter ? <Search onChangeText={props.onChangeText} /> : null}
-            rightComponent={chat ? <Chat onPress={chat} /> : confirm ? <Confirm onPress={confirm} /> : newCall ? <NewCall onPress={newCall} /> : null}
+            centerComponent={title != null ? <Title imagem={imagem} title={title} onPress={titlePress} /> : filter ? <Search onChangeText={props.onChangeText} /> : null}
+            rightComponent={chat ? <Chat onPress={chat} /> : confirm ? <Confirm onPress={confirm} /> : newCall ? <NewCall onPress={newCall} /> : calls ? <Calls onPress={calls} /> : null}
             leftComponent={back && <Back onPress={back} />}
         >
         </Header>

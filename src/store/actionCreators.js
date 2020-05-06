@@ -61,6 +61,8 @@ export const { Types, Creators } = createActions({
     professionalFinishCallRequest: ['token', 'call'],
     professionalFinishCallError: ['error'],
     professionalFinishCallSuccess: ['call'],
+    professionalNewCallRegistered: ['mensagem'],
+    professionalNewCallClearMsg: null,
 
     //Highlights
     highlightsLoadRequest: ['token'],

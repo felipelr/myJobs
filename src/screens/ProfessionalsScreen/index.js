@@ -43,7 +43,7 @@ function ProfessionalsScreen(props) {
             <Container />
             <HeaderJobs back={back} title='Profissionais' />
             <ContainerProfessionals>
-                <Highlights titulo={'Destaques do mês'} highlights={highlights} />
+                <Highlights titulo={'Destaques do mês'} highlights={highlights} navigation={props.navigation}/>
                 {props.userType === 'client' &&
                     <ButtonContainer>
                         <ButtonOrcamento onPress={() => props.navigation.navigate('ServiceHire')}>

@@ -14,6 +14,7 @@ import {
 } from './styles'
 
 function StoriesCarousel(props) {
+    const [professionalData] = useState(props.professionalSelected.id ? props.professionalSelected : props.professionalData)
     const [imageUri, setImagesUri] = useState(props.ownProps.firstImage.uri)
     const [firstIndex, setFirstIndex] = useState(props.ownProps.firstImage.index)
     const [progressValue, setProgressValue] = useState(10)
@@ -22,7 +23,7 @@ function StoriesCarousel(props) {
     const presentationRef = useRef()
     const pageRef = useRef()
 
-    const getStories = useGet(`/stories/viewSingle/${props.professionalData.id}.json?limit=5&page=${props.stories.selfPage}`, props.token)
+    const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=5&page=${props.stories.selfPage}`, props.token)
 
     useEffect(() => {
 
@@ -134,7 +135,7 @@ function StoriesCarousel(props) {
         }, 500)
     }
 
-    onSingleTap = (evt) => {
+    const onSingleTap = (evt) => {
         const screenWidth = Math.round(Dimensions.get('window').width)
         const positionX = Math.round(evt.nativeEvent.locationX)
         if (positionX < screenWidth / 2) {
@@ -163,6 +164,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
         professionalData: state.professional.professional,
+        professionalSelected: state.professional.selected,
         stories: state.stories,
         ownProps: ownProps
     }

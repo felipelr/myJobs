@@ -1,5 +1,4 @@
 import React from 'react'
-import { TouchableOpacity } from 'react-native'
 
 import {
     VwContainerCard,
@@ -30,11 +29,9 @@ export default CardService = ({ service, select, ...props }) => {
                     <RatingJobs
                         avaliacao={service.rating}
                         qtdeAvaliacoes={service.amount_ratings} />
-                    <TouchableOpacity>
-                        <TxtTitle size={12} bold>
-                            Ver comentários
-                        </TxtTitle>
-                    </TouchableOpacity>
+                    <TxtTitle size={12} bold>
+                        Ver comentários
+                    </TxtTitle>
                 </VwRodapeContent>
             </VwRodape>
         </VwContainerCard>

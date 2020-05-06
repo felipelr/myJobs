@@ -1,17 +1,47 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-elements'
+import { connect } from 'react-redux'
 
-import { ContainerItem, BodyItem, TitleItem, DescriptionItem, ContentInfo, Services, ServicesAmount, TextoVazio, DescricaoVazia, styles } from './styles'
+import ActionCreators from '../../store/actionCreators'
+
+import {
+    ContainerItem,
+    BodyItem,
+    TitleItem,
+    DescriptionItem,
+    ContentInfo,
+    TextoVazio,
+    DescricaoVazia,
+    styles
+} from './styles'
+
 import { white } from '../common/util/colors'
 
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
 import RatingJobs from '../RatingJobs'
 
-export default function ItemHighlight(props) {
-    const { profissional } = props
+function ItemHighlight(props) {
+    const { profissional } = props.ownProps
+    const { navigation } = props.ownProps
+
+    useEffect(() => {
+        console.log(props)
+
+        return () => {
+
+        }
+    }, [])
+
+    const handlePress = () => {
+        if (profissional) {
+            props.professionalSelectedRequest(profissional)
+            navigation.navigate('ProfessionalHomeView')
+        }
+    }
+
     return (
-        <ContainerItem gray={(profissional ? false : true)}>
+        <ContainerItem gray={(profissional ? false : true)} onPress={() => handlePress()}>
             <BodyItem>
                 {profissional &&
                     <Avatar
@@ -43,7 +73,20 @@ export default function ItemHighlight(props) {
                 profissional &&
                 <RatingJobs backPurple={true} avaliacao={profissional.rating} qtdeAvaliacoes={profissional.amount_ratings} />
             }
-
         </ContainerItem>
     )
 }
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        ownProps: ownProps,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemHighlight)

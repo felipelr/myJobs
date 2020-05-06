@@ -56,7 +56,7 @@ function CallsListScreen(props) {
     const getFinishedCallsClient = useGet('', props.token)
 
     useEffect(() => {
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {  
             props.navigation.goBack()
             return true
         })
@@ -218,11 +218,15 @@ function CallsListScreen(props) {
 
     const handleCallFinished = (call) => {
         if (tabSelected === 0) {
-            setFinishedCalls([call, ...finishedCalls])
+            const array = finishedCalls.filter(item => item.id !== call.id)
+            array.push(call)
+            setFinishedCalls(array)
             setCalls(calls.filter(item => item.id !== call.id))
         }
         else {
-            setFinishedCallsClient([call, ...finishedCallsClient])
+            const array = finishedCallsClient.filter(item => item.id !== call.id)
+            array.push(call)
+            setFinishedCallsClient(array)
             setCallsClient(callsClient.filter(item => item.id !== call.id))
         }
 

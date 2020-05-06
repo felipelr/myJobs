@@ -63,6 +63,7 @@ function ChatListScreen(props) {
     }, [getChatsClient.data])
 
     const handleBackPress = async () => {
+        props.professionalSelected({})
         props.navigation.goBack()
         return true
     }
@@ -118,6 +119,7 @@ function ChatListScreen(props) {
             props.clientSelected(item.client)
         }
         else {
+            console.log('professional => ', item.professional)
             props.clientSelected({})
             props.professionalSelected(item.professional)
         }

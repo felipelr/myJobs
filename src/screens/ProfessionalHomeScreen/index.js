@@ -233,8 +233,23 @@ function ProfessionalHomeScreen(props) {
             setServices([])
             setComments([])
             setStories([])
-            props.professionalSelectedRequest({})
-            props.navigation.goBack()
+
+            let clearProfessional = true
+            let canGoBack = true
+            try {
+                if (props.navigation.state.params.previewScreen === 'ProfessionalChat')
+                    clearProfessional = false
+                else if (props.navigation.state.params.previewScreen === 'Splash')
+                    canGoBack = false
+            } catch (ex) {
+                console.log(ex)
+            }
+
+            if (clearProfessional)
+                props.professionalSelectedRequest({})
+
+            if (canGoBack)
+                props.navigation.goBack()
         }
         return true
     }

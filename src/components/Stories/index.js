@@ -32,6 +32,9 @@ const Stories = ({ novaImagem, stories, onPressNewStory, onPressStory, ...props 
                 <VwContainerStorieItem>
                     <Text style={{ backgroundColor: lightgray, width: '100%', height: '100%', borderRadius: 10 }} />
                 </VwContainerStorieItem>
+                <VwContainerStorieItem>
+                    <Text style={{ backgroundColor: lightgray, width: '100%', height: '100%', borderRadius: 10 }} />
+                </VwContainerStorieItem>
             </React.Fragment>}
         </SvwContainerStories>
     )

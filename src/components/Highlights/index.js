@@ -31,7 +31,7 @@ const Highlights = (props) => {
                 <Title>{titulo}</Title>
                 <ContainerItems>
                     {
-                        highlights.data.highlights.map((item) => <ItemHighlight key={item.id} profissional={item} />)
+                        highlights.data.highlights.map((item) => <ItemHighlight key={item.id} profissional={item} navigation={props.navigation} />)
                     }
                     <PreencherAnuncios qtdePreenchida={highlights.data.highlights.length} subcategorie={subcategorie} />
                 </ContainerItems>

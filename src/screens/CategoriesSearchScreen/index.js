@@ -82,8 +82,19 @@ function CategoriesSearchScreen(props) {
     const handleBackPress = async () => {
         if (props.userType == 'client')
             props.logoutRequest()
-        else
-            props.navigation.goBack()
+        else {
+            let canGoBack = true
+
+            try {
+                if (props.navigation.state.params.previewScreen === 'Splash')
+                    canGoBack = false
+            } catch (ex) {
+                console.log(ex)
+            }
+
+            if (canGoBack)
+                props.navigation.goBack()
+        }
         return true
     }
 
@@ -107,7 +118,7 @@ function CategoriesSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} onChangeText={handleFilterChangeText} />
             <ContainerCategorias>
-                <Highlights titulo={'Destaques do mês'} highlights={highlights} />
+                <Highlights titulo={'Destaques do mês'} highlights={highlights} navigation={props.navigation} />
                 <Categories itens={categories} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {

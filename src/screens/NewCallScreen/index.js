@@ -23,6 +23,7 @@ import TextError from '../../components/TextError/index'
 import ButtonPurple from '../../components/ButtonPurple/index'
 import useGet from '../../services/restServices';
 import PickerJobs from '../../components/PickerJobs'
+import { urlMyJobs } from '../../config/config'
 
 function NewCallScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
@@ -72,6 +73,15 @@ function NewCallScreen(props) {
             }
             else {
                 //finalizar com sucesso
+                const array = services.filter(item => item.id == form.service_id)
+                const strService = array[0].name
+                const msg = `Chamado aberto para o serviço '${strService}'`
+                props.professionalNewCallRegistered({
+                    data: {
+                        message: msg,
+                        link: `myjobs.com.br/newcall/professional/${props.professional.id}`
+                    }
+                })
                 props.navigation.goBack()
             }
         }
@@ -233,6 +243,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         newProfessionalCallRequest: (token, call) => dispatch(ActionCreators.newProfessionalCallRequest(token, call)),
+        professionalNewCallRegistered: (mensagem) => dispatch(ActionCreators.professionalNewCallRegistered(mensagem)),
     }
 }
 

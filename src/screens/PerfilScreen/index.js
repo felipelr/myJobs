@@ -108,10 +108,6 @@ function PerfilScreen(props) {
             title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
             icon: 'share'
         },
-        {
-            title: 'Sorteios',
-            icon: 'redeem'
-        }
     ])
 
     const pageRef = useRef()
@@ -372,7 +368,6 @@ function PerfilScreen(props) {
                                                         leftIcon={{ name: item.icon }}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
-                                                        bottomDivider
                                                     />
                                                 ))
                                             }

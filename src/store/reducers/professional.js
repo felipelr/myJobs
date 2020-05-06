@@ -11,7 +11,8 @@ export const INITIAL_STATE = {
     errorMessage: '',
     professional: {},
     selected: {},
-    newServicesConfig: {}
+    newServicesConfig: {},
+    newCallMsg: {},
 }
 
 export const professionalsLoadRequest = (state = INITIAL_STATE, action) => {
@@ -173,7 +174,7 @@ export const professionalConfigCategoryError = (state = INITIAL_STATE, action) =
         errorMessage: action.error,
     }
 }
- 
+
 export const newProfessionalCallRequest = (state = INITIAL_STATE, action) => {
     return {
         ...state,
@@ -228,6 +229,19 @@ export const professionalFinishCallSuccess = (state = INITIAL_STATE, action) => 
     }
 }
 
+export const professionalNewCallRegistered = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        newCallMsg: action.mensagem
+    }
+}
+
+export const professionalNewCallClearMsg = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        newCallMsg: {}
+    }
+}
 
 export const HANDLES = {
     [Types.PROFESSIONALS_LOAD_REQUEST]: professionalsLoadRequest,
@@ -248,12 +262,14 @@ export const HANDLES = {
     [Types.PROFESSIONAL_CONFIG_CATEGORY]: professionalConfigCategory,
     [Types.PROFESSIONAL_CONFIG_CATEGORY_SUCCESS]: professionalConfigCategorySuccess,
     [Types.PROFESSIONAL_CONFIG_CATEGORY_ERROR]: professionalConfigCategoryError,
-    [Types.NEW_PROFESSIONAL_CALL_REQUEST]: newProfessionalCallRequest,  
-    [Types.NEW_PROFESSIONAL_CALL_SUCCESS]: newProfessionalCallSuccess,  
+    [Types.NEW_PROFESSIONAL_CALL_REQUEST]: newProfessionalCallRequest,
+    [Types.NEW_PROFESSIONAL_CALL_SUCCESS]: newProfessionalCallSuccess,
     [Types.NEW_PROFESSIONAL_CALL_ERROR]: newProfessionalCallError,
     [Types.PROFESSIONAL_FINISH_CALL_REQUEST]: professionalFinishCallRequest,
     [Types.PROFESSIONAL_FINISH_CALL_ERROR]: professionalFinishCallError,
     [Types.PROFESSIONAL_FINISH_CALL_SUCCESS]: professionalFinishCallSuccess,
+    [Types.PROFESSIONAL_NEW_CALL_REGISTERED]: professionalNewCallRegistered,
+    [Types.PROFESSIONAL_NEW_CALL_CLEAR_MSG]: professionalNewCallClearMsg,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

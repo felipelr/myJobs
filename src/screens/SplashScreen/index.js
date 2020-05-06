@@ -42,7 +42,7 @@ function SplashScreen(props) {
             notification.android.setChannelId(channel.channelId)
             notification.android.setVibrate(channel.vibrationPattern)
             notification.android.setPriority(firebase.notifications.Android.Priority.High)
-            notification.android.setSmallIcon('ic_launcher')
+            notification.android.setSmallIcon('ic_myjobs')
             notification.android.setColorized(true)
             notification.android.setColor('purple')
 
@@ -71,7 +71,9 @@ function SplashScreen(props) {
                             const professional = { id: msg.professional_id, name: notification.title }
                             props.professionalSelected(professional)
                         }
-                        props.navigation.navigate('ProfessionalChat')
+                        props.navigation.navigate('ProfessionalChat', {
+                            previewScreen: 'Splash',
+                        })
                     }
                 }
             }
@@ -150,29 +152,39 @@ function SplashScreen(props) {
                         await AsyncStorage.setItem('@userData', JSON.stringify({}));
                         await AsyncStorage.setItem('@clientData', JSON.stringify({}));
                         await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
-                        props.navigation.navigate('Login')
+                        props.navigation.navigate('Login', {
+                            previewScreen: 'Splash',
+                        })
                     }
                     else {
                         props.authSuccess(userJson)
 
                         if (userType === 'client')
-                            props.navigation.navigate('CategoriesSearch')
+                            props.navigation.navigate('CategoriesSearch', {
+                                previewScreen: 'Splash',
+                            })
                         else
-                            props.navigation.navigate('ProfessionalHome')
+                            props.navigation.navigate('ProfessionalHome', {
+                                previewScreen: 'Splash',
+                            })
                     }
 
                 } else {
                     await AsyncStorage.setItem('@userData', JSON.stringify({}));
                     await AsyncStorage.setItem('@clientData', JSON.stringify({}));
                     await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
-                    props.navigation.navigate('Login')
+                    props.navigation.navigate('Login', {
+                        previewScreen: 'Splash',
+                    })
                 }
             }, 2000)
         } catch (e) {
             await AsyncStorage.setItem('@userData', JSON.stringify({}));
             await AsyncStorage.setItem('@clientData', JSON.stringify({}));
             await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
-            props.navigation.navigate('Login')
+            props.navigation.navigate('Login', {
+                previewScreen: 'Splash',
+            })
         }
     }
 

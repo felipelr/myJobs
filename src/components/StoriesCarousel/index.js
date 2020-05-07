@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Dimensions } from 'react-native'
+import { Dimensions, TouchableWithoutFeedback } from 'react-native'
 import { connect } from 'react-redux'
 
 import useGet from '../../services/restServices'
@@ -19,9 +19,12 @@ function StoriesCarousel(props) {
     const [firstIndex, setFirstIndex] = useState(props.ownProps.firstImage.index)
     const [progressValue, setProgressValue] = useState(10)
     const [movePresentation, setMovePresentation] = useState('')
+
     const moveRef = useRef()
     const presentationRef = useRef()
     const pageRef = useRef()
+    const startTimeStampRef = useRef()
+    const stopPresentationRef = useRef()
 
     const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=5&page=${props.stories.selfPage}`, props.token)
 
@@ -125,9 +128,11 @@ function StoriesCarousel(props) {
                             clearInterval(pageRef.current)
                         }
                         else {
-                            time += 500
-                            percTime = (time * 100) / 5000
-                            setProgressValue(percTime)
+                            if (stopPresentationRef.current != 1) {
+                                time += 500
+                                percTime = (time * 100) / 5000
+                                setProgressValue(percTime)
+                            }
                         }
                     }, 500)
                 }
@@ -135,19 +140,29 @@ function StoriesCarousel(props) {
         }, 500)
     }
 
-    const onSingleTap = (evt) => {
-        const screenWidth = Math.round(Dimensions.get('window').width)
-        const positionX = Math.round(evt.nativeEvent.locationX)
-        if (positionX < screenWidth / 2) {
-            setMovePresentation('LEFT')
-        }
-        else {
-            setMovePresentation('RIGHT')
+    const onStartPress = (evt) => {
+        stopPresentationRef.current = 1
+        startTimeStampRef.current = evt.timeStamp
+        return true
+    }
+
+    const onEndPress = (evt) => {
+        stopPresentationRef.current = 0
+        const duration = evt.timeStamp - startTimeStampRef.current
+        if (duration < 250) {
+            const screenWidth = Math.round(Dimensions.get('window').width)
+            const positionX = Math.round(evt.nativeEvent.locationX)
+            if (positionX < screenWidth / 2) {
+                setMovePresentation('LEFT')
+            }
+            else {
+                setMovePresentation('RIGHT')
+            }
         }
     }
 
     return (
-        <ViewContainer onStartShouldSetResponder={(evt) => onSingleTap(evt)}>
+        <ViewContainer onStartShouldSetResponder={(evt) => onStartPress(evt)} onResponderRelease={(evt) => onEndPress(evt)}>
             {imageUri !== '' &&
                 <ImageItem
                     source={{ uri: imageUri }}

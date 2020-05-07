@@ -22,7 +22,6 @@ import {
     TextGotoLogin,
     ButtonGotoLogin,
     TextGotoLoginButton,
-    ViewContainerRow,
     ViewContainerButton,
     ScrollViewContainerForm
 } from './styles'
@@ -30,9 +29,8 @@ import {
 import { styleSheets } from './styles'
 
 function SignUp(props) {
-    const [newRequest, setNewRequest] = useState(false)
     const [invalidField, setInvalidField] = useState('')
-    const [genderList, setGenderList] = useState([
+    const [genderList] = useState([
         {
             label: 'Masculino',
             value: 'MASCULINO'
@@ -113,22 +111,23 @@ function SignUp(props) {
         }
     }, [form.phone])
 
-    handleOnChange = (name, text) => {
+    const handleOnChange = (name, text) => {
         setForm({
             ...form,
             [name]: text
         })
 
-        if (!validateField(name, text))
+        if (!validateField(name, text)) {
             setInvalidField(name)
+        }
         else
             setInvalidField('')
     }
 
-    validateField = (field, value) => {
+    const validateField = (field, value) => {
         switch (field) {
             case 'name':
-            case 'document':
+                //case 'document':
                 if (value.length === 0)
                     return false
                 break
@@ -162,9 +161,53 @@ function SignUp(props) {
         return true
     }
 
-    handleClickSignUp = () => {
-        if (invalidField !== '')
+    const showError = (description) => {
+        scrollViewRef.current.scrollTo({ x: 0, y: 1, animated: true })
+        props.signupError('O campo ' + description + ' está inválido.')
+    }
+
+    const handleClickSignUp = () => {
+        if (!validateField('name', form.name)) {
+            setInvalidField('name')
+            showError('Nome')
             return
+        }
+
+        if (!validateField('phone', form.phone)) {
+            setInvalidField('phone')
+            showError('Telefone')
+            return
+        }
+
+        if (!validateField('date_birth', form.date_birth)) {
+            setInvalidField('date_birth')
+            showError('Data de Nascimento')
+            return
+        }
+
+        if (!validateField('email', form.email)) {
+            setInvalidField('email')
+            showError('Email')
+            return
+        }
+
+        if (!validateField('gender', form.gender)) {
+            setInvalidField('gender')
+            showError('Gênero')
+            return
+        }
+
+        if (!validateField('password', form.password)) {
+            setInvalidField('password')
+            showError('Senha')
+            return
+        }
+
+        if (!validateField('confirmPassword', form.confirmPassword)) {
+            setInvalidField('confirmPassword')
+            showError('Confirme a Senha')
+            return
+        }
 
         let date = form.date_birth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
@@ -176,7 +219,6 @@ function SignUp(props) {
         props.signupRequest(user)
     }
 
-    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView>
             <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
@@ -294,6 +336,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         signupRequest: (user) => dispatch(ActionCreators.signupRequest(user)),
+        signupError: (error) => dispatch(ActionCreators.signupError(error)),
         login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }
 }

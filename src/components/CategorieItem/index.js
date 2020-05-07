@@ -11,7 +11,12 @@ const CategorieItem = (props) => {
     const { categoria } = props
 
     const handleClickCategoria = () => {
-        props.categoriasSelected(categoria);
+        if(props.selectedCategorie != null && props.selectedCategorie.id === categoria.id){
+            props.categoriasSelected(null);
+        }
+        else{
+            props.categoriasSelected(categoria);
+        }        
     }
 
     return (

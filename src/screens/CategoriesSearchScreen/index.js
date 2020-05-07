@@ -53,6 +53,7 @@ function CategoriesSearchScreen(props) {
 
     useEffect(() => {
         if (getSubcategories.data && getSubcategories.data.subcategories) {
+            console.log('subcategories', getSubcategories.data.subcategories)
             if (filterText.length) {
                 const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(filterText.toUpperCase()))
                 setSubCategories(filteredSubCategories)
@@ -75,10 +76,6 @@ function CategoriesSearchScreen(props) {
         }
     }, [props.isAuth]);
 
-    const selectSubcategoryRedirect = () => {
-        props.navigation.navigate('Services')
-    };
-
     const handleBackPress = async () => {
         if (props.userType == 'client')
             props.logoutRequest()
@@ -100,15 +97,21 @@ function CategoriesSearchScreen(props) {
 
     const handleFilterChangeText = (text) => {
         setFilterText(text)
-        if (text.length) {
-            if (getSubcategories.data.subcategories) {
-                const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(text.toUpperCase()))
-                setSubCategories(filteredSubCategories)
+        if (props.selectedCategorie !== null && props.selectedCategorie.id !== 0) {
+            if (text.length) {
+                if (getSubcategories.data.subcategories) {
+                    const filteredSubCategories = getSubcategories.data.subcategories.filter((item) => item.description.toUpperCase().includes(text.toUpperCase()))
+                    setSubCategories(filteredSubCategories)
+                }
+            }
+            else {
+                if (getSubcategories.data.subcategories)
+                    setSubCategories(getSubcategories.data.subcategories)
             }
         }
-        else {
-            if (getSubcategories.data.subcategories)
-                setSubCategories(getSubcategories.data.subcategories)
+        else if(text.length > 2) {
+            //filtrar subcategorias e todas as categorias
+            getSubcategories.refetch(`/subcategories/getAll.json?search=${text}`);
         }
     }
 
@@ -125,15 +128,15 @@ function CategoriesSearchScreen(props) {
                         getSubcategories.loading && <List itens={[1, 2, 3]} />
                     }
                     {
-                        (!getSubcategories.loading && props.selectedCategorie != null && props.selectedCategorie.id != 0) &&
+                        (!getSubcategories.loading && (filterText.length > 0 || (props.selectedCategorie != null && props.selectedCategorie.id != 0))) &&
                         <List
                             tipo='subcategory'
-                            titulo={'Subcategorias de \'' + props.selectedCategorie.description + "'"}
+                            titulo={'Subcategorias de \'' + (props.selectedCategorie != null ? props.selectedCategorie.description : 'Todas') + "'"}
                             itens={subCategories}
                             itemOnPress={() => props.navigation.navigate('Services')} />
                     }
                     {
-                        (!getSubcategories.loading && !(props.selectedCategorie != null && props.selectedCategorie.id != 0)) &&
+                        (!getSubcategories.loading && !(filterText.length > 0 || (props.selectedCategorie != null && props.selectedCategorie.id != 0))) &&
                         <ViewInfoCategoria>
                             <Icon name='info' size={72} color={mediumgray} />
                             <TextInfoCategoria>Selecione uma categoria acima para visualizar mais detalhes dos serviços</TextInfoCategoria>

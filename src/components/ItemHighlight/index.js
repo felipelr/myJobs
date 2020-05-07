@@ -26,10 +26,7 @@ function ItemHighlight(props) {
     const { navigation } = props.ownProps
 
     useEffect(() => {
-        console.log(props)
-
         return () => {
-
         }
     }, [])
 

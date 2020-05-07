@@ -219,8 +219,9 @@ function SignUp(props) {
         props.signupRequest(user)
     }
 
+    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior={behavior}>
             <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
                 <View style={{ paddingBottom: 50 }}>
                     {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}

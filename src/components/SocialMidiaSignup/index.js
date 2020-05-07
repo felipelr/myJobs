@@ -118,7 +118,7 @@ function SocialMidiaSignup(props) {
         }
     }, [form.phone])
 
-    handleOnChange = (name, text) => {
+    const handleOnChange = (name, text) => {
         setForm({
             ...form,
             [name]: text
@@ -130,12 +130,8 @@ function SocialMidiaSignup(props) {
             setInvalidField('')
     }
 
-    validateField = (field, value) => {
+    const validateField = (field, value) => {
         switch (field) {
-            case 'document':
-                if (value.length === 0)
-                    return false
-                break
             case 'phone':
                 if (value.length < 14)
                     return false
@@ -154,9 +150,29 @@ function SocialMidiaSignup(props) {
         return true
     }
 
-    handleClickSignUp = () => {
-        if (invalidField !== '')
+    const showError = (description) => {
+        scrollViewRef.current.scrollTo({ x: 0, y: 1, animated: true })
+        props.socialMidiaSignupError('O campo ' + description + ' está inválido.')
+    }
+
+    const handleClickSignUp = () => {
+        if (!validateField('phone', form.phone)) {
+            setInvalidField('phone')
+            showError('Telefone')
             return
+        }
+
+        if (!validateField('date_birth', form.date_birth)) {
+            setInvalidField('date_birth')
+            showError('Data de Nascimento')
+            return
+        }
+
+        if (!validateField('gender', form.gender)) {
+            setInvalidField('gender')
+            showError('Gênero')
+            return
+        }
 
         let date = form.date_birth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
@@ -276,6 +292,7 @@ const mapDispatchToProps = dispatch => {
     return {
         socialMidiaSignupInit: (user) => dispatch(ActionCreators.socialMidiaSignupInit(user)),
         socialMidiaSignupRequest: (user) => dispatch(ActionCreators.socialMidiaSignupRequest(user)),
+        socialMidiaSignupError: (error) => dispatch(ActionCreators.socialMidiaSignupError(error)),
         socialMidiaVerifyAccount: (socialMidiaId, socialMidiaType) => dispatch(ActionCreators.socialMidiaVerifyAccount(socialMidiaId, socialMidiaType)),
         login: (email, password) => dispatch(ActionCreators.loginRequest(email, password)),
     }

@@ -17,7 +17,7 @@ export const CapaEmpty = styled.View`
 `
 
 export const VwContainerTitle = styled.View` 
-    margin-top: ${heightPercentageToDP('17%')};
+    margin-top: ${heightPercentageToDP('18%')};
     background-color: white;
     border-top-left-radius: 20;
     border-top-right-radius: 20;
@@ -34,7 +34,6 @@ export const TxtTitle = styled.Text`
 `
 
 export const VwContainerRating = styled.View`
-    flex: 1;
     align-self: flex-start;
     margin-top: 25px;
     margin-left: 5px;

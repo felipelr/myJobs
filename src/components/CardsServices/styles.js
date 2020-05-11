@@ -63,3 +63,12 @@ export const VwEmpty2 = styled.View`
     background-color: ${mediumgray};
     border-radius: 5px;
 `
+
+export const TextInfo = styled.Text`
+    font-size: 12px;
+    text-align: center;
+    font-family: 'SF-Pro-Text-Regular';
+    font-weight: bold;
+    color: ${mediumgray};
+    padding: 5px 0px 0px 10px;
+`

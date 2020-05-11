@@ -7,14 +7,16 @@ import {
     SvwContainerComentarios,
     VwContainerComentario,
     VwEmpty,
-    VwEmpty2
+    VwEmpty2,
+    TextInfo,
 } from './styles'
+
 import Comentario from '../../components/Comentario/index'
 
 const ComentariosList = ({ comments, loading, ...props }) => {
     return (
         <SvwContainerComentarios>
-            <View style={{ flex: 1, backgroundColor: 'white', height: 90 }}>
+            <View style={{ flex: 1, backgroundColor: 'white', minHeight: 90 }}>
                 {
                     !loading && comments.map((item) => (
                         <Comentario
@@ -23,19 +25,8 @@ const ComentariosList = ({ comments, loading, ...props }) => {
                     ))
                 }
                 {
-                    (!loading && !comments.length) && <React.Fragment>
-                        <VwContainerComentario>
-                            <View>
-                                <Avatar
-                                    rounded
-                                    size={60} />
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <VwEmpty />
-                                <VwEmpty2 />
-                            </View>
-                        </VwContainerComentario>
-                    </React.Fragment>
+                    (!loading && !comments.length) && 
+                    <TextInfo>Não há comentários deste serviço...</TextInfo>
                 }
                 {
                     loading && (
@@ -63,5 +54,3 @@ ComentariosList.propTypes = {
 }
 
 export default ComentariosList;
-
-

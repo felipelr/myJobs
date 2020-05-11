@@ -94,6 +94,7 @@ export const { Types, Creators } = createActions({
     clientCallRateRequest: ['token', 'rate'],
     clientCallRateSuccess: ['rate'],
     clientCallRateError: ['error'],
+    clientSetUpdateCallBadge: ['updateCallBadge'],
 
     //Services
     serviceSelected: ['service'],
@@ -121,6 +122,7 @@ export const { Types, Creators } = createActions({
     chatUpdateUserFcmToken: ['token', 'userId', 'fcmToken'],
     chatCleanSendedMessage: null,
     chatSetScreenChatVisible: ['visible'],
+    chatSetUpdateChatBadge: ['updateChatbadge'],
 })
 
 export default Creators

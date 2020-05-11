@@ -32,3 +32,12 @@ export const VwContainerComentario = styled.View`
     margin-bottom: 5px;
     margin-right: 7px;
 `
+
+export const TextInfo = styled.Text`
+    font-size: 12px;
+    text-align: center;
+    font-family: 'SF-Pro-Text-Regular';
+    font-weight: bold;
+    color: ${mediumgray};
+    padding: 5px 0px 0px 10px;
+`

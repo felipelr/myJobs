@@ -73,7 +73,7 @@ function ProfessionalHomeScreen(props) {
     const professionalSelectedRef = useRef()
 
     const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
-    const getProfessionalComments = useGet(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`, props.token)
+    const getRatings = useGet(``, props.token)
     const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`, props.token)
     const getRate = useGet(`/ratings/professional/${professionalData.id}.json`, props.token)
 
@@ -105,11 +105,6 @@ function ProfessionalHomeScreen(props) {
     }, [])
 
     useEffect(() => {
-        console.log('imagem => ', images.image)
-        console.log('backImage => ', images.backImage)
-    }, [images])
-
-    useEffect(() => {
         if (getProfessionalServices.data) {
             if (getProfessionalServices.data.professionalServices) {
                 const array = getProfessionalServices.data.professionalServices.map(item => {
@@ -135,24 +130,24 @@ function ProfessionalHomeScreen(props) {
 
     useEffect(() => {
         if (props.selectedService && props.selectedService.id !== 0) {
-            getProfessionalComments.refetch(`/professionalComments/comments/${professionalData.id}/${props.selectedService.id}.json`)
+            getRatings.refetch(`/ratings/comments/${professionalData.id}/${props.selectedService.id}.json`)
         }
     }, [props.selectedService])
 
     useEffect(() => {
-        if (getProfessionalComments.data && getProfessionalComments.data.professionalComments) {
-            setComments(getProfessionalComments.data.professionalComments.map(item => {
+        if (getRatings.data && getRatings.data.comments) {
+            setComments(getRatings.data.comments.map(item => {
                 return {
                     id: item.id,
-                    comment: item.comment,
-                    rating: item.rating,
-                    amount_ratings: item.amount_ratings,
+                    comment: item.description,
+                    rating: item.rate,
+                    amount_ratings: 0,
                     photo: item.client.photo,
                     client_name: item.client.name,
                 }
             }))
         }
-    }, [getProfessionalComments.data])
+    }, [getRatings.data])
 
     useEffect(() => {
         if (getStories.data && getStories.data.stories) {
@@ -412,12 +407,12 @@ function ProfessionalHomeScreen(props) {
 
                                 <VwContainerServices>
                                     <TxtTitle size={14}>Serviços</TxtTitle>
-                                    <CardsServices services={services} selectedService={props.selectedService.id} loading={getProfessionalServices.loading} />
+                                    <CardsServices services={services} loading={getProfessionalServices.loading} />
                                 </VwContainerServices>
 
                                 <ContentComentarios>
                                     <TxtTitle size={14}>Comentários do Serviço: {props.selectedService.title}</TxtTitle>
-                                    <ComentariosList comments={comments} loading={getProfessionalComments.loading} />
+                                    <ComentariosList comments={comments} loading={getRatings.loading} />
                                 </ContentComentarios>
                             </VwContainerContent>
 
@@ -426,15 +421,16 @@ function ProfessionalHomeScreen(props) {
                                     <Avatar
                                         rounded
                                         containerStyle={styles}
-                                        source={{ uri: images.image.uri }}
-                                        size={heightPercentageToDP('20%')} />
+                                        size={heightPercentageToDP('20%')}
+                                        source={{ uri: images.image.uri }} />
                                 }
 
                                 {images.image.uri.length <= 0 &&
                                     <Avatar
                                         rounded
                                         containerStyle={styles}
-                                        size={heightPercentageToDP('20%')} />
+                                        size={heightPercentageToDP('20%')}
+                                        icon={{ name: 'image' }} />
                                 }
                             </ContainerAvatar>
 

@@ -22,19 +22,20 @@ const Comentario = ({ comment, ...props }) => {
                         rounded
                         containerStyle={styles.containerStyle}
                         overlayContainerStyle={styles.overlayContainerStyle}
-                        source={{ uri: image.uri }}
-                        size={60} />}
+                        size={60}
+                        source={{ uri: image.uri }} />}
 
                 {image.uri.length <= 0 &&
                     <Avatar
                         rounded
                         containerStyle={styles.containerStyle}
                         overlayContainerStyle={styles.overlayContainerStyle}
-                        size={60} />}
+                        size={60}
+                        icon={{ name: 'image' }} />}
             </View>
             <View style={{ flex: 1 }}>
                 <TxtTitle size={10} color={black}>
-                    "{comment.comment}"
+                    {comment.comment.length ? `"${comment.comment}"` : '...'}
                 </TxtTitle>
                 <VwContentComentario>
                     <RatingJobs avaliacao={comment.rating} />

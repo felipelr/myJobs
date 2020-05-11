@@ -17,7 +17,6 @@ function SplashScreen(props) {
     const appStateRef = useRef()
 
     useEffect(() => {
-
         getUserData()
         firebasePermission()
         appStateRef.current = 'active'
@@ -34,8 +33,18 @@ function SplashScreen(props) {
 
         const notificationListener = firebase.notifications().onNotification((notification) => {
             // Process your notification as required
+            console.log('notification => ', notification)
+
+            let jsonMessage = null
             if (notification.data.message)
-                props.chatSetReceivedMessage(JSON.parse(notification.data.message))
+                jsonMessage = typeof notification.data.message == 'string' ? JSON.parse(notification.data.message) : notification.data.message
+
+            console.log('jsonMessage => ', jsonMessage)
+
+            if (notification.data.message) {
+                if (jsonMessage.type != 'call')
+                    props.chatSetReceivedMessage(jsonMessage)
+            }
 
             notification.setSound('sound_1.mp3')
             notification.android.setDefaults(firebase.notifications.Android.Defaults.All)
@@ -46,11 +55,11 @@ function SplashScreen(props) {
             notification.android.setColorized(true)
             notification.android.setColor('purple')
 
-            //salvar badge do chat
-            updateChatBadge(JSON.parse(notification.data.message))
+            //salvar badge do chat ou call
+            updateBadge(jsonMessage)
 
             //mostrar notificação
-            showNotification(notification);
+            showNotification(notification, jsonMessage.type);
         })
 
         const notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
@@ -63,17 +72,23 @@ function SplashScreen(props) {
                 if (!chatVisibleRef.current) {
                     if (props.professional || props.client) {
                         const msg = JSON.parse(notification.data.message)
-                        if (msg.msg_from == 'client') {
-                            const client = { id: msg.client_id, name: notification.title }
-                            props.clientSelected(client)
+
+                        if (msg.type == 'call') {
+
                         }
                         else {
-                            const professional = { id: msg.professional_id, name: notification.title }
-                            props.professionalSelected(professional)
+                            if (msg.msg_from == 'client') {
+                                const client = { id: msg.client_id, name: notification.title }
+                                props.clientSelected(client)
+                            }
+                            else {
+                                const professional = { id: msg.professional_id, name: notification.title }
+                                props.professionalSelected(professional)
+                            }
+                            props.navigation.navigate('ProfessionalChat', {
+                                previewScreen: 'Splash',
+                            })
                         }
-                        props.navigation.navigate('ProfessionalChat', {
-                            previewScreen: 'Splash',
-                        })
                     }
                 }
             }
@@ -101,9 +116,14 @@ function SplashScreen(props) {
         chatVisibleRef.current = props.screenChatVisible
     }, [props.screenChatVisible])
 
-    const showNotification = (notification) => {
-        if (!chatVisibleRef.current || appStateRef.current.match(/inactive|background/)) {
+    const showNotification = (notification, type) => {
+        if (type == 'call') {
             firebase.notifications().displayNotification(notification)
+        }
+        else {
+            if (!chatVisibleRef.current || appStateRef.current.match(/inactive|background/)) {
+                firebase.notifications().displayNotification(notification)
+            }
         }
     }
 
@@ -111,20 +131,100 @@ function SplashScreen(props) {
         appStateRef.current = nextAppState
     }
 
-    const updateChatBadge = async (msg) => {
+    const updateBadge = async (msg) => {
         try {
-            const storageName = `@badge_c_${msg.client_id}_p_${msg.professional_id}`
-            const strBadge = await AsyncStorage.getItem(storageName)
-            let badge = 0;
-            if (strBadge) {
-                badge = parseInt(strBadge) + 1;
+            if (msg.type == 'call') {
+                updateCallBadge(msg)
             }
             else {
-                badge = 1;
+                updateChatBadge(msg)
             }
-            await AsyncStorage.setItem(storageName, badge.toString());
         } catch (e) {
+            console.log('updateBadge => ', e)
+        }
+    }
 
+    const updateCallBadge = async (msg) => {
+        try {
+            const storageName = `@badgeCall`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            const arrayBadgeCall = JSON.parse(strBadge)
+            if (arrayBadgeCall != null) {
+                const array = arrayBadgeCall.filter((item) => item.client_id != msg.client_id && item.professional_id != msg.professional_id)
+                const array2 = arrayBadgeCall.filter((item) => item.client_id == msg.client_id && item.professional_id == msg.professional_id)
+                if (array2.length > 0) {
+                    const item = {
+                        client_id: msg.client_id,
+                        professional_id: msg.professional_id,
+                        badge: array2[0].badge + 1
+                    }
+                    array.push(item)
+                }
+                else {
+                    const item = {
+                        client_id: msg.client_id,
+                        professional_id: msg.professional_id,
+                        badge: 1
+                    }
+                    array.push(item)
+                }
+                await AsyncStorage.setItem(storageName, JSON.stringify(array));
+            }
+            else {
+                const array = []
+                const item = {
+                    client_id: msg.client_id,
+                    professional_id: msg.professional_id,
+                    badge: 1
+                }
+                array.push(item)
+                await AsyncStorage.setItem(storageName, JSON.stringify(array));
+            }
+            props.clientSetUpdateCallBadge(true)
+        } catch (e) {
+            console.log('erro => ', e)
+        }
+    }
+
+    const updateChatBadge = async (msg) => {
+        try {
+            const storageName = `@badgeChat`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            const arrayBadgeChat = JSON.parse(strBadge)
+            if (arrayBadgeChat != null) {
+                const array = arrayBadgeChat.filter((item) => item.client_id != msg.client_id && item.professional_id != msg.professional_id)
+                const array2 = arrayBadgeChat.filter((item) => item.client_id == msg.client_id && item.professional_id == msg.professional_id)
+                if (array2.length > 0) {
+                    const item = {
+                        client_id: msg.client_id,
+                        professional_id: msg.professional_id,
+                        badge: array2[0].badge + 1
+                    }
+                    array.push(item)
+                }
+                else {
+                    const item = {
+                        client_id: msg.client_id,
+                        professional_id: msg.professional_id,
+                        badge: 1
+                    }
+                    array.push(item)
+                }
+                await AsyncStorage.setItem(storageName, JSON.stringify(array));
+            }
+            else {
+                const array = []
+                const item = {
+                    client_id: msg.client_id,
+                    professional_id: msg.professional_id,
+                    badge: 1
+                }
+                array.push(item)
+                await AsyncStorage.setItem(storageName, JSON.stringify(array));
+            }
+            props.chatSetUpdateChatBadge(true)
+        } catch (e) {
+            console.log('erro => ', e)
         }
     }
 
@@ -243,6 +343,8 @@ const mapDispatchToProps = dispatch => {
         chatSetReceivedMessage: (message) => dispatch(ActionCreators.chatSetReceivedMessage(message)),
         clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
         professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        chatSetUpdateChatBadge: (updateChatBadge) => dispatch(ActionCreators.chatSetUpdateChatBadge(updateChatBadge)),
+        clientSetUpdateCallBadge: (updateChatBadge) => dispatch(ActionCreators.clientSetUpdateCallBadge(updateChatBadge)),
     }
 }
 

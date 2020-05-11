@@ -80,3 +80,7 @@ export const TxtTabStatus = styled.Text`
     font-family: 'SF-Pro-Text-Regular';
     font-weight: bold;
 `
+export const ViewListItem = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+`

@@ -336,7 +336,8 @@ function PerfilScreen(props) {
                                         <Avatar
                                             rounded
                                             containerStyle={styles}
-                                            size={heightPercentageToDP('20%')} />
+                                            size={heightPercentageToDP('20%')}
+                                            icon={{ name: 'image' }} />
                                     }
 
                                 </ContainerAvatar>

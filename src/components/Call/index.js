@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { Overlay, Avatar, AirbnbRating, Rating } from 'react-native-elements'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -24,6 +25,7 @@ import CardJobs from '../CardJobs'
 import ButtonPurple from '../ButtonPurple'
 import Loading from '../Loading'
 import TextError from '../TextError'
+import TextInputJobs from '../TextInputJobs'
 
 import { white, purple, black, lightgray } from '../common/util/colors'
 
@@ -33,12 +35,14 @@ function Call(props) {
     const [overlayRatingVisible, setOverlayRatingVisible] = useState(false)
     const [requisitou, setRequisitou] = useState(false)
     const [rate, setRate] = useState(5)
+    const [description, setDescription] = useState('')
     const [rating, setRating] = useState({})
     const [ratingNames] = useState(["Péssimo", "Ruim", "Regular", "Bom", "Muito Bom"])
 
     const scrollViewRef = useRef()
 
     useEffect(() => {
+        cleanBadge()
 
         return () => {
 
@@ -82,6 +86,7 @@ function Call(props) {
     const handleRateCall = () => {
         const form = {
             rate: rate,
+            description: description,
             professional_id: call.professional.id,
             client_id: props.clientData.id,
             call_id: call.id,
@@ -89,6 +94,42 @@ function Call(props) {
         setRating(form)
         setRequisitou(true)
         props.clientCallRateRequest(props.token, form)
+    }
+
+    const cleanBadge = async () => {
+        try {
+            const itemToClean = {
+                client_id: call.client_id,
+                professional_id: call.professional_id
+            }
+            const storageName = `@badgeCall`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            const arrayBadgeChat = JSON.parse(strBadge)
+            if (arrayBadgeChat != null) {
+                const array = arrayBadgeChat.filter((item) => item.client_id != itemToClean.client_id && item.professional_id != itemToClean.professional_id)
+                const array2 = arrayBadgeChat.filter((item) => item.client_id == itemToClean.client_id && item.professional_id == itemToClean.professional_id)
+                if (array2.length > 0) {
+                    const item = {
+                        client_id: itemToClean.client_id,
+                        professional_id: itemToClean.professional_id,
+                        badge: 0
+                    }
+                    array.push(item)
+                    props.clientSetUpdateCallBadge(true)
+                }
+                else {
+                    const item = {
+                        client_id: itemToClean.client_id,
+                        professional_id: itemToClean.professional_id,
+                        badge: 0
+                    }
+                    array.push(item)
+                }
+                await AsyncStorage.setItem(storageName, JSON.stringify(array));
+            }
+        } catch (e) {
+            console.log('cleanBadge => ', e)
+        }
     }
 
     return (
@@ -99,7 +140,6 @@ function Call(props) {
 
                     {!props.professionalCtr.loading && (
                         <CardJobs backColor='white' width='90' height='250' paddingCard='20'>
-
                             {props.professionalCtr.error && <TextError>{props.professionalCtr.errorMessage}</TextError>}
 
                             {call.client &&
@@ -166,12 +206,12 @@ function Call(props) {
                     </Overlay>
 
                     <Overlay
-                        height={350}
+                        height={450}
                         isVisible={overlayRatingVisible}
                         onBackdropPress={() => setOverlayRatingVisible(false)}
                     >
                         <React.Fragment>
-                            {props.clientCtr.isUpdating && <Loading elevation={0} size='large' color={purple} height='330' error={props.clientCtr.errorUpdating} />}
+                            {props.clientCtr.isUpdating && <Loading elevation={0} size='large' color={purple} height='350' error={props.clientCtr.errorUpdating} />}
 
                             {!props.clientCtr.isUpdating && (
                                 <ViewContainerOverlay>
@@ -184,9 +224,7 @@ function Call(props) {
                                                     rounded
                                                     size={100}
                                                     source={{ uri: call.professional.photo }} />
-
                                                 <TxtTitle>{call.professional.name}</TxtTitle>
-
                                             </React.Fragment>
                                         }
 
@@ -198,6 +236,13 @@ function Call(props) {
                                             size={40}
                                             onFinishRating={(value) => setRate(value)}
                                         />
+
+                                        <TextInputJobs
+                                            style={{ paddingTop: 30, width: '85%' }}
+                                            value={description}
+                                            name='description'
+                                            onChangeText={(name, text) => setDescription(text)}
+                                            placeholder='Comentário' />
                                     </ViewContainerCenter>
                                     <ViewContainerButtonOverlay>
                                         <TouchButtton backColor={purple} onPress={() => handleRateCall()}>
@@ -231,6 +276,7 @@ const mapDispatchToProps = dispatch => {
     return {
         professionalFinishCallRequest: (token, call) => dispatch(ActionCreators.professionalFinishCallRequest(token, call)),
         clientCallRateRequest: (token, rate) => dispatch(ActionCreators.clientCallRateRequest(token, rate)),
+        clientSetUpdateCallBadge: (updateChatBadge) => dispatch(ActionCreators.clientSetUpdateCallBadge(updateChatBadge)),
     }
 }
 

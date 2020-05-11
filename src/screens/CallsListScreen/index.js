@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { BackHandler, Animated, Dimensions, View } from 'react-native'
 import { connect } from 'react-redux'
-import { ListItem, Avatar } from 'react-native-elements'
+import { ListItem, Avatar, Badge } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import AsyncStorage from '@react-native-community/async-storage'
 import Moment from 'moment'
 
 import useGet from '../../services/restServices'
@@ -24,7 +25,8 @@ import {
     ViewCallDate,
     TxtCallService,
     TxtCallDate,
-    TxtCallProfessional
+    TxtCallProfessional,
+    ViewListItem,
 } from './styles'
 
 function CallsListScreen(props) {
@@ -56,7 +58,7 @@ function CallsListScreen(props) {
     const getFinishedCallsClient = useGet('', props.token)
 
     useEffect(() => {
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {  
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {
             props.navigation.goBack()
             return true
         })
@@ -72,7 +74,8 @@ function CallsListScreen(props) {
 
     useEffect(() => {
         if (getCalls.data && getCalls.data.calls) {
-            setCalls(getCalls.data.calls)
+            //setCalls(getCalls.data.calls)
+            loadCallsWithBadge(getCalls.data.calls)
         }
     }, [getCalls.data])
 
@@ -81,13 +84,15 @@ function CallsListScreen(props) {
             setFinishedCalls(getFinishedCalls.data.calls)
             //verificar se não há calls presentes em finalizados na lista de abertos
             const difference = calls.filter(x => !getFinishedCalls.data.calls.some(y => y.id === x.id));
-            setCalls(difference)
+            //setCalls(difference)
+            loadCallsWithBadge(difference)
         }
     }, [getFinishedCalls.data])
 
     useEffect(() => {
         if (getCallsClient.data && getCallsClient.data.calls) {
-            setCallsClient(getCallsClient.data.calls)
+            //setCallsClient(getCallsClient.data.calls)
+            loadClientCallsWithBadge(getCallsClient.data.calls)
         }
     }, [getCallsClient.data])
 
@@ -96,9 +101,62 @@ function CallsListScreen(props) {
             setFinishedCallsClient(getFinishedCallsClient.data.calls)
             //verificar se não há calls presentes em finalizados na lista de abertos
             const difference = callsClient.filter(x => !getFinishedCallsClient.data.calls.some(y => y.id === x.id));
-            setCallsClient(difference)
+            //setCallsClient(difference)
+            loadClientCallsWithBadge(difference)
         }
     }, [getFinishedCallsClient.data])
+
+    useEffect(() => {
+        if (props.updateCallBadge) {
+            props.clientSetUpdateCallBadge(false)
+            loadCallsWithBadge(calls)
+            loadClientCallsWithBadge(callsClient)
+        }
+    }, [props.updateCallBadge])
+
+    const loadCallsWithBadge = (arrayCalls) => {
+        const results = arrayCalls.map(async (item) => {
+            let badge = 0;
+            try {
+                const storageName = `@badgeCall`
+                const strBadge = await AsyncStorage.getItem(storageName)
+                const arrayBadge = JSON.parse(strBadge)
+                if (arrayBadge != null) {
+                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.client_id == item.client_id && itemBadge.professional_id == item.professional_id)
+                    if (jsonBadge) {
+                        badge = jsonBadge.badge
+                    }
+                }
+            } catch (ex) {
+                console.log('loadCallsWithBadge MAP => ', ex)
+            }
+            return { ...item, badgeValue: badge }
+        });
+
+        Promise.all(results).then((arrayCompleted) => setCalls(arrayCompleted))
+    }
+
+    const loadClientCallsWithBadge = (arrayCallsClient) => {
+        const results = arrayCallsClient.map(async (item) => {
+            let badge = 0;
+            try {
+                const storageName = `@badgeCall`
+                const strBadge = await AsyncStorage.getItem(storageName)
+                const arrayBadge = JSON.parse(strBadge)
+                if (arrayBadge != null) {
+                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.client_id == item.client_id && itemBadge.professional_id == item.professional_id)
+                    if (jsonBadge) {
+                        badge = jsonBadge.badge
+                    }
+                }
+            } catch (ex) {
+                console.log('loadClientCallsWithBadge MAP => ', ex)
+            }
+            return { ...item, badgeValue: badge }
+        });
+
+        Promise.all(results).then((arrayCompleted) => setCallsClient(arrayCompleted))
+    }
 
     const inAnimation = () => {
         Animated.spring(slideLeft, {
@@ -221,13 +279,15 @@ function CallsListScreen(props) {
             const array = finishedCalls.filter(item => item.id !== call.id)
             array.push(call)
             setFinishedCalls(array)
-            setCalls(calls.filter(item => item.id !== call.id))
+            //setCalls(calls.filter(item => item.id !== call.id))
+            loadCallsWithBadge(calls.filter(item => item.id !== call.id))
         }
         else {
             const array = finishedCallsClient.filter(item => item.id !== call.id)
             array.push(call)
             setFinishedCallsClient(array)
-            setCallsClient(callsClient.filter(item => item.id !== call.id))
+            //setCallsClient(callsClient.filter(item => item.id !== call.id))
+            loadClientCallsWithBadge(callsClient.filter(item => item.id !== call.id))
         }
 
         handleBackPress()
@@ -273,7 +333,6 @@ function CallsListScreen(props) {
                                 <Animated.View style={slideStatusLeft.getLayout()}>
                                     <React.Fragment>
                                         {statusSelected === 0 && calls.map((item, i) => (
-
                                             <ListItem
                                                 key={i}
                                                 containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
@@ -283,11 +342,19 @@ function CallsListScreen(props) {
                                                             <TxtCallService>{item.service.title}</TxtCallService>
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
-                                                        <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                                        <ViewListItem>
+                                                            <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                                            {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
+                                                        </ViewListItem>
                                                     </React.Fragment>
                                                 }
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                leftIcon={<Avatar rounded size={45} source={{ uri: item.client.photo }} />}
+                                                leftIcon={
+                                                    <React.Fragment>
+                                                        {item.client.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.client.photo }} />}
+                                                        {!(item.client.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                    </React.Fragment>
+                                                }
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
@@ -309,7 +376,12 @@ function CallsListScreen(props) {
                                                     </React.Fragment>
                                                 }
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                leftIcon={<Avatar rounded size={45} source={{ uri: item.client.photo }} />}
+                                                leftIcon={
+                                                    <React.Fragment>
+                                                        {item.client.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.client.photo }} />}
+                                                        {!(item.client.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                    </React.Fragment>
+                                                }
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
@@ -340,11 +412,19 @@ function CallsListScreen(props) {
                                                             <TxtCallService>{item.service.title}</TxtCallService>
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
-                                                        <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                                        <ViewListItem>
+                                                            <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                                            {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
+                                                        </ViewListItem>
                                                     </React.Fragment>
                                                 }
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                leftIcon={<Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
+                                                leftIcon={
+                                                    <React.Fragment>
+                                                        {item.professional.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
+                                                        {!(item.professional.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                    </React.Fragment>
+                                                }
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
@@ -366,7 +446,12 @@ function CallsListScreen(props) {
                                                     </React.Fragment>
                                                 }
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                leftIcon={<Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
+                                                leftIcon={
+                                                    <React.Fragment>
+                                                        {item.professional.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
+                                                        {!(item.professional.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                    </React.Fragment>
+                                                }
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
@@ -377,11 +462,9 @@ function CallsListScreen(props) {
                     </Animated.View>
                 </View>
             }
-
             {showCall &&
                 <Call call={selectedCall} onFinished={(rating) => handleCallFinished(rating)} />
             }
-
 
             <Footer
                 type={props.userType}
@@ -406,6 +489,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         professionalData: state.professional.professional,
         clientData: state.client.client,
+        updateChatBadge: state.client.updateCallBadge,
     }
 }
 
@@ -413,6 +497,7 @@ const mapDispatchToProps = dispatch => {
     return {
         professionalsCleanErrors: () => dispatch(ActionCreators.professionalsCleanErrors()),
         clientClearErrors: () => dispatch(ActionCreators.clientClearErrors()),
+        clientSetUpdateCallBadge: (updateChatBadge) => dispatch(ActionCreators.clientSetUpdateCallBadge(updateChatBadge)),
     }
 }
 

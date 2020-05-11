@@ -128,7 +128,6 @@ function ProfessionalChatScreen(props) {
 
     const getMessages = useGet('', props.token)
 
-
     useEffect(() => {
         appStateRef.current = 'active'
 
@@ -145,7 +144,8 @@ function ProfessionalChatScreen(props) {
             setKeyboardIsVisible(false)
         })
 
-        updateChatBadge()
+        cleanBadge()
+
         carregarMensagens(true)
 
         const type_ = props.userType;
@@ -262,18 +262,48 @@ function ProfessionalChatScreen(props) {
         }
     }, [props.newCallMsg])
 
-    const updateChatBadge = async () => {
+    const cleanBadge = async () => {
         try {
+            let itemToClean = {}
             if (props.professionalSelected.id) {
-                const storageName = `@badge_c_${props.user.id}_p_${props.professionalSelected.id}`
-                await AsyncStorage.setItem(storageName, '0')
+                itemToClean = {
+                    client_id: props.user.id,
+                    professional_id: props.professionalSelected.id
+                }
             }
             else {
-                const storageName = `@badge_c_${props.clientSelected.id}_p_${props.user.id}`
-                await AsyncStorage.setItem(storageName, '0')
+                itemToClean = {
+                    client_id: props.clientSelected.id,
+                    professional_id: props.user.id
+                }
+            }
+            const storageName = `@badgeChat`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            const arrayBadgeChat = JSON.parse(strBadge)
+            if (arrayBadgeChat != null) {
+                const array = arrayBadgeChat.filter((item) => item.client_id != itemToClean.client_id && item.professional_id != itemToClean.professional_id)
+                const array2 = arrayBadgeChat.filter((item) => item.client_id == itemToClean.client_id && item.professional_id == itemToClean.professional_id)
+                if (array2.length > 0) {
+                    const item = {
+                        client_id: itemToClean.client_id,
+                        professional_id: itemToClean.professional_id,
+                        badge: 0
+                    }
+                    array.push(item)
+                    props.chatSetUpdateChatBadge(true)
+                }
+                else {
+                    const item = {
+                        client_id: itemToClean.client_id,
+                        professional_id: itemToClean.professional_id,
+                        badge: 0
+                    }
+                    array.push(item)
+                }
+                await AsyncStorage.setItem(storageName, JSON.stringify(array));
             }
         } catch (e) {
-
+            console.log('cleanBadge => ', e)
         }
     }
 
@@ -450,7 +480,7 @@ const mapStateToProps = (state, ownProps) => {
         screenChatVisible: state.chat.screenChatVisible,
         newCallMsg: state.professional.newCallMsg,
     }
-};
+}
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -458,9 +488,10 @@ const mapDispatchToProps = dispatch => {
         chatCleanSendedMessage: () => dispatch(ActionCreators.chatCleanSendedMessage()),
         chatSetScreenChatVisible: (visible) => dispatch(ActionCreators.chatSetScreenChatVisible(visible)),
         professionalNewCallClearMsg: () => dispatch(ActionCreators.professionalNewCallClearMsg()),
-        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional))
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        chatSetUpdateChatBadge: (updateChatBadge) => dispatch(ActionCreators.chatSetUpdateChatBadge(updateChatBadge)),
     }
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalChatScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalChatScreen)

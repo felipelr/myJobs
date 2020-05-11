@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BackHandler, Animated, Dimensions, Text } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar, Badge } from 'react-native-elements'
@@ -27,11 +27,9 @@ function ChatListScreen(props) {
     const [doubleUser] = useState(props.clientData.id && props.professionalData.id)
     const [slideLeft] = useState(new Animated.ValueXY({ x: 0, y: 0 }))
     const [slideRight] = useState(new Animated.ValueXY({ x: 0, y: 0 }))
-    const [professionalChats, setProfessionalChats] = useState([])    
+    const [professionalChats, setProfessionalChats] = useState([])
     const [clientChats, setClientChats] = useState([])
     const [tabSelected, setTabSelected] = useState(doubleUser ? 0 : props.userType === 'client' ? 1 : 0) // 0 -> professional; 1 -> client
-
-    const refBadgeArray = useRef()
 
     const getChatsClient = useGet(``, props.token)
     const getChatsProfessional = useGet(`/chatMessages/professionalChats.json?professional_id=${props.professionalData.id}`, props.token)
@@ -51,16 +49,24 @@ function ChatListScreen(props) {
     useEffect(() => {
         console.log(getChatsProfessional.data)
         if (getChatsProfessional.data && getChatsProfessional.data.chatMessages) {
-            setProfessionalChats(getChatsProfessional.data.chatMessages)
+            loadProfessionalsWithBadge(getChatsProfessional.data.chatMessages)
         }
     }, [getChatsProfessional.data])
 
     useEffect(() => {
         console.log(getChatsClient.data)
         if (getChatsClient.data && getChatsClient.data.chatMessages) {
-            setClientChats(getChatsClient.data.chatMessages)
+            loadClientsWithBadge(getChatsClient.data.chatMessages)
         }
     }, [getChatsClient.data])
+
+    useEffect(() => {
+        if (props.updateChatBadge) {
+            props.chatSetUpdateChatBadge(false)
+            loadProfessionalsWithBadge(professionalChats)
+            loadClientsWithBadge(clientChats)
+        }
+    }, [props.updateChatBadge])
 
     const handleBackPress = async () => {
         props.professionalSelected({})
@@ -124,44 +130,51 @@ function ChatListScreen(props) {
             props.professionalSelected(item.professional)
         }
 
-        cleanBadge()
-
         props.navigation.navigate('ProfessionalChat')
     }
 
-    const cleanBadge = async () => {
-        try {
-            const storageName = `@badge_c_${item.client_id}_p_${item.professional_id}`
-            await AsyncStorage.setItem(storageName, "0");
-        } catch (e) {
-            return ''
-        }
-    }
-
-    const loadBadge = async (item) => {
-        try {
-            const storageName = `@badge_c_${item.client_id}_p_${item.professional_id}`
-            const strBadge = await AsyncStorage.getItem(storageName)
+    const loadProfessionalsWithBadge = (arrayProfessinals) => {
+        const results = arrayProfessinals.map(async (item) => {
             let badge = 0;
-            console.log('strBadge', strBadge, 'storageName =>', storageName)
-            if (strBadge != null) {
-                badge = parseInt(strBadge);
+            try {
+                const storageName = `@badgeChat`
+                const strBadge = await AsyncStorage.getItem(storageName)
+                const arrayBadge = JSON.parse(strBadge)
+                if (arrayBadge != null) {
+                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.client_id == item.client_id && itemBadge.professional_id == item.professional_id)
+                    if (jsonBadge) {
+                        badge = jsonBadge.badge
+                    }
+                }
+            } catch (ex) {
+                console.log('loadProfessionalsWithBadge MAP => ', ex)
             }
-            refBadgeArray.current.push({
-                client_id: item.client_id,
-                professional_id: item.professional_id,
-                badge: badge
-            })
-            console.log('loadBadge', refBadgeArray.current)
-        } catch (e) {
-            return ''
-        }
+            return { ...item, badgeValue: badge }
+        });
+
+        Promise.all(results).then((arrayCompleted) => setProfessionalChats(arrayCompleted))
     }
 
-    const renderBadge = (item, array) => {
-        const arrayBadge = array.filter(element => item.client_id == element.client_id && item.professional_id == element.professional_id)
-            .map((element, index) => <Badge key={index} value={element.badge} status="success" />)
-        return arrayBadge;
+    const loadClientsWithBadge = async (arrayClients) => {
+        const results = arrayClients.map(async (item) => {
+            let badge = 0;
+            try {
+                const storageName = `@badgeChat`
+                const strBadge = await AsyncStorage.getItem(storageName)
+                const arrayBadge = JSON.parse(strBadge)
+                if (arrayBadge != null) {
+                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.client_id == item.client_id && itemBadge.professional_id == item.professional_id)
+                    if (jsonBadge) {
+                        badge = jsonBadge.badge
+                    }
+                }
+            } catch (ex) {
+                console.log('loadClientsWithBadge MAP => ', ex)
+            }
+            return { ...item, badgeValue: badge }
+        });
+
+        Promise.all(results).then((arrayCompleted) => setClientChats(arrayCompleted))
     }
 
     return (
@@ -200,10 +213,16 @@ function ChatListScreen(props) {
                                     title={
                                         <ViewListItem>
                                             <Text>{item.client.name}</Text>
+                                            {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                         </ViewListItem>
                                     }
                                     rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                    leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                    leftIcon={
+                                        <React.Fragment>
+                                            {item.client.photo.length > 0 && <Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                            {!(item.client.photo.length > 0) && <Avatar rounded containerStyle={styles} size={45} icon={{ name: 'image' }} />}
+                                        </React.Fragment>
+                                    }
                                     onPress={() => { handleClickItem(item) }}
                                 />
                             ))
@@ -219,9 +238,19 @@ function ChatListScreen(props) {
                                 <ListItem
                                     key={i}
                                     containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
-                                    title={item.professional.name}
+                                    title={
+                                        <ViewListItem>
+                                            <Text>{item.professional.name}</Text>
+                                            {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
+                                        </ViewListItem>
+                                    }
                                     rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                    leftIcon={<Avatar rounded containerStyle={styles} size={45} source={{ uri: item.professional.photo }} />}
+                                    leftIcon={
+                                        <React.Fragment>
+                                            {item.professional.photo.length > 0 && <Avatar rounded containerStyle={styles} size={45} source={{ uri: item.professional.photo }} />}
+                                            {!(item.professional.photo.length > 0) && <Avatar rounded containerStyle={styles} size={45} icon={{ name: 'image' }} />}
+                                        </React.Fragment>
+                                    }
                                     onPress={() => { handleClickItem(item) }}
                                 />
                             ))
@@ -252,6 +281,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         clientData: state.client.client,
         professionalData: state.professional.professional,
+        updateChatBadge: state.chat.updateChatBadge,
     }
 }
 
@@ -259,6 +289,7 @@ const mapDispatchToProps = dispatch => {
     return {
         professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
         clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
+        chatSetUpdateChatBadge: (updateChatBadge) => dispatch(ActionCreators.chatSetUpdateChatBadge(updateChatBadge)),
     }
 }
 

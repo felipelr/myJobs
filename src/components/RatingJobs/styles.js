@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { white } from '../common/util/colors'
 
 export const ContainerRating = styled.View`
     flex-direction: row;

@@ -6,7 +6,8 @@ export const INITIAL_STATE = {
     isUpdating: false,
     errorUpdating: false,
     errorMessage: '',
-    selected: {}
+    selected: {},
+    updateCallBadge : false,
 }
 
 export const clientUpdateRequest = (state = INITIAL_STATE, action) => {
@@ -133,6 +134,13 @@ export const clientCallRateError = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const clientSetUpdateCallBadge = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        updateCallBadge: action.updateCallBadge,
+    }
+}
+
 export const HANDLERS = {
     [Types.CLIENT_UPDATE_REQUEST]: clientUpdateRequest,
     [Types.CLIENT_UPDATE_SUCCESS]: clientUpdateSuccess,
@@ -148,6 +156,7 @@ export const HANDLERS = {
     [Types.CLIENT_CALL_RATE_REQUEST]: clientCallRateRequest,
     [Types.CLIENT_CALL_RATE_SUCCESS]: clientCallRateSuccess,
     [Types.CLIENT_CALL_RATE_ERROR]: clientCallRateError,
+    [Types.CLIENT_SET_UPDATE_CALL_BADGE] : clientSetUpdateCallBadge,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

@@ -476,7 +476,6 @@ const mapStateToProps = (state, ownProps) => {
         lastId: state.chat.lastId,
         fcmToken: state.chat.fcmToken,
         sendedMessage: state.chat.sendedMessage,
-        receivedMessage: state.chat.receivedMessage,
         screenChatVisible: state.chat.screenChatVisible,
         newCallMsg: state.professional.newCallMsg,
     }

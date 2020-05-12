@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Platform, BackHandler } from 'react-native';
+import { View, Platform, BackHandler, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -77,8 +77,21 @@ function CategoriesSearchScreen(props) {
     }, [props.isAuth]);
 
     const handleBackPress = async () => {
-        if (props.userType == 'client')
-            props.logoutRequest()
+        if (props.userType == 'client') {
+            Alert.alert(
+                "Atenção",
+                "Deseja sair do aplicativo?",
+                [
+                    {
+                        text: "NÃO",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                    { text: "SIM", onPress: () => props.logoutRequest() }
+                ],
+                { cancelable: false }
+            );
+        }
         else {
             let canGoBack = true
 
@@ -109,7 +122,7 @@ function CategoriesSearchScreen(props) {
                     setSubCategories(getSubcategories.data.subcategories)
             }
         }
-        else if(text.length > 2) {
+        else if (text.length > 2) {
             //filtrar subcategorias e todas as categorias
             getSubcategories.refetch(`/subcategories/getAll.json?search=${text}`);
         }

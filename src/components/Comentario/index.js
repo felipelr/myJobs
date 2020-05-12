@@ -5,7 +5,8 @@ import { Avatar } from 'react-native-elements'
 import {
     VwContainerComentario,
     TxtTitle,
-    VwContentComentario
+    VwContentComentario,
+    VwContainerWhite,
 } from './styles'
 
 import { black } from '../../components/common/util/colors'
@@ -16,31 +17,34 @@ const Comentario = ({ comment, ...props }) => {
 
     return (
         <VwContainerComentario>
-            <View>
-                {image.uri.length > 0 &&
-                    <Avatar
-                        rounded
-                        containerStyle={styles.containerStyle}
-                        overlayContainerStyle={styles.overlayContainerStyle}
-                        size={60}
-                        source={{ uri: image.uri }} />}
+            <VwContainerWhite>
+                <View>
+                    {image.uri.length > 0 &&
+                        <Avatar
+                            rounded
+                            containerStyle={styles.containerStyle}
+                            overlayContainerStyle={styles.overlayContainerStyle}
+                            size={60}
+                            source={{ uri: image.uri }} />}
 
-                {image.uri.length <= 0 &&
-                    <Avatar
-                        rounded
-                        containerStyle={styles.containerStyle}
-                        overlayContainerStyle={styles.overlayContainerStyle}
-                        size={60}
-                        icon={{ name: 'image' }} />}
-            </View>
-            <View style={{ flex: 1 }}>
-                <TxtTitle size={10} color={black}>
-                    {comment.comment.length ? `"${comment.comment}"` : '...'}
-                </TxtTitle>
-                <VwContentComentario>
-                    <RatingJobs avaliacao={comment.rating} />
-                </VwContentComentario>
-            </View>
+                    {image.uri.length <= 0 &&
+                        <Avatar
+                            rounded
+                            containerStyle={styles.containerStyle}
+                            overlayContainerStyle={styles.overlayContainerStyle}
+                            size={60}
+                            icon={{ name: 'image' }} />}
+                </View>
+                <View style={{ flex: 1 }}>
+                    <TxtTitle size={10} color={black}>
+                        {comment.comment.length ? `"${comment.comment}"` : '...'}
+                    </TxtTitle>
+                    <VwContentComentario>
+                        <RatingJobs avaliacao={comment.rating} />
+                    </VwContentComentario>
+                </View>
+            </VwContainerWhite>
+
         </VwContainerComentario>
     )
 }

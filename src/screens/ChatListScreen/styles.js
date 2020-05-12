@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native'
 import { purple, white } from '../../components/common/util/colors'
 
 export const styles = StyleSheet.create({
-    elevation: 2
+    elevation: 1
 })
 
 export const ScrollViewContainer = styled.ScrollView.attrs({

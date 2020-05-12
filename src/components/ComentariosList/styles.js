@@ -1,10 +1,9 @@
 import styled from 'styled-components'
-import { mediumgray } from '../common/util/colors'
+import { mediumgray, lightgray, gray } from '../common/util/colors'
 import { widthPercentageToDP } from '../../components/common/util/dimensions'
 
 export const SvwContainerComentarios = styled.ScrollView.attrs({
     horizontal: true,
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
     showsHorizontalScrollIndicator: false,
     showsVerticalScrollIndicator: false,
 })` 
@@ -27,17 +26,18 @@ export const VwEmpty2 = styled.View`
 `
 export const VwContainerComentario = styled.View`
     flex-direction: row;
-    width: ${widthPercentageToDP('50%')}; 
+    width: ${widthPercentageToDP('92%')}; 
     background-color: white;
-    margin-bottom: 5px;
-    margin-right: 7px;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
 `
 
 export const TextInfo = styled.Text`
     font-size: 12px;
-    text-align: center;
+    text-align: left;
     font-family: 'SF-Pro-Text-Regular';
     font-weight: bold;
-    color: ${mediumgray};
+    color: ${gray};
     padding: 5px 0px 0px 10px;
 `

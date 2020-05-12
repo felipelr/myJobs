@@ -12,6 +12,9 @@ export default function RatingJobs({ backPurple, avaliacao, qtdeAvaliacoes, ...p
     }, [])
 
     const abbrNum = (number, decPlaces) => {
+        if (number === 0)
+            return 0
+            
         decPlaces = Math.pow(10, decPlaces);
         const abbrev = ["k", "m", "b", "t"];
         for (let i = abbrev.length - 1; i >= 0; i--) {

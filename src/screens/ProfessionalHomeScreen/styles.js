@@ -31,6 +31,7 @@ export const TxtTitle = styled.Text`
     margin-top: 10px;
     margin-bottom: 5px;
     font-weight: bold;
+    padding-left: 5px;
 `
 
 export const VwContainerRating = styled.View`
@@ -48,13 +49,15 @@ export const VwContainerServices = styled.View`
     height: ${heightPercentageToDP('22%')};
     background-color: ${white};
     margin-top: 2;
-    padding: 5px; 
+    padding-top: 5px; 
+    padding-bottom: 5px; 
 `
 
 export const VwContainerStories = styled.View`
     background-color: ${white};
     margin-top: 2;
-    padding: 5px; 
+    padding-top: 5px; 
+    padding-bottom: 5px; 
 `
 
 export const VwContainerRatingComentario = styled.View`
@@ -73,10 +76,11 @@ export const ContainerAvatar = styled.View`
 `
 
 export const ContentComentarios = styled.View` 
-    background-color: ${white};
+    background-color: ${lightgray};
     margin-top: 2;
     justify-content: flex-end; 
-    padding: 5px; 
+    padding-top: 5px; 
+    padding-bottom: 5px; 
 `
 
 export const ModalContainer = styled.View`

@@ -33,19 +33,10 @@ function SplashScreen(props) {
 
         const notificationListener = firebase.notifications().onNotification((notification) => {
             // Process your notification as required
-            console.log('notification => ', notification)
-
             let jsonMessage = null
             if (notification.data.message)
                 jsonMessage = typeof notification.data.message == 'string' ? JSON.parse(notification.data.message) : notification.data.message
-
-            console.log('jsonMessage => ', jsonMessage)
-
-            if (notification.data.message) {
-                if (jsonMessage.type != 'call')
-                    props.chatSetReceivedMessage(jsonMessage)
-            }
-
+            
             notification.setSound('sound_1.mp3')
             notification.android.setDefaults(firebase.notifications.Android.Defaults.All)
             notification.android.setChannelId(channel.channelId)
@@ -59,7 +50,7 @@ function SplashScreen(props) {
             updateBadge(jsonMessage)
 
             //mostrar notificação
-            showNotification(notification, jsonMessage.type);
+            showNotification(notification);
         })
 
         const notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
@@ -74,6 +65,9 @@ function SplashScreen(props) {
                         const msg = JSON.parse(notification.data.message)
 
                         if (msg.type == 'call') {
+
+                        }
+                        else if (msg.type == 'call_finished') {
 
                         }
                         else {
@@ -116,15 +110,8 @@ function SplashScreen(props) {
         chatVisibleRef.current = props.screenChatVisible
     }, [props.screenChatVisible])
 
-    const showNotification = (notification, type) => {
-        if (type == 'call') {
-            firebase.notifications().displayNotification(notification)
-        }
-        else {
-            if (!chatVisibleRef.current || appStateRef.current.match(/inactive|background/)) {
-                firebase.notifications().displayNotification(notification)
-            }
-        }
+    const showNotification = (notification) => {
+        firebase.notifications().displayNotification(notification)
     }
 
     const handleAppStateChange = (nextAppState) => {
@@ -133,7 +120,7 @@ function SplashScreen(props) {
 
     const updateBadge = async (msg) => {
         try {
-            if (msg.type == 'call') {
+            if (msg.type == 'call' || msg.type == 'call_finished') {
                 updateCallBadge(msg)
             }
             else {
@@ -156,6 +143,7 @@ function SplashScreen(props) {
                     const item = {
                         client_id: msg.client_id,
                         professional_id: msg.professional_id,
+                        call_id: msg.call_id,
                         badge: array2[0].badge + 1
                     }
                     array.push(item)
@@ -164,6 +152,7 @@ function SplashScreen(props) {
                     const item = {
                         client_id: msg.client_id,
                         professional_id: msg.professional_id,
+                        call_id: msg.call_id,
                         badge: 1
                     }
                     array.push(item)
@@ -175,6 +164,7 @@ function SplashScreen(props) {
                 const item = {
                     client_id: msg.client_id,
                     professional_id: msg.professional_id,
+                    call_id: msg.call_id,
                     badge: 1
                 }
                 array.push(item)
@@ -340,7 +330,6 @@ const mapDispatchToProps = dispatch => {
         professionalUpdateSuccess: (dados) => dispatch(ActionCreators.professionalUpdateSuccess(dados)),
         authSuccess: (dados) => dispatch(ActionCreators.authSuccess(dados)),
         chatSetFcmToken: (fcmToken) => dispatch(ActionCreators.chatSetFcmToken(fcmToken)),
-        chatSetReceivedMessage: (message) => dispatch(ActionCreators.chatSetReceivedMessage(message)),
         clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
         professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
         chatSetUpdateChatBadge: (updateChatBadge) => dispatch(ActionCreators.chatSetUpdateChatBadge(updateChatBadge)),

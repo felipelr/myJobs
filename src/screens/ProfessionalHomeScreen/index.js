@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View } from 'react-native'
+import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, Alert } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
@@ -222,7 +222,19 @@ function ProfessionalHomeScreen(props) {
         }
 
         if (!professionalSelectedRef.current.id) {
-            props.logoutRequest()
+            Alert.alert(
+                "Atenção",
+                "Deseja sair do aplicativo?",
+                [
+                    {
+                        text: "NÃO",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                    { text: "SIM", onPress: () => props.logoutRequest() }
+                ],
+                { cancelable: false }
+            );
         }
         else {
             setServices([])

@@ -16,7 +16,7 @@ import Comentario from '../../components/Comentario/index'
 const ComentariosList = ({ comments, loading, ...props }) => {
     return (
         <SvwContainerComentarios>
-            <View style={{ flex: 1, backgroundColor: 'white', minHeight: 90 }}>
+            <View style={{ minHeight: 90 }}>
                 {
                     !loading && comments.map((item) => (
                         <Comentario

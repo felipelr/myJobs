@@ -96,7 +96,7 @@ function CategoriesSearchScreen(props) {
             let canGoBack = true
 
             try {
-                if (props.navigation.state.params.previewScreen === 'Splash')
+                if (props.route.params.previewScreen === 'Splash')
                     canGoBack = false
             } catch (ex) {
                 console.log(ex)

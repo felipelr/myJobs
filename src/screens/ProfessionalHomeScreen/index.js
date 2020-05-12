@@ -224,7 +224,7 @@ function ProfessionalHomeScreen(props) {
         if (!professionalSelectedRef.current.id) {
             let canLogout = false
             try {
-                if (props.navigation.state.params.previewScreen === 'Splash')
+                if (props.route.params.previewScreen === 'Splash')
                     canLogout = true
             } catch (ex) {
                 console.log(ex)
@@ -254,9 +254,9 @@ function ProfessionalHomeScreen(props) {
             let clearProfessional = true
             let canGoBack = true
             try {
-                if (props.navigation.state.params.previewScreen === 'ProfessionalChat')
+                if (props.route.params.previewScreen === 'ProfessionalChat')
                     clearProfessional = false
-                else if (props.navigation.state.params.previewScreen === 'Splash')
+                else if (props.route.params.previewScreen === 'Splash')
                     canGoBack = false
             } catch (ex) {
                 console.log(ex)

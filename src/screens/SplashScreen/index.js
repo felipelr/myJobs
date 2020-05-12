@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { AppState, StatusBar } from 'react-native'
-import firebase from 'react-native-firebase'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
+import firebase from '@react-native-firebase/app'
+import messaging from '@react-native-firebase/messaging'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -18,11 +19,12 @@ function SplashScreen(props) {
 
     useEffect(() => {
         getUserData()
-        firebasePermission()
+        firebaseRequestUserPermission()
         appStateRef.current = 'active'
 
         AppState.addEventListener('change', handleAppStateChange)
 
+        /* 
         const channel = new firebase.notifications.Android.Channel('myjobs-channel', 'MyJobs', firebase.notifications.Android.Importance.Max)
             .setDescription('MyJobs channel')
             .setVibrationPattern([1000, 2000, 3000])
@@ -36,7 +38,7 @@ function SplashScreen(props) {
             let jsonMessage = null
             if (notification.data.message)
                 jsonMessage = typeof notification.data.message == 'string' ? JSON.parse(notification.data.message) : notification.data.message
-            
+
             notification.setSound('sound_1.mp3')
             notification.android.setDefaults(firebase.notifications.Android.Defaults.All)
             notification.android.setChannelId(channel.channelId)
@@ -97,12 +99,57 @@ function SplashScreen(props) {
                 } else {
                     // user doesn't have a device token yet
                 }
+            }); 
+        */
+
+        //new methods
+        const _onMessage = messaging().onMessage(async remoteMessage => {
+            console.log('A new FCM message arrived! => ', remoteMessage);
+
+            const notification = remoteMessage.notification;
+            const data = remoteMessage.data;
+
+            let jsonMessage = null
+            if (data.message)
+                jsonMessage = typeof data.message == 'string' ? JSON.parse(data.message) : data.message
+
+            //salvar badge do chat ou call
+            updateBadge(jsonMessage)
+        });  
+
+        const _onTokenRefresh = messaging().onTokenRefresh(token => {
+            saveTokenToDatabase(token);
+        });
+
+        messaging().onNotificationOpenedApp(remoteMessage => {
+            console.log('Notification caused app to open from background state => ', remoteMessage);
+            handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
+        });
+
+        messaging()
+            .getInitialNotification()
+            .then(remoteMessage => {
+                if (remoteMessage) {
+                    console.log('Notification caused app to open from quit state => ', remoteMessage);
+                    handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
+                }
+            });
+
+        messaging()
+            .getToken()
+            .then(token => {
+                if (token) {
+                    console.log('FCM Token => ', token)
+                    props.chatSetFcmToken(token)
+                }
             });
 
         return () => {
-            notificationListener()
-            notificationOpenedListener()
-            AppState.removeEventListener('change', handleAppStateChange);
+            //notificationListener()
+            //notificationOpenedListener()
+            AppState.removeEventListener('change', handleAppStateChange)
+            _onMessage
+            _onTokenRefresh
         }
     }, [])
 
@@ -110,8 +157,42 @@ function SplashScreen(props) {
         chatVisibleRef.current = props.screenChatVisible
     }, [props.screenChatVisible])
 
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log('Message handled in the background!', remoteMessage);
+    });
+
+    const handleAppOpenedByNotification = (notification, data) => {
+        if (data.message) {
+            if (!chatVisibleRef.current) {
+                if (props.professional || props.client) {
+                    const msg = JSON.parse(data.message)
+
+                    if (msg.type == 'call') {
+
+                    }
+                    else if (msg.type == 'call_finished') {
+
+                    }
+                    else {
+                        if (msg.msg_from == 'client') {
+                            const client = { id: msg.client_id, name: notification.title }
+                            props.clientSelected(client)
+                        }
+                        else {
+                            const professional = { id: msg.professional_id, name: notification.title }
+                            props.professionalSelected(professional)
+                        }
+                        props.navigation.navigate('ProfessionalChat', {
+                            previewScreen: 'Splash',
+                        })
+                    }
+                }
+            }
+        }
+    }
+
     const showNotification = (notification) => {
-        firebase.notifications().displayNotification(notification)
+        //firebase.notifications().displayNotification(notification)        
     }
 
     const handleAppStateChange = (nextAppState) => {
@@ -278,28 +359,16 @@ function SplashScreen(props) {
         }
     }
 
-    const firebasePermission = async () => {
+    const firebaseRequestUserPermission = async () => {
         try {
-            const enabled = await firebase.messaging().hasPermission();
-            if (enabled) {
-                // user has permissions
-                console.log('has permissions')
-            } else {
-                // user doesn't have permission
-                try {
-                    await firebase.messaging().requestPermission();
-                    console.log('has authorised')
-                    // User has authorised
-                } catch (error) {
-                    // User has rejected permissions
-                    console.log('User has rejected permissions', error)
-                    alert('User has rejected permissions => ' + error.message)
-                }
+            const settings = await messaging().requestPermission();
+            if (settings) {
+                console.log('Permission settings:', settings);
             }
         } catch (error) {
             // User has rejected permissions
             console.log('User has rejected permissions', error)
-            alert('User has rejected permissions => ' + error.message)
+            Alert.alert('User has rejected permissions => ', JSON.stringify(error));
         }
     }
 

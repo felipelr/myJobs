@@ -1,7 +1,7 @@
 import React from 'react'
-import { Easing, Animated } from 'react-native'
 import { Provider } from 'react-redux'
-import { createStackNavigator, createAppContainer } from 'react-navigation'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack'
 
 import LoginScreen from './src/screens/LoginScreen/index'
 import ProfessionalsScreen from './src/screens/ProfessionalsScreen/index'
@@ -20,60 +20,34 @@ import ChatListScreen from './src/screens/ChatListScreen'
 
 import store from './src/store'
 
-
-const MainNavigator = createStackNavigator(
-  {
-    Splash: { screen: SplashScreen },
-    Login: { screen: LoginScreen },
-    Professionals: { screen: ProfessionalsScreen },
-    CategoriesSearch: { screen: CategoriesSearchScreen },
-    Perfil: { screen: PerfilScreen },
-    Services: { screen: ServicesScreen },
-    ProfessionalHome: { screen: ProfessionalHomeScreen },
-    ProfessionalHomeView: { screen: ProfessionalHomeScreen },
-    ServiceHire: { screen: ServiceHireScreen },
-    ProfessionalChat: { screen: ProfessionalChatScreen },
-    NewCall: { screen: NewCallScreen },
-    ProfessionalListChat: { screen: ProfessionalListChatScreen },
-    ClientListChat: { screen: ClientListChatScreen },
-    CallsList: { screen: CallsListScreen },
-    ChatList: { screen: ChatListScreen },
-  },
-  {
-    initialRouteName: 'Splash',
-    transitionConfig: () => ({
-      transitionSpec: {
-        duration: 300,
-        easing: Easing.out(Easing.poly(4)),
-        timing: Animated.timing,
-      },
-      screenInterpolator: sceneProps => {
-        const { layout, position, scene } = sceneProps;
-        const { index } = scene;
-
-        const width = layout.initWidth;
-        const translateX = position.interpolate({
-          inputRange: [index - 1, index, index + 1],
-          outputRange: [width, 0, 0],
-        });
-
-        const opacity = position.interpolate({
-          inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1],
-        });
-
-        return { opacity, transform: [{ translateX: translateX }] };
-      },
-    })
-  }
-);
-
-let Navigation = createAppContainer(MainNavigator)
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <Provider store={store}>
-      <Navigation />
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,          
+        }}>
+          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Professionals" component={ProfessionalsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="CategoriesSearch" component={CategoriesSearchScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Perfil" component={PerfilScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Services" component={ServicesScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ProfessionalHome" component={ProfessionalHomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ProfessionalHomeView" component={ProfessionalHomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ServiceHire" component={ServiceHireScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ProfessionalChat" component={ProfessionalChatScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="NewCall" component={NewCallScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ProfessionalListChat" component={ProfessionalListChatScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ClientListChat" component={ClientListChatScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="CallsList" component={CallsListScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ChatList" component={ChatListScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   )
 }

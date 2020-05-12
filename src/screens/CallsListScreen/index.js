@@ -16,6 +16,7 @@ import Call from '../../components/Call/index'
 import { purple, lightgray, white, gold, black } from '../../components/common/util/colors'
 
 import {
+    styles,
     ViewTabControl,
     TouchTab,
     TxtTab,
@@ -122,7 +123,7 @@ function CallsListScreen(props) {
                 const strBadge = await AsyncStorage.getItem(storageName)
                 const arrayBadge = JSON.parse(strBadge)
                 if (arrayBadge != null) {
-                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.client_id == item.client_id && itemBadge.professional_id == item.professional_id)
+                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.call_id == item.id)
                     if (jsonBadge) {
                         badge = jsonBadge.badge
                     }
@@ -144,7 +145,7 @@ function CallsListScreen(props) {
                 const strBadge = await AsyncStorage.getItem(storageName)
                 const arrayBadge = JSON.parse(strBadge)
                 if (arrayBadge != null) {
-                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.client_id == item.client_id && itemBadge.professional_id == item.professional_id)
+                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.call_id == item.id)
                     if (jsonBadge) {
                         badge = jsonBadge.badge
                     }
@@ -351,8 +352,8 @@ function CallsListScreen(props) {
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                                 leftIcon={
                                                     <React.Fragment>
-                                                        {item.client.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.client.photo }} />}
-                                                        {!(item.client.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                        {item.client.photo.length > 0 && <Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                                        {!(item.client.photo.length > 0) && <Avatar rounded containerStyle={styles} size={45} icon={{ name: 'image' }} />}
                                                     </React.Fragment>
                                                 }
                                                 onPress={() => { handleClickItem(item) }}
@@ -378,8 +379,8 @@ function CallsListScreen(props) {
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                                 leftIcon={
                                                     <React.Fragment>
-                                                        {item.client.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.client.photo }} />}
-                                                        {!(item.client.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                        {item.client.photo.length > 0 && <Avatar rounded containerStyle={styles} size={45} source={{ uri: item.client.photo }} />}
+                                                        {!(item.client.photo.length > 0) && <Avatar rounded containerStyle={styles} size={45} icon={{ name: 'image' }} />}
                                                     </React.Fragment>
                                                 }
                                                 onPress={() => { handleClickItem(item) }}
@@ -421,8 +422,8 @@ function CallsListScreen(props) {
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                                 leftIcon={
                                                     <React.Fragment>
-                                                        {item.professional.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
-                                                        {!(item.professional.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                        {item.professional.photo.length > 0 && <Avatar rounded containerStyle={styles} size={45} source={{ uri: item.professional.photo }} />}
+                                                        {!(item.professional.photo.length > 0) && <Avatar rounded containerStyle={styles} size={45} icon={{ name: 'image' }} />}
                                                     </React.Fragment>
                                                 }
                                                 onPress={() => { handleClickItem(item) }}
@@ -448,8 +449,8 @@ function CallsListScreen(props) {
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
                                                 leftIcon={
                                                     <React.Fragment>
-                                                        {item.professional.photo.length > 0 && <Avatar rounded size={45} source={{ uri: item.professional.photo }} />}
-                                                        {!(item.professional.photo.length > 0) && <Avatar rounded size={45} icon={{ name: 'image' }} />}
+                                                        {item.professional.photo.length > 0 && <Avatar rounded containerStyle={styles} size={45} source={{ uri: item.professional.photo }} />}
+                                                        {!(item.professional.photo.length > 0) && <Avatar rounded containerStyle={styles} size={45} icon={{ name: 'image' }} />}
                                                     </React.Fragment>
                                                 }
                                                 onPress={() => { handleClickItem(item) }}

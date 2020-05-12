@@ -31,8 +31,7 @@ export const ViewContainerButton = styled.View`
     margin-bottom: 16px;
 `
 
-export const ViewContainerOverlay = styled.View`
-    flex: 1;
+export const ViewContainerOverlay = styled.View`    
     justify-content: center;
 `
 
@@ -48,7 +47,6 @@ export const ViewContainerButtonOverlay = styled.View`
 export const ViewContainerCenter = styled.View`
     align-items: center;
     justify-content: space-around;
-    flex: 1;
 `
 
 export const ViewGray = styled.View`

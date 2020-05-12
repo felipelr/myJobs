@@ -222,19 +222,29 @@ function ProfessionalHomeScreen(props) {
         }
 
         if (!professionalSelectedRef.current.id) {
-            Alert.alert(
-                "Atenção",
-                "Deseja sair do aplicativo?",
-                [
-                    {
-                        text: "NÃO",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    },
-                    { text: "SIM", onPress: () => props.logoutRequest() }
-                ],
-                { cancelable: false }
-            );
+            let canLogout = false
+            try {
+                if (props.navigation.state.params.previewScreen === 'Splash')
+                    canLogout = true
+            } catch (ex) {
+                console.log(ex)
+            }
+
+            if (canLogout) {
+                Alert.alert(
+                    "Atenção",
+                    "Deseja sair do aplicativo?",
+                    [
+                        {
+                            text: "NÃO",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                        { text: "SIM", onPress: () => props.logoutRequest() }
+                    ],
+                    { cancelable: false }
+                );
+            }
         }
         else {
             setServices([])

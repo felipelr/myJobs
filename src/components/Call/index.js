@@ -188,7 +188,7 @@ function Call(props) {
                     )}
 
                     <Overlay
-                        height={200}
+                        height={250}
                         isVisible={overlayVisible}
                         onBackdropPress={() => setOverlayVisible(false)}
                     >

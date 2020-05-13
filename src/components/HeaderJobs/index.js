@@ -10,12 +10,12 @@ import Search from './Search/index'
 import Chat from './Chat/index'
 import Confirm from './Confirm/index'
 
-import { purple } from '../common/util/colors'
+import { purple, white } from '../common/util/colors'
 
 function NewCall(props) {
     return (
         <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.onPress}>
-            <Icon name='assignment' size={24} color={purple} />
+            <Icon name='assignment' size={24} color={white} />
         </TouchableOpacity>
     )
 }
@@ -23,7 +23,7 @@ function NewCall(props) {
 function Calls(props) {
     return (
         <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.onPress}>
-            <Icon name='playlist-add-check' size={24} color={purple} />
+            <Icon name='playlist-add-check' size={24} color={white} />
         </TouchableOpacity>
     )
 }

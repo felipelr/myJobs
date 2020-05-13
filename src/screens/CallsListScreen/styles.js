@@ -12,7 +12,7 @@ export const ScrollViewContainer = styled.ScrollView.attrs({
 })``
 
 export const ViewContainer = styled.View`
-    background-color: ${white};
+    background-color: ${purple};
     flex: 1;
 `
 
@@ -23,14 +23,14 @@ export const ViewTabControl = styled.View`
 
 export const TouchTab = styled.TouchableOpacity`
     flex: 1;
-    background-color: ${white};
+    background-color: ${purple};
     padding: 4px;
     border-bottom-width: 3px;
     border-bottom-color: ${props => `${props.borderColor}`};
 `
 
 export const TxtTab = styled.Text`
-    color: ${purple};
+    color: ${white};
     font-size: 14;
     align-self: center;
 `

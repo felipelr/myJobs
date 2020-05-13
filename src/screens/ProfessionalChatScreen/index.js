@@ -364,7 +364,8 @@ function ProfessionalChatScreen(props) {
 
     const handleSendPress = () => {
         const newMessage = inputMsgRef.current.input._lastNativeText
-        sendMessageSocket(newMessage)
+        if (newMessage && newMessage.length)
+            sendMessageSocket(newMessage)
     }
 
     const sendMessageSocket = (newMessage) => {
@@ -381,7 +382,7 @@ function ProfessionalChatScreen(props) {
                 wsRef.current.send(JSON.stringify(form));
 
                 inputMsgRef.current.clear()
-                Keyboard.dismiss()
+                //Keyboard.dismiss()
                 setMensagens([...mensagens, {
                     id: 0,
                     date: Moment().format('DD/MM/YYYY'),
@@ -400,7 +401,7 @@ function ProfessionalChatScreen(props) {
                 wsRef.current.send(JSON.stringify(form));
 
                 inputMsgRef.current.clear()
-                Keyboard.dismiss()
+                //Keyboard.dismiss()
                 setMensagens([...mensagens, {
                     id: 0,
                     date: Moment().format('DD/MM/YYYY'),

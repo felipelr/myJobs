@@ -290,18 +290,14 @@ function CallsListScreen(props) {
 
     const handleCallFinished = (call) => {
         if (tabSelected === 0) {
-            const array = finishedCalls.filter(item => item.id !== call.id)
-            array.push(call)
-            setFinishedCalls(array)
             //setCalls(calls.filter(item => item.id !== call.id))
             loadCallsWithBadge(calls.filter(item => item.id !== call.id))
+            getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
         }
         else {
-            const array = finishedCallsClient.filter(item => item.id !== call.id)
-            array.push(call)
-            setFinishedCallsClient(array)
             //setCallsClient(callsClient.filter(item => item.id !== call.id))
             loadClientCallsWithBadge(callsClient.filter(item => item.id !== call.id))
+            getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
         }
 
         handleBackPress()
@@ -320,14 +316,14 @@ function CallsListScreen(props) {
                             <TouchTab
                                 activeOpacity={1}
                                 onPress={() => handleClickTab(0)}
-                                borderColor={tabSelected === 0 ? purple : white}
+                                borderColor={tabSelected === 0 ? gold : purple}
                             >
                                 <TxtTab>PROFISSIONAL</TxtTab>
                             </TouchTab>
                             <TouchTab
                                 activeOpacity={1}
                                 onPress={() => handleClickTab(1)}
-                                borderColor={tabSelected === 1 ? purple : white}
+                                borderColor={tabSelected === 1 ? gold : purple}
                             >
                                 <TxtTab>CLIENTE</TxtTab>
                             </TouchTab>

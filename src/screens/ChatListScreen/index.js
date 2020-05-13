@@ -11,7 +11,7 @@ import ActionCreators from '../../store/actionCreators'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 
-import { purple, lightgray, white } from '../../components/common/util/colors'
+import { purple, lightgray, white, gold } from '../../components/common/util/colors'
 
 import {
     styles,
@@ -188,14 +188,14 @@ function ChatListScreen(props) {
                     <TouchTab
                         activeOpacity={1}
                         onPress={() => hadleClickTab(0)}
-                        borderColor={tabSelected === 0 ? purple : white}
+                        borderColor={tabSelected === 0 ? gold : purple}
                     >
                         <TxtTab>PROFISSIONAL</TxtTab>
                     </TouchTab>
                     <TouchTab
                         activeOpacity={1}
                         onPress={() => hadleClickTab(1)}
-                        borderColor={tabSelected === 1 ? purple : white}
+                        borderColor={tabSelected === 1 ? gold : purple}
                     >
                         <TxtTab>CLIENTE</TxtTab>
                     </TouchTab>

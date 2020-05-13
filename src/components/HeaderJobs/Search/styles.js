@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native'
-import { lightgray } from '../../common/util/colors'
+import { lightgray, lightpurple } from '../../common/util/colors'
 
 export default styles = StyleSheet.create({ 
     searchContainerStyle: {
-        backgroundColor: lightgray,
+        backgroundColor: lightpurple,
         width: '100%', 
         borderTopWidth: 0,
         borderBottomWidth: 0,
@@ -12,7 +12,7 @@ export default styles = StyleSheet.create({
         borderRadius: 20
     },
     searchInputContainerStyle: {
-        backgroundColor: lightgray,
+        backgroundColor: lightpurple,
         borderRadius: 20,
         height: 35
     } 

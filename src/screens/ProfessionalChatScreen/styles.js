@@ -39,6 +39,7 @@ export const ScrollViewContainerMessages = styled.ScrollView.attrs({
     showsHorizontalScrollIndicator: false,
     showsVerticalScrollIndicator: false,
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
+    keyboardShouldPersistTaps: 'always'
 })`
     flex: 1;
 `

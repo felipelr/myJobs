@@ -7,7 +7,7 @@ import messaging from '@react-native-firebase/messaging'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { purple } from '../../components/common/util/colors'
+import { purple, white, black } from '../../components/common/util/colors'
 
 import { ViewContainer, ImgLogoTipo } from './styles'
 
@@ -119,26 +119,8 @@ function SplashScreen(props) {
             updateBadge(jsonMessage)
 
             //local notification
-            PushNotification.localNotification({
-                /* Android Only Properties */
-                autoCancel: true, // (optional) default: true
-                largeIcon: "ic_myjobs", // (optional) default: "ic_launcher"
-                smallIcon: "ic_myjobs", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-                color: purple, // (optional) default: system default
-                vibrate: true, // (optional) default: true
-                vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-                priority: "high", // (optional) set notification priority, default: high
-                visibility: "private", // (optional) set notification visibility, default: private
-                importance: "high", // (optional) set notification importance, default: high
-                ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
-                              
-                /* iOS and Android properties */
-                title: notification.title, // (optional)
-                message: notification.body, // (required)
-                playSound: true, // (optional) default: true
-                soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)                
-              });
-        });  
+            showNotification(notification)
+        });
 
         const _onTokenRefresh = messaging().onTokenRefresh(token => {
             saveTokenToDatabase(token);
@@ -182,6 +164,15 @@ function SplashScreen(props) {
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
         console.log('Message handled in the background!', remoteMessage);
+
+        const data = remoteMessage.data
+
+        let jsonMessage = null
+        if (data.message)
+            jsonMessage = typeof data.message == 'string' ? JSON.parse(data.message) : data.message
+
+        //salvar badge do chat ou call
+        updateBadge(jsonMessage)
     });
 
     const handleAppOpenedByNotification = (notification, data) => {
@@ -215,7 +206,27 @@ function SplashScreen(props) {
     }
 
     const showNotification = (notification) => {
-        //firebase.notifications().displayNotification(notification)        
+        //firebase.notifications().displayNotification(notification)  
+
+        PushNotification.localNotification({
+            /* Android Only Properties */
+            autoCancel: true, // (optional) default: true
+            largeIcon: "ic_myjobs", // (optional) default: "ic_launcher"
+            smallIcon: "ic_myjobs", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+            color: purple, // (optional) default: system default
+            vibrate: true, // (optional) default: true
+            vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+            priority: "high", // (optional) set notification priority, default: high
+            visibility: "private", // (optional) set notification visibility, default: private
+            importance: "high", // (optional) set notification importance, default: high
+            ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
+
+            /* iOS and Android properties */
+            title: notification.title, // (optional)
+            message: notification.body, // (required)
+            playSound: true, // (optional) default: true
+            soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)                
+        });
     }
 
     const handleAppStateChange = (nextAppState) => {
@@ -402,7 +413,7 @@ function SplashScreen(props) {
 
     return (
         <ViewContainer>
-            <StatusBar backgroundColor={purple} />
+            <StatusBar backgroundColor={purple} barStyle='light-content' />
             <ImgLogoTipo source={assets.myjobs} />
         </ViewContainer>
     )

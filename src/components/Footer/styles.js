@@ -1,9 +1,9 @@
 import styled from 'styled-components/native'
-import { white } from '../common/util/colors'
+import { white, purple } from '../common/util/colors'
 
 export const ContainerFooter = styled.View`
     padding: 10px;
-    background-color: ${white};
+    background-color: ${purple};
     flex-direction: row;
 `
 

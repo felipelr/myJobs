@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { SearchBar } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { purple } from '../../common/util/colors'
+import { purple, white } from '../../common/util/colors'
 
 import styles from './styles'
 
@@ -16,14 +16,14 @@ export default Search = (props) => {
 
     return (
         <SearchBar placeholder="Pesquisar "
-            placeholderTextColor={purple}
+            placeholderTextColor={white}
             inputContainerStyle={styles.searchInputContainerStyle}
-            inputStyle={{ color: purple, marginTop: 7 }}
+            inputStyle={{ color: white, marginTop: 7 }}
             containerStyle={styles.searchContainerStyle}
             onChangeText={(text) => handleTextChange(text)}
             value={search}
-            searchIcon={<Icon name='search' size={24} color={purple} />}
-            clearIcon={<Icon name='close' size={24} color={purple} onPress={() => handleTextChange('')} />}
+            searchIcon={<Icon name='search' size={24} color={white} />}
+            clearIcon={<Icon name='close' size={24} color={white} onPress={() => handleTextChange('')} />}
         />
     )
 }

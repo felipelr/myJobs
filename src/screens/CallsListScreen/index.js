@@ -110,8 +110,21 @@ function CallsListScreen(props) {
     useEffect(() => {
         if (props.updateCallBadge) {
             props.clientSetUpdateCallBadge(false)
-            loadCallsWithBadge(calls)
-            loadClientCallsWithBadge(callsClient)
+
+            if (doubleUser) {
+                getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
+                getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
+                getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
+                getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
+            }
+            else if (props.userType === 'client') {
+                getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
+                getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
+            }
+            else {
+                getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
+                getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
+            }
         }
     }, [props.updateCallBadge])
 

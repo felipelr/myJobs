@@ -330,11 +330,16 @@ function SplashScreen(props) {
                     const clientData = await AsyncStorage.getItem('@clientData')
                     const professionalData = await AsyncStorage.getItem('@professionalData')
 
-                    let userType = professionalData ? 'professional' : 'client'
+                    console.log('userData => ', userData)
+                    console.log('clientData => ', clientData)
+                    console.log('professionalData => ', professionalData)
 
-                    const userJson = { ...JSON.parse(userData), userType }
+
                     const clientJson = clientData ? JSON.parse(clientData) : null
                     const professionalJson = professionalData ? JSON.parse(professionalData) : null
+
+                    let userType = professionalJson && professionalJson.id ? 'professional' : 'client'
+                    const userJson = { ...JSON.parse(userData), userType }
 
                     if (clientJson !== null && clientJson.id)
                         props.clientUpdateSuccess(clientJson)

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { purple } from '../../components/common/util/colors'
+import { purple, gray } from '../../components/common/util/colors'
 
 export const SvwContainerStories = styled.ScrollView.attrs({
     horizontal: true,
@@ -32,4 +32,14 @@ export const VwContainerStorieItem = styled.TouchableOpacity`
     align-items: center;
     justify-content: center;
     border-radius: 10;
+`
+
+export const TextInfo = styled.Text`
+    height: 170;
+    font-size: 12px;
+    text-align: left;
+    font-family: 'SF-Pro-Text-Regular';
+    font-weight: bold;
+    color: ${gray};
+    padding: 5px 0px 0px 10px;
 `

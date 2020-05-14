@@ -438,7 +438,6 @@ function ProfessionalChatScreen(props) {
                 titlePress={() => handleTitlePress()}
                 back={() => handleBackPress()}
                 newCall={props.clientSelected.id ? () => handlePressNewCall() : null}
-                calls={props.professionalSelected.id ? () => handlePressCalls() : null}
             />
             <ViewContainerChat>
                 <ChatMessages messages={mensagens} userType={props.userType} />

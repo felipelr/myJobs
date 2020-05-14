@@ -5,12 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {
     SvwContainerStories,
     VwContainerStorieItem,
-    VwContainerStorieItemEmpty
+    VwContainerStorieItemEmpty,
+    TextInfo,
 } from './styles'
 
 import { lightgray } from '../common/util/colors'
 
-const Stories = ({ novaImagem, stories, onPressNewStory, onPressStory, ...props }) => {
+const Stories = ({ loading, novaImagem, stories, onPressNewStory, onPressStory, ...props }) => {
 
     return (
         <SvwContainerStories>
@@ -25,7 +26,10 @@ const Stories = ({ novaImagem, stories, onPressNewStory, onPressStory, ...props 
                     <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
                 </VwContainerStorieItem>
             ))}
-            {!stories.length && <React.Fragment>
+
+            {(!loading && !stories.length) && <TextInfo>Não há stories deste perfil...</TextInfo>}
+            
+            {loading && <React.Fragment>
                 <VwContainerStorieItem>
                     <Text style={{ backgroundColor: lightgray, width: '100%', height: '100%', borderRadius: 10 }} />
                 </VwContainerStorieItem>

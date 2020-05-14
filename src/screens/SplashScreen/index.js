@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { AppState, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -16,93 +16,20 @@ import assets from './assets'
 var PushNotification = require("react-native-push-notification")
 
 function SplashScreen(props) {
+    const [initialRoute, setInitialRoute] = useState('')
+
     const chatVisibleRef = useRef()
     const appStateRef = useRef()
 
     useEffect(() => {
-        getUserData()
+        getUserData().then(route => {
+            console.log('getUserData => ', route)
+            setInitialRoute(route)
+        })
         firebaseRequestUserPermission()
         appStateRef.current = 'active'
 
         AppState.addEventListener('change', handleAppStateChange)
-
-        /* 
-        const channel = new firebase.notifications.Android.Channel('myjobs-channel', 'MyJobs', firebase.notifications.Android.Importance.Max)
-            .setDescription('MyJobs channel')
-            .setVibrationPattern([1000, 2000, 3000])
-            .setShowBadge(true);
-
-        //cria um channel para poder exibir notificações
-        firebase.notifications().android.createChannel(channel)
-
-        const notificationListener = firebase.notifications().onNotification((notification) => {
-            // Process your notification as required
-            let jsonMessage = null
-            if (notification.data.message)
-                jsonMessage = typeof notification.data.message == 'string' ? JSON.parse(notification.data.message) : notification.data.message
-
-            notification.setSound('sound_1.mp3')
-            notification.android.setDefaults(firebase.notifications.Android.Defaults.All)
-            notification.android.setChannelId(channel.channelId)
-            notification.android.setVibrate(channel.vibrationPattern)
-            notification.android.setPriority(firebase.notifications.Android.Priority.High)
-            notification.android.setSmallIcon('ic_myjobs')
-            notification.android.setColorized(true)
-            notification.android.setColor('purple')
-
-            //salvar badge do chat ou call
-            updateBadge(jsonMessage)
-
-            //mostrar notificação
-            showNotification(notification);
-        })
-
-        const notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
-            // Get the action triggered by the notification being opened
-            const action = notificationOpen.action;
-            // Get information about the notification that was opened
-            const notification = notificationOpen.notification
-
-            if (notification.data.message) {
-                if (!chatVisibleRef.current) {
-                    if (props.professional || props.client) {
-                        const msg = JSON.parse(notification.data.message)
-
-                        if (msg.type == 'call') {
-
-                        }
-                        else if (msg.type == 'call_finished') {
-
-                        }
-                        else {
-                            if (msg.msg_from == 'client') {
-                                const client = { id: msg.client_id, name: notification.title }
-                                props.clientSelected(client)
-                            }
-                            else {
-                                const professional = { id: msg.professional_id, name: notification.title }
-                                props.professionalSelected(professional)
-                            }
-                            props.navigation.navigate('ProfessionalChat', {
-                                previewScreen: 'Splash',
-                            })
-                        }
-                    }
-                }
-            }
-        })
-
-        firebase.messaging().getToken()
-            .then(fcmToken => {
-                if (fcmToken) {
-                    // user has a device token
-                    console.log(fcmToken)
-                    props.chatSetFcmToken(fcmToken)
-                } else {
-                    // user doesn't have a device token yet
-                }
-            }); 
-        */
 
         //new methods
         const _onMessage = messaging().onMessage(async remoteMessage => {
@@ -129,6 +56,7 @@ function SplashScreen(props) {
         messaging().onNotificationOpenedApp(remoteMessage => {
             console.log('Notification caused app to open from background state => ', remoteMessage);
             handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
+            setInitialRoute('NotificationStart')
         });
 
         messaging()
@@ -136,7 +64,10 @@ function SplashScreen(props) {
             .then(remoteMessage => {
                 if (remoteMessage) {
                     console.log('Notification caused app to open from quit state => ', remoteMessage);
-                    handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
+                    getUserData().then(route => {
+                        handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
+                        setInitialRoute('NotificationStart')
+                    })
                 }
             });
 
@@ -161,6 +92,29 @@ function SplashScreen(props) {
     useEffect(() => {
         chatVisibleRef.current = props.screenChatVisible
     }, [props.screenChatVisible])
+
+    useEffect(() => {
+        if (initialRoute === 'ProfessionalStart') {
+            props.navigation.navigate('ProfessionalHome', {
+                previewScreen: 'Splash',
+            })
+        }
+        else if (initialRoute === 'ClientStart') {
+            props.navigation.navigate('CategoriesSearch', {
+                previewScreen: 'Splash',
+            })
+        }
+        else if (initialRoute === 'LoginStart') {
+            props.navigation.navigate('Login', {
+                previewScreen: 'Splash',
+            })
+        }
+        else if (initialRoute === 'NotificationStart') {
+            props.navigation.navigate('ProfessionalChat', {
+                previewScreen: 'Splash',
+            })
+        }
+    }, [initialRoute])
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
         console.log('Message handled in the background!', remoteMessage);
@@ -196,9 +150,6 @@ function SplashScreen(props) {
                             const professional = { id: msg.professional_id, name: notification.title }
                             props.professionalSelected(professional)
                         }
-                        props.navigation.navigate('ProfessionalChat', {
-                            previewScreen: 'Splash',
-                        })
                     }
                 }
             }
@@ -335,66 +286,62 @@ function SplashScreen(props) {
 
     const getUserData = async () => {
         try {
-            setTimeout(async () => {
-                const userData = await AsyncStorage.getItem('@userData')
-                if (userData) {
-                    const clientData = await AsyncStorage.getItem('@clientData')
-                    const professionalData = await AsyncStorage.getItem('@professionalData')
+            /* setTimeout(async () => {
+                
+            }, 2000) */
 
-                    console.log('userData => ', userData)
-                    console.log('clientData => ', clientData)
-                    console.log('professionalData => ', professionalData)
+            const userData = await AsyncStorage.getItem('@userData')
+            if (userData) {
+                const clientData = await AsyncStorage.getItem('@clientData')
+                const professionalData = await AsyncStorage.getItem('@professionalData')
 
+                console.log('userData => ', userData)
+                console.log('clientData => ', clientData)
+                console.log('professionalData => ', professionalData)
 
-                    const clientJson = clientData ? JSON.parse(clientData) : null
-                    const professionalJson = professionalData ? JSON.parse(professionalData) : null
+                const clientJson = clientData ? JSON.parse(clientData) : null
+                const professionalJson = professionalData ? JSON.parse(professionalData) : null
 
-                    let userType = professionalJson && professionalJson.id ? 'professional' : 'client'
-                    const userJson = { ...JSON.parse(userData), userType }
+                let userType = professionalJson && professionalJson.id ? 'professional' : 'client'
+                const userJson = { ...JSON.parse(userData), userType }
 
-                    if (clientJson !== null && clientJson.id)
-                        props.clientUpdateSuccess(clientJson)
+                if (clientJson !== null && clientJson.id)
+                    props.clientUpdateSuccess(clientJson)
 
-                    if (professionalJson !== null && professionalJson.id)
-                        props.professionalUpdateSuccess(professionalJson)
+                if (professionalJson !== null && professionalJson.id)
+                    props.professionalUpdateSuccess(professionalJson)
 
-                    if (!professionalJson.id && !clientJson.id) {
-                        await AsyncStorage.setItem('@userData', JSON.stringify({}));
-                        await AsyncStorage.setItem('@clientData', JSON.stringify({}));
-                        await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
-                        props.navigation.navigate('Login', {
-                            previewScreen: 'Splash',
-                        })
-                    }
-                    else {
-                        props.authSuccess(userJson)
-
-                        if (userType === 'client')
-                            props.navigation.navigate('CategoriesSearch', {
-                                previewScreen: 'Splash',
-                            })
-                        else
-                            props.navigation.navigate('ProfessionalHome', {
-                                previewScreen: 'Splash',
-                            })
-                    }
-
-                } else {
+                if (!professionalJson.id && !clientJson.id) {
                     await AsyncStorage.setItem('@userData', JSON.stringify({}));
                     await AsyncStorage.setItem('@clientData', JSON.stringify({}));
                     await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
-                    props.navigation.navigate('Login', {
-                        previewScreen: 'Splash',
-                    })
+
+                    return "LoginStart"
                 }
-            }, 2000)
+                else {
+                    props.authSuccess(userJson)
+
+                    if (userType === 'client') {
+                        return "ClientStart"
+                    }
+                    else {
+                        return "ProfessionalStart"
+                    }
+                }
+
+            } else {
+                await AsyncStorage.setItem('@userData', JSON.stringify({}));
+                await AsyncStorage.setItem('@clientData', JSON.stringify({}));
+                await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
+
+                return "LoginStart"
+            }
         } catch (e) {
             await AsyncStorage.setItem('@userData', JSON.stringify({}));
             await AsyncStorage.setItem('@clientData', JSON.stringify({}));
             await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
-            props.navigation.navigate('Login', {
-                previewScreen: 'Splash',
-            })
+
+            return "LoginStart"
         }
     }
 

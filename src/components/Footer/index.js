@@ -96,27 +96,27 @@ function Footer({ type, selected, ...props }) {
         return (
             <ContainerFooter>
                 <FooterButton onPress={props.homeOnPress}>
-                    <Icon name="home" size={25} color={itemSelected === 'home' ? purple : gray} />
+                    <Icon name="home" size={25} color={itemSelected === 'home' ? gold : white} />
                 </FooterButton>
                 <FooterButton onPress={props.callsOnPress}>
                     <React.Fragment>
-                        <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? purple : gray} />
+                        <Icon name="playlist-add-check" size={25} color={itemSelected === 'calls' ? gold : white} />
                         {badgeCall > 0 && <Badge value={badgeCall} status="success" containerStyle={{ position: 'absolute', top: -4, right: 8 }} />}
                     </React.Fragment>
                 </FooterButton>
                 <FooterButton onPress={props.favoriteOnPress}>
-                    <ItemRounded backColor={itemSelected === 'favorite' ? purple : gray}>
-                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={white} />
+                    <ItemRounded backColor={itemSelected === 'favorite' ? gold : white}>
+                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={purple} />
                     </ItemRounded>
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
                     <React.Fragment>
-                        <Icon name="chat" size={25} color={itemSelected === 'chat' ? purple : gray} />
+                        <Icon name="chat" size={25} color={itemSelected === 'chat' ? gold : white} />
                         {badgeChat > 0 && <Badge value={badgeChat} status="success" containerStyle={{ position: 'absolute', top: -4, right: 8 }} />}
                     </React.Fragment>
                 </FooterButton>
                 <FooterButton onPress={props.perfilOnPress}>
-                    <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? purple : gray} />
+                    <Icon name="person-outline" size={25} color={itemSelected === 'perfil' ? gold : white} />
                 </FooterButton>
             </ContainerFooter>
         )

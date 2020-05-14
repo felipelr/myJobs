@@ -70,7 +70,6 @@ function ProfessionalHomeScreen(props) {
 
     const pageRef = useRef()
     const cameraRef = useRef()
-    const professionalSelectedRef = useRef()
 
     const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
     const getRatings = useGet(``, props.token)
@@ -191,7 +190,6 @@ function ProfessionalHomeScreen(props) {
         else {
             setProfessionalData(props.professionalData)
         }
-        professionalSelectedRef.current = props.professionalSelected
     }, [props.professionalSelected])
 
     useEffect(() => {
@@ -221,17 +219,8 @@ function ProfessionalHomeScreen(props) {
             return true
         }
 
-        if (!professionalSelectedRef.current.id) {
-            let canLogout = false
-            try {
-                if (props.route.params.previewScreen === 'Splash')
-                    canLogout = true
-            } catch (ex) {
-                console.log(ex)
-            }
-
-            if (canLogout) {
-                Alert.alert(
+        if (!props.professionalSelected.id) {
+            Alert.alert(
                     "Atenção",
                     "Deseja sair do aplicativo?",
                     [
@@ -244,7 +233,6 @@ function ProfessionalHomeScreen(props) {
                     ],
                     { cancelable: false }
                 );
-            }
         }
         else {
             setServices([])
@@ -421,6 +409,7 @@ function ProfessionalHomeScreen(props) {
                                 <VwContainerStories>
                                     <TxtTitle size={14}>Stories</TxtTitle>
                                     <Stories
+                                        loading={getStories.loading}
                                         novaImagem={props.professionalSelected.id ? false : true}
                                         stories={stories}
                                         onPressNewStory={handleNewStoryClick}

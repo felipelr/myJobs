@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-community/async-storage'
 import firebase from '@react-native-firebase/app'
 import messaging from '@react-native-firebase/messaging'
 
+import { useGet } from '../../services/useRequest'
+
 import ActionCreators from '../../store/actionCreators'
 
 import { purple, white, black } from '../../components/common/util/colors'
@@ -20,6 +22,8 @@ function SplashScreen(props) {
 
     const chatVisibleRef = useRef()
     const appStateRef = useRef()
+
+    const getRefreshInstaToken = useGet('')
 
     useEffect(() => {
         getUserData().then(route => {
@@ -115,6 +119,13 @@ function SplashScreen(props) {
             })
         }
     }, [initialRoute])
+
+    useEffect(() => {
+        if (getRefreshInstaToken.data && getRefreshInstaToken.data.access_token) {
+            //resultado refreshed access token
+            props.authSetInstaTokenLong(getRefreshInstaToken.data.access_token)
+        }
+    }, [getRefreshInstaToken.data])
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
         console.log('Message handled in the background!', remoteMessage);
@@ -294,6 +305,8 @@ function SplashScreen(props) {
             if (userData) {
                 const clientData = await AsyncStorage.getItem('@clientData')
                 const professionalData = await AsyncStorage.getItem('@professionalData')
+                const instaTokenLong = await AsyncStorage.getItem('@instaTokenLong')
+                const instaUserID = await AsyncStorage.getItem('@instaUserID')
 
                 console.log('userData => ', userData)
                 console.log('clientData => ', clientData)
@@ -310,6 +323,16 @@ function SplashScreen(props) {
 
                 if (professionalJson !== null && professionalJson.id)
                     props.professionalUpdateSuccess(professionalJson)
+
+                //carregar instagram user id
+                if (instaUserID && instaUserID.length)
+                    props.authSetInstaUserId(instaUserID)
+
+                //refresh instagram token
+                if (instaTokenLong && instaTokenLong.length) {
+                    props.authSetInstaTokenLong(instaTokenLong)
+                    getRefreshInstaToken.refetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${instaTokenLong}`)
+                }
 
                 if (!professionalJson.id && !clientJson.id) {
                     await AsyncStorage.setItem('@userData', JSON.stringify({}));
@@ -389,6 +412,8 @@ const mapDispatchToProps = dispatch => {
         professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
         chatSetUpdateChatBadge: (updateChatBadge) => dispatch(ActionCreators.chatSetUpdateChatBadge(updateChatBadge)),
         clientSetUpdateCallBadge: (updateChatBadge) => dispatch(ActionCreators.clientSetUpdateCallBadge(updateChatBadge)),
+        authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
+        authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
     }
 }
 

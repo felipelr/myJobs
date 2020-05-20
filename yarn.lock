@@ -5439,6 +5439,11 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
+qs@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.4.tgz#9090b290d1f91728d3c22e54843ca44aea5ab687"
+  integrity sha512-A1kFqHekCTM7cz0udomYUoYNWjBebHm/5wzU/XqrBRBNWectVH0QIiN+NEcZ0Dte5hvzHwbr8+XQmguPhJ6WdQ==
+
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
@@ -5566,10 +5571,10 @@ react-native-screens@^2.7.0:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.7.0.tgz#2d3cf3c39a665e9ca1c774264fccdb90e7944047"
   integrity sha512-n/23IBOkrTKCfuUd6tFeRkn3lB2QZ3cmvoubRscR0JU/Zl4/ZyKmwnFmUv1/Fr+2GH/H8UTX59kEKDYYg3dMgA==
 
-react-native-share@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-2.0.0.tgz#4543a746013e0d8fa9f765fb8937007cfbcffcf7"
-  integrity sha512-J8Xl3mq0L9KDFtSYtKsQDAnZWw/niZIpAD1PRiNfZFHo44Rc+oS2bEIhskNnoQXKEgBNdPzCl/DenMXYAHXRYg==
+react-native-share@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-3.3.2.tgz#06d1d3f14ba8eeb95e7e94e4db6a286e9902bd29"
+  integrity sha512-Pvkr62TiCX511RMPL+wvy9Fofre4HQnvUT5zzgPPN3vszP/C8lUb7cmFu/8x5U14t3JQg+xW/svNK5eKNebJKw==
 
 react-native-status-bar-height@^2.2.0:
   version "2.5.0"

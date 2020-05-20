@@ -6,8 +6,7 @@ export const INITIAL_STATE = {
     error: false,
     errorMessage: '',
     lastStory: {},
-    selfPage: 1,
-    communityPage: 1,
+    finishPresentation: false,
 }
 
 export const storiesSaveRequest = (state = INITIAL_STATE, action) => {
@@ -47,17 +46,28 @@ export const storiesClearError = (state = INITIAL_STATE, action) => {
     }
 }
 
-export const storiesNextSelfPage = (state = INITIAL_STATE, action) => {
+export const storiesSetFinishPresentation = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        selfPage: state.selfPage + 1
+        finishPresentation: action.finish
     }
 }
 
-export const storiesRestartSelfPage = (state = INITIAL_STATE, action) => {
+export const storiesSaveIntragramData = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        selfPage: 1
+        loading: true,
+        error: false,
+        errorMessage: ''
+    }
+}
+
+export const storiesSaveIntragramDataSuccess = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        loading: false,
+        error: false,
+        errorMessage: '',
     }
 }
 
@@ -66,8 +76,9 @@ export const HANDLES = {
     [Types.STORIES_SAVE_SUCCESS]: storiesSaveSuccess,
     [Types.STORIES_SAVE_ERROR]: storiesSaveError,
     [Types.STORIES_CLEAR_ERROR]: storiesClearError,
-    [Types.STORIES_NEXT_SELF_PAGE]: storiesNextSelfPage,
-    [Types.STORIES_RESTART_SELF_PAGE]: storiesRestartSelfPage,
+    [Types.STORIES_SET_FINISH_PRESENTATION]: storiesSetFinishPresentation,
+    [Types.STORIES_SAVE_INTRAGRAM_DATA]: storiesSaveIntragramData,
+    [Types.STORIES_SAVE_INTRAGRAM_DATA_SUCCESS]: storiesSaveIntragramDataSuccess,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

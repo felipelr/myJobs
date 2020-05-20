@@ -9,7 +9,9 @@ export const INITIAL_STATE = {
     error: false,
     errorMessage: '',
     token: '',
-    userType: 'client'
+    userType: 'client',
+    instaTokenLong: '',
+    instaUserID: '',
 }
 
 export const loginRequest = (state = INITIAL_STATE, action) => {
@@ -112,12 +114,24 @@ export const authCleanErrors = (state = INITIAL_STATE, action) => {
     }
 }
 
-
-
 export const authSetUserType = (state = INITIAL_STATE, action) => {
     return {
         ...state,
         userType: action.userType
+    }
+}
+
+export const authSetInstaTokenLong = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        instaTokenLong: action.token
+    }
+}
+
+export const authSetInstaUserId = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        instaUserID: action.id
     }
 }
 
@@ -134,6 +148,8 @@ export const HANDLERS = {
     [Types.CHANGE_PASSWORD_ERROR]: changePasswordError,
     [Types.AUTH_CLEAN_ERRORS]: authCleanErrors,
     [Types.AUTH_SET_USER_TYPE]: authSetUserType,
+    [Types.AUTH_SET_INSTA_TOKEN_LONG]: authSetInstaTokenLong,
+    [Types.AUTH_SET_INSTA_USER_ID]: authSetInstaUserId,
 }
 
 export default createReducer(INITIAL_STATE, HANDLERS)

@@ -7,8 +7,9 @@ import RNFetchBlob from 'rn-fetch-blob'
 import Moment from 'moment'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import useGet from '../../services/restServices'
+import useGetMyJobs from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
+import { useGet } from '../../services/useRequest'
 
 import {
     Capa,
@@ -67,14 +68,21 @@ function ProfessionalHomeScreen(props) {
     const [firstImageCarousel, setFirstImageCarousel] = useState('')
     const [cameraType, setCameraType] = useState('front')
     const [professionalRate, setProfessionalRate] = useState({ avg: 0, count: 0 })
+    const [storiesMyJobs, setStoriesMyJobs] = useState([])
+    const [storiesInstagram, setStoriesInstagram] = useState([])
+    const [storiesTemp, setStoriesTemp] = useState([])
+    const [storiesPage, setStoriesPage] = useState(1)
 
     const pageRef = useRef()
     const cameraRef = useRef()
 
-    const getProfessionalServices = useGet(`/professionalServices/services/${professionalData.id}.json`, props.token)
-    const getRatings = useGet(``, props.token)
-    const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`, props.token)
-    const getRate = useGet(`/ratings/professional/${professionalData.id}.json`, props.token)
+    const getProfessionalServices = useGetMyJobs(`/professionalServices/services/${professionalData.id}.json`, props.token)
+    const getRatings = useGetMyJobs(``, props.token)
+    const getRate = useGetMyJobs(`/ratings/professional/${professionalData.id}.json`, props.token)
+
+    const getStories = useGetMyJobs(``, props.token)
+    const getInstaStoriesSaved = useGetMyJobs(``, props.token)
+    const getInstaStories = useGet('')
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
@@ -88,6 +96,17 @@ function ProfessionalHomeScreen(props) {
 
         if (professionalData.backImage && professionalData.backImage.length > 0) {
             _backImage = { uri: professionalData.backImage + '?v=' + Moment(professionalData.modified).toDate().getTime() }
+        }
+
+        if (storiesMyJobs.length === 0)
+            getStories.refetch(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`)
+
+        if (props.professionalSelected.id) {
+            getInstaStoriesSaved.refetch(`/instagram/view/${professionalData.id}.json`)
+        }
+        else {
+            if (storiesInstagram.length === 0 && props.instaToken.length)
+                getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
         }
 
         setImages({ image: _image, backImage: _backImage })
@@ -149,12 +168,6 @@ function ProfessionalHomeScreen(props) {
     }, [getRatings.data])
 
     useEffect(() => {
-        if (getStories.data && getStories.data.stories) {
-            setStories(getStories.data.stories.map(item => item))
-        }
-    }, [getStories.data])
-
-    useEffect(() => {
         if (!props.isAuth) {
             props.navigation.navigate('Login')
         }
@@ -168,7 +181,6 @@ function ProfessionalHomeScreen(props) {
         if (props.professionalData.id)
             setProfessionalData(props.professionalData)
     }, [props.professionalData])
-
 
     useEffect(() => {
         if (props.professionalSelected.id) {
@@ -213,6 +225,76 @@ function ProfessionalHomeScreen(props) {
         }
     }, [getRate.data])
 
+    useEffect(() => {
+        if (storiesTemp.length) {
+            const arrayOrdered = storiesTemp.sort((a, b) => a.created.getTime() > b.created.getTime() ? -1 : a.created.getTime() < b.created.getTime() ? 1 : 0)
+            setStories(stories.concat(arrayOrdered))
+        }
+    }, [storiesTemp])
+
+
+    useEffect(() => {
+        if (getStories.data && getStories.data.stories) {
+            const arrayMyjobs = getStories.data.stories.map(item => {
+                return {
+                    ...item,
+                    created: new Date(item.created),
+                }
+            })
+            setStoriesMyJobs(arrayMyjobs)
+            setStoriesTemp(arrayPaginate(arrayMyjobs, 5, storiesPage))
+        }
+    }, [getStories.data])
+
+    useEffect(() => {
+        if (getInstaStories.data && getInstaStories.data.data && storiesInstagram.length === 0) {
+
+            //salvar dados do instagram
+            props.storiesSaveIntragramData({
+                professional_id: professionalData.id,
+                json: getInstaStories.data.data,
+            })
+
+            const arrayInsta = getInstaStories.data.data.map(item => {
+                return {
+                    id: item.id,
+                    photo: item.media_url,
+                    description: item.caption,
+                    created: new Date(item.timestamp),
+                }
+            })
+            setStoriesInstagram(arrayInsta)
+            setStoriesTemp(arrayPaginate(arrayInsta, 5, storiesPage))
+        }
+    }, [getInstaStories.data])
+
+    useEffect(() => {
+        if (getInstaStoriesSaved.data
+            && getInstaStoriesSaved.data.story
+            && getInstaStoriesSaved.data.story.json
+            && storiesInstagram.length === 0) {
+
+            console.log('getInstaStoriesSaved => ', getInstaStoriesSaved.data.story.json)
+
+            const arrayInsta = getInstaStoriesSaved.data.story.json.map(item => {
+                return {
+                    id: item.id,
+                    photo: item.media_url,
+                    description: item.caption,
+                    created: new Date(item.timestamp),
+                }
+            })
+            setStoriesInstagram(arrayInsta)
+            setStoriesTemp(arrayPaginate(arrayInsta, 5, storiesPage))
+        }
+    }, [getInstaStoriesSaved.data])
+
+    const arrayPaginate = (array, pageSize, pageNumber) => {
+        const start = (pageNumber - 1) * pageSize
+        const end = pageNumber * pageSize
+        return array.slice(start, end)
+    }
+
     const handleBackPress = async () => {
         if (pageRef.current === 'storiesCarousel') {
             handleFinishPresentitionCarousel()
@@ -221,18 +303,18 @@ function ProfessionalHomeScreen(props) {
 
         if (!props.professionalSelected.id) {
             Alert.alert(
-                    "Atenção",
-                    "Deseja sair do aplicativo?",
-                    [
-                        {
-                            text: "NÃO",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                        },
-                        { text: "SIM", onPress: () => props.logoutRequest() }
-                    ],
-                    { cancelable: false }
-                );
+                "Atenção",
+                "Deseja sair do aplicativo?",
+                [
+                    {
+                        text: "NÃO",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                    { text: "SIM", onPress: () => props.logoutRequest() }
+                ],
+                { cancelable: false }
+            );
         }
         else {
             setServices([])
@@ -359,18 +441,28 @@ function ProfessionalHomeScreen(props) {
         getStories.refetch(`/stories/viewSingle/${professionalData.id}.json?limit=5&page=1`)
     }
 
-    const handleOpenCarousel = (imageUri, index) => {
-        setFirstImageCarousel({ uri: imageUri, index: index })
+    const handleOpenCarousel = (item) => {
+        setFirstImageCarousel(item)
         setStoriesCarouselOpened(true)
+        props.storiesSetFinishPresentation(false)
     }
 
     const handleFinishPresentitionCarousel = () => {
         setStoriesCarouselOpened(false)
-        props.storiesRestartSelfPage()
+        props.storiesSetFinishPresentation(true)
     }
 
     const handleFlipCamera = () => {
         setCameraType(cameraType === 'front' ? 'back' : 'front')
+    }
+
+    const handleCloseToEndStories = () => {
+        const newPage = storiesPage + 1
+        setStoriesPage(newPage)
+        const arrayMyJobs = arrayPaginate(storiesMyJobs, 5, newPage)
+        const arrayInstagram = arrayPaginate(storiesInstagram, 5, newPage)
+
+        setStoriesTemp(arrayMyJobs.concat(arrayInstagram))
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -378,8 +470,11 @@ function ProfessionalHomeScreen(props) {
         <React.Fragment>
             {storiesCarouselOpened &&
                 <StoriesCarousel
-                    firstImage={firstImageCarousel}
-                    onFinishPresentation={handleFinishPresentitionCarousel} />}
+                    firstItem={firstImageCarousel}
+                    onFinishPresentation={handleFinishPresentitionCarousel}
+                    storiesMyJobs={storiesMyJobs}
+                    storiesInstagram={storiesInstagram} />
+            }
 
             {!storiesCarouselOpened &&
                 <React.Fragment>
@@ -413,7 +508,8 @@ function ProfessionalHomeScreen(props) {
                                         novaImagem={props.professionalSelected.id ? false : true}
                                         stories={stories}
                                         onPressNewStory={handleNewStoryClick}
-                                        onPressStory={(imageUri, index) => handleOpenCarousel(imageUri, index)} />
+                                        onPressStory={item => handleOpenCarousel(item)}
+                                        onCloseToEnd={() => handleCloseToEndStories()} />
                                 </VwContainerStories>
 
                                 <VwContainerServices>
@@ -554,6 +650,8 @@ const mapStateToProps = (state, ownProps) => {
         selectedService: state.professionalHome.selectedService,
         user: state.auth.user,
         fcmToken: state.chat.fcmToken,
+        instaToken: state.auth.instaTokenLong,
+        instaUserID: state.auth.instaUserID,
     }
 }
 
@@ -561,10 +659,11 @@ const mapDispatchToProps = dispatch => {
     return {
         logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
         professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service)),
-        storiesRestartSelfPage: () => dispatch(ActionCreators.storiesRestartSelfPage()),
         chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
         professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
         clientSelectedRequest: (client) => dispatch(ActionCreators.clientSelected(client)),
+        storiesSetFinishPresentation: (finish) => dispatch(ActionCreators.storiesSetFinishPresentation(finish)),
+        storiesSaveIntragramData: (finish) => dispatch(ActionCreators.storiesSaveIntragramData(finish)),
     }
 }
 

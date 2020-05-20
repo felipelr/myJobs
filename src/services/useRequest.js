@@ -1,7 +1,6 @@
 import { useReducer, useEffect } from 'react'
 import axios from 'axios'
-import { urlMyJobsAPI } from '../config/config'
-import { stringify } from 'qs'
+import qs from 'qs'
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -36,16 +35,41 @@ const INITIAL_STATE = {
     errorMessage: '',
 }
 
-const useGet = (url, token) => {
+export const usePost = (url, data) => {
+    const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
+    const refetch = async (newUrl, newData) => {
+        dispatch({ type: 'REQUEST' })
+        try {
+            const resposta = await axios.post(newUrl, qs.stringify(newData),
+                {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            dispatch({ type: 'SUCCESS', data: resposta.data })
+        } catch (ex) {
+            const messageError = ex.message
+            console.log('usePost => ', JSON.stringify(ex))
+            dispatch({ type: 'ERROR', errorMessage: messageError })
+        }
+    }
+    useEffect(() => {
+        if (url !== '') {
+            refetch(url, data);
+        }
+    }, [url])
+    return {
+        ...state,
+        refetch,
+    };
+}
+
+export const useGet = (url) => {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
     const refetch = async (newUrl) => {
         dispatch({ type: 'REQUEST' })
         try {
-            const resposta = await axios.get(`${urlMyJobsAPI}` + newUrl, {
-                headers: {
-                    Authorization: 'Bearer ' + token
-                }
-            })
+            const resposta = await axios.get(newUrl)
 
             dispatch({ type: 'SUCCESS', data: resposta.data })
         } catch (ex) {
@@ -64,6 +88,3 @@ const useGet = (url, token) => {
         refetch,
     };
 }
-
-
-export default useGet

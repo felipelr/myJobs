@@ -11,10 +11,21 @@ import {
 
 import { lightgray } from '../common/util/colors'
 
-const Stories = ({ loading, novaImagem, stories, onPressNewStory, onPressStory, ...props }) => {
+const Stories = ({ loading, novaImagem, stories, onPressNewStory, onPressStory, onCloseToEnd, ...props }) => {
+
+    const isCloseToRight = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        const paddingToRight = 10;
+        return layoutMeasurement.width + contentOffset.x  >= contentSize.width - paddingToRight;
+    };
 
     return (
-        <SvwContainerStories>
+        <SvwContainerStories
+            onScroll={({ nativeEvent }) => {
+                if (isCloseToRight(nativeEvent)) {
+                    onCloseToEnd()
+                }
+            }}
+            scrollEventThrottle={400}>
             {
                 novaImagem &&
                 <VwContainerStorieItemEmpty onPress={onPressNewStory}>
@@ -22,13 +33,13 @@ const Stories = ({ loading, novaImagem, stories, onPressNewStory, onPressStory, 
                 </VwContainerStorieItemEmpty>
             }
             {stories.map((item, index) => (
-                <VwContainerStorieItem key={item.id} onPress={() => onPressStory(item.photo, index)}>
+                <VwContainerStorieItem key={item.id} onPress={() => onPressStory(item)}>
                     <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
                 </VwContainerStorieItem>
             ))}
 
             {(!loading && !stories.length) && <TextInfo>Não há stories deste perfil...</TextInfo>}
-            
+
             {loading && <React.Fragment>
                 <VwContainerStorieItem>
                     <Text style={{ backgroundColor: lightgray, width: '100%', height: '100%', borderRadius: 10 }} />

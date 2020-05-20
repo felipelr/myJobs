@@ -14,9 +14,7 @@ import {
 } from './styles'
 
 function StoriesCarousel(props) {
-    const [professionalData] = useState(props.professionalSelected.id ? props.professionalSelected : props.professionalData)
-    const [imageUri, setImagesUri] = useState(props.ownProps.firstImage.uri)
-    const [firstIndex, setFirstIndex] = useState(props.ownProps.firstImage.index)
+    const [imageUri, setImagesUri] = useState(props.ownProps.firstItem.photo.uri)
     const [progressValue, setProgressValue] = useState(10)
     const [movePresentation, setMovePresentation] = useState('')
 
@@ -25,10 +23,13 @@ function StoriesCarousel(props) {
     const pageRef = useRef()
     const startTimeStampRef = useRef()
     const stopPresentationRef = useRef()
-
-    const getStories = useGet(`/stories/viewSingle/${professionalData.id}.json?limit=5&page=${props.stories.selfPage}`, props.token)
+    const finishPresentationRef = useRef()
 
     useEffect(() => {
+        const newArray = props.storiesMyJobs.concat(props.storiesInstagram)
+        const arrayOrdered = newArray.sort((a, b) => a.created.getTime() > b.created.getTime() ? -1 : a.created.getTime() < b.created.getTime() ? 1 : 0)
+
+        playPresentation(arrayOrdered)
 
         return () => {
             if (presentationRef.current)
@@ -44,37 +45,35 @@ function StoriesCarousel(props) {
     }, [movePresentation])
 
     useEffect(() => {
-        if (getStories.data && getStories.data.stories) {
-            if (getStories.data.stories.length > 0) {
-                console.log('playPresentation => fisrt ID ', getStories.data.stories[0].id)
-                playPresentation()
-            }
-            else {
-                console.log('No data ')
-                props.onFinishPresentation()
-            }
-        }
-    }, [getStories.data])
+        finishPresentationRef.current = props.finishPresentarion
+        console.log('finishPresentarion => ', props.finishPresentarion)
+    }, [props.finishPresentarion])
 
-    const playPresentation = () => {
+    const playPresentation = (arrayCarousel) => {
         let time = 0
         let percTime = 0
-        let pos = firstIndex !== 0 ? firstIndex : 0
-        const size = getStories.data.stories.length
+        let pos = 0
+        const firstIndex = arrayCarousel.indexOf(props.ownProps.firstItem)
 
-        setFirstIndex(0)
+        if (firstIndex !== 0)
+            pos = firstIndex
+
+        const size = arrayCarousel.length
+
+        console.log('playPresentation => size: ', size, 'pos: ', pos)
 
         if (pos < size) {
-            const firstItem = getStories.data.stories[pos]
+            const firstItem = arrayCarousel[pos]
             setImagesUri(firstItem.photo)
         }
 
         presentationRef.current = setInterval(() => {
-            if (pos >= size) {
-                console.log('storiesNextSelfPage')
-                props.storiesNextSelfPage()
+            if (pos >= size || finishPresentationRef.current) {
+                console.log('finishPresentation => pos: ', pos, ' size: ', size)
                 clearInterval(presentationRef.current)
                 clearInterval(pageRef.current)
+
+                props.onFinishPresentation()
             }
 
             if (pos < size) {
@@ -93,7 +92,7 @@ function StoriesCarousel(props) {
                             setProgressValue(percTime)
 
                             if (pos < size) {
-                                const item = getStories.data.stories[pos]
+                                const item = arrayCarousel[pos]
                                 setImagesUri(item.photo)
                             }
                             clearInterval(pageRef.current)
@@ -108,7 +107,7 @@ function StoriesCarousel(props) {
                             setProgressValue(percTime)
 
                             if (pos < size) {
-                                const item = getStories.data.stories[pos]
+                                const item = arrayCarousel[pos]
                                 setImagesUri(item.photo)
                             }
                             clearInterval(pageRef.current)
@@ -122,7 +121,7 @@ function StoriesCarousel(props) {
                             setProgressValue(percTime)
 
                             if (pos < size) {
-                                const item = getStories.data.stories[pos]
+                                const item = arrayCarousel[pos]
                                 setImagesUri(item.photo)
                             }
                             clearInterval(pageRef.current)
@@ -147,6 +146,7 @@ function StoriesCarousel(props) {
     }
 
     const onEndPress = (evt) => {
+        console.log('onEndPress => STOP')
         stopPresentationRef.current = 0
         const duration = evt.timeStamp - startTimeStampRef.current
         if (duration < 250) {
@@ -181,13 +181,14 @@ const mapStateToProps = (state, ownProps) => {
         professionalData: state.professional.professional,
         professionalSelected: state.professional.selected,
         stories: state.stories,
-        ownProps: ownProps
+        ownProps: ownProps,
+        finishPresentation: state.stories.finishPresentation,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        storiesNextSelfPage: () => dispatch(ActionCreators.storiesNextSelfPage()),
+        
     }
 }
 

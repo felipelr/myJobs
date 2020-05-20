@@ -46,7 +46,7 @@ function ItemHighlight(props) {
                         rounded
                         size={heightPercentageToDP('10%')}
                         source={{
-                            uri: profissional.imagem,
+                            uri: profissional.photo,
                         }} />
                 }
                 {!profissional &&

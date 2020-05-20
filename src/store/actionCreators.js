@@ -14,6 +14,8 @@ export const { Types, Creators } = createActions({
     changePasswordError: ['error'],
     authCleanErrors: null,
     authSetUserType: ['userType'],
+    authSetInstaTokenLong: ['token'],
+    authSetInstaUserId: ['id'],
 
     //SignUp Actions
     signupRequest: ['user'],
@@ -110,8 +112,9 @@ export const { Types, Creators } = createActions({
     storiesSaveSuccess: ['story'],
     storiesSaveError: ['error'],
     storiesClearError: null,
-    storiesNextSelfPage: null,
-    storiesRestartSelfPage: null,
+    storiesSetFinishPresentation: ['finish'],
+    storiesSaveIntragramData: ['story'],
+    storiesSaveIntragramDataSuccess: null,
 
     //Chat
     chatSendNewMessage: ['token', 'message'],

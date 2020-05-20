@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { View, BackHandler, Animated, Dimensions } from 'react-native'
+import { View, BackHandler, Animated, Dimensions, Linking, Platform } from 'react-native'
 import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
 import Moment from 'moment'
+import AsyncStorage from '@react-native-community/async-storage'
+
+import { usePost, useGet } from '../../services/useRequest'
+
+import { instagramAppID, instagramAppSecret, instagramRedirectUrl } from '../../config/config'
 
 import ActionCreators from '../../store/actionCreators'
 
@@ -77,6 +82,10 @@ function PerfilScreen(props) {
         {
             title: 'Sorteios',
             icon: 'redeem'
+        },
+        {
+            title: 'Habilitar Instagram',
+            icon: 'lock-open'
         }
     ])
     const [listProfessional] = useState([
@@ -108,18 +117,26 @@ function PerfilScreen(props) {
             title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
             icon: 'share'
         },
+        {
+            title: 'Habilitar Instagram',
+            icon: 'lock-open'
+        }
     ])
 
     const pageRef = useRef()
+
+    const postInstaAcessToken = usePost('', {})
+    const getInstaAcessTokenLong = useGet('')
 
     useEffect(() => {
         pageRef.current = 'menu'
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
-        console.log('userType', props.userType)
+        Linking.addEventListener('url', handleOpenURL)
 
         return () => {
             backHandler.remove()
+            Linking.removeEventListener('url', handleOpenURL)
         }
     }, [])
 
@@ -174,6 +191,40 @@ function PerfilScreen(props) {
         }
     }, [show])
 
+    useEffect(() => {
+        if (postInstaAcessToken.data && postInstaAcessToken.data.access_token) {
+            //resultado com acessToken de curta duracao
+            const instaToken = postInstaAcessToken.data.access_token
+            const instaUserID = postInstaAcessToken.data.user_id
+            console.log('instaAcessToken => ', instaToken)
+
+            //salvar insta user id
+            saveInstaUserID(instaUserID).then(saved => {
+                if (saved)
+                    props.authSetInstaUserId(instaUserID)
+            })
+
+            //gerar o token de longa duracao
+            const grant = 'ig_exchange_token'
+            getInstaAcessTokenLong.refetch(`https://graph.instagram.com/access_token?grant_type=${grant}&client_secret=${instagramAppSecret}&access_token=${instaToken}`)
+        }
+    }, [postInstaAcessToken.data])
+
+    useEffect(() => {
+        if (getInstaAcessTokenLong.data && getInstaAcessTokenLong.data.access_token) {
+            //resultado com acessToken de longa duracao
+            const instaLongToken = getInstaAcessTokenLong.data.access_token
+            console.log('newInstaAcessTokenLong => ', instaLongToken)
+
+            //salvar o token de longa duracao
+            saveInstaAcessTokenLong(instaLongToken).then((saved) => {
+                if (saved) {
+                    props.authSetInstaTokenLong(instaLongToken)
+                }
+            })
+        }
+    }, [getInstaAcessTokenLong.data])
+
     const handleBackPress = async () => {
         handleClickBack()
         return true
@@ -217,6 +268,9 @@ function PerfilScreen(props) {
                 setShow('sugerir_servicos')
                 pageRef.current = 'sugerir_servicos'
                 doAnimation = true
+                break
+            case 'Habilitar Instagram':
+                handleClickInstagram()
                 break
             default:
                 setShow('menu')
@@ -283,6 +337,77 @@ function PerfilScreen(props) {
         else {
             setSelectedUserType(0)
             props.authSetUserType('client')
+        }
+    }
+
+    const handleClickInstagram = () => {
+        console.log('handleClickInstagram')
+        const scope = 'user_profile,user_media'
+        const state = props.user.sub
+        const url = `https://www.instagram.com/oauth/authorize?client_id=${instagramAppID}&redirect_uri=${instagramRedirectUrl}&scope=${scope}&response_type=code&state=${state}`
+        Linking.openURL(url).then(result => {
+            console.log('openURL', result)
+        }).catch(err => {
+            console.error('An error occurred', err)
+        });
+    }
+
+    const getParameterByName = (name, url) => {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    const handleOpenURL = (event) => {
+        console.log('handleOpenURL => ', event)
+        if (event != null) {
+            if (event.url) {
+                const url = event.url.replace("#_", "")
+                const code = getParameterByName('code', url)
+                const userid = getParameterByName('state', url)
+
+                console.log('code => ', code)
+                console.log('userid => ', userid)
+
+                if (code && code.length) {
+                    //autorizado
+                    const data = {
+                        client_id: instagramAppID,
+                        client_secret: instagramAppSecret,
+                        code: code,
+                        grant_type: 'authorization_code',
+                        redirect_uri: instagramRedirectUrl,
+                    }
+
+                    postInstaAcessToken.refetch('https://api.instagram.com/oauth/access_token', data)
+                }
+            }
+        }
+    }
+
+    const saveInstaAcessTokenLong = async (token) => {
+        try {
+            const storageName = '@instaTokenLong'
+            await AsyncStorage.setItem(storageName, token)
+            console.log('saved TOKEN => ', token)
+            return true
+        } catch (e) {
+            console.log('saveInstaAcessTokenLong => ', JSON.stringify(e))
+            return false
+        }
+    }
+
+    const saveInstaUserID = async (id) => {
+        try {
+            const storageName = '@instaUserID'
+            await AsyncStorage.setItem(storageName, id.toString())
+            return true
+        } catch (e) {
+            console.log('saveInstaUserID => ', JSON.stringify(e))
+            return false
         }
     }
 
@@ -417,6 +542,7 @@ const mapStateToProps = (state, ownProps) => {
         client: state.client.client,
         professional: state.professional.professional,
         userType: state.auth.userType,
+        user: state.auth.user,
         ownProps: ownProps,
     }
 }
@@ -427,7 +553,9 @@ const mapDispatchToProps = dispatch => {
         authCleanErrors: () => dispatch(ActionCreators.authCleanErrors()),
         professionalsCleanErrors: () => dispatch(ActionCreators.professionalsCleanErrors()),
         authSetUserType: (userType) => dispatch(ActionCreators.authSetUserType(userType)),
-        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional))
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
+        authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
     }
 }
 

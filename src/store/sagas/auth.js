@@ -81,6 +81,8 @@ function* logOut() {
         yield AsyncStorage.setItem('@userData', JSON.stringify({}));
         yield AsyncStorage.setItem('@clientData', JSON.stringify({}));
         yield AsyncStorage.setItem('@professionalData', JSON.stringify({}));
+        yield AsyncStorage.setItem('@instaTokenLong', '');
+        yield AsyncStorage.setItem('@instaUserID', '');
 
         yield put(ActionCreator.logoutSuccess())
     } catch (ex) {

@@ -5,11 +5,11 @@ import AsyncStorage from '@react-native-community/async-storage'
 import firebase from '@react-native-firebase/app'
 import messaging from '@react-native-firebase/messaging'
 
-import { useGet } from '../../services/useRequest'
-
 import ActionCreators from '../../store/actionCreators'
 
-import { purple, white, black } from '../../components/common/util/colors'
+import { useGet } from '../../services/useRequest'
+
+import { purple } from '../../components/common/util/colors'
 
 import { ViewContainer, ImgLogoTipo } from './styles'
 
@@ -20,10 +20,10 @@ var PushNotification = require("react-native-push-notification")
 function SplashScreen(props) {
     const [initialRoute, setInitialRoute] = useState('')
 
+    const getRefreshInstaToken = useGet('')
+
     const chatVisibleRef = useRef()
     const appStateRef = useRef()
-
-    const getRefreshInstaToken = useGet('')
 
     useEffect(() => {
         getUserData().then(route => {
@@ -330,8 +330,12 @@ function SplashScreen(props) {
 
                 //refresh instagram token
                 if (instaTokenLong && instaTokenLong.length) {
-                    props.authSetInstaTokenLong(instaTokenLong)
-                    getRefreshInstaToken.refetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${instaTokenLong}`)
+                    //props.authSetInstaTokenLong(instaTokenLong)
+
+                    //refresh instagram token
+                    if (instaTokenLong && instaTokenLong.length) {
+                        getRefreshInstaToken.refetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${instaTokenLong}`)
+                    }
                 }
 
                 if (!professionalJson.id && !clientJson.id) {

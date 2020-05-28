@@ -72,7 +72,9 @@ function CategoriesSearchScreen(props) {
 
     useEffect(() => {
         if (!props.isAuth) {
-            props.ownProps.navigation.navigate('Login')
+            props.ownProps.navigation.navigate('Login', {
+                previewScreen: props.route.name,
+            })
         }
     }, [props.isAuth]);
 
@@ -96,14 +98,26 @@ function CategoriesSearchScreen(props) {
             let canGoBack = true
 
             try {
-                if (props.route.params.previewScreen === 'Splash')
+                if (props.route.params && props.route.params.previewScreen === 'Splash')
                     canGoBack = false
             } catch (ex) {
                 console.log(ex)
             }
 
-            if (canGoBack)
-                props.navigation.goBack()
+            if (canGoBack) {
+                if (props.route.params.previewScreen === 'Services') {
+                    props.navigation.navigate('ProfessionalHome', {
+                        previewScreen: props.route.name,
+                        viewProfile: false,
+                    })
+                }
+                else {
+                    props.navigation.navigate(props.route.params.previewScreen, {
+                        previewScreen: props.route.name,
+                        viewProfile: false,
+                    })
+                }
+            }
         }
         return true
     }
@@ -134,7 +148,7 @@ function CategoriesSearchScreen(props) {
             <Container />
             <HeaderJob filter={true} onChangeText={handleFilterChangeText} />
             <ContainerCategorias>
-                <Highlights titulo={'Destaques do mês'} highlights={highlights} navigation={props.navigation} />
+                <Highlights titulo={'Destaques do mês'} highlights={highlights} navigation={props.navigation} route={props.route} />
                 <Categories itens={categories} />
                 <View style={{ flex: 2, marginTop: 2 }}>
                     {
@@ -146,7 +160,9 @@ function CategoriesSearchScreen(props) {
                             tipo='subcategory'
                             titulo={'Subcategorias de \'' + (props.selectedCategorie != null ? props.selectedCategorie.description : 'Todas') + "'"}
                             itens={subCategories}
-                            itemOnPress={() => props.navigation.navigate('Services')} />
+                            itemOnPress={() => props.navigation.navigate('Services', {
+                                previewScreen: props.route.name,
+                            })} />
                     }
                     {
                         (!getSubcategories.loading && !(filterText.length > 0 || (props.selectedCategorie != null && props.selectedCategorie.id != 0))) &&
@@ -160,10 +176,21 @@ function CategoriesSearchScreen(props) {
             <Footer
                 type={props.userType}
                 selected={'home'}
-                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('CallsList')}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome', {
+                    previewScreen: props.route.name,
+                    viewProfile: false
+                })}
+                callsOnPress={() => props.navigation.navigate('CallsList', {
+                    previewScreen: props.route.name,
+                })}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
+                    previewScreen: props.route.name,
+                }) : props.navigation.navigate('ProfessionalListChat', {
+                    previewScreen: props.route.name,
+                })}
+                perfilOnPress={() => props.navigation.navigate('Perfil', {
+                    previewScreen: props.route.name,
+                })}
             />
         </View>
     )

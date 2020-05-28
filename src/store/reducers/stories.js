@@ -7,6 +7,7 @@ export const INITIAL_STATE = {
     errorMessage: '',
     lastStory: {},
     finishPresentation: false,
+    storiesInstagram: []
 }
 
 export const storiesSaveRequest = (state = INITIAL_STATE, action) => {
@@ -71,6 +72,13 @@ export const storiesSaveIntragramDataSuccess = (state = INITIAL_STATE, action) =
     }
 }
 
+export const storiesSetInstagramData = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        storiesInstagram: action.stories,
+    }
+}
+
 export const HANDLES = {
     [Types.STORIES_SAVE_REQUEST]: storiesSaveRequest,
     [Types.STORIES_SAVE_SUCCESS]: storiesSaveSuccess,
@@ -79,6 +87,7 @@ export const HANDLES = {
     [Types.STORIES_SET_FINISH_PRESENTATION]: storiesSetFinishPresentation,
     [Types.STORIES_SAVE_INTRAGRAM_DATA]: storiesSaveIntragramData,
     [Types.STORIES_SAVE_INTRAGRAM_DATA_SUCCESS]: storiesSaveIntragramDataSuccess,
+    [Types.STORIES_SET_INSTAGRAM_DATA]: storiesSetInstagramData,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

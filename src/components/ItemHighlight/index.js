@@ -24,6 +24,7 @@ import RatingJobs from '../RatingJobs'
 function ItemHighlight(props) {
     const { profissional } = props.ownProps
     const { navigation } = props.ownProps
+    const { route } = props.ownProps
 
     useEffect(() => {
         return () => {
@@ -33,7 +34,10 @@ function ItemHighlight(props) {
     const handlePress = () => {
         if (profissional) {
             props.professionalSelectedRequest(profissional)
-            navigation.navigate('ProfessionalHomeView')
+            navigation.navigate('ProfessionalHome', {
+                previewScreen: route.name,
+                viewProfile: true,
+            })
         }
     }
 

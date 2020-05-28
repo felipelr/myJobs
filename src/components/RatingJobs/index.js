@@ -1,42 +1,46 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Rating } from 'react-native-elements'
 import { ContainerRating, RatingText } from './styles'
 import { white, black } from '../common/util/colors'
 import assets from './assets'
 
 export default function RatingJobs({ backPurple, avaliacao, qtdeAvaliacoes, ...props }) {
-    const [qtdeAvaliacoesAbbr, setQtdeAbbr] = useState(0)
+    const [value, setValue] = useState(0)
+    const [text, setText] = useState(0)
+    const [color, setColor] = useState(black)
+
+    const unmontRef = useRef()
 
     useEffect(() => {
-        setQtdeAbbr(abbrNum(qtdeAvaliacoes, 2))
+        unmontRef.current = false;
+        return () => {
+            unmontRef.current = true;
+        }
     }, [])
 
-    const abbrNum = (number, decPlaces) => {
-        if (number === 0)
-            return 0
-            
-        decPlaces = Math.pow(10, decPlaces);
-        const abbrev = ["k", "m", "b", "t"];
-        for (let i = abbrev.length - 1; i >= 0; i--) {
-            let size = Math.pow(10, (i + 1) * 3);
-            if (size <= number) {
-                number = Math.round(number * decPlaces / size) / decPlaces;
-                if ((number == 1000) && (i < abbrev.length - 1)) {
-                    number = 1;
-                    i++;
-                }
-                number += abbrev[i];
-                break;
-            }
+    useEffect(() => {
+        if (!unmontRef.current) {
+            setValue(avaliacao == null ? 0 : parseInt(avaliacao))
         }
-        return number;
-    }
+    }, [avaliacao])
+
+    useEffect(() => {
+        if (!unmontRef.current) {
+            setText(qtdeAvaliacoes == 0 ? '' : qtdeAvaliacoes > 999 ? ((qtdeAvaliacoes / 1000) + 'k') : qtdeAvaliacoes)
+        }
+    }, [qtdeAvaliacoes])
+
+    useEffect(() => {
+        if (!unmontRef.current) {
+            setColor(backPurple ? white : black)
+        }
+    }, [backPurple])
 
     return (
         <ContainerRating>
-            {backPurple && <Rating readonly type='custom' imageSize={16} fractions={1} startingValue={avaliacao == null ? 0 : parseInt(avaliacao)} ratingBackgroundColor={white} ratingImage={assets.star} />}
-            {!backPurple && <Rating readonly type='star' imageSize={16} fractions={1} startingValue={avaliacao == null ? 0 : parseInt(avaliacao)} ratingBackgroundColor={white} />}
-            <RatingText color={backPurple ? white : black}>{qtdeAvaliacoesAbbr == 0 ? '' : qtdeAvaliacoesAbbr}</RatingText>
+            {backPurple && <Rating readonly type='custom' imageSize={16} fractions={1} startingValue={value} ratingBackgroundColor={white} ratingImage={assets.star} />}
+            {!backPurple && <Rating readonly type='star' imageSize={16} fractions={1} startingValue={value} ratingBackgroundColor={white} />}
+            <RatingText color={color}>{text}</RatingText>
         </ContainerRating>
     )
 }

@@ -50,12 +50,16 @@ function ServicesScreen(props) {
 
     useEffect(() => {
         if (!props.isAuth) {
-            props.navigation.navigate('Login');
+            props.navigation.navigate('Login', {
+                previewScreen: props.route.name,
+            });
         }
     }, [props.isAuth]);
 
     const back = async () => {
-        props.navigation.goBack()
+        props.navigation.navigate('CategoriesSearch', {
+            previewScreen: props.route.name,
+        })
         return true
     }
 
@@ -64,7 +68,7 @@ function ServicesScreen(props) {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
             <Container />
             <HeaderJobs back={back} title='Serviços' />
-            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} navigation={props.navigation}/>
+            <Highlights titulo={'Destaques do mês'} highlights={highlights} subcategorie={true} navigation={props.navigation} route={props.route} />
             <ContainerSearch>
                 <SearchBar placeholder="Oque você está procurando?"
                     placeholderTextColor='white'
@@ -89,16 +93,28 @@ function ServicesScreen(props) {
                         tipo='service'
                         titulo={("Serviços de '" + props.selectedSubcategory.description + "'")}
                         itens={servicesSubcategory}
-                        itemOnPress={() => props.navigation.navigate('Professionals')} />
+                        itemOnPress={() => props.navigation.navigate('Professionals', {
+                            previewScreen: props.route.name,
+                        })} />
                 }
             </ContainerList>
             <Footer
                 type={props.userType}
                 selected={'home'}
-                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('CallsList')}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome', {
+                    previewScreen: props.route.name,
+                })}
+                callsOnPress={() => props.navigation.navigate('CallsList', {
+                    previewScreen: props.route.name,
+                })}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
+                    previewScreen: props.route.name,
+                }) : props.navigation.navigate('ProfessionalListChat', {
+                    previewScreen: props.route.name,
+                })}
+                perfilOnPress={() => props.navigation.navigate('Perfil', {
+                    previewScreen: props.route.name,
+                })} />
         </KeyboardAvoidingView>
     )
 }

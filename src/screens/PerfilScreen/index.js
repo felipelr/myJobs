@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { View, BackHandler, Animated, Dimensions, Linking, Platform } from 'react-native'
 import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import IconFont from 'react-native-vector-icons/FontAwesome'
 import Share from 'react-native-share'
-import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import { usePost, useGet } from '../../services/useRequest'
@@ -48,7 +48,7 @@ function PerfilScreen(props) {
     const [slideRight] = useState(new Animated.ValueXY())
     const [showHeader, setShowHeader] = useState(true)
     const [title, setTitle] = useState('Perfil')
-    const [image, setImage] = useState((user.photo && user.photo.length > 0) ? { uri: user.photo + '?v=' + Moment(user.modified).toDate().getTime() } : { uri: '' })
+    const [image, setImage] = useState((user.photo && user.photo.length > 0) ? { uri: user.photo } : { uri: '' })
     const [show, setShow] = useState('menu')
     const [listClient] = useState([
         {
@@ -64,14 +64,6 @@ function PerfilScreen(props) {
             icon: 'lock'
         },
         {
-            title: 'Meus Agendamentos', //mvp
-            icon: 'date-range'
-        },
-        {
-            title: 'Avisos', //mvp
-            icon: 'notifications-active'
-        },
-        {
             title: 'Sugerir Profissionais/Empresas', //mvp -> colher dados de contato do indicado
             icon: 'thumb-up'
         },
@@ -80,12 +72,8 @@ function PerfilScreen(props) {
             icon: 'share'
         },
         {
-            title: 'Sorteios',
-            icon: 'redeem'
-        },
-        {
             title: 'Habilitar Instagram',
-            icon: 'lock-open'
+            icon: 'instagram'
         }
     ])
     const [listProfessional] = useState([
@@ -110,16 +98,12 @@ function PerfilScreen(props) {
             icon: 'lock'
         },
         {
-            title: 'Avisos', //mvp
-            icon: 'notifications-active'
-        },
-        {
             title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
             icon: 'share'
         },
         {
             title: 'Habilitar Instagram',
-            icon: 'lock-open'
+            icon: 'instagram'
         }
     ])
 
@@ -143,25 +127,25 @@ function PerfilScreen(props) {
     useEffect(() => {
         if (props.userType === 'client') {
             setUser(props.client)
-            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + Moment(props.client.modified).toDate().getTime() } : { uri: '' })
+            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo } : { uri: '' })
         }
     }, [props.client.modified])
 
     useEffect(() => {
         if (props.userType === 'professional') {
             setUser(props.professional)
-            setImage((props.professional.photo && props.professional.photo.length > 0) ? { uri: props.professional.photo + '?v=' + Moment(props.professional.modified).toDate().getTime() } : { uri: '' })
+            setImage((props.professional.photo && props.professional.photo.length > 0) ? { uri: props.professional.photo } : { uri: '' })
         }
     }, [props.professional.modified])
 
     useEffect(() => {
         if (props.userType === 'client') {
             setUser(props.client)
-            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo + '?v=' + Moment(props.client.modified).toDate().getTime() } : { uri: '' })
+            setImage((props.client.photo && props.client.photo.length > 0) ? { uri: props.client.photo } : { uri: '' })
         }
         else {
             setUser(props.professional)
-            setImage((props.professional.photo && props.professional.photo.length > 0) ? { uri: props.professional.photo + '?v=' + Moment(props.professional.modified).toDate().getTime() } : { uri: '' })
+            setImage((props.professional.photo && props.professional.photo.length > 0) ? { uri: props.professional.photo } : { uri: '' })
         }
     }, [props.userType])
 
@@ -491,13 +475,14 @@ function PerfilScreen(props) {
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
                                                         title={item.title}
                                                         rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                        leftIcon={{ name: item.icon }}
+                                                        leftIcon={item.icon === 'instagram' ? <IconFont name={item.icon} size={20} color={purple} /> : <Icon name={item.icon} size={20} color={purple} />}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
                                                     />
                                                 ))
                                             }
                                         </ContainerLista>
+                                        <View style={{ backgroundColor: '#FFFFFF', height: '100%' }} />
                                     </View>
                                 </ScrollViewContainer>
 
@@ -524,10 +509,20 @@ function PerfilScreen(props) {
             <Footer
                 type={props.userType}
                 selected={'perfil'}
-                homeOnPress={() => props.navigation.navigate('CategoriesSearch')}
-                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('CallsList')}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
+                homeOnPress={() => props.navigation.navigate('CategoriesSearch', {
+                    previewScreen: props.route.name,
+                })}
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome', {
+                    previewScreen: props.route.name,
+                })}
+                callsOnPress={() => props.navigation.navigate('CallsList', {
+                    previewScreen: props.route.name,
+                })}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
+                    previewScreen: props.route.name,
+                }) : props.navigation.navigate('ProfessionalListChat', {
+                    previewScreen: props.route.name,
+                })}
             />
         </React.Fragment>
     )

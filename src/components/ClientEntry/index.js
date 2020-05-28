@@ -282,7 +282,8 @@ function ClientEntry(props) {
                                     size={120}
                                     onPress={handleAvatarClick}
                                     showEditButton
-                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                    onEditPress={handleAvatarClick} />}
 
                             {image.uri.length <= 0 &&
                                 <Avatar

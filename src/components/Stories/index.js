@@ -1,5 +1,5 @@
-import React from 'react'
-import { Image, Text } from 'react-native'
+import React, { useRef, useEffect } from 'react'
+import { Text, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {
@@ -12,14 +12,25 @@ import {
 import { lightgray } from '../common/util/colors'
 
 const Stories = ({ loading, novaImagem, stories, onPressNewStory, onPressStory, onCloseToEnd, ...props }) => {
+    const scrollRef = useRef()
+
+    useEffect(() => {
+        if (loading)
+            goToTop()
+    }, [loading])
 
     const isCloseToRight = ({ layoutMeasurement, contentOffset, contentSize }) => {
         const paddingToRight = 10;
-        return layoutMeasurement.width + contentOffset.x  >= contentSize.width - paddingToRight;
+        return layoutMeasurement.width + contentOffset.x >= contentSize.width - paddingToRight;
     };
+
+    const goToTop = () => {
+        scrollRef.current.scrollTo({ x: 0, y: 0, animated: true })
+    }
 
     return (
         <SvwContainerStories
+            ref={s => { scrollRef.current = s; }}
             onScroll={({ nativeEvent }) => {
                 if (isCloseToRight(nativeEvent)) {
                     onCloseToEnd()
@@ -34,7 +45,9 @@ const Stories = ({ loading, novaImagem, stories, onPressNewStory, onPressStory, 
             }
             {stories.map((item, index) => (
                 <VwContainerStorieItem key={item.id} onPress={() => onPressStory(item)}>
-                    <Image source={{ uri: item.photo }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                    <Image
+                        source={{ uri: item.photo }}
+                        style={{ width: 110, height: 170, borderRadius: 10, backgroundColor: lightgray }} />
                 </VwContainerStorieItem>
             ))}
 

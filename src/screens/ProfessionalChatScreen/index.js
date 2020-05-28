@@ -421,6 +421,7 @@ function ProfessionalChatScreen(props) {
             props.professionalSelectedRequest(props.professionalSelected)
             props.navigation.navigate('ProfessionalHomeView', {
                 previewScreen: 'ProfessionalChat',
+                viewProfile: true,
             })
         }
     }

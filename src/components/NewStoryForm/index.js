@@ -89,8 +89,7 @@ const NewStoryForm = ({ image, onSuccess, ...props }) => {
                         }).then(result => {
                             console.log('Share Instagram => ', result)
                             if (result.message) {
-                                setNewRequest(true)
-                                props.storiesSaveRequest(props.token, form)
+                                onSuccess()
                             }
                         }).catch(err => {
                             console.log('Share Instagram Error => ', err)

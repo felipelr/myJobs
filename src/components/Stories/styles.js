@@ -11,7 +11,7 @@ export const SvwContainerStories = styled.ScrollView.attrs({
 `
 
 export const VwContainerStorieItemEmpty = styled.TouchableOpacity`
-    width:110;
+    width: 110;
     height: 170;
     background-color: ${purple};
     opacity:0.6;
@@ -42,4 +42,10 @@ export const TextInfo = styled.Text`
     font-weight: bold;
     color: ${gray};
     padding: 5px 0px 0px 10px;
+`
+
+export const ImgRounded = styled.Image`
+    height: 170;
+    width: 110;
+    border-radius: 10;
 `

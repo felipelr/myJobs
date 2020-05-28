@@ -115,6 +115,7 @@ export const { Types, Creators } = createActions({
     storiesSetFinishPresentation: ['finish'],
     storiesSaveIntragramData: ['story'],
     storiesSaveIntragramDataSuccess: null,
+    storiesSetInstagramData: ['stories'],
 
     //Chat
     chatSendNewMessage: ['token', 'message'],

@@ -134,7 +134,7 @@ function Footer({ type, selected, ...props }) {
                     </React.Fragment>
                 </FooterButton>
                 <FooterButton onPress={props.professionalProfileOnPress}>
-                    <Icon name="control-point" size={25} color={itemSelected === 'professional-profile' ? gold : white} />
+                    <Icon name="control-point" size={25} color={(itemSelected === 'professional-profile' && !props.professionalSelected.id) ? gold : white} />
                 </FooterButton>
                 <FooterButton onPress={props.chatOnPress}>
                     <React.Fragment>

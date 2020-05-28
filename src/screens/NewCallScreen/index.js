@@ -217,10 +217,20 @@ function NewCallScreen(props) {
             <Footer
                 type={props.userType}
                 selected={'home'}
-                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('CallsList')}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome', {
+                    previewScreen: props.route.name,
+                })}
+                callsOnPress={() => props.navigation.navigate('CallsList', {
+                    previewScreen: props.route.name,
+                })}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
+                    previewScreen: props.route.name,
+                }) : props.navigation.navigate('ProfessionalListChat', {
+                    previewScreen: props.route.name,
+                })}
+                perfilOnPress={() => props.navigation.navigate('Perfil', {
+                    previewScreen: props.route.name,
+                })} />
         </React.Fragment>
     )
 }

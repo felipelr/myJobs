@@ -1,20 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Dimensions, TouchableWithoutFeedback } from 'react-native'
+import { Dimensions } from 'react-native'
+import { Avatar } from 'react-native-elements'
 import { connect } from 'react-redux'
 
-import useGet from '../../services/restServices'
-import ActionCreators from '../../store/actionCreators'
-
 import ProgressBarMyJobs from '../ProgressBarMyJobs'
+
+import { purple } from '../common/util/colors'
 
 import {
     ViewContainer,
     ViewContainerAbsolute,
     ImageItem,
+    TextItem,
+    ViewInfo,
+    TextInfo,
 } from './styles'
 
 function StoriesCarousel(props) {
     const [imageUri, setImagesUri] = useState(props.ownProps.firstItem.photo.uri)
+    const [text, setText] = useState(props.ownProps.firstItem.description)
+    const [professional] = useState(props.professional)
     const [progressValue, setProgressValue] = useState(10)
     const [movePresentation, setMovePresentation] = useState('')
 
@@ -28,6 +33,8 @@ function StoriesCarousel(props) {
     useEffect(() => {
         const newArray = props.storiesMyJobs.concat(props.storiesInstagram)
         const arrayOrdered = newArray.sort((a, b) => a.created.getTime() > b.created.getTime() ? -1 : a.created.getTime() < b.created.getTime() ? 1 : 0)
+
+        console.log('arrayOrdered => ', JSON.stringify(arrayOrdered))
 
         playPresentation(arrayOrdered)
 
@@ -65,6 +72,7 @@ function StoriesCarousel(props) {
         if (pos < size) {
             const firstItem = arrayCarousel[pos]
             setImagesUri(firstItem.photo)
+            setText(firstItem.description)
         }
 
         presentationRef.current = setInterval(() => {
@@ -94,6 +102,7 @@ function StoriesCarousel(props) {
                             if (pos < size) {
                                 const item = arrayCarousel[pos]
                                 setImagesUri(item.photo)
+                                setText(item.description)
                             }
                             clearInterval(pageRef.current)
                             return
@@ -109,6 +118,7 @@ function StoriesCarousel(props) {
                             if (pos < size) {
                                 const item = arrayCarousel[pos]
                                 setImagesUri(item.photo)
+                                setText(item.description)
                             }
                             clearInterval(pageRef.current)
                             return
@@ -123,6 +133,7 @@ function StoriesCarousel(props) {
                             if (pos < size) {
                                 const item = arrayCarousel[pos]
                                 setImagesUri(item.photo)
+                                setText(item.description)
                             }
                             clearInterval(pageRef.current)
                         }
@@ -163,14 +174,26 @@ function StoriesCarousel(props) {
 
     return (
         <ViewContainer onStartShouldSetResponder={(evt) => onStartPress(evt)} onResponderRelease={(evt) => onEndPress(evt)}>
-            {imageUri !== '' &&
-                <ImageItem
-                    source={{ uri: imageUri }}
-                    resizeMode='cover' />
-            }
             <ViewContainerAbsolute>
-                <ProgressBarMyJobs percentage={progressValue} />
+                <ProgressBarMyJobs percentage={progressValue} color={purple} />
             </ViewContainerAbsolute>
+            <ViewContainer>
+                <ViewInfo>
+                    <Avatar
+                        containerStyle={{ alignSelf: 'center' }}
+                        size={50}
+                        source={{ uri: professional.photo, }}
+                        rounded={true}
+                    />
+                    <TextInfo>{professional.name}</TextInfo>
+                </ViewInfo>
+                {imageUri !== '' &&
+                    <ImageItem
+                        source={{ uri: imageUri }}
+                        resizeMode='cover' />
+                }
+                <TextItem>{text}</TextItem>
+            </ViewContainer>
         </ViewContainer>
     )
 }
@@ -178,8 +201,6 @@ function StoriesCarousel(props) {
 const mapStateToProps = (state, ownProps) => {
     return {
         token: state.auth.token,
-        professionalData: state.professional.professional,
-        professionalSelected: state.professional.selected,
         stories: state.stories,
         ownProps: ownProps,
         finishPresentation: state.stories.finishPresentation,
@@ -188,7 +209,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        
+
     }
 }
 

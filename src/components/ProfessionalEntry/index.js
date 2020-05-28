@@ -10,7 +10,7 @@ import Moment from 'moment'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { formatDate } from '../common/util/functions'
+import { formatDate, formatPhone } from '../common/util/functions'
 
 import {
     ScrollViewContainer,
@@ -81,6 +81,18 @@ function ProfessionalEntry(props) {
         }
     }, [form.date_birth])
 
+    useEffect(() => {
+        if (form.phone && form.phone.length > 0) {
+            let phone_ = formatPhone(form.phone)
+            if (form.phone !== phone_) {
+                setForm({
+                    ...form,
+                    'phone': phone_
+                })
+            }
+        }
+    }, [form.phone])
+
     const handleOnChange = (name, text) => {
         setForm({
             ...form,
@@ -98,6 +110,10 @@ function ProfessionalEntry(props) {
             case 'name':
             case 'document':
                 if (value.length === 0)
+                    return false
+                break
+            case 'phone':
+                if (value.length < 14)
                     return false
                 break
             case 'date_birth':
@@ -294,7 +310,8 @@ function ProfessionalEntry(props) {
                                     size={120}
                                     onPress={() => handleAvatarClick('photo')}
                                     showEditButton
-                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                    onEditPress={() => handleAvatarClick('photo')} />}
 
                             {image.uri.length <= 0 &&
                                 <Avatar
@@ -303,7 +320,8 @@ function ProfessionalEntry(props) {
                                     size={120}
                                     onPress={() => handleAvatarClick('photo')}
                                     showEditButton
-                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }} />}
+                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                    onEditPress={() => handleAvatarClick('photo')} />}
 
                         </ContainerAvatar>
 
@@ -324,6 +342,15 @@ function ProfessionalEntry(props) {
                                 numberOfLines={3}
                                 style={{ textAlignVertical: true }}
                                 invalidValue={invalidField === 'description'} />
+
+                            <TextInputJobs
+                                value={form.phone}
+                                name='phone'
+                                onChangeText={handleOnChange}
+                                placeholder='Telefone'
+                                textContentType='telephoneNumber'
+                                keyboardType='phone-pad'
+                                invalidValue={invalidField === 'phone'} />
 
                             <TextInputJobs
                                 value={form.document}

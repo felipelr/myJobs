@@ -33,7 +33,9 @@ function ProfessionalsScreen(props) {
     }, [])
 
     const back = async () => {
-        props.navigation.goBack()
+        props.navigation.navigate('Services', {
+            previewScreen: props.route.name,
+        })
         return true
     }
 
@@ -43,7 +45,7 @@ function ProfessionalsScreen(props) {
             <Container />
             <HeaderJobs back={back} title='Profissionais' />
             <ContainerProfessionals>
-                <Highlights titulo={'Destaques do mês'} highlights={highlights} navigation={props.navigation}/>
+                <Highlights titulo={'Destaques do mês'} highlights={highlights} navigation={props.navigation} route={props.route} />
                 {props.userType === 'client' &&
                     <ButtonContainer>
                         <ButtonOrcamento onPress={() => props.navigation.navigate('ServiceHire')}>
@@ -61,17 +63,31 @@ function ProfessionalsScreen(props) {
                             tipo='professional'
                             titulo='Profissionais/Empresas'
                             itens={getProfessionals.data.professionals}
-                            itemOnPress={() => props.navigation.navigate('ProfessionalHomeView')} />
+                            itemOnPress={() => props.navigation.navigate('ProfessionalHome', {
+                                previewScreen: props.route.name,
+                                viewProfile: true,
+                            })} />
                     }
                 </ContainerList>
             </ContainerProfessionals>
             <Footer
                 type={props.userType}
                 selected={'home'}
-                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome')}
-                callsOnPress={() => props.navigation.navigate('CallsList')}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat') : props.navigation.navigate('ProfessionalListChat')}
-                perfilOnPress={() => props.navigation.navigate('Perfil')} />
+                professionalProfileOnPress={() => props.navigation.navigate('ProfessionalHome', {
+                    previewScreen: props.route.name,
+                    viewProfile: false,
+                })}
+                callsOnPress={() => props.navigation.navigate('CallsList', {
+                    previewScreen: props.route.name,
+                })}
+                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
+                    previewScreen: props.route.name,
+                }) : props.navigation.navigate('ProfessionalListChat', {
+                    previewScreen: props.route.name,
+                })}
+                perfilOnPress={() => props.navigation.navigate('Perfil', {
+                    previewScreen: props.route.name,
+                })} />
         </KeyboardAvoidingView>
     )
 }

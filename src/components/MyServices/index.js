@@ -29,6 +29,7 @@ import HeaderJobs from '../../components/HeaderJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
+import ButtonPurple from '../ButtonPurple'
 
 function MyServices(props) {
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
@@ -253,7 +254,6 @@ function MyServices(props) {
                 <HeaderJobs
                     title='Configurar Categoria'
                     back={handleClickBack}
-                    confirm={handleConfirmPress}
                 />}
             <ViewContainer>
                 <ScrollViewContainer>
@@ -339,6 +339,9 @@ function MyServices(props) {
                                                         onPress={() => handleClickService(item)}
                                                     />)
                                             }
+                                        </View>
+                                        <View style={{ width: 150, alignSelf: 'center', marginTop: 20 }}>
+                                            <ButtonPurple onPress={handleConfirmPress}>Confirmar</ButtonPurple>
                                         </View>
                                     </React.Fragment>
                                 }

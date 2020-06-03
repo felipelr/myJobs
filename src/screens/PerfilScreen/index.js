@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { View, BackHandler, Animated, Dimensions, Linking, Platform } from 'react-native'
+import { View, BackHandler, Animated, Dimensions, Linking } from 'react-native'
 import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import IconFont from 'react-native-vector-icons/FontAwesome'
 import Share from 'react-native-share'
-import AsyncStorage from '@react-native-community/async-storage'
 
 import { usePost, useGet } from '../../services/useRequest'
 
@@ -39,6 +38,8 @@ import MyServices from '../../components/MyServices'
 import SuggestService from '../../components/SuggestService'
 
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
+import { getParameterByName } from '../../components/common/util/functions'
+import { saveInstaAcessTokenLong, saveInstaUserID } from '../../components/common/util/localStorage'
 
 function PerfilScreen(props) {
     const [doubleUser] = useState(props.client.id && props.professional.id)
@@ -52,7 +53,7 @@ function PerfilScreen(props) {
     const [show, setShow] = useState('menu')
     const [listClient] = useState([
         {
-            title: 'Dados Cadastrais', //mvp -> alterar info do usuario
+            title: 'Dados', //mvp -> alterar info do usuario
             icon: 'account-circle'
         },
         {
@@ -70,15 +71,11 @@ function PerfilScreen(props) {
         {
             title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
             icon: 'share'
-        },
-        {
-            title: 'Habilitar Instagram',
-            icon: 'instagram'
         }
     ])
     const [listProfessional] = useState([
         {
-            title: 'Dados Cadastrais', //mvp -> alterar info do usuario
+            title: 'Dados', //mvp -> alterar info do usuario
             icon: 'account-circle'
         },
         {
@@ -152,7 +149,7 @@ function PerfilScreen(props) {
     useEffect(() => {
         switch (show) {
             case 'cadastro':
-                setTitle('Dados Cadastrais')
+                setTitle('Dados')
                 break
             case 'enderecos':
                 setTitle('Meus Endereços')
@@ -217,7 +214,7 @@ function PerfilScreen(props) {
     const handleClickMenu = (item) => {
         let doAnimation = false
         switch (item) {
-            case 'Dados Cadastrais':
+            case 'Dados':
                 props.clientClearErrors()
                 setShow('cadastro')
                 pageRef.current = 'cadastro'
@@ -336,15 +333,6 @@ function PerfilScreen(props) {
         });
     }
 
-    const getParameterByName = (name, url) => {
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
-
     const handleOpenURL = (event) => {
         console.log('handleOpenURL => ', event)
         if (event != null) {
@@ -369,29 +357,6 @@ function PerfilScreen(props) {
                     postInstaAcessToken.refetch('https://api.instagram.com/oauth/access_token', data)
                 }
             }
-        }
-    }
-
-    const saveInstaAcessTokenLong = async (token) => {
-        try {
-            const storageName = '@instaTokenLong'
-            await AsyncStorage.setItem(storageName, token)
-            console.log('saved TOKEN => ', token)
-            return true
-        } catch (e) {
-            console.log('saveInstaAcessTokenLong => ', JSON.stringify(e))
-            return false
-        }
-    }
-
-    const saveInstaUserID = async (id) => {
-        try {
-            const storageName = '@instaUserID'
-            await AsyncStorage.setItem(storageName, id.toString())
-            return true
-        } catch (e) {
-            console.log('saveInstaUserID => ', JSON.stringify(e))
-            return false
         }
     }
 
@@ -460,8 +425,8 @@ function PerfilScreen(props) {
                                                         key={i}
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, margin: 0 }}
                                                         title={item.title}
-                                                        rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                        leftIcon={{ name: item.icon }}
+                                                        rightIcon={<Icon name="chevron-right" size={25} color={purple} />}
+                                                        leftIcon={<Icon name={item.icon} size={25} color={purple} />}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
                                                         bottomDivider
@@ -474,8 +439,8 @@ function PerfilScreen(props) {
                                                         key={i}
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
                                                         title={item.title}
-                                                        rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
-                                                        leftIcon={item.icon === 'instagram' ? <IconFont name={item.icon} size={20} color={purple} /> : <Icon name={item.icon} size={20} color={purple} />}
+                                                        rightIcon={<Icon name="chevron-right" size={25} color={purple} />}
+                                                        leftIcon={item.icon === 'instagram' ? <IconFont name={item.icon} size={25} color={purple} /> : <Icon name={item.icon} size={25} color={purple} />}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
                                                     />

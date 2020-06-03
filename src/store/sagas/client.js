@@ -32,10 +32,14 @@ function* updateClient(action) {
             yield put(ActionCreator.clientUpdateError(putResp.data.errorMessage))
         }
         else {
-            console.log('updateClient => ', putResp.data)
             const client = putResp.data.client
-            setClientData(client)
-            yield put(ActionCreator.clientUpdateSuccess(client))
+            if (client) {
+                setClientData(client)
+                yield put(ActionCreator.clientUpdateSuccess(client))
+            }
+            else {
+                yield put(ActionCreator.clientUpdateError('Erro ao consultar cliente'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -62,8 +66,13 @@ function* addNewClientAddress(action) {
         }
         else {
             const client = postResp.data.client
-            setClientData(client)
-            yield put(ActionCreator.clientUpdateSuccess(client))
+            if (client) {
+                setClientData(client)
+                yield put(ActionCreator.clientUpdateSuccess(client))
+            }
+            else {
+                yield put(ActionCreator.clientUpdateError('Erro ao consultar cliente'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -90,8 +99,13 @@ function* editClientAddress(action) {
         }
         else {
             const client = putResp.data.client
-            setClientData(client)
-            yield put(ActionCreator.clientUpdateSuccess(client))
+            if (client) {
+                setClientData(client)
+                yield put(ActionCreator.clientUpdateSuccess(client))
+            }
+            else {
+                yield put(ActionCreator.clientUpdateError('Erro ao consultar cliente'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -115,8 +129,13 @@ function* deleteClientAddress(action) {
         }
         else {
             const client = deleteResp.data.client
-            setClientData(client)
-            yield put(ActionCreator.clientUpdateSuccess(client))
+            if (client) {
+                setClientData(client)
+                yield put(ActionCreator.clientUpdateSuccess(client))
+            }
+            else {
+                yield put(ActionCreator.clientUpdateError('Erro ao consultar cliente'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'

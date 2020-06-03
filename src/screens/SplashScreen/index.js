@@ -23,17 +23,12 @@ function SplashScreen(props) {
     const getRefreshInstaToken = useGet('')
 
     const chatVisibleRef = useRef()
-    const appStateRef = useRef()
 
     useEffect(() => {
         getUserData().then(route => {
-            console.log('getUserData => ', route)
             setInitialRoute(route)
         })
         firebaseRequestUserPermission()
-        appStateRef.current = 'active'
-
-        AppState.addEventListener('change', handleAppStateChange)
 
         //new methods
         const _onMessage = messaging().onMessage(async remoteMessage => {
@@ -48,6 +43,8 @@ function SplashScreen(props) {
 
             //salvar badge do chat ou call
             updateBadge(jsonMessage)
+
+            updateProfessionalRating(jsonMessage)
 
             //local notification
             showNotification(notification)
@@ -85,9 +82,6 @@ function SplashScreen(props) {
             });
 
         return () => {
-            //notificationListener()
-            //notificationOpenedListener()
-            AppState.removeEventListener('change', handleAppStateChange)
             _onMessage
             _onTokenRefresh
         }
@@ -138,6 +132,8 @@ function SplashScreen(props) {
 
         //salvar badge do chat ou call
         updateBadge(jsonMessage)
+
+        updateProfessionalRating(jsonMessage)
     });
 
     const handleAppOpenedByNotification = (notification, data) => {
@@ -146,11 +142,14 @@ function SplashScreen(props) {
                 if (props.professional || props.client) {
                     const msg = JSON.parse(data.message)
 
-                    if (msg.type == 'call') {
-
+                    if (msg.type === 'call') {
+                        //abrir tela de chamados
                     }
-                    else if (msg.type == 'call_finished') {
-
+                    else if (msg.type === 'call_finished') {
+                        //abrir tela de chamados finalizados
+                    }
+                    else if (msg.type === 'rating') {
+                        //abrir home do profissional
                     }
                     else {
                         if (msg.msg_from == 'client') {
@@ -191,14 +190,13 @@ function SplashScreen(props) {
         });
     }
 
-    const handleAppStateChange = (nextAppState) => {
-        appStateRef.current = nextAppState
-    }
-
     const updateBadge = async (msg) => {
         try {
-            if (msg.type == 'call' || msg.type == 'call_finished') {
+            if (msg.type === 'call' || msg.type === 'call_finished') {
                 updateCallBadge(msg)
+            }
+            else if (msg.type === 'rating') {
+                //badge para avaliação
             }
             else {
                 updateChatBadge(msg)
@@ -297,20 +295,12 @@ function SplashScreen(props) {
 
     const getUserData = async () => {
         try {
-            /* setTimeout(async () => {
-                
-            }, 2000) */
-
             const userData = await AsyncStorage.getItem('@userData')
             if (userData) {
                 const clientData = await AsyncStorage.getItem('@clientData')
                 const professionalData = await AsyncStorage.getItem('@professionalData')
                 const instaTokenLong = await AsyncStorage.getItem('@instaTokenLong')
                 const instaUserID = await AsyncStorage.getItem('@instaUserID')
-
-                console.log('userData => ', userData)
-                console.log('clientData => ', clientData)
-                console.log('professionalData => ', professionalData)
 
                 const clientJson = clientData ? JSON.parse(clientData) : null
                 const professionalJson = professionalData ? JSON.parse(professionalData) : null
@@ -385,6 +375,18 @@ function SplashScreen(props) {
         }
     }
 
+    const updateProfessionalRating = (jsonMessage) => {
+        try {
+            if (jsonMessage && jsonMessage != null) {
+                if (jsonMessage.type === 'rating') {
+                    props.professionalSetRatingUpdated(true)
+                }
+            }
+        } catch (error) {
+            console.log('updateProfessionalRating => ', JSON.stringify(error))
+        }
+    }
+
     return (
         <ViewContainer>
             <StatusBar backgroundColor={purple} barStyle='light-content' />
@@ -418,6 +420,7 @@ const mapDispatchToProps = dispatch => {
         clientSetUpdateCallBadge: (updateChatBadge) => dispatch(ActionCreators.clientSetUpdateCallBadge(updateChatBadge)),
         authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
         authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
+        professionalSetRatingUpdated: (updated) => dispatch(ActionCreators.professionalSetRatingUpdated(updated)),
     }
 }
 

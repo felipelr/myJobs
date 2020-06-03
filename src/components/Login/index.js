@@ -69,7 +69,10 @@ function Login(props) {
                             value={form.email}
                             name='email'
                             onChangeText={handleOnChange}
-                            placeholder='Usuário' />
+                            placeholder='Usuário' 
+                            autoCompleteType='email'
+                            autoCapitalize='none'/>
+                            
                         <TextInputJobs
                             value={form.password}
                             name='password'

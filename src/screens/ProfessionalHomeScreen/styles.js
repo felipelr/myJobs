@@ -3,6 +3,10 @@ import { purple, gray, lightgray, white, black } from '../../components/common/u
 import { heightPercentageToDP, widthPercentageToDP } from '../../components/common/util/dimensions'
 import { StyleSheet } from 'react-native'
 
+export const styles = StyleSheet.create({
+    elevation: 2
+})
+
 export const Capa = styled.Image`
     width: 100%;
     height: ${heightPercentageToDP('20%')};
@@ -155,6 +159,66 @@ export const FlipCameraButtonContainer = styled.TouchableOpacity`
     justify-content: center;
 `
 
-export const styles = StyleSheet.create({
-    elevation: 2
-})
+export const TouchMaisInfo = styled.TouchableOpacity`
+    background-color: ${white};
+`
+
+export const TxtMaisInfo = styled.Text`
+    font-size: 14px;
+    color: ${black};
+    background-color: ${white};
+    text-decoration-line: underline;
+    font-style: italic;
+    padding: 10px;
+`
+export const TxtProfessionalDescrption = styled.Text`
+    font-size: 14px;
+    color: ${black};
+    padding: 10px;
+`
+
+export const ViewInfo = styled.View`
+    flex-direction: row;
+`
+
+export const TextInfo = styled.Text`
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    align-self: center;
+    padding-left: 10px;
+`
+
+export const TextAddress = styled.Text`
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 10px;
+`
+
+export const TxtHabilitarInstagram = styled.Text`
+    font-size: 14px;
+    font-weight: bold;
+    color: ${white};
+    padding: 5px;
+    align-self: center;
+`
+
+export const ViewInstagram = styled.View`
+    flex-direction: row;
+    background-color: ${purple};
+    padding: 10px;
+    border-top-right-radius: 50;
+    border-bottom-right-radius: 50;
+`
+
+export const TouchInstagram = styled.TouchableOpacity`
+    background-color: ${white};
+    width: 65%;
+`
+
+export const TouchCapa = styled.TouchableOpacity`
+    width: 100%;
+    height: ${heightPercentageToDP('20%')};
+    position: absolute;
+`

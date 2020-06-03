@@ -10,7 +10,7 @@ import Moment from 'moment'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { formatDate, formatPhone } from '../common/util/functions'
+import { formatDate, formatPhone, formatDocumento } from '../common/util/functions'
 
 import {
     ScrollViewContainer,
@@ -92,6 +92,18 @@ function ProfessionalEntry(props) {
             }
         }
     }, [form.phone])
+
+    useEffect(() => {
+        if (form.document.length > 0) {
+            let doc = formatDocumento(form.document)
+            if (form.document !== doc) {
+                setForm({
+                    ...form,
+                    'document': doc
+                })
+            }
+        }
+    }, [form.document])
 
     const handleOnChange = (name, text) => {
         setForm({
@@ -285,7 +297,7 @@ function ProfessionalEntry(props) {
     }
 
     return (
-        <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
+        <ScrollViewContainer ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
             <View style={{ flex: 1 }}>
                 {props.professional.isUpdating && <Loading size='large' color={purple} height='330' error={props.professional.errorUpdating} />}
 

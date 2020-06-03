@@ -14,7 +14,7 @@ import ButtonPurple from '../ButtonPurple/index'
 
 import { white, purple } from '../common/util/colors'
 
-import { formatPhone, formatDate } from '../common/util/functions'
+import { formatPhone, formatDate, formatDocumento } from '../common/util/functions'
 
 import {
     TextSignUpTitle,
@@ -110,6 +110,18 @@ function SignUp(props) {
             }
         }
     }, [form.phone])
+
+    useEffect(() => {
+        if (form.document.length > 0) {
+            let doc = formatDocumento(form.document)
+            if (form.document !== doc) {
+                setForm({
+                    ...form,
+                    'document': doc
+                })
+            }
+        }
+    }, [form.document])
 
     const handleOnChange = (name, text) => {
         setForm({
@@ -222,7 +234,7 @@ function SignUp(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView behavior={behavior}>
-            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
+            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
                 <View style={{ paddingBottom: 50 }}>
                     {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
 
@@ -258,6 +270,7 @@ function SignUp(props) {
                                     invalidValue={invalidField === 'phone'} />
 
                                 <TextInputJobs
+                                    value={form.document}
                                     name='document'
                                     onChangeText={handleOnChange}
                                     keyboardType='number-pad'
@@ -288,6 +301,8 @@ function SignUp(props) {
                                     placeholder='Email'
                                     textContentType='emailAddress'
                                     keyboardType='email-address'
+                                    autoCompleteType='email'
+                                    autoCapitalize='none'
                                     invalidValue={invalidField === 'email'} />
 
                                 <TextInputJobs

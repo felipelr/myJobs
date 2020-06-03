@@ -13,6 +13,9 @@ export const INITIAL_STATE = {
     selected: {},
     newServicesConfig: {},
     newCallMsg: {},
+    servicesUpdated: false,
+    ratingUpdated: false,
+    professionalView: {},
 }
 
 export const professionalsLoadRequest = (state = INITIAL_STATE, action) => {
@@ -153,6 +156,7 @@ export const professionalConfigCategory = (state = INITIAL_STATE, action) => {
         error: false,
         errorMessage: '',
         newServicesConfig: {},
+        servicesUpdated: false,
     }
 }
 
@@ -163,6 +167,7 @@ export const professionalConfigCategorySuccess = (state = INITIAL_STATE, action)
         error: false,
         errorMessage: '',
         newServicesConfig: action.config,
+        servicesUpdated: true,
     }
 }
 
@@ -243,6 +248,20 @@ export const professionalNewCallClearMsg = (state = INITIAL_STATE, action) => {
     }
 }
 
+export const professionalSetRatingUpdated = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        ratingUpdated: action.updated
+    }
+}
+
+export const professionalSetProfessionalView = (state = INITIAL_STATE, action) => {
+    return {
+        ...state,
+        professionalView: action.professional
+    }
+}
+
 export const HANDLES = {
     [Types.PROFESSIONALS_LOAD_REQUEST]: professionalsLoadRequest,
     [Types.PROFESSIONALS_LOAD_SUCCESS]: professionalsLoadSuccess,
@@ -270,6 +289,8 @@ export const HANDLES = {
     [Types.PROFESSIONAL_FINISH_CALL_SUCCESS]: professionalFinishCallSuccess,
     [Types.PROFESSIONAL_NEW_CALL_REGISTERED]: professionalNewCallRegistered,
     [Types.PROFESSIONAL_NEW_CALL_CLEAR_MSG]: professionalNewCallClearMsg,
+    [Types.PROFESSIONAL_SET_RATING_UPDATED]: professionalSetRatingUpdated,
+    [Types.PROFESSIONAL_SET_PROFESSIONAL_VIEW]: professionalSetProfessionalView,
 }
 
 export default createReducer(INITIAL_STATE, HANDLES)

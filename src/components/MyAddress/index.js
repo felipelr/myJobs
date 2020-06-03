@@ -19,6 +19,7 @@ import TextInputJobs from '../../components/TextInputJobs/index'
 import PickerJobs from '../../components/PickerJobs/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
+import ButtonPurple from '../ButtonPurple'
 
 function MyAddress(props) {
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
@@ -229,13 +230,12 @@ function MyAddress(props) {
                     <HeaderJobs
                         title={titleHeader}
                         back={gotoAddressList}
-                        confirm={handleClickConfimar}
                     />
                 )
             }
             <ViewContainer>
-                <ScrollViewContainer>
-                    <View style={{ flex: 1 }}>
+                <ScrollViewContainer keyboardShouldPersistTaps='always'>
+                    <View>
                         {props.isUpdating && <Loading size='large' color={purple} height='330' error={props.errorUpdating} />}
 
                         {(!props.isUpdating && !showForm) && (
@@ -331,6 +331,10 @@ function MyAddress(props) {
                                             }
                                         }}
                                         itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
+
+                                    <View style={{ width: 150, alignSelf: 'center' }}>
+                                        <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                                    </View>
                                 </ContainerLista>
                             </Animated.View>
                         )}

@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, Alert } from 'react-native'
+import { Platform, PermissionsAndroid, BackHandler, Modal, ScrollView, View, Alert, Linking } from 'react-native'
+import { Overlay } from 'react-native-elements';
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
 import RNFetchBlob from 'rn-fetch-blob'
-import Moment from 'moment'
+import ImageResizer from 'react-native-image-resizer'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import IconFont from 'react-native-vector-icons/FontAwesome'
 
 import useGetMyJobs from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
-import { useGet } from '../../services/useRequest'
+import { useGet, usePost } from '../../services/useRequest'
 
 import {
+    styles,
     Capa,
     CapaEmpty,
     VwContainerTitle,
@@ -31,7 +34,16 @@ import {
     ContinueButtonText,
     ImageNewStory,
     FlipCameraButtonContainer,
-    styles
+    TxtMaisInfo,
+    TouchMaisInfo,
+    TxtProfessionalDescrption,
+    ViewInfo,
+    TextInfo,
+    TextAddress,
+    TxtHabilitarInstagram,
+    ViewInstagram,
+    TouchInstagram,
+    TouchCapa,
 } from './styles'
 
 import { white } from '../../components/common/util/colors'
@@ -48,6 +60,9 @@ import MenuPicture from '../../components/MenuPicture'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
+import { getParameterByName } from '../../components/common/util/functions'
+import { saveInstaAcessTokenLong, saveInstaUserID } from '../../components/common/util/localStorage'
+import { instagramAppID, instagramAppSecret, instagramRedirectUrl } from '../../config/config'
 
 function ProfessionalHomeScreen(props) {
     const [professionalData, setProfessionalData] = useState(props.professionalSelected.id ? props.professionalSelected : props.professionalData)
@@ -72,6 +87,13 @@ function ProfessionalHomeScreen(props) {
     const [storiesInstagram, setStoriesInstagram] = useState([])
     const [storiesPage, setStoriesPage] = useState(1)
     const [storiesComplete, setStoriesComplete] = useState([])
+    const [moreInfoVisible, setMoreInfoVisible] = useState(false)
+    const [isProfSelected, setProfSelected] = useState(false)
+    const [typeImage, setTypeImage] = useState(false)
+    const [typeImageHandle, setTypeImageHandle] = useState('')
+    const [image, setImage] = useState({ uri: '' })
+    const [backImage, setBackImage] = useState({ uri: '' })
+    const [requisitou, setRequisitou] = useState(false)
 
     const pageRef = useRef()
     const cameraRef = useRef()
@@ -85,6 +107,10 @@ function ProfessionalHomeScreen(props) {
     const getInstaStoriesSaved = useGetMyJobs('', props.token)
     const getInstaStories = useGet('')
 
+    const postInstaAcessToken = usePost('', {})
+    const getInstaAcessTokenLong = useGet('')
+
+    //START - USE EFFECTS SECTION
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
@@ -94,17 +120,27 @@ function ProfessionalHomeScreen(props) {
             }
         }
 
+        Linking.addEventListener('url', handleOpenURL)
+
         return () => {
             backHandler.remove()
-            props.professionalSelectedRequest({})
+            props.professionalSetProfessionalView({})
+            Linking.removeEventListener('url', handleOpenURL)
         }
     }, [])
+
+    useEffect(() => {
+        if (props.route) {
+            routeRef.current = props.route
+        }
+    }, [props.route])
 
     useEffect(() => {
         loadProfessionalDataImages(professionalData)
     }, [professionalData.modified])
 
     useEffect(() => {
+        setProfSelected(props.professionalSelected.id ? true : false)
         if (props.professionalSelected.id) {
             setProfessionalData(props.professionalSelected)
             loadInfoProfessional(props.professionalSelected)
@@ -180,7 +216,7 @@ function ProfessionalHomeScreen(props) {
     }, [getRate.data])
 
     useEffect(() => {
-        if (props.instaToken.length > 0 && !props.professionalSelected.id) {
+        if (props.instaToken.length > 0 && !isProfSelected) {
             getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
         }
     }, [props.instaToken])
@@ -237,6 +273,17 @@ function ProfessionalHomeScreen(props) {
     }, [getInstaStoriesSaved.data])
 
     useEffect(() => {
+        const arrayFull = storiesMyJobs.concat(storiesInstagram)
+        const arrayOrdered = arrayFull.sort((a, b) => a.created.getTime() > b.created.getTime() ? -1 : a.created.getTime() < b.created.getTime() ? 1 : 0)
+        setStoriesComplete(arrayOrdered)
+    }, [storiesMyJobs, storiesInstagram])
+
+    useEffect(() => {
+        setStoriesPage(1)
+        setStories(arrayPaginate(storiesComplete, 5, 1))
+    }, [storiesComplete])
+
+    useEffect(() => {
         if (props.storiesInstagram && props.storiesInstagram.length > 0) {
             console.log('props.storiesInstagram =======================')
 
@@ -258,22 +305,90 @@ function ProfessionalHomeScreen(props) {
     }, [props.storiesInstagram])
 
     useEffect(() => {
-        const arrayFull = storiesMyJobs.concat(storiesInstagram)
-        const arrayOrdered = arrayFull.sort((a, b) => a.created.getTime() > b.created.getTime() ? -1 : a.created.getTime() < b.created.getTime() ? 1 : 0)
-        setStoriesComplete(arrayOrdered)
-    }, [storiesMyJobs, storiesInstagram])
+        if (postInstaAcessToken.data && postInstaAcessToken.data.access_token) {
+            //resultado com acessToken de curta duracao
+            const instaToken = postInstaAcessToken.data.access_token
+            const instaUserID = postInstaAcessToken.data.user_id
+            console.log('instaAcessToken => ', instaToken)
 
-    useEffect(() => {
-        setStoriesPage(1)
-        setStories(arrayPaginate(storiesComplete, 5, 1))
-    }, [storiesComplete])
+            //salvar insta user id
+            saveInstaUserID(instaUserID).then(saved => {
+                if (saved)
+                    props.authSetInstaUserId(instaUserID)
+            })
 
-    useEffect(() => {
-        if (props.route) {
-            routeRef.current = props.route
+            //gerar o token de longa duracao
+            const grant = 'ig_exchange_token'
+            getInstaAcessTokenLong.refetch(`https://graph.instagram.com/access_token?grant_type=${grant}&client_secret=${instagramAppSecret}&access_token=${instaToken}`)
         }
-    }, [props.route])
+    }, [postInstaAcessToken.data])
 
+    useEffect(() => {
+        if (getInstaAcessTokenLong.data && getInstaAcessTokenLong.data.access_token) {
+            //resultado com acessToken de longa duracao
+            const instaLongToken = getInstaAcessTokenLong.data.access_token
+            console.log('newInstaAcessTokenLong => ', instaLongToken)
+
+            //salvar o token de longa duracao
+            saveInstaAcessTokenLong(instaLongToken).then((saved) => {
+                if (saved) {
+                    props.authSetInstaTokenLong(instaLongToken)
+                }
+            })
+        }
+    }, [getInstaAcessTokenLong.data])
+
+    useEffect(() => {
+        if (props.servicesUpdated) {
+            if (isProfSelected) {
+                getProfessionalServices.refetch(`/professionalServices/services/${props.professionalSelected.id}.json`)
+            }
+            else {
+                getProfessionalServices.refetch(`/professionalServices/services/${props.professionalData.id}.json`)
+            }
+        }
+    }, [props.servicesUpdated])
+
+    useEffect(() => {
+        if (props.ratingUpdated) {
+            props.professionalSetRatingUpdated(false)
+            if (isProfSelected) {
+                getRate.refetch(`/ratings/professional/${props.professionalSelected.id}.json`)
+                getProfessionalServices.refetch(`/professionalServices/services/${props.professionalSelected.id}.json`)
+            }
+            else {
+                getRate.refetch(`/ratings/professional/${props.professionalData.id}.json`)
+                getProfessionalServices.refetch(`/professionalServices/services/${props.professionalData.id}.json`)
+            }
+        }
+    }, [props.ratingUpdated])
+
+    useEffect(() => {
+        if (requisitou && !props.professionalCtr.isUpdating) {
+            if (props.professionalCtr.errorUpdating) {
+                setRequisitou(false)
+                //erro
+            }
+            else {
+                //atualizar foto na screen
+                if (typeImage === 'backImage') {
+                    setImages({
+                        ...images,
+                        backImage: backImage,
+                    })
+                }
+                else {
+                    setImages({
+                        ...images,
+                        image: image,
+                    })
+                }
+            }
+        }
+    }, [props.professionalCtr.isUpdating])
+    //END - USE EFFECTS SECTION
+
+    //START - FUNCTIONS SECTION
     const loadInfoProfessional = (item) => {
         console.log('loadInfoProfessional => ==========================')
 
@@ -288,7 +403,7 @@ function ProfessionalHomeScreen(props) {
 
         getStories.refetch(`/stories/viewSingle/${item.id}.json?limit=50&page=1`)
 
-        if (props.professionalSelected.id) {
+        if (isProfSelected) {
             getInstaStoriesSaved.refetch(`/instagram/view/${props.professionalSelected.id}.json`)
         }
         else {
@@ -362,7 +477,7 @@ function ProfessionalHomeScreen(props) {
                 setServices([])
                 setComments([])
                 setStories([])
-                props.professionalSelectedRequest({})
+                props.professionalSetProfessionalView({})
             }
 
             if (canGoBack) {
@@ -406,6 +521,7 @@ function ProfessionalHomeScreen(props) {
     }
 
     const handleNewStoryClick = () => {
+        setTypeImageHandle('stories')
         setNewStory('')
         setNewStoryVisible(false)
         if (Platform.OS === 'ios') {
@@ -434,19 +550,27 @@ function ProfessionalHomeScreen(props) {
         }
     }
 
+    const handleNewStorySuccess = () => {
+        setNewStory('')
+        setNewStoryVisible(false)
+        setMenuOpened(true)
+        setCameraOpened(false)
+        setFolderImagesOpened(false)
+        setModalOpened(false)
+        getStories.refetch(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`)
+        if (props.instaToken.length > 0 && !isProfSelected) {
+            props.storiesSetInstagramData([])
+            setTimeout(() => {
+                getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
+            }, 1000)
+        }
+    }
+
     const handleShowMenu = () => {
         setModalOpened(true)
         setMenuOpened(true)
         setCameraOpened(false)
         setFolderImagesOpened(false)
-    }
-
-    const handleTakePicture = async () => {
-        if (cameraRef.current) {
-            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true, pauseAfterCapture: true };
-            const data = await cameraRef.current.takePictureAsync(options)
-            setNewStory(data)
-        }
     }
 
     const handleModalClose = () => {
@@ -478,39 +602,115 @@ function ProfessionalHomeScreen(props) {
         setFolderImagesOpened(true)
     }
 
-    const handleSelectPicture = (item) => {
-        RNFetchBlob.fs.readFile(item.uri, 'base64')
-            .then(data => {
-                item = {
-                    ...item,
-                    base64: data
+    const handleTakePicture = async () => {
+        if (cameraRef.current) {
+            const options = { quality: 1, base64: true, forceUpOrientation: true, fixOrientation: true, pauseAfterCapture: true };
+            const data = await cameraRef.current.takePictureAsync(options)
+
+            if (typeImageHandle === 'stories') {
+                setNewStory(data)
+            }
+            else if (typeImageHandle === 'perfil') {
+                if (typeImage === 'backImage') {
+                    ImageResizer.createResizedImage(data.uri, 1024, 1024, 'JPEG', 100)
+                        .then(({ uri }) => {
+                            RNFetchBlob.fs.readFile(uri, 'base64')
+                                .then(data64 => {
+                                    setBackImage({
+                                        uri: uri,
+                                        base64: data64
+                                    })
+                                })
+                                .catch(err => {
+
+                                })
+                        }).catch((err) => {
+
+                        })
                 }
-                setNewStory(item)
-                setNewStoryVisible(true)
-                setFolderImagesOpened(false)
-            })
-            .catch(err => {
-                setNewStory('')
-                setFolderImagesOpened(false)
-            })
+                else {
+                    ImageResizer.createResizedImage(data.uri, 250, 250, 'JPEG', 100)
+                        .then(({ uri }) => {
+                            RNFetchBlob.fs.readFile(uri, 'base64')
+                                .then(data64 => {
+                                    setImage({
+                                        uri: uri,
+                                        base64: data64
+                                    })
+                                })
+                                .catch(err => {
+
+                                })
+                        }).catch((err) => {
+
+                        })
+                }
+            }
+        }
     }
 
-    const handleNewStorySuccess = () => {
-        setNewStory('')
-        setNewStoryVisible(false)
-        setMenuOpened(true)
-        setCameraOpened(false)
-        setFolderImagesOpened(false)
-        setModalOpened(false)
-        getStories.refetch(`/stories/viewSingle/${professionalData.id}.json?limit=50&page=1`)
-        if (props.instaToken.length > 0 && !props.professionalSelected.id) {
-            props.storiesSetInstagramData([])
-            getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
+    const handleSelectPicture = (item) => {
+        if (typeImageHandle === 'stories') {
+            RNFetchBlob.fs.readFile(item.uri, 'base64')
+                .then(data => {
+                    item = {
+                        ...item,
+                        base64: data
+                    }
+                    setNewStory(item)
+                    setNewStoryVisible(true)
+                    setFolderImagesOpened(false)
+                })
+                .catch(err => {
+                    setNewStory('')
+                    setFolderImagesOpened(false)
+                })
+        }
+        else if (typeImageHandle === 'perfil') {
+            ImageResizer.createResizedImage(item.uri, 250, 250, 'JPEG', 100)
+                .then(({ uri }) => {
+                    RNFetchBlob.fs.readFile(uri, 'base64')
+                        .then(data => {
+                            if (typeImage === 'backImage') {
+                                setBackImage({
+                                    uri: uri,
+                                    base64: data
+                                })
+                            }
+                            else {
+                                setImage({
+                                    uri: uri,
+                                    base64: data
+                                })
+                            }
+
+                            setMenuOpened(true)
+                            setCameraOpened(false)
+                            setFolderImagesOpened(false)
+                            setModalOpened(false)
+
+                            //salvar imagem
+                            let professionalData_ = {
+                                ...professionalData,
+                                image: typeImage === 'photo' ? data : '',
+                                imageBackground: typeImage === 'backImage' ? data : ''
+                            }
+                            setRequisitou(true)
+                            props.professionalUpdateRequest(professionalData_, props.token)
+                        })
+                        .catch(err => {
+                            setMenuOpened(true)
+                            setCameraOpened(false)
+                            setFolderImagesOpened(false)
+                            setModalOpened(false)
+                        })
+                }).catch((err) => {
+
+                })
         }
     }
 
     const handleOpenCarousel = (item) => {
-        console.log('onPressStory => ', item)
         setFirstImageCarousel(item)
         setStoriesCarouselOpened(true)
         props.storiesSetFinishPresentation(false)
@@ -536,12 +736,85 @@ function ProfessionalHomeScreen(props) {
         setServices([])
         setComments([])
         setStories([])
-        props.professionalSelectedRequest({})
+        props.professionalSetProfessionalView({})
 
         props.navigation.navigate(view, {
             previewScreen: props.route.name
         })
     }
+
+    const toggleOverlay = () => {
+        setMoreInfoVisible(!moreInfoVisible)
+    }
+
+    const handleClickInstagram = () => {
+        console.log('handleClickInstagram')
+        const scope = 'user_profile,user_media'
+        const state = props.user.sub
+        const url = `https://www.instagram.com/oauth/authorize?client_id=${instagramAppID}&redirect_uri=${instagramRedirectUrl}&scope=${scope}&response_type=code&state=${state}`
+        Linking.openURL(url).then(result => {
+            console.log('openURL', result)
+        }).catch(err => {
+            console.error('An error occurred', err)
+        });
+    }
+
+    const handleOpenURL = (event) => {
+        console.log('handleOpenURL => ', event)
+        if (event != null) {
+            if (event.url) {
+                const url = event.url.replace("#_", "")
+                const code = getParameterByName('code', url)
+                const userid = getParameterByName('state', url)
+
+                console.log('code => ', code)
+                console.log('userid => ', userid)
+
+                if (code && code.length) {
+                    //autorizado
+                    const data = {
+                        client_id: instagramAppID,
+                        client_secret: instagramAppSecret,
+                        code: code,
+                        grant_type: 'authorization_code',
+                        redirect_uri: instagramRedirectUrl,
+                    }
+
+                    postInstaAcessToken.refetch('https://api.instagram.com/oauth/access_token', data)
+                }
+            }
+        }
+    }
+
+    const handleAvatarClick = (type) => {
+        setTypeImage(type)
+        setTypeImageHandle('perfil')
+        if (Platform.OS === 'ios') {
+            handleShowMenu()
+        } else {
+            async function requestCameraPermission() {
+                try {
+                    const granted = await PermissionsAndroid.requestMultiple(
+                        [
+                            PermissionsAndroid.PERMISSIONS.CAMERA,
+                            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                        ]
+                    )
+                    if (granted["android.permission.CAMERA"] === PermissionsAndroid.RESULTS.GRANTED) {
+                        handleShowMenu()
+                    } else {
+                        alert("Permission Denied")
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+            }
+            requestCameraPermission()
+        }
+    }
+    //END - FUNCTIONS SECTION
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
@@ -557,8 +830,8 @@ function ProfessionalHomeScreen(props) {
 
             {!storiesCarouselOpened &&
                 <React.Fragment>
-                    {!props.professionalSelected.id && <HeaderJobs title='Home' />}
-                    {props.professionalSelected.id &&
+                    {!isProfSelected && <HeaderJobs title='Home' />}
+                    {isProfSelected &&
                         <HeaderJobs title='Profissional'
                             professional={professionalData}
                             chat={() => {
@@ -572,8 +845,10 @@ function ProfessionalHomeScreen(props) {
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}>
                         <View style={{ flex: 1 }} behavior={behavior}>
-                            {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
-                            {images.backImage.uri.length <= 0 && <CapaEmpty />}
+                            <TouchCapa onPress={() => handleAvatarClick('backImage')}>
+                                {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
+                                {images.backImage.uri.length <= 0 && <CapaEmpty />}
+                            </TouchCapa>
 
                             <VwContainerTitle>
                                 <VwContainerRating>
@@ -583,13 +858,26 @@ function ProfessionalHomeScreen(props) {
                                     {professionalData.name}
                                 </TxtTitle>
                             </VwContainerTitle>
+                            <TouchMaisInfo onPress={toggleOverlay}>
+                                <TxtMaisInfo>Mais informações</TxtMaisInfo>
+                            </TouchMaisInfo>
 
                             <VwContainerContent>
                                 <VwContainerStories>
+                                    {
+                                        (!isProfSelected && props.instaToken.length === 0) &&
+                                        <TouchInstagram onPress={handleClickInstagram}>
+                                            <ViewInstagram>
+                                                <IconFont name="instagram" size={25} color={white} style={{ padding: 5 }} />
+                                                <TxtHabilitarInstagram>Habilitar feed do Instagram</TxtHabilitarInstagram>
+                                            </ViewInstagram>
+                                        </TouchInstagram>
+                                    }
+
                                     <TxtTitle size={14}>Stories</TxtTitle>
                                     <Stories
                                         loading={getStories.loading || getInstaStoriesSaved.loading || getInstaStories.loading}
-                                        novaImagem={props.professionalSelected.id ? false : true}
+                                        novaImagem={!isProfSelected}
                                         stories={stories}
                                         onPressNewStory={handleNewStoryClick}
                                         onPressStory={item => handleOpenCarousel(item)}
@@ -613,7 +901,8 @@ function ProfessionalHomeScreen(props) {
                                         rounded
                                         containerStyle={styles}
                                         size={heightPercentageToDP('20%')}
-                                        source={{ uri: images.image.uri }} />
+                                        source={{ uri: images.image.uri }}
+                                        onPress={() => handleAvatarClick('photo')} />
                                 }
 
                                 {(images && images.image.uri.length <= 0) &&
@@ -621,7 +910,8 @@ function ProfessionalHomeScreen(props) {
                                         rounded
                                         containerStyle={styles}
                                         size={heightPercentageToDP('20%')}
-                                        icon={{ name: 'image' }} />
+                                        icon={{ name: 'image' }}
+                                        onPress={() => handleAvatarClick('photo')} />
                                 }
                             </ContainerAvatar>
 
@@ -702,6 +992,29 @@ function ProfessionalHomeScreen(props) {
                                         </ModalButtons>
                                     </ModalContainer>}
                             </Modal>
+
+                            <Overlay isVisible={moreInfoVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
+                                <React.Fragment>
+                                    <ViewInfo>
+                                        <Avatar
+                                            containerStyle={{ alignSelf: 'center' }}
+                                            size={50}
+                                            source={{ uri: professionalData.photo, }}
+                                            rounded={true}
+                                        />
+                                        <TextInfo>{professionalData.name}</TextInfo>
+                                    </ViewInfo>
+                                    <TxtProfessionalDescrption>{professionalData.description}</TxtProfessionalDescrption>
+                                    {professionalData.professionalsAddresses &&
+                                        <React.Fragment>
+                                            <TextAddress>Endereço</TextAddress>
+                                            <TxtProfessionalDescrption>
+                                                {professionalData.professionalsAddresses.map(address => `${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
+                                            </TxtProfessionalDescrption>
+                                        </React.Fragment>
+                                    }
+                                </React.Fragment>
+                            </Overlay>
                         </View>
                     </ScrollView>
                     <Footer
@@ -712,7 +1025,7 @@ function ProfessionalHomeScreen(props) {
                         callsOnPress={() => handleFooterPress('CallsList')}
                         chatOnPress={() => handleFooterPress('ChatList')}
                         perfilOnPress={() => handleFooterPress('Perfil')}
-                        professionalProfileOnPress={() => props.professionalSelectedRequest({})}
+                        professionalProfileOnPress={() => props.professionalSetProfessionalView({})}
                     />
                 </React.Fragment>
             }
@@ -732,13 +1045,15 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         professionalCtr: state.professional,
         professionalData: state.professional.professional,
-        professionalSelected: state.professional.selected,
+        professionalSelected: state.professional.professionalView,
         selectedService: state.professionalHome.selectedService,
         user: state.auth.user,
         fcmToken: state.chat.fcmToken,
         instaToken: state.auth.instaTokenLong,
         instaUserID: state.auth.instaUserID,
         storiesInstagram: state.stories.storiesInstagram,
+        servicesUpdated: state.professional.servicesUpdated,
+        ratingUpdated: state.professional.ratingUpdated,
     }
 }
 
@@ -747,12 +1062,15 @@ const mapDispatchToProps = dispatch => {
         logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
         professionalHomeSetSelectedService: (service) => dispatch(ActionCreators.professionalHomeSetSelectedService(service)),
         chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
-        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        professionalSetProfessionalView: (professional) => dispatch(ActionCreators.professionalSetProfessionalView(professional)),
         clientSelectedRequest: (client) => dispatch(ActionCreators.clientSelected(client)),
         storiesSetFinishPresentation: (finish) => dispatch(ActionCreators.storiesSetFinishPresentation(finish)),
         storiesSaveIntragramData: (finish) => dispatch(ActionCreators.storiesSaveIntragramData(finish)),
         authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
         storiesSetInstagramData: (stories) => dispatch(ActionCreators.storiesSetInstagramData(stories)),
+        authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
+        professionalSetRatingUpdated: (updated) => dispatch(ActionCreators.professionalSetRatingUpdated(updated)),
+        professionalUpdateRequest: (professional, token) => dispatch(ActionCreators.professionalUpdateRequest(professional, token))
     }
 }
 

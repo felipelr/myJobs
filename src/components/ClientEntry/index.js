@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { formatPhone, formatDate } from '../common/util/functions'
+import { formatPhone, formatDate, formatDocumento } from '../common/util/functions'
 
 import {
     ScrollViewContainer,
@@ -103,6 +103,18 @@ function ClientEntry(props) {
             }
         }
     }, [form.phone])
+
+    useEffect(() => {
+        if (form.document.length > 0) {
+            let doc = formatDocumento(form.document)
+            if (form.document !== doc) {
+                setForm({
+                    ...form,
+                    'document': doc
+                })
+            }
+        }
+    }, [form.document])
 
     const validateField = (field, value) => {
         switch (field) {
@@ -265,7 +277,7 @@ function ClientEntry(props) {
     }
 
     return (
-        <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
+        <ScrollViewContainer ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
             <View style={{ flex: 1, padding: 8 }}>
                 {props.client.isUpdating && <Loading size='large' color={purple} height='330' error={props.client.errorUpdating} />}
 

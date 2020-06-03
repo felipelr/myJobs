@@ -69,7 +69,9 @@ function ChatListScreen(props) {
     }, [props.updateChatBadge])
 
     const handleBackPress = async () => {
-        props.professionalSelected({})
+        if (props.professionalSelected.id) {
+            props.professionalSelectedRequest({})
+        }
         props.navigation.goBack()
         return true
     }
@@ -121,13 +123,13 @@ function ChatListScreen(props) {
 
     const handleClickItem = (item) => {
         if (tabSelected === 0) {
-            props.professionalSelected({})
+            props.professionalSelectedRequest({})
             props.clientSelected(item.client)
         }
         else {
             console.log('professional => ', item.professional)
             props.clientSelected({})
-            props.professionalSelected(item.professional)
+            props.professionalSelectedRequest(item.professional)
         }
 
         props.navigation.navigate('ProfessionalChat')
@@ -190,14 +192,14 @@ function ChatListScreen(props) {
                         onPress={() => hadleClickTab(0)}
                         borderColor={tabSelected === 0 ? gold : purple}
                     >
-                        <TxtTab>PROFISSIONAL</TxtTab>
+                        <TxtTab>Meus Clientes</TxtTab>
                     </TouchTab>
                     <TouchTab
                         activeOpacity={1}
                         onPress={() => hadleClickTab(1)}
                         borderColor={tabSelected === 1 ? gold : purple}
                     >
-                        <TxtTab>CLIENTE</TxtTab>
+                        <TxtTab>Meus Profissionais</TxtTab>
                     </TouchTab>
                 </ViewTabControl>
             }
@@ -291,12 +293,13 @@ const mapStateToProps = (state, ownProps) => {
         clientData: state.client.client,
         professionalData: state.professional.professional,
         updateChatBadge: state.chat.updateChatBadge,
+        professionalSelected: state.professional.selected,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
         clientSelected: (client) => dispatch(ActionCreators.clientSelected(client)),
         chatSetUpdateChatBadge: (updateChatBadge) => dispatch(ActionCreators.chatSetUpdateChatBadge(updateChatBadge)),
     }

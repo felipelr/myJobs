@@ -156,7 +156,7 @@ function NewCallScreen(props) {
     return (
         <React.Fragment>
             <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-                <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
+                <ScrollViewContainer ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
                     <View style={{ flex: 1 }}>
                         <ViewCardContainer>
                             {props.professionalCtr.loading && <Loading size='large' color={purple} height='330' error={props.professionalCtr.error} />}

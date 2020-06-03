@@ -134,7 +134,7 @@ function Call(props) {
 
     return (
         <ViewGray>
-            <ScrollViewContainer ref={(c) => scrollViewRef.current = c}>
+            <ScrollViewContainer ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
                 <ViewContainer>
                     {props.professionalCtr.loading && <Loading size='large' color={purple} height='330' error={props.professionalCtr.error} />}
 
@@ -188,7 +188,7 @@ function Call(props) {
                     )}
 
                     <Overlay
-                        height={180}
+                        overlayStyle={{ height: 'auto' }}
                         isVisible={overlayVisible}
                         onBackdropPress={() => setOverlayVisible(false)}
                     >
@@ -206,7 +206,7 @@ function Call(props) {
                     </Overlay>
 
                     <Overlay
-                        height={450}
+                        overlayStyle={{ height: 'auto' }}
                         isVisible={overlayRatingVisible}
                         onBackdropPress={() => setOverlayRatingVisible(false)}
                     >

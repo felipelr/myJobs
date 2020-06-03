@@ -15,9 +15,14 @@ import { purple, white } from '../common/util/colors'
 
 function NewCall(props) {
     return (
-        <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.onPress}>
-            <Icon name='assignment' size={24} color={white} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", width: 65, justifyContent: "space-between" }}>
+            <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.onPress}>
+                <Icon name='assignment' size={24} color={white} />
+            </TouchableOpacity>
+            <TouchableOpacity style={{ paddingRight: 10 }} onPress={props.addressPress}>
+                <Icon name='pin-drop' size={24} color={white} />
+            </TouchableOpacity>
+        </View>
     )
 }
 
@@ -49,12 +54,12 @@ function ChatView(props) {
     )
 }
 
-export default function HeaderJobs({ title, filter, back, chat, imagem, confirm, newCall, titlePress, calls, ...props }) {
+export default function HeaderJobs({ title, filter, back, chat, imagem, confirm, newCall, titlePress, calls, addressPress, ...props }) {
     return (
         <Header
             containerStyle={styles.headerContainerStyle}
             centerComponent={title != null ? <Title imagem={imagem} title={title} onPress={titlePress} /> : filter ? <Search onChangeText={props.onChangeText} /> : null}
-            rightComponent={chat ? <ChatView onPress={chat} professional={props.professional} /> : confirm ? <Confirm onPress={confirm} /> : newCall ? <NewCall onPress={newCall} /> : calls ? <Calls onPress={calls} /> : null}
+            rightComponent={chat ? <ChatView onPress={chat} professional={props.professional} /> : confirm ? <Confirm onPress={confirm} /> : newCall ? <NewCall onPress={newCall} addressPress={addressPress} /> : calls ? <Calls onPress={calls} /> : null}
             leftComponent={back && <Back onPress={back} />}
         >
         </Header>

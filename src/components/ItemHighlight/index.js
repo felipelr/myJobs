@@ -33,7 +33,7 @@ function ItemHighlight(props) {
 
     const handlePress = () => {
         if (profissional) {
-            props.professionalSelectedRequest(profissional)
+            props.professionalSetProfessionalView(profissional)
             navigation.navigate('ProfessionalHome', {
                 previewScreen: route.name,
                 viewProfile: true,
@@ -86,7 +86,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        professionalSetProfessionalView: (professional) => dispatch(ActionCreators.professionalSetProfessionalView(professional)),
     }
 }
 

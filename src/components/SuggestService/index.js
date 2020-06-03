@@ -21,6 +21,7 @@ import PickerJobs from '../../components/PickerJobs/index'
 import TextInputJobs from '../../components/TextInputJobs/index'
 import TextError from '../TextError/index'
 import Loading from '../Loading/index'
+import ButtonPurple from '../ButtonPurple'
 
 function SuggestService(props) {
     const [invalidField, setInvalidField] = useState('')
@@ -193,7 +194,6 @@ function SuggestService(props) {
                 <HeaderJobs
                     title='Sugerir Serviços'
                     back={handleClickBack}
-                    confirm={handleConfirmPress}
                 />}
 
             {!showForm &&
@@ -202,7 +202,7 @@ function SuggestService(props) {
                     back={handleClickBack}
                 />}
             <ViewContainer>
-                <ScrollViewContainer>
+                <ScrollViewContainer keyboardShouldPersistTaps='always'>
                     <View style={{ flex: 1 }}>
                         {showForm &&
                             <Animated.View style={slideRight.getLayout()}>
@@ -247,6 +247,11 @@ function SuggestService(props) {
                                             onChangeText={handleOnChange}
                                             placeholder='Descrição'
                                             invalidValue={invalidField === 'description'} />
+
+
+                                        <View style={{ width: 150, alignSelf: 'center', marginTop: 20 }}>
+                                            <ButtonPurple onPress={handleConfirmPress}>Confirmar</ButtonPurple>
+                                        </View>
                                     </React.Fragment>}
                             </Animated.View>
                         }

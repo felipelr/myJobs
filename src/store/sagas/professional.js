@@ -59,8 +59,13 @@ function* updateProfessional(action) {
         }
         else {
             const professional = putResp.data.professional
-            setProfessionalData(professional)
-            yield put(ActionCreator.professionalUpdateSuccess(professional))
+            if (professional) {
+                setProfessionalData(professional)
+                yield put(ActionCreator.professionalUpdateSuccess(professional))
+            }
+            else {
+                yield put(ActionCreator.professionalUpdateError('Erro ao consultar profissional'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -87,8 +92,13 @@ function* addNewProfessionalAddress(action) {
         }
         else {
             const professional = postResp.data.professional
-            setProfessionalData(professional)
-            yield put(ActionCreator.professionalUpdateSuccess(professional))
+            if (professional) {
+                setProfessionalData(professional)
+                yield put(ActionCreator.professionalUpdateSuccess(professional))
+            }
+            else {
+                yield put(ActionCreator.professionalUpdateError('Erro ao consultar profissional'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -115,8 +125,13 @@ function* editProfessionalAddress(action) {
         }
         else {
             const professional = putResp.data.professional
-            setProfessionalData(professional)
-            yield put(ActionCreator.professionalUpdateSuccess(professional))
+            if (professional) {
+                setProfessionalData(professional)
+                yield put(ActionCreator.professionalUpdateSuccess(professional))
+            }
+            else {
+                yield put(ActionCreator.professionalUpdateError('Erro ao consultar profissional'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -140,8 +155,13 @@ function* deleteProfessionalAddress(action) {
         }
         else {
             const professional = deleteResp.data.professional
-            setProfessionalData(professional)
-            yield put(ActionCreator.professionalUpdateSuccess(professional))
+            if (professional) {
+                setProfessionalData(professional)
+                yield put(ActionCreator.professionalUpdateSuccess(professional))
+            }
+            else {
+                yield put(ActionCreator.professionalUpdateError('Erro ao consultar profissional'))
+            }
         }
     } catch (ex) {
         const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
@@ -162,7 +182,7 @@ function* professionalConfigCategory(action) {
                 }
             }
         )
-        
+
         console.log('post data => ', postResp.data)
 
         if (postResp.data.error) {
@@ -201,13 +221,13 @@ function* newProfessionalCallRequest(action) {
             yield put(ActionCreator.newProfessionalCallSuccess(postResp.data.call))
         }
     } catch (ex) {
-        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido' 
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         console.log('erro => ' + messageError)
         yield put(ActionCreator.newProfessionalCallError(messageError))
     }
 }
 
-function* professionalFinishCallRequest(action){
+function* professionalFinishCallRequest(action) {
     try {
         console.log(action.call)
         const postResp = yield axios.post(`${urlMyJobsAPI}/calls/finish.json`,
@@ -231,7 +251,7 @@ function* professionalFinishCallRequest(action){
             yield put(ActionCreator.professionalFinishCallSuccess(postResp.data.call))
         }
     } catch (ex) {
-        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido' 
+        const messageError = ex.response ? ex.response.data.message : ex.message ? ex.message : 'Erro Desconhecido'
         console.log('erro => ' + messageError)
         yield put(ActionCreator.professionalFinishCallError(messageError))
     }

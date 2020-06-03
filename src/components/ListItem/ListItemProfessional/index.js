@@ -15,7 +15,7 @@ function ListItemProfessional(props) {
     const { profissional } = props
 
     const onPress = (profissionalItem) => {
-        props.professionalSelected(profissionalItem)
+        props.professionalSetProfessionalView(profissionalItem)
         props.itemOnPress()
     }
 
@@ -58,7 +58,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        professionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional))
+        professionalSetProfessionalView: (professional) => dispatch(ActionCreators.professionalSetProfessionalView(professional))
     }
 }
 

@@ -2,12 +2,15 @@ import styled from 'styled-components'
 import { white } from '../common/util/colors'
 
 export const ViewContainer = styled.View`
-    padding: 8px;
+    padding: 0px;
 `
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
     contentContainerStyle: { flexGrow: 1 },
-    showHorizontalScrollIndicator: false
+    showHorizontalScrollIndicator: false,
+    padding: 5, 
+    paddingBottom: 40, 
+    backgroundColor: 'white'
 })``
 
 export const ContainerLista = styled.View`

@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState } from 'react-native'
-import { Input } from 'react-native-elements'
+import { Input, Overlay } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { gray, white, lightpurple } from '../../components/common/util/colors'
+import { gray, white, lightpurple, black } from '../../components/common/util/colors'
 import {
     ViewContainerChat,
     ViewContainerNewMessage,
     TouchIcon,
+    TxtAddressTitle,
+    TxtAddress,
+    TouchAddress,
+    ViewTitleAddress,
 } from './styles'
 import Container from '../../components/Container/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
@@ -120,6 +124,7 @@ function ChateItem(props) {
 function ProfessionalChatScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [mensagens, setMensagens] = useState([])
+    const [addressVisible, setAddressVisible] = useState(false)
 
     const inputMsgRef = useRef()
     const appStateRef = useRef()
@@ -426,8 +431,16 @@ function ProfessionalChatScreen(props) {
         }
     }
 
-    const handlePressCalls = () => {
+    const toggleOverlay = () => { 
+        setAddressVisible(!addressVisible)
+    }
 
+    const handlePressSendAddress = (address) => {
+        //enviar endereço no chat
+        if (address) {
+            setAddressVisible(false)
+            sendMessageSocket(`${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials}`)
+        }
     }
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -439,6 +452,7 @@ function ProfessionalChatScreen(props) {
                 titlePress={() => handleTitlePress()}
                 back={() => handleBackPress()}
                 newCall={props.clientSelected.id ? () => handlePressNewCall() : null}
+                addressPress={() => toggleOverlay()}
             />
             <ViewContainerChat>
                 <ChatMessages messages={mensagens} userType={props.userType} />
@@ -455,6 +469,21 @@ function ProfessionalChatScreen(props) {
                     <Icon name='send' size={25} color={gray} />
                 </TouchIcon>
             </ViewContainerNewMessage>
+
+            <Overlay isVisible={addressVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
+                <React.Fragment>
+                    <ViewTitleAddress>
+                        <Icon name='pin-drop' size={25} color={black} />
+                        <TxtAddressTitle>Enviar endereço</TxtAddressTitle>
+                    </ViewTitleAddress>
+                    {props.user.professionalsAddresses && props.user.professionalsAddresses.map(address =>
+                        <TouchAddress key={address.id} onPress={() => handlePressSendAddress(address)}>
+                            <Icon name='radio-button-unchecked' size={25} color={black} />
+                            <TxtAddress>{`${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials}`}</TxtAddress>
+                        </TouchAddress>
+                    )}
+                </React.Fragment>
+            </Overlay>
         </KeyboardAvoidingView>
     )
 }

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { white, purple, lightpurple, black } from '../../components/common/util/colors'
+import { white, purple, lightpurple, black, lightgray } from '../../components/common/util/colors'
 
 
 export const ViewContainerInfo = styled.View`
@@ -105,4 +105,31 @@ export const ViewLoading = styled.View`
     width: 100%;
     position: absolute;
     background-color: #ffffff;
+`
+
+export const TxtAddressTitle = styled.Text`
+    font-size: 14px;
+    font-weight: bold;
+    color: ${black};    
+    align-self: center;
+    padding-left: 10px;
+`
+
+export const TxtAddress = styled.Text`
+    font-size: 12px;
+    color: ${black};
+    align-self: center;
+    padding-left: 10px;
+`
+
+export const TouchAddress = styled.TouchableOpacity`
+    padding: 20px 0px 20px 0px;
+    border-top-color: ${lightgray};
+    border-top-width: 1px;
+    flex-direction: row;
+`
+
+export const ViewTitleAddress = styled.View`
+    flex-direction: row;    
+    margin-bottom: 15px;
 `

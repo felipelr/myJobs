@@ -14,10 +14,13 @@ import ButtonPurple from '../ButtonPurple/index'
 
 import { white, purple } from '../common/util/colors'
 
-import { formatPhone, formatDate } from '../common/util/functions'
+import { formatPhone, formatDate, formatDocumento } from '../common/util/functions'
 
 import {
-    ViewContainer, TextSignUpTitle, ViewContainerRow, ScrollViewContainerForm, ViewContainerButton
+    ViewContainer,
+    TextSignUpTitle,
+    ScrollViewContainerForm,
+    ViewContainerButton
 } from './styles'
 
 import { styleSheets } from './styles'
@@ -118,6 +121,18 @@ function SocialMidiaSignup(props) {
         }
     }, [form.phone])
 
+    useEffect(() => {
+        if (form.document.length > 0) {
+            let doc = formatDocumento(form.document)
+            if (form.document !== doc) {
+                setForm({
+                    ...form,
+                    'document': doc
+                })
+            }
+        }
+    }, [form.document])
+
     const handleOnChange = (name, text) => {
         setForm({
             ...form,
@@ -211,7 +226,7 @@ function SocialMidiaSignup(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c}>
+            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
                 <ViewContainer>
                     {(props.socialMidiaSignup.isSigningup || props.socialMidiaSignup.verifyingAcc || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
 
@@ -244,6 +259,7 @@ function SocialMidiaSignup(props) {
                                     invalidValue={invalidField === 'phone'} />
 
                                 <TextInputJobs
+                                    value={form.document}
                                     name='document'
                                     onChangeText={handleOnChange}
                                     placeholder='CPF'

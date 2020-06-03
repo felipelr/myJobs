@@ -318,14 +318,14 @@ function CallsListScreen(props) {
                                 onPress={() => handleClickTab(0)}
                                 borderColor={tabSelected === 0 ? gold : purple}
                             >
-                                <TxtTab>PROFISSIONAL</TxtTab>
+                                <TxtTab>Meus Clientes</TxtTab>
                             </TouchTab>
                             <TouchTab
                                 activeOpacity={1}
                                 onPress={() => handleClickTab(1)}
                                 borderColor={tabSelected === 1 ? gold : purple}
                             >
-                                <TxtTab>CLIENTE</TxtTab>
+                                <TxtTab>Meus Profissionais</TxtTab>
                             </TouchTab>
                         </ViewTabControl>
                     }

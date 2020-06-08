@@ -69,10 +69,10 @@ function Login(props) {
                             value={form.email}
                             name='email'
                             onChangeText={handleOnChange}
-                            placeholder='Usuário' 
+                            placeholder='Usuário'
                             autoCompleteType='email'
-                            autoCapitalize='none'/>
-                            
+                            autoCapitalize='none' />
+
                         <TextInputJobs
                             value={form.password}
                             name='password'
@@ -82,7 +82,7 @@ function Login(props) {
                             secureTextEntry={true} />
 
                         <LoginButtonContainer>
-                            <ButtonPurple onPress={handleClickLogin}>Entrar</ButtonPurple>
+                            <ButtonPurple onPress={handleClickLogin} icon="sign-in">Entrar</ButtonPurple>
                         </LoginButtonContainer>
                         <ContainerNewUser>
                             <NewUserText>Novo por aqui?</NewUserText>

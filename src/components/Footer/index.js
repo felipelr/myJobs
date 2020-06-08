@@ -157,6 +157,7 @@ const mapStateToProps = (state, ownProps) => {
         professionalData: state.professional.professional,
         updateChatBadge: state.chat.updateChatBadge,
         updateCallBadge: state.client.updateCallBadge,
+        professionalSelected: state.professional.professionalView,
     }
 }
 

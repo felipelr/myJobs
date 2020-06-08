@@ -332,8 +332,8 @@ function MyAddress(props) {
                                         }}
                                         itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
 
-                                    <View style={{ width: 150, alignSelf: 'center' }}>
-                                        <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                                    <View style={{ width: 170, alignSelf: 'center' }}>
+                                        <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
                                     </View>
                                 </ContainerLista>
                             </Animated.View>

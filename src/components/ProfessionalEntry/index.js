@@ -380,7 +380,7 @@ function ProfessionalEntry(props) {
                                 invalidValue={invalidField === 'date_birth'} />
 
                             <ViewContainerButton>
-                                <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                                <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
                             </ViewContainerButton>
                         </View>
 

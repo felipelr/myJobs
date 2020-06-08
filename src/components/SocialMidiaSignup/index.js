@@ -19,6 +19,7 @@ import { formatPhone, formatDate, formatDocumento } from '../common/util/functio
 import {
     ViewContainer,
     TextSignUpTitle,
+    TextSignUpSubtitle,
     ScrollViewContainerForm,
     ViewContainerButton
 } from './styles'
@@ -170,6 +171,18 @@ function SocialMidiaSignup(props) {
         props.socialMidiaSignupError('O campo ' + description + ' está inválido.')
     }
 
+    const existUserName = () => {
+        return props.socialMidiaSignup.user && props.socialMidiaSignup.user.name
+    }
+
+    const existClientName = () => {
+        return props.socialMidiaSignup.user && props.socialMidiaSignup.user.client && props.socialMidiaSignup.user.client.name
+    }
+
+    const existProfessionalName = () => {
+        return props.socialMidiaSignup.user && props.socialMidiaSignup.user.professional && props.socialMidiaSignup.user.professional.name
+    }
+
     const handleClickSignUp = () => {
         if (!validateField('phone', form.phone)) {
             setInvalidField('phone')
@@ -192,7 +205,7 @@ function SocialMidiaSignup(props) {
         let date = form.date_birth.split("/")
         let dateFormatted = date[2] + "-" + date[1] + "-" + date[0]
 
-        const name = props.socialMidiaSignup.user.name ? props.socialMidiaSignup.user.name : props.socialMidiaSignup.user.client.name ? props.socialMidiaSignup.user.client.name : props.socialMidiaSignup.user.professional.name
+        const name = existUserName() ? props.socialMidiaSignup.user.name : existClientName() ? props.socialMidiaSignup.user.client.name : existProfessionalName() ? props.socialMidiaSignup.user.professional.name : ''
 
         if (props.socialMidiaSignup.user.facebook_token) {
             let user = {
@@ -232,7 +245,8 @@ function SocialMidiaSignup(props) {
 
                     {(!props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
                         <CardJobs backColor={white} width='80' height='140' opacity={1}>
-                            <TextSignUpTitle>Complete seu Cadastro</TextSignUpTitle>
+                            <TextSignUpTitle>Olá {existUserName() ? props.socialMidiaSignup.user.name : existClientName() ? props.socialMidiaSignup.user.client.name : existProfessionalName() ? props.socialMidiaSignup.user.professional.name : ''},</TextSignUpTitle>
+                            <TextSignUpSubtitle>Precisamos de mais algumas informações para concluir o seu cadastro.</TextSignUpSubtitle>
                             {
                                 props.socialMidiaSignup.error && <TextError>{props.socialMidiaSignup.errorMessage}</TextError>
                             }

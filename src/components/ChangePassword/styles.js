@@ -6,7 +6,7 @@ export const ViewContainer = styled.View`
 `
 
 export const ViewContainerButton = styled.View`
-    width: 150px;
+    width: 180px;
     align-self: center;
     padding-top: 20
 `

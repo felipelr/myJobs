@@ -206,6 +206,7 @@ export const TxtHabilitarInstagram = styled.Text`
 
 export const ViewInstagram = styled.View`
     flex-direction: row;
+    background-color: ${purple};
     padding: 10px;
     border-top-right-radius: 50;
     border-bottom-right-radius: 50;

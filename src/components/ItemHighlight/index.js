@@ -34,7 +34,7 @@ function ItemHighlight(props) {
     const handlePress = () => {
         if (profissional) {
             props.professionalSetProfessionalView(profissional)
-            navigation.navigate('ProfessionalHome', {
+            navigation.navigate('ProfessionalView', {
                 previewScreen: route.name,
                 viewProfile: true,
             })

@@ -8,7 +8,7 @@ export const ScrollViewContainer = styled.ScrollView.attrs({
 })``
 
 export const ViewContainerButton = styled.View`
-    width: 150px;
+    width: 170px;
     align-self: center;
     padding-bottom: 16px;
 `

@@ -350,7 +350,7 @@ function ClientEntry(props) {
                             itemsList={genderList} />
 
                         <ViewContainerButton>
-                            <ButtonPurple onPress={handleClickConfimar}>Confirmar</ButtonPurple>
+                            <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
                         </ViewContainerButton>
 
                         <Modal

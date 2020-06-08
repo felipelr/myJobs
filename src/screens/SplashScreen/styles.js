@@ -9,4 +9,6 @@ export const ViewContainer = styled.View`
 
 export const ImgLogoTipo = styled.Image`
     align-self: center;
+    width: 314;
+    height: 133;
 `

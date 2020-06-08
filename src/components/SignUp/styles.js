@@ -53,7 +53,7 @@ export const ViewContainerRow = styled.View`
 `
 
 export const ViewContainerButton = styled.View`
-    width: 150px;
+    width: 170px;
     align-self: center;
 `
 

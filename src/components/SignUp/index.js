@@ -322,7 +322,7 @@ function SignUp(props) {
                                     invalidValue={invalidField === 'confirmPassword'} />
 
                                 <ViewContainerButton>
-                                    <ButtonPurple onPress={handleClickSignUp}>Confirmar</ButtonPurple>
+                                    <ButtonPurple onPress={handleClickSignUp} icon="sign-in">Cadastrar</ButtonPurple>
                                 </ViewContainerButton>
 
                                 <ViewContainerGotoLogin>

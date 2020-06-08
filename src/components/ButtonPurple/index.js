@@ -1,14 +1,54 @@
 import React from 'react'
-import { Button } from 'react-native'
+import { RectButton } from 'react-native-gesture-handler'
+import { StyleSheet, Text, View } from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 import { purple } from '../common/util/colors'
 
-export default function ButtonPurple(props) {
-    const { onPress } = props
+const ButtonPurple = (props) => {
+    const { onPress, icon } = props
     return (
-        <Button
+        <RectButton
+            style={styles.button}
             onPress={onPress}
-            title={props.children}
-            color={purple}
-        />
+        >
+            {icon &&
+                <View style={styles.buttonIcon}>
+                    <Text>
+                        <Icon name={icon} color="#FFF" size={24} />
+                    </Text>
+                </View>}
+            <Text style={styles.buttonText}>{props.children}</Text>
+        </RectButton>
     )
 }
+
+const styles = StyleSheet.create({
+    button: {
+        backgroundColor: purple,
+        height: 50,
+        flexDirection: 'row',
+        borderRadius: 2,
+        overflow: 'hidden',
+        alignItems: 'center',
+        marginTop: 8,
+    },
+
+    buttonIcon: {
+        height: 50,
+        width: 50,
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    buttonText: {
+        flex: 1,
+        justifyContent: 'center',
+        textAlign: 'center',
+        color: '#FFF',
+        fontSize: 16,
+    }
+});
+
+export default ButtonPurple;

@@ -115,7 +115,7 @@ function SuggestCompany(props) {
                         invalidValue={invalidField === 'phone'} />
 
                     <ViewContainerButton>
-                        <ButtonPurple onPress={handleClickEnviar}>Enviar</ButtonPurple>
+                        <ButtonPurple onPress={handleClickEnviar} icon="check">Enviar</ButtonPurple>
                     </ViewContainerButton>
                 </React.Fragment>
             )}

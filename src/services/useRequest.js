@@ -47,10 +47,12 @@ export const usePost = (url, data) => {
                     }
                 })
             dispatch({ type: 'SUCCESS', data: resposta.data })
+            return resposta.data
         } catch (ex) {
             const messageError = ex.message
             console.log('usePost => ', JSON.stringify(ex))
             dispatch({ type: 'ERROR', errorMessage: messageError })
+            return []
         }
     }
     useEffect(() => {
@@ -70,12 +72,13 @@ export const useGet = (url) => {
         dispatch({ type: 'REQUEST' })
         try {
             const resposta = await axios.get(newUrl)
-
             dispatch({ type: 'SUCCESS', data: resposta.data })
+            return resposta.data
         } catch (ex) {
             const messageError = ex.message
             console.log(JSON.stringify(ex))
             dispatch({ type: 'ERROR', errorMessage: messageError })
+            return []
         }
     }
     useEffect(() => {

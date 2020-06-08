@@ -23,7 +23,7 @@ export const ViewCardContainer = styled.View`
 `
 
 export const ViewContainerConfirmar = styled.View`
-    width: 200px;
+    width: 250px;
     align-self: center;
     margin-top: 20px;
 `

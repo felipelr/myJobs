@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AppState, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
 import firebase from '@react-native-firebase/app'
@@ -10,6 +9,7 @@ import ActionCreators from '../../store/actionCreators'
 import { useGet } from '../../services/useRequest'
 
 import { purple } from '../../components/common/util/colors'
+import { updateBadge } from '../../components/common/util/badgeNotification'
 
 import { ViewContainer, ImgLogoTipo } from './styles'
 
@@ -42,7 +42,19 @@ function SplashScreen(props) {
                 jsonMessage = typeof data.message == 'string' ? JSON.parse(data.message) : data.message
 
             //salvar badge do chat ou call
-            updateBadge(jsonMessage)
+            updateBadge(jsonMessage).then(result => {
+                if (result) {
+                    if (jsonMessage.type === 'call' || jsonMessage.type === 'call_finished') {
+                        props.clientSetUpdateCallBadge(true)
+                    }
+                    else if (jsonMessage.type === 'rating') {
+
+                    }
+                    else {
+                        props.chatSetUpdateChatBadge(true)
+                    }
+                }
+            })
 
             updateProfessionalRating(jsonMessage)
 
@@ -190,109 +202,6 @@ function SplashScreen(props) {
         });
     }
 
-    const updateBadge = async (msg) => {
-        try {
-            if (msg.type === 'call' || msg.type === 'call_finished') {
-                updateCallBadge(msg)
-            }
-            else if (msg.type === 'rating') {
-                //badge para avaliação
-            }
-            else {
-                updateChatBadge(msg)
-            }
-        } catch (e) {
-            console.log('updateBadge => ', e)
-        }
-    }
-
-    const updateCallBadge = async (msg) => {
-        try {
-            const storageName = `@badgeCall`
-            const strBadge = await AsyncStorage.getItem(storageName)
-            const arrayBadgeCall = JSON.parse(strBadge)
-            if (arrayBadgeCall != null) {
-                const array = arrayBadgeCall.filter((item) => item.client_id != msg.client_id && item.professional_id != msg.professional_id)
-                const array2 = arrayBadgeCall.filter((item) => item.client_id == msg.client_id && item.professional_id == msg.professional_id)
-                if (array2.length > 0) {
-                    const item = {
-                        client_id: msg.client_id,
-                        professional_id: msg.professional_id,
-                        call_id: msg.call_id,
-                        badge: array2[0].badge + 1
-                    }
-                    array.push(item)
-                }
-                else {
-                    const item = {
-                        client_id: msg.client_id,
-                        professional_id: msg.professional_id,
-                        call_id: msg.call_id,
-                        badge: 1
-                    }
-                    array.push(item)
-                }
-                await AsyncStorage.setItem(storageName, JSON.stringify(array));
-            }
-            else {
-                const array = []
-                const item = {
-                    client_id: msg.client_id,
-                    professional_id: msg.professional_id,
-                    call_id: msg.call_id,
-                    badge: 1
-                }
-                array.push(item)
-                await AsyncStorage.setItem(storageName, JSON.stringify(array));
-            }
-            props.clientSetUpdateCallBadge(true)
-        } catch (e) {
-            console.log('erro => ', e)
-        }
-    }
-
-    const updateChatBadge = async (msg) => {
-        try {
-            const storageName = `@badgeChat`
-            const strBadge = await AsyncStorage.getItem(storageName)
-            const arrayBadgeChat = JSON.parse(strBadge)
-            if (arrayBadgeChat != null) {
-                const array = arrayBadgeChat.filter((item) => item.client_id != msg.client_id && item.professional_id != msg.professional_id)
-                const array2 = arrayBadgeChat.filter((item) => item.client_id == msg.client_id && item.professional_id == msg.professional_id)
-                if (array2.length > 0) {
-                    const item = {
-                        client_id: msg.client_id,
-                        professional_id: msg.professional_id,
-                        badge: array2[0].badge + 1
-                    }
-                    array.push(item)
-                }
-                else {
-                    const item = {
-                        client_id: msg.client_id,
-                        professional_id: msg.professional_id,
-                        badge: 1
-                    }
-                    array.push(item)
-                }
-                await AsyncStorage.setItem(storageName, JSON.stringify(array));
-            }
-            else {
-                const array = []
-                const item = {
-                    client_id: msg.client_id,
-                    professional_id: msg.professional_id,
-                    badge: 1
-                }
-                array.push(item)
-                await AsyncStorage.setItem(storageName, JSON.stringify(array));
-            }
-            props.chatSetUpdateChatBadge(true)
-        } catch (e) {
-            console.log('erro => ', e)
-        }
-    }
-
     const getUserData = async () => {
         try {
             const userData = await AsyncStorage.getItem('@userData')
@@ -389,14 +298,9 @@ function SplashScreen(props) {
 
     return (
         <ViewContainer>
-            <StatusBar backgroundColor={purple} barStyle='light-content' />
             <ImgLogoTipo source={assets.myjobs} />
         </ViewContainer>
     )
-}
-
-SplashScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {

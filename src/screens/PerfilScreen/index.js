@@ -172,40 +172,6 @@ function PerfilScreen(props) {
         }
     }, [show])
 
-    useEffect(() => {
-        if (postInstaAcessToken.data && postInstaAcessToken.data.access_token) {
-            //resultado com acessToken de curta duracao
-            const instaToken = postInstaAcessToken.data.access_token
-            const instaUserID = postInstaAcessToken.data.user_id
-            console.log('instaAcessToken => ', instaToken)
-
-            //salvar insta user id
-            saveInstaUserID(instaUserID).then(saved => {
-                if (saved)
-                    props.authSetInstaUserId(instaUserID)
-            })
-
-            //gerar o token de longa duracao
-            const grant = 'ig_exchange_token'
-            getInstaAcessTokenLong.refetch(`https://graph.instagram.com/access_token?grant_type=${grant}&client_secret=${instagramAppSecret}&access_token=${instaToken}`)
-        }
-    }, [postInstaAcessToken.data])
-
-    useEffect(() => {
-        if (getInstaAcessTokenLong.data && getInstaAcessTokenLong.data.access_token) {
-            //resultado com acessToken de longa duracao
-            const instaLongToken = getInstaAcessTokenLong.data.access_token
-            console.log('newInstaAcessTokenLong => ', instaLongToken)
-
-            //salvar o token de longa duracao
-            saveInstaAcessTokenLong(instaLongToken).then((saved) => {
-                if (saved) {
-                    props.authSetInstaTokenLong(instaLongToken)
-                }
-            })
-        }
-    }, [getInstaAcessTokenLong.data])
-
     const handleBackPress = async () => {
         handleClickBack()
         return true
@@ -321,8 +287,7 @@ function PerfilScreen(props) {
         }
     }
 
-    const handleClickInstagram = () => {
-        console.log('handleClickInstagram')
+    const handleClickInstagram = () => {        
         const scope = 'user_profile,user_media'
         const state = props.user.sub
         const url = `https://www.instagram.com/oauth/authorize?client_id=${instagramAppID}&redirect_uri=${instagramRedirectUrl}&scope=${scope}&response_type=code&state=${state}`
@@ -355,6 +320,38 @@ function PerfilScreen(props) {
                     }
 
                     postInstaAcessToken.refetch('https://api.instagram.com/oauth/access_token', data)
+                        .then(data => {
+                            if (data && data.access_token) {
+                                //resultado com acessToken de curta duracao
+                                const instaToken = data.access_token
+                                const instaUserID = data.user_id
+                                console.log('instaAcessToken => ', instaToken)
+
+                                //salvar insta user id
+                                saveInstaUserID(instaUserID).then(saved => {
+                                    if (saved)
+                                        props.authSetInstaUserId(instaUserID)
+                                })
+
+                                //gerar o token de longa duracao
+                                const grant = 'ig_exchange_token'
+                                getInstaAcessTokenLong.refetch(`https://graph.instagram.com/access_token?grant_type=${grant}&client_secret=${instagramAppSecret}&access_token=${instaToken}`)
+                                    .then(data => {
+                                        if (data && data.access_token) {
+                                            //resultado com acessToken de longa duracao
+                                            const instaLongToken = data.access_token
+                                            console.log('newInstaAcessTokenLong => ', instaLongToken)
+
+                                            //salvar o token de longa duracao
+                                            saveInstaAcessTokenLong(instaLongToken).then(saved => {
+                                                if (saved) {
+                                                    props.authSetInstaTokenLong(instaLongToken)
+                                                }
+                                            })
+                                        }
+                                    })
+                            }
+                        })
                 }
             }
         }

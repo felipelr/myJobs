@@ -48,10 +48,12 @@ const useGet = (url, token) => {
             })
 
             dispatch({ type: 'SUCCESS', data: resposta.data })
+            return resposta.data
         } catch (ex) {
             const messageError = ex.message
             console.log(JSON.stringify(ex))
             dispatch({ type: 'ERROR', errorMessage: messageError })
+            return []
         }
     }
     useEffect(() => {

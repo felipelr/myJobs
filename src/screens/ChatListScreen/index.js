@@ -11,7 +11,7 @@ import ActionCreators from '../../store/actionCreators'
 import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 
-import { purple, lightgray, white, gold } from '../../components/common/util/colors'
+import { purple, lightgray, gold } from '../../components/common/util/colors'
 
 import {
     styles,
@@ -47,14 +47,12 @@ function ChatListScreen(props) {
     }, [])
 
     useEffect(() => {
-        console.log(getChatsProfessional.data)
         if (getChatsProfessional.data && getChatsProfessional.data.chatMessages) {
             loadProfessionalsWithBadge(getChatsProfessional.data.chatMessages)
         }
     }, [getChatsProfessional.data])
 
     useEffect(() => {
-        console.log(getChatsClient.data)
         if (getChatsClient.data && getChatsClient.data.chatMessages) {
             loadClientsWithBadge(getChatsClient.data.chatMessages)
         }
@@ -127,7 +125,6 @@ function ChatListScreen(props) {
             props.clientSelected(item.client)
         }
         else {
-            console.log('professional => ', item.professional)
             props.clientSelected({})
             props.professionalSelectedRequest(item.professional)
         }

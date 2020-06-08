@@ -15,7 +15,7 @@ export const ViewContainerFields = styled.View`
 `
 
 export const LoginButtonContainer = styled.View`
-    width: 100px;
+    width: 150px;
     align-self: center;
 `
 

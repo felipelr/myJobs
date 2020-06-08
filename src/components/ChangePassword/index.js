@@ -105,7 +105,7 @@ function ChangePassword(props) {
                         invalidValue={invalidField === 'confirmNewPassword'} />
 
                     <ViewContainerButton>
-                        <ButtonPurple onPress={handleClickChangePassword}>Alterar Senha</ButtonPurple>
+                        <ButtonPurple onPress={handleClickChangePassword} icon="check">Alterar Senha</ButtonPurple>
                     </ViewContainerButton>
                 </React.Fragment>
             )}

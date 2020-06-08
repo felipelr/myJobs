@@ -54,6 +54,8 @@ function* updateProfessional(action) {
             }
         )
 
+        console.log('updateProfessional => ', putResp.data)
+
         if (putResp.data.error) {
             yield put(ActionCreator.professionalUpdateError(putResp.data.errorMessage))
         }

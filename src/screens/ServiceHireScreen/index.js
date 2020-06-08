@@ -134,7 +134,7 @@ function ServiceHireScreen(props) {
                                                 <CheckBox
                                                     key={item.id}
                                                     title={item.street + ', ' + item.street_number}
-                                                    checkedColor='purple'
+                                                    checkedColor={purple}
                                                     checked={item.id === form.client_address_id}
                                                     checkedIcon='dot-circle-o'
                                                     uncheckedIcon='circle-o'
@@ -160,7 +160,7 @@ function ServiceHireScreen(props) {
                                                 numberOfLines={2} />
 
                                             <ViewContainerConfirmar>
-                                                <ButtonPurple onPress={handleClickConfimar}>Confirmar Orçamentos</ButtonPurple>
+                                                <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar Orçamentos</ButtonPurple>
                                             </ViewContainerConfirmar>
                                         </React.Fragment>
                                     </CardJobs>

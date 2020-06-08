@@ -340,8 +340,8 @@ function MyServices(props) {
                                                     />)
                                             }
                                         </View>
-                                        <View style={{ width: 150, alignSelf: 'center', marginTop: 20 }}>
-                                            <ButtonPurple onPress={handleConfirmPress}>Confirmar</ButtonPurple>
+                                        <View style={{ width: 170, alignSelf: 'center', marginTop: 20 }}>
+                                            <ButtonPurple onPress={handleConfirmPress} icon="check">Confirmar</ButtonPurple>
                                         </View>
                                     </React.Fragment>
                                 }

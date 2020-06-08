@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { StyleSheet } from 'react-native'
-import { purple, white } from '../common/util/colors'
+import { purple, gray } from '../common/util/colors'
 
 export const ScrollViewContainerForm = styled.ScrollView.attrs({
     contentContainerStyle: { paddingLeft: 2, paddingRight: 2 },
@@ -15,6 +15,14 @@ export const ViewContainer = styled.View`
 export const TextSignUpTitle = styled.Text`
     font-size: 24px;
     color: ${purple};
+    text-align: center;
+    padding-bottom: 5px;
+    font-family: 'SF-Pro-Text-Regular';
+`
+
+export const TextSignUpSubtitle = styled.Text`
+    font-size: 16px;
+    color: ${gray};
     text-align: center;
     padding-bottom: 5px;
     font-family: 'SF-Pro-Text-Regular';

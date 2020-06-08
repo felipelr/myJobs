@@ -24,6 +24,21 @@ function SplashScreen(props) {
 
     const chatVisibleRef = useRef()
 
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log('Splash => Message handled in the background!', remoteMessage);
+
+        const data = remoteMessage.data
+
+        let jsonMessage = null
+        if (data.message)
+            jsonMessage = typeof data.message == 'string' ? JSON.parse(data.message) : data.message
+
+        //salvar badge do chat ou call
+        updateBadge(jsonMessage)
+
+        updateProfessionalRating(jsonMessage)
+    });
+
     useEffect(() => {
         getUserData().then(route => {
             setInitialRoute(route)
@@ -126,28 +141,6 @@ function SplashScreen(props) {
         }
     }, [initialRoute])
 
-    useEffect(() => {
-        if (getRefreshInstaToken.data && getRefreshInstaToken.data.access_token) {
-            //resultado refreshed access token
-            props.authSetInstaTokenLong(getRefreshInstaToken.data.access_token)
-        }
-    }, [getRefreshInstaToken.data])
-
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('Message handled in the background!', remoteMessage);
-
-        const data = remoteMessage.data
-
-        let jsonMessage = null
-        if (data.message)
-            jsonMessage = typeof data.message == 'string' ? JSON.parse(data.message) : data.message
-
-        //salvar badge do chat ou call
-        updateBadge(jsonMessage)
-
-        updateProfessionalRating(jsonMessage)
-    });
-
     const handleAppOpenedByNotification = (notification, data) => {
         if (data.message) {
             if (!chatVisibleRef.current) {
@@ -179,8 +172,6 @@ function SplashScreen(props) {
     }
 
     const showNotification = (notification) => {
-        //firebase.notifications().displayNotification(notification)  
-
         PushNotification.localNotification({
             /* Android Only Properties */
             autoCancel: true, // (optional) default: true
@@ -233,7 +224,11 @@ function SplashScreen(props) {
 
                     //refresh instagram token
                     if (instaTokenLong && instaTokenLong.length) {
-                        getRefreshInstaToken.refetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${instaTokenLong}`)
+                        const data = await getRefreshInstaToken.refetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${instaTokenLong}`)
+                        if (data && data.access_token) {
+                            //resultado refreshed access token
+                            props.authSetInstaTokenLong(getRefreshInstaToken.data.access_token)
+                        }
                     }
                 }
 

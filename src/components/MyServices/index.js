@@ -20,7 +20,9 @@ import {
     ScrollViewSubcategory,
     TouchTabSubcategory,
     TxtTabSubcategory,
-    ViewTabEmpty
+    ViewTabEmpty,
+    ViewItem,
+    TextItem
 } from './styles'
 
 import { lightgray, purple, white, black } from '../common/util/colors'
@@ -257,7 +259,7 @@ function MyServices(props) {
                 />}
             <ViewContainer>
                 <ScrollViewContainer>
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, paddingBottom: 100 }}>
                         {!showForm &&
                             <Animated.View style={slideRight.getLayout()}>
                                 <ViewContainerCategory>
@@ -331,16 +333,16 @@ function MyServices(props) {
                                         <View style={{ flex: 1 }}>
                                             {
                                                 !getServices.loading && servicesForm.map(item =>
-                                                    <ListItem
-                                                        key={'s' + item.id}
-                                                        containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
-                                                        title={item.title}
-                                                        rightIcon={renderIconService(item.id)}
-                                                        onPress={() => handleClickService(item)}
-                                                    />)
+                                                    <ViewItem key={item.id} onPress={() => handleClickService(item)}>
+                                                        <React.Fragment >
+                                                            <TextItem>{item.title}</TextItem>
+                                                            {renderIconService(item.id)}
+                                                        </React.Fragment>
+                                                    </ViewItem>
+                                                )
                                             }
                                         </View>
-                                        <View style={{ width: 170, alignSelf: 'center', marginTop: 20 }}>
+                                        <View style={{ width: 170, alignSelf: 'center' }}>
                                             <ButtonPurple onPress={handleConfirmPress} icon="check">Confirmar</ButtonPurple>
                                         </View>
                                     </React.Fragment>
@@ -350,7 +352,7 @@ function MyServices(props) {
                     </View>
                 </ScrollViewContainer>
             </ViewContainer>
-        </React.Fragment>
+        </React.Fragment >
     )
 }
 

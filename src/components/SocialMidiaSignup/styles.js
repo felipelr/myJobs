@@ -41,6 +41,9 @@ export const ViewContainerButton = styled.View`
 export const styleSheets = StyleSheet.create({
     containerCheck: {
         backgroundColor: '#FFFFFF',
-        borderWidth: 0
+        borderWidth: 0,
+        padding: 0,
+        margin: 0,
+        paddingTop: 10,
     }
 })

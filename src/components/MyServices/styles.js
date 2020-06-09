@@ -6,7 +6,6 @@ export const ViewContainer = styled.View`
 `
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
-    contentContainerStyle: { flexGrow: 1 },
     showsHorizontalScrollIndicator: false,
     showsVerticalScrollIndicator: false,
 })``
@@ -104,4 +103,17 @@ export const ViewTabEmpty = styled.View`
     border-radius: 20px;
     width: 150px;
     height: 40px;
+`
+
+export const ViewItem = styled.TouchableOpacity`
+    padding: 10px;
+    border-bottom-color: ${lightgray};
+    border-bottom-width: 1px;
+    flex-direction: row;
+`
+
+export const TextItem = styled.Text`
+    font-size: 16px;
+    color: ${black};
+    flex: 1;
 `

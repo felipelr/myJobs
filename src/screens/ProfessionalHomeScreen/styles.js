@@ -234,3 +234,16 @@ export const ViewIcon = styled.View`
     align-items: center;
     justify-content: center;
 `
+
+export const TouchConfigServices = styled.TouchableOpacity`
+    background-color: ${white};
+`
+
+export const TxtConfigServices = styled.Text`
+    font-size: 14px;
+    color: ${black};
+    background-color: ${white};
+    text-decoration-line: underline;
+    font-style: italic;
+    padding: 10px;
+`

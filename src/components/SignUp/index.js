@@ -244,7 +244,7 @@ function SignUp(props) {
                             {props.signup.error && <TextError>{props.signup.errorMessage}</TextError>}
                             <View>
                                 <CheckBox
-                                    title='Oferecer serviços no aplicativo'
+                                    title='Quero oferecer meus serviços no Myjobs!'
                                     checkedColor={purple}
                                     containerStyle={styleSheets.containerCheck}
                                     checked={form.userType === 2}
@@ -254,6 +254,7 @@ function SignUp(props) {
                                             'userType': form.userType === 2 ? 1 : 2
                                         })
                                     }} />
+                                    
                                 <TextInputJobs
                                     name='name'
                                     onChangeText={handleOnChange}

@@ -172,6 +172,12 @@ function PerfilScreen(props) {
         }
     }, [show])
 
+    useEffect(() => {
+        if (props.route.params.gotoMyServices) {
+            handleClickMenu('Meus Serviços')
+        }
+    }, [props.route.params])
+
     const handleBackPress = async () => {
         handleClickBack()
         return true
@@ -287,7 +293,7 @@ function PerfilScreen(props) {
         }
     }
 
-    const handleClickInstagram = () => {        
+    const handleClickInstagram = () => {
         const scope = 'user_profile,user_media'
         const state = props.user.sub
         const url = `https://www.instagram.com/oauth/authorize?client_id=${instagramAppID}&redirect_uri=${instagramRedirectUrl}&scope=${scope}&response_type=code&state=${state}`

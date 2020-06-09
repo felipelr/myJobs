@@ -252,7 +252,7 @@ function SocialMidiaSignup(props) {
                             }
                             <View>
                                 <CheckBox
-                                    title='Oferecer serviços no aplicativo'
+                                    title='Quero oferecer meus serviços no Myjobs!'
                                     checkedColor={purple}
                                     containerStyle={styleSheets.containerCheck}
                                     checked={form.userType === 2}
@@ -299,7 +299,7 @@ function SocialMidiaSignup(props) {
                                     itemsList={genderList} />
 
                                 <ViewContainerButton>
-                                    <ButtonPurple onPress={handleClickSignUp}>Continuar</ButtonPurple>
+                                    <ButtonPurple onPress={handleClickSignUp} icon="sign-in">Continuar</ButtonPurple>
                                 </ViewContainerButton>
                             </View>
                         </CardJobs>

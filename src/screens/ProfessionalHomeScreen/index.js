@@ -42,10 +42,10 @@ import {
     TextInfo,
     TextAddress,
     TxtHabilitarInstagram,
-    ViewInstagram,
-    TouchInstagram,
     TouchCapa,
     ViewIcon,
+    TouchConfigServices,
+    TxtConfigServices,
 } from './styles'
 
 import { white, lightgray, purple } from '../../components/common/util/colors'
@@ -98,7 +98,6 @@ function ProfessionalHomeScreen(props) {
 
     const pageRef = useRef()
     const cameraRef = useRef()
-    const routeRef = useRef()
 
     const getProfessionalServices = useGetMyJobs('', props.token)
     const getRatings = useGetMyJobs('', props.token)
@@ -128,12 +127,6 @@ function ProfessionalHomeScreen(props) {
             Linking.removeEventListener('url', handleOpenURL)
         }
     }, [])
-
-    useEffect(() => {
-        if (props.route) {
-            routeRef.current = props.route
-        }
-    }, [props.route])
 
     useEffect(() => {
         setProfessionalData(props.professionalData)
@@ -802,8 +795,19 @@ function ProfessionalHomeScreen(props) {
                                 </VwContainerStories>
 
                                 <VwContainerServices>
-                                    <TxtTitle size={14}>Serviços</TxtTitle>
-                                    <CardsServices services={services} loading={getProfessionalServices.loading} />
+                                    <View style={{ flexDirection: "row" }}>
+                                        <TxtTitle size={14}>Serviços</TxtTitle>
+                                        {services.length == 0 &&
+                                            <TouchConfigServices onPress={() => {
+                                                props.navigation.navigate('Perfil', {
+                                                    previewScreen: props.route.name,
+                                                    gotoMyServices: true
+                                                })
+                                            }}>
+                                                <TxtConfigServices>Configurar Meus Serviços</TxtConfigServices>
+                                            </TouchConfigServices>}
+                                    </View>
+                                    <CardsServices services={services} loading={getProfessionalServices.loading} emptyMsg="Você não possui serviços configurado..." />
                                 </VwContainerServices>
 
                                 <ContentComentarios>

@@ -67,6 +67,9 @@ export const PickerGenre = styled.Picker`
 export const styleSheets = StyleSheet.create({
     containerCheck: {
         backgroundColor: '#FFFFFF',
-        borderWidth: 0
+        borderWidth: 0,
+        padding: 0,
+        paddingTop: 10,
+        margin: 0,
     }
 })

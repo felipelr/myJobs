@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import ActionCreators from '../../store/actionCreators'
 
@@ -15,9 +15,10 @@ import {
 import CardService from '../../components/CardService/index'
 
 function CardsServices(props) {
+    const [emptyMsg, setEmptyMsg] = useState('')
 
     useEffect(() => {
-        console.log('props.selectedService => ', props)
+        setEmptyMsg(props.emptyMsg ? props.emptyMsg : 'Não há serviços...')
     }, [])
 
     return (
@@ -32,8 +33,8 @@ function CardsServices(props) {
                 ))
             }
             {
-                (!props.loading && !props.services.length) && 
-                <TextInfo>Não há serviços...</TextInfo>
+                (!props.loading && !props.services.length) &&
+                <TextInfo>{emptyMsg}</TextInfo>
             }
             {
                 props.loading && (

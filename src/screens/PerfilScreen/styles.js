@@ -61,6 +61,10 @@ export const TxtSlider = styled.Text`
     margin-top: 6px;
 `
 
+export const TouchHabilitarProfessional = styled.TouchableOpacity`
+    padding: 5px;
+`
+
 export const styles = StyleSheet.create({
     elevation: 2
 })

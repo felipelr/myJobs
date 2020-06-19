@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { PermissionsAndroid, Platform, View, Modal, Text } from 'react-native'
+import { PermissionsAndroid, Platform, View, Modal, Text, KeyboardAvoidingView } from 'react-native'
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
 import { RNCamera } from 'react-native-camera'
@@ -57,6 +57,10 @@ function ProfessionalEntry(props) {
 
     const scrollViewRef = useRef()
     const cameraRef = useRef()
+    const descriptionRef = useRef()
+    const phoneRef = useRef()
+    const documentRef = useRef()
+    const dateBirthRef = useRef()
 
     useEffect(() => {
         if (requisitou && !props.professional.isUpdating) {
@@ -296,160 +300,181 @@ function ProfessionalEntry(props) {
         setCameraType(cameraType === 'front' ? 'back' : 'front')
     }
 
+    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <ScrollViewContainer ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
-            <View style={{ flex: 1 }}>
-                {props.professional.isUpdating && <Loading size='large' color={purple} height='330' error={props.professional.errorUpdating} />}
+        <KeyboardAvoidingView behavior={behavior}>
+            <ScrollViewContainer
+                ref={current => scrollViewRef.current = current}
+                keyboardShouldPersistTaps='always'>
+                <View style={{ flex: 1 }}>
+                    {props.professional.isUpdating && <Loading size='large' color={purple} height='330' error={props.professional.errorUpdating} />}
 
-                {props.professional.errorUpdating && <TextError>{props.professional.errorMessage}</TextError>}
+                    {props.professional.errorUpdating && <TextError>{props.professional.errorMessage}</TextError>}
 
-                {!props.professional.isUpdating && (
-                    <React.Fragment>
-                        <ViewCapa onPress={() => handleAvatarClick('backImage')}>
-                            {backImage.uri.length > 0 && <ImageCapa source={{ uri: backImage.uri + '?v=' + imgVersion }} />}
-                            {backImage.uri.length <= 0 && <Text></Text>}
-                            <ViewIcon>
-                                <Icon name="edit" size={32} color={lightgray} />
-                            </ViewIcon>
-                        </ViewCapa>
+                    {!props.professional.isUpdating && (
+                        <React.Fragment>
+                            <ViewCapa onPress={() => handleAvatarClick('backImage')}>
+                                {backImage.uri.length > 0 && <ImageCapa source={{ uri: backImage.uri + '?v=' + imgVersion }} />}
+                                {backImage.uri.length <= 0 && <Text></Text>}
+                                <ViewIcon>
+                                    <Icon name="edit" size={32} color={lightgray} />
+                                </ViewIcon>
+                            </ViewCapa>
 
-                        <ContainerAvatar>
-                            {image.uri.length > 0 &&
-                                <Avatar
-                                    rounded
-                                    containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                    source={image.uri.length > 0 ? { uri: image.uri + '?v=' + imgVersion } : { uri: '' }}
-                                    size={120}
-                                    onPress={() => handleAvatarClick('photo')}
-                                    showEditButton
-                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
-                                    onEditPress={() => handleAvatarClick('photo')} />}
+                            <ContainerAvatar>
+                                {image.uri.length > 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={{ elevation: 2, alignSelf: "center" }}
+                                        source={image.uri.length > 0 ? { uri: image.uri + '?v=' + imgVersion } : { uri: '' }}
+                                        size={120}
+                                        onPress={() => handleAvatarClick('photo')}
+                                        showEditButton
+                                        editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                        onEditPress={() => handleAvatarClick('photo')} />}
 
-                            {image.uri.length <= 0 &&
-                                <Avatar
-                                    rounded
-                                    containerStyle={{ elevation: 2, alignSelf: "center" }}
-                                    size={120}
-                                    onPress={() => handleAvatarClick('photo')}
-                                    showEditButton
-                                    editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
-                                    onEditPress={() => handleAvatarClick('photo')} />}
+                                {image.uri.length <= 0 &&
+                                    <Avatar
+                                        rounded
+                                        containerStyle={{ elevation: 2, alignSelf: "center" }}
+                                        size={120}
+                                        onPress={() => handleAvatarClick('photo')}
+                                        showEditButton
+                                        editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                        onEditPress={() => handleAvatarClick('photo')} />}
 
-                        </ContainerAvatar>
+                            </ContainerAvatar>
 
-                        <View style={{ padding: 8 }}>
-                            <TextInputJobs
-                                value={form.name}
-                                name='name'
-                                onChangeText={handleOnChange}
-                                placeholder='Nome'
-                                invalidValue={invalidField === 'name'} />
+                            <View style={{ padding: 8 }}>
+                                <TextInputJobs
+                                    value={form.name}
+                                    name='name'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Nome'
+                                    invalidValue={invalidField === 'name'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => descriptionRef.current.focus()} />
 
-                            <TextInputJobs
-                                value={form.description}
-                                name='description'
-                                onChangeText={handleOnChange}
-                                placeholder='Descrição'
-                                multiline={true}
-                                numberOfLines={3}
-                                style={{ textAlignVertical: true }}
-                                invalidValue={invalidField === 'description'} />
+                                <TextInputJobs
+                                    ref={input => { descriptionRef.current = input; }}
+                                    value={form.description}
+                                    name='description'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Descrição'
+                                    multiline={true}
+                                    numberOfLines={3}
+                                    style={{ textAlignVertical: true }}
+                                    invalidValue={invalidField === 'description'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => phoneRef.current.focus()} />
 
-                            <TextInputJobs
-                                value={form.phone}
-                                name='phone'
-                                onChangeText={handleOnChange}
-                                placeholder='Telefone'
-                                textContentType='telephoneNumber'
-                                keyboardType='phone-pad'
-                                invalidValue={invalidField === 'phone'} />
+                                <TextInputJobs
+                                    ref={input => { phoneRef.current = input; }}
+                                    value={form.phone}
+                                    name='phone'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Telefone'
+                                    textContentType='telephoneNumber'
+                                    keyboardType='phone-pad'
+                                    invalidValue={invalidField === 'phone'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => documentRef.current.focus()} />
 
-                            <TextInputJobs
-                                value={form.document}
-                                name='document'
-                                onChangeText={handleOnChange}
-                                placeholder='CPF/CNPJ'
-                                invalidValue={invalidField === 'document'} />
+                                <TextInputJobs
+                                    ref={input => { documentRef.current = input; }}
+                                    value={form.document}
+                                    name='document'
+                                    onChangeText={handleOnChange}
+                                    placeholder='CPF/CNPJ'
+                                    invalidValue={invalidField === 'document'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => dateBirthRef.current.focus()} />
 
-                            <TextInputJobs
-                                value={form.date_birth}
-                                name='date_birth'
-                                onChangeText={handleOnChange}
-                                placeholder='Data de Nascimento'
-                                keyboardType='number-pad'
-                                invalidValue={invalidField === 'date_birth'} />
+                                <TextInputJobs
+                                    ref={input => { dateBirthRef.current = input; }}
+                                    value={form.date_birth}
+                                    name='date_birth'
+                                    onChangeText={handleOnChange}
+                                    placeholder='Data de Nascimento'
+                                    keyboardType='number-pad'
+                                    invalidValue={invalidField === 'date_birth'} />
 
-                            <ViewContainerButton>
-                                <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
-                            </ViewContainerButton>
-                        </View>
+                                <ViewContainerButton>
+                                    <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
+                                </ViewContainerButton>
+                            </View>
 
-                        <Modal
-                            visible={modalOpened}
-                            transparent={menuOpened}
-                            animationType="fade"
-                            onRequestClose={handleModalClose}>
+                            <Modal
+                                visible={modalOpened}
+                                transparent={menuOpened}
+                                animationType="fade"
+                                onRequestClose={handleModalClose}>
 
-                            {menuOpened &&
-                                <MenuPicture
-                                    onCameraPress={handleShowCamera}
-                                    onGaleryPress={handleShowFolder}
-                                    onCancelPress={handleModalClose} />}
+                                {menuOpened &&
+                                    <MenuPicture
+                                        onCameraPress={handleShowCamera}
+                                        onGaleryPress={handleShowFolder}
+                                        onCancelPress={handleModalClose} />}
 
-                            {cameraOpened && (
-                                <ModalContainer>
+                                {cameraOpened && (
                                     <ModalContainer>
-                                        <RNCamera
-                                            ref={camera => { cameraRef.current = camera; }}
-                                            style={{ flex: 1 }}
-                                            type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
-                                            autoFocus={RNCamera.Constants.AutoFocus.on}
-                                            flashMode={RNCamera.Constants.FlashMode.off}
-                                            androidCameraPermissionOptions={{
-                                                title: 'Permissão para usar a câmera',
-                                                message: 'Nós precisamos da sua permissão para usar a câmera',
-                                                buttonPositive: 'Ok',
-                                                buttonNegative: 'Cancel',
-                                            }}
-                                            androidRecordAudioPermissionOptions={{
-                                                title: 'Permissão para gravar audio',
-                                                message: 'Nós precisamos da sua permissão para usar o seu audio',
-                                                buttonPositive: 'Ok',
-                                                buttonNegative: 'Cancel',
-                                            }}
-                                        />
-                                        <TakePictureButtonContainer onPress={handleTakePicture}>
-                                            <TakePictureButtonLabel />
-                                        </TakePictureButtonContainer>
-                                        <FlipCameraButtonContainer onPress={handleFlipCamera}>
-                                            <Icon name="switch-camera" size={40} color={white} />
-                                        </FlipCameraButtonContainer>
+                                        <ModalContainer>
+                                            <RNCamera
+                                                ref={camera => { cameraRef.current = camera; }}
+                                                style={{ flex: 1 }}
+                                                type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
+                                                autoFocus={RNCamera.Constants.AutoFocus.on}
+                                                flashMode={RNCamera.Constants.FlashMode.off}
+                                                androidCameraPermissionOptions={{
+                                                    title: 'Permissão para usar a câmera',
+                                                    message: 'Nós precisamos da sua permissão para usar a câmera',
+                                                    buttonPositive: 'Ok',
+                                                    buttonNegative: 'Cancel',
+                                                }}
+                                                androidRecordAudioPermissionOptions={{
+                                                    title: 'Permissão para gravar audio',
+                                                    message: 'Nós precisamos da sua permissão para usar o seu audio',
+                                                    buttonPositive: 'Ok',
+                                                    buttonNegative: 'Cancel',
+                                                }}
+                                            />
+                                            <TakePictureButtonContainer onPress={handleTakePicture}>
+                                                <TakePictureButtonLabel />
+                                            </TakePictureButtonContainer>
+                                            <FlipCameraButtonContainer onPress={handleFlipCamera}>
+                                                <Icon name="switch-camera" size={40} color={white} />
+                                            </FlipCameraButtonContainer>
+                                        </ModalContainer>
+                                        <ModalButtons>
+                                            <CameraButtonContainer onPress={handleModalClose}>
+                                                <CancelButtonText>Cancelar</CancelButtonText>
+                                            </CameraButtonContainer>
+                                            <CameraButtonContainer onPress={handleCameraModalConfirm}>
+                                                <ContinueButtonText>Continuar</ContinueButtonText>
+                                            </CameraButtonContainer>
+                                        </ModalButtons>
                                     </ModalContainer>
-                                    <ModalButtons>
-                                        <CameraButtonContainer onPress={handleModalClose}>
-                                            <CancelButtonText>Cancelar</CancelButtonText>
-                                        </CameraButtonContainer>
-                                        <CameraButtonContainer onPress={handleCameraModalConfirm}>
-                                            <ContinueButtonText>Continuar</ContinueButtonText>
-                                        </CameraButtonContainer>
-                                    </ModalButtons>
-                                </ModalContainer>
-                            )}
+                                )}
 
-                            {folderImagesOpened &&
-                                <ModalContainer>
-                                    <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
-                                    <ModalButtons>
-                                        <CameraButtonContainer onPress={handleModalClose}>
-                                            <CancelButtonText>Cancelar</CancelButtonText>
-                                        </CameraButtonContainer>
-                                    </ModalButtons>
-                                </ModalContainer>}
-                        </Modal>
-                    </React.Fragment>
-                )}
-            </View>
-        </ScrollViewContainer>
+                                {folderImagesOpened &&
+                                    <ModalContainer>
+                                        <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
+                                        <ModalButtons>
+                                            <CameraButtonContainer onPress={handleModalClose}>
+                                                <CancelButtonText>Cancelar</CancelButtonText>
+                                            </CameraButtonContainer>
+                                        </ModalButtons>
+                                    </ModalContainer>}
+                            </Modal>
+                        </React.Fragment>
+                    )}
+                </View>
+            </ScrollViewContainer>
+        </KeyboardAvoidingView>
     )
 }
 

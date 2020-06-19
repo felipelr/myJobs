@@ -45,5 +45,6 @@ export const styleSheets = StyleSheet.create({
         padding: 0,
         margin: 0,
         paddingTop: 10,
+        paddingBottom: 10,
     }
 })

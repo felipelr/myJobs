@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
-import firebase from '@react-native-firebase/app'
-import messaging from '@react-native-firebase/messaging'
+import messaging, { AuthorizationStatus } from '@react-native-firebase/messaging'
+import axios from 'axios'
+import PushNotificationIOS from "@react-native-community/push-notification-ios"
+var PushNotification = require("react-native-push-notification")
+
+import { urlMyJobsAPI } from '../../config/config'
 
 import ActionCreators from '../../store/actionCreators'
 
 import { useGet } from '../../services/useRequest'
 
-import { purple } from '../../components/common/util/colors'
+import { showNotification } from '../../components/common/util/localNotification'
 import { updateBadge } from '../../components/common/util/badgeNotification'
 
-import { ViewContainer, ImgLogoTipo } from './styles'
-
-import assets from './assets'
-
-var PushNotification = require("react-native-push-notification")
+import { ViewContainer } from './styles'
 
 function SplashScreen(props) {
     const [initialRoute, setInitialRoute] = useState('')
@@ -39,10 +40,38 @@ function SplashScreen(props) {
         updateProfessionalRating(jsonMessage)
     });
 
+    PushNotification.configure({
+        // (required) Called when a remote is received or opened, or local notification is opened
+        onNotification: function (notification) {
+            console.log("NOTIFICATION:", notification);
+            // process the notification
+            
+            if(chatVisibleRef.current){
+                props.navigation.goBack()
+            }
+            handleAppOpenedByNotification(notification, { message: JSON.stringify(notification.data) })
+            props.navigation.navigate('ProfessionalChat', {
+                previewScreen: 'Splash',
+            })
+
+            // (required) Called when a remote is received or opened, or local notification is opened
+            notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true,
+        },
+        popInitialNotification: true,
+        requestPermissions: true,
+    });
+
     useEffect(() => {
-        getUserData().then(route => {
+        loginFromLocalStorage().then(route => {
             setInitialRoute(route)
         })
+
         firebaseRequestUserPermission()
 
         //new methods
@@ -74,11 +103,12 @@ function SplashScreen(props) {
             updateProfessionalRating(jsonMessage)
 
             //local notification
-            showNotification(notification)
+            showNotification({ ...notification, data: jsonMessage })
         });
 
         const _onTokenRefresh = messaging().onTokenRefresh(token => {
-            saveTokenToDatabase(token);
+            console.log('FCM Token Refresh => ', token)
+            props.chatSetFcmToken(token)
         });
 
         messaging().onNotificationOpenedApp(remoteMessage => {
@@ -92,7 +122,7 @@ function SplashScreen(props) {
             .then(remoteMessage => {
                 if (remoteMessage) {
                     console.log('Notification caused app to open from quit state => ', remoteMessage);
-                    getUserData().then(route => {
+                    loginFromLocalStorage().then(route => {
                         handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
                         setInitialRoute('NotificationStart')
                     })
@@ -143,76 +173,63 @@ function SplashScreen(props) {
 
     const handleAppOpenedByNotification = (notification, data) => {
         if (data.message) {
-            if (!chatVisibleRef.current) {
-                if (props.professional || props.client) {
-                    const msg = JSON.parse(data.message)
+            if (props.professional || props.client) {
+                const msg = JSON.parse(data.message)
 
-                    if (msg.type === 'call') {
-                        //abrir tela de chamados
-                    }
-                    else if (msg.type === 'call_finished') {
-                        //abrir tela de chamados finalizados
-                    }
-                    else if (msg.type === 'rating') {
-                        //abrir home do profissional
+                if (msg.type === 'call') {
+                    //abrir tela de chamados
+                }
+                else if (msg.type === 'call_finished') {
+                    //abrir tela de chamados finalizados
+                }
+                else if (msg.type === 'rating') {
+                    //abrir home do profissional
+                }
+                else {
+                    if (msg.msg_from == 'client') {
+                        const client = { id: msg.client_id, name: notification.title }
+                        props.authSetUserType('professional')
+                        props.clientSelected(client)
                     }
                     else {
-                        if (msg.msg_from == 'client') {
-                            const client = { id: msg.client_id, name: notification.title }
-                            props.clientSelected(client)
-                        }
-                        else {
-                            const professional = { id: msg.professional_id, name: notification.title }
-                            props.professionalSelected(professional)
-                        }
+                        const professional = { id: msg.professional_id, name: notification.title }
+                        props.authSetUserType('client')
+                        props.professionalSelected(professional)
                     }
                 }
             }
         }
     }
 
-    const showNotification = (notification) => {
-        PushNotification.localNotification({
-            /* Android Only Properties */
-            autoCancel: true, // (optional) default: true
-            largeIcon: "ic_myjobs", // (optional) default: "ic_launcher"
-            smallIcon: "ic_myjobs", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-            color: purple, // (optional) default: system default
-            vibrate: true, // (optional) default: true
-            vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-            priority: "high", // (optional) set notification priority, default: high
-            visibility: "private", // (optional) set notification visibility, default: private
-            importance: "high", // (optional) set notification importance, default: high
-            ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
-
-            /* iOS and Android properties */
-            title: notification.title, // (optional)
-            message: notification.body, // (required)
-            playSound: true, // (optional) default: true
-            soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)                
-        });
-    }
-
-    const getUserData = async () => {
+    const loginFromLocalStorage = async () => {
         try {
             const userData = await AsyncStorage.getItem('@userData')
             if (userData) {
-                const clientData = await AsyncStorage.getItem('@clientData')
-                const professionalData = await AsyncStorage.getItem('@professionalData')
+                const loginData = JSON.parse(userData)
+                const responseUser = await axios.get(`${urlMyJobsAPI}/users/view/${loginData.user.sub}.json`, {
+                    headers: {
+                        Authorization: 'Bearer ' + loginData.token
+                    }
+                })
+
+                const { client } = responseUser.data.user
+                const { professional } = responseUser.data.user
+
+                if (client) {
+                    await AsyncStorage.setItem('@clientData', JSON.stringify(client))
+                    props.clientUpdateSuccess(client)
+                }
+
+                if (professional) {
+                    await AsyncStorage.setItem('@professionalData', JSON.stringify(professional))
+                    props.professionalUpdateSuccess(professional)
+                }
+
                 const instaTokenLong = await AsyncStorage.getItem('@instaTokenLong')
                 const instaUserID = await AsyncStorage.getItem('@instaUserID')
 
-                const clientJson = clientData ? JSON.parse(clientData) : null
-                const professionalJson = professionalData ? JSON.parse(professionalData) : null
-
-                let userType = professionalJson && professionalJson.id ? 'professional' : 'client'
-                const userJson = { ...JSON.parse(userData), userType }
-
-                if (clientJson !== null && clientJson.id)
-                    props.clientUpdateSuccess(clientJson)
-
-                if (professionalJson !== null && professionalJson.id)
-                    props.professionalUpdateSuccess(professionalJson)
+                const userType = professional && professional.id ? 'professional' : 'client'
+                const userJson = { ...loginData, userType }
 
                 //carregar instagram user id
                 if (instaUserID && instaUserID.length)
@@ -227,12 +244,12 @@ function SplashScreen(props) {
                         const data = await getRefreshInstaToken.refetch(`https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${instaTokenLong}`)
                         if (data && data.access_token) {
                             //resultado refreshed access token
-                            props.authSetInstaTokenLong(getRefreshInstaToken.data.access_token)
+                            props.authSetInstaTokenLong(data.access_token)
                         }
                     }
                 }
 
-                if (!professionalJson.id && !clientJson.id) {
+                if (!professional.id && !client.id) {
                     await AsyncStorage.setItem('@userData', JSON.stringify({}));
                     await AsyncStorage.setItem('@clientData', JSON.stringify({}));
                     await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
@@ -258,6 +275,7 @@ function SplashScreen(props) {
                 return "LoginStart"
             }
         } catch (e) {
+            console.log('ERROR => ', e.message)
             await AsyncStorage.setItem('@userData', JSON.stringify({}));
             await AsyncStorage.setItem('@clientData', JSON.stringify({}));
             await AsyncStorage.setItem('@professionalData', JSON.stringify({}));
@@ -268,14 +286,14 @@ function SplashScreen(props) {
 
     const firebaseRequestUserPermission = async () => {
         try {
-            const settings = await messaging().requestPermission();
-            if (settings) {
-                console.log('Permission settings:', settings);
+            const authStatus = await messaging().requestPermission();
+            const enabled = authStatus === AuthorizationStatus.AUTHORIZED || authStatus === AuthorizationStatus.PROVISIONAL;
+            if (enabled) {
+                console.log('Authorization status:', authStatus);
             }
         } catch (error) {
             // User has rejected permissions
-            console.log('User has rejected permissions', error)
-            Alert.alert('User has rejected permissions => ', JSON.stringify(error));
+            console.log('User has rejected permissions', JSON.stringify(error));
         }
     }
 
@@ -293,7 +311,7 @@ function SplashScreen(props) {
 
     return (
         <ViewContainer>
-            <ImgLogoTipo source={assets.myjobs} />
+            <ActivityIndicator size='large' color='#FFFFFF' style={{ alignSelf: "center" }} />
         </ViewContainer>
     )
 }
@@ -320,6 +338,7 @@ const mapDispatchToProps = dispatch => {
         authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
         authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
         professionalSetRatingUpdated: (updated) => dispatch(ActionCreators.professionalSetRatingUpdated(updated)),
+        authSetUserType: (userType) => dispatch(ActionCreators.authSetUserType(userType)),
     }
 }
 

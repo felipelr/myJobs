@@ -1,6 +1,5 @@
 import React from 'react'
 import { ActivityIndicator, View } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {
     ViewContainerBack,
@@ -25,7 +24,7 @@ export default function Loading(props) {
                 <ViewContainer>
                     {(!success && !error) &&
                         <View>
-                            <ActivityIndicator size={size ? size : 'large'} color={color ? color : "#0000ff"} />
+                            <ActivityIndicator size={size ? size : 'large'} color={color ? color : purple} />
                             <TextLoading color={purple}>{text ? text : 'Loading...'}</TextLoading>
                         </View>}
                     {success &&
@@ -44,7 +43,7 @@ export default function Loading(props) {
                 <ViewContainer2>
                     {(!success && !error) &&
                         <View>
-                            <ActivityIndicator size={size ? size : 'large'} color={color ? color : "#0000ff"} />
+                            <ActivityIndicator size={size ? size : 'large'} color={color ? color : purple} />
                             <TextLoading color={purple}>{text ? text : 'Loading...'}</TextLoading>
                         </View>}
                     {success &&

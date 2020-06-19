@@ -57,9 +57,15 @@ function SignUp(props) {
     })
 
     const scrollViewRef = useRef()
+    const phoneRef = useRef()
+    const documentRef = useRef()
+    const dateBirthRef = useRef()
+    const emailRef = useRef()
+    const passwdRef = useRef()
+    const confirmPasswdRef = useRef()
 
     useEffect(() => {
-
+        console.log('scrollViewRef.current.height => ', scrollViewRef.current)
     }, [])
 
     useEffect(() => {
@@ -174,7 +180,7 @@ function SignUp(props) {
     }
 
     const showError = (description) => {
-        scrollViewRef.current.scrollTo({ x: 0, y: 1, animated: true })
+        scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
         props.signupError('O campo ' + description + ' está inválido.')
     }
 
@@ -234,8 +240,10 @@ function SignUp(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView behavior={behavior}>
-            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
-                <View style={{ paddingBottom: 50 }}>
+            <ScrollViewContainerForm
+                ref={current => scrollViewRef.current = current}
+                keyboardShouldPersistTaps='always'>
+                <View style={{ paddingBottom: 20, flex: 1 }}>
                     {(props.signup.isSigningup || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.signup.error} success={props.signup.isSignup} />}
 
                     {(!props.signup.isSigningup && !props.auth.isLogingin) && (
@@ -254,37 +262,57 @@ function SignUp(props) {
                                             'userType': form.userType === 2 ? 1 : 2
                                         })
                                     }} />
-                                    
+
                                 <TextInputJobs
                                     name='name'
                                     onChangeText={handleOnChange}
                                     placeholder='Nome'
-                                    invalidValue={invalidField === 'name'} />
+                                    invalidValue={invalidField === 'name'}
+                                    textContentType='name'
+                                    keyboardType='default'
+                                    autoCompleteType='name'
+                                    autoCapitalize='none'
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => phoneRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={(input) => phoneRef.current = input}
                                     value={form.phone}
                                     name='phone'
                                     onChangeText={handleOnChange}
                                     placeholder='Telefone'
                                     textContentType='telephoneNumber'
                                     keyboardType='phone-pad'
-                                    invalidValue={invalidField === 'phone'} />
+                                    autoCompleteType='off'
+                                    invalidValue={invalidField === 'phone'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => documentRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={(input) => documentRef.current = input}
                                     value={form.document}
                                     name='document'
                                     onChangeText={handleOnChange}
                                     keyboardType='number-pad'
+                                    autoCompleteType='off'
                                     placeholder='CPF'
-                                    invalidValue={invalidField === 'document'} />
+                                    invalidValue={invalidField === 'document'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => dateBirthRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={(input) => dateBirthRef.current = input}
                                     value={form.date_birth}
                                     name='date_birth'
                                     onChangeText={handleOnChange}
                                     placeholder='Data de Nascimento'
+                                    autoCompleteType='off'
                                     keyboardType='number-pad'
-                                    invalidValue={invalidField === 'date_birth'} />
+                                    invalidValue={invalidField === 'date_birth'}
+                                    returnKeyType="next"/>
 
                                 <PickerJobs
                                     selectedValue={form.gender}
@@ -297,6 +325,7 @@ function SignUp(props) {
                                     itemsList={genderList} />
 
                                 <TextInputJobs
+                                    ref={(input) => emailRef.current = input}
                                     name='email'
                                     onChangeText={handleOnChange}
                                     placeholder='Email'
@@ -304,17 +333,25 @@ function SignUp(props) {
                                     keyboardType='email-address'
                                     autoCompleteType='email'
                                     autoCapitalize='none'
-                                    invalidValue={invalidField === 'email'} />
+                                    invalidValue={invalidField === 'email'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => passwdRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={(input) => passwdRef.current = input}
                                     name='password'
                                     onChangeText={handleOnChange}
                                     placeholder='Senha'
                                     textContentType='password'
                                     secureTextEntry={true}
-                                    invalidValue={invalidField === 'password'} />
+                                    invalidValue={invalidField === 'password'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => confirmPasswdRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={(input) => confirmPasswdRef.current = input}
                                     name='confirmPassword'
                                     onChangeText={handleOnChange}
                                     placeholder='Confirme a Senha'

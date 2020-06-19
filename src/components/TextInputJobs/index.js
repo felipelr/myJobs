@@ -10,13 +10,17 @@ import {
     ContainerIcon,
 } from './styles'
 
-export default function TextInputJobs({ invalidValue, name, style, onChangeText, secureTextEntry, ...props }) {
+export default TextInputJobs = React.forwardRef(({ invalidValue, name, style, onChangeText, secureTextEntry, ...props }, ref) => {
     const [showPwd, setShowPwd] = useState(false)
 
     return (
         <ContainerTextInput style={style}>
             <ContainerRow>
-                <TextInputCustom onChangeText={(text) => onChangeText(name, text)} {...props} secureTextEntry={secureTextEntry && !showPwd}/>
+                <TextInputCustom
+                    {...props}
+                    ref={ref}
+                    onChangeText={(text) => onChangeText(name, text)}
+                    secureTextEntry={secureTextEntry && !showPwd} />
                 {(secureTextEntry && !showPwd) && <ContainerIcon><Icon name='eye' size={20} onPress={() => setShowPwd(!showPwd)} /></ContainerIcon>}
                 {(secureTextEntry && showPwd) && <ContainerIcon><Icon name='eye-slash' size={20} onPress={() => setShowPwd(!showPwd)} /></ContainerIcon>}
             </ContainerRow>
@@ -24,4 +28,4 @@ export default function TextInputJobs({ invalidValue, name, style, onChangeText,
             {!invalidValue && <ViewBlack />}
         </ContainerTextInput>
     )
-}
+})

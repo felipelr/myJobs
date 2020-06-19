@@ -1,6 +1,7 @@
 import styled from 'styled-components'
+import { Dimensions } from 'react-native'
 import { white, purple, lightpurple, black, lightgray } from '../../components/common/util/colors'
-
+const { height, width } = Dimensions.get('window')
 
 export const ViewContainerInfo = styled.View`
     padding: 5px;
@@ -75,20 +76,21 @@ export const ViewChatItem = styled.View`
 `
 
 export const ViewChatText = styled.View`
-    flex-direction: row;
     padding: 8px;
     border-radius: 5px;
     background-color: ${props => `${props.backColor}`};
-    margin-left: ${props => `${props.marginLeft}`};
-    margin-right: ${props => `${props.marginRight}`};
     margin-bottom: 5px;
-    elevation: 1;
-    
+    elevation: 1;    
+`
+
+export const ViewRow = styled.View`
+    flex-direction: row; 
 `
 
 export const TextMessage = styled.Text`
     font-size: 12px;
     color: ${black};
+    max-width: ${width - 85};
 `
 
 export const TextTime = styled.Text`

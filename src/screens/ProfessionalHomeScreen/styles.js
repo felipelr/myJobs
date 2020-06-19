@@ -247,3 +247,7 @@ export const TxtConfigServices = styled.Text`
     font-style: italic;
     padding: 10px;
 `
+
+export const TouchEdit = styled.TouchableOpacity`
+    flex-direction: row;
+`

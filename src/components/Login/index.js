@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { CheckBox } from 'react-native-elements'
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 
 import ActionCreators from '../../store/actionCreators'
@@ -13,10 +12,7 @@ import {
     NewUserButton,
     NewUserButtonText,
     ViewContainerFields,
-    ViewContainerRow
 } from './styles'
-
-import { styleSheets } from './styles'
 
 import TextInputJobs from '../TextInputJobs/index'
 import CardJobs from '../CardJobs/index'
@@ -24,15 +20,17 @@ import Loading from '../Loading/index'
 import TextError from '../TextError/index'
 import ButtonPurple from '../ButtonPurple/index'
 
-function Login(props) {
-    /* const [form, setForm] = useState({
-        email: '',
-        password: '',
-    }) */
+const Login = (props) => {
     const [form, setForm] = useState({
         email: 'felipe.lima.flr@gmail.com', //felipe.lima.flr@gmail.com
         password: '101762866218022699799', //101762866218022699799
     })
+    /* const [form, setForm] = useState({
+        email: '',
+        password: '',
+    }) */
+    
+    const passwdRef = useRef()
 
     useEffect(() => {
         if (props.auth.isAuth) {
@@ -71,9 +69,13 @@ function Login(props) {
                             onChangeText={handleOnChange}
                             placeholder='Usuário'
                             autoCompleteType='email'
-                            autoCapitalize='none' />
+                            autoCapitalize='none'
+                            returnKeyType="next"
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => passwdRef.current.focus()} />
 
                         <TextInputJobs
+                            ref={input => { passwdRef.current = input; }}
                             value={form.password}
                             name='password'
                             onChangeText={handleOnChange}

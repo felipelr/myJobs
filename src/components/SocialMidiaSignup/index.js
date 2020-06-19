@@ -27,6 +27,7 @@ import {
 import { styleSheets } from './styles'
 
 function SocialMidiaSignup(props) {
+    const [loadingInterface, setLoadingInterface] = useState(true)
     const [invalidField, setInvalidField] = useState('')
     const [genderList, setGenderList] = useState([
         {
@@ -51,6 +52,8 @@ function SocialMidiaSignup(props) {
     })
 
     const scrollViewRef = useRef()
+    const documentRef = useRef()
+    const dateBirthRef = useRef()
 
     useEffect(() => {
         //verificar se já existe cadastro do facebook
@@ -65,6 +68,9 @@ function SocialMidiaSignup(props) {
     useEffect(() => {
         if (props.socialMidiaSignup.accVerified === 1) {
             props.login(props.socialMidiaSignup.user.email, props.socialMidiaSignup.user.password)
+        }
+        if (props.socialMidiaSignup.accVerified === 0) {
+            setLoadingInterface(false)
         }
     }, [props.socialMidiaSignup.accVerified])
 
@@ -239,11 +245,11 @@ function SocialMidiaSignup(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-            <ScrollViewContainerForm ref={(c) => scrollViewRef.current = c} keyboardShouldPersistTaps='always'>
+            <ScrollViewContainerForm ref={current => scrollViewRef.current = current} keyboardShouldPersistTaps='always'>
                 <ViewContainer>
-                    {(props.socialMidiaSignup.isSigningup || props.socialMidiaSignup.verifyingAcc || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
+                    {(loadingInterface || props.socialMidiaSignup.isSigningup || props.socialMidiaSignup.verifyingAcc || props.auth.isLogingin) && <Loading size='large' color={purple} height='330' error={props.socialMidiaSignup.error} success={props.socialMidiaSignup.isSignup} />}
 
-                    {(!props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
+                    {(!loadingInterface && !props.socialMidiaSignup.isSigningup && !props.socialMidiaSignup.verifyingAcc && !props.auth.isLogingin) && (
                         <CardJobs backColor={white} width='80' height='140' opacity={1}>
                             <TextSignUpTitle>Olá {existUserName() ? props.socialMidiaSignup.user.name : existClientName() ? props.socialMidiaSignup.user.client.name : existProfessionalName() ? props.socialMidiaSignup.user.professional.name : ''},</TextSignUpTitle>
                             <TextSignUpSubtitle>Precisamos de mais algumas informações para concluir o seu cadastro.</TextSignUpSubtitle>
@@ -270,23 +276,33 @@ function SocialMidiaSignup(props) {
                                     placeholder='Telefone'
                                     textContentType='telephoneNumber'
                                     keyboardType='phone-pad'
-                                    invalidValue={invalidField === 'phone'} />
+                                    autoCompleteType='off'
+                                    invalidValue={invalidField === 'phone'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => documentRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={input => documentRef.current = input}
                                     value={form.document}
                                     name='document'
                                     onChangeText={handleOnChange}
                                     placeholder='CPF'
                                     keyboardType='number-pad'
-                                    invalidValue={invalidField === 'document'} />
+                                    invalidValue={invalidField === 'document'}
+                                    returnKeyType="next"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => dateBirthRef.current.focus()} />
 
                                 <TextInputJobs
+                                    ref={input => dateBirthRef.current = input}
                                     value={form.date_birth}
                                     name='date_birth'
                                     onChangeText={handleOnChange}
                                     placeholder='Data de Nascimento'
                                     keyboardType='number-pad'
-                                    invalidValue={invalidField === 'date_birth'} />
+                                    invalidValue={invalidField === 'date_birth'}
+                                    returnKeyType="next" />
 
                                 <PickerJobs
                                     selectedValue={form.gender}

@@ -6,7 +6,10 @@ import { connect } from 'react-redux'
 import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { gray, white, lightpurple, black } from '../../components/common/util/colors'
+import { showNotification } from '../../components/common/util/localNotification'
+import { updateBadge } from '../../components/common/util/badgeNotification'
+
+import { gray, white, lightpurple, black, purple } from '../../components/common/util/colors'
 import {
     ViewContainerChat,
     ViewContainerNewMessage,
@@ -29,7 +32,45 @@ import { ScrollViewContainerMessages } from './styles'
 import { ViewChatDate, TextChatDate } from './styles'
 
 ///////ChatItem
-import { ViewChatItem, ViewChatText, TextMessage, TextTime } from './styles'
+import { ViewChatItem, ViewChatText, TextMessage, TextTime, ViewRow } from './styles'
+
+function ChatTextDate(props) {
+    const { mensagem } = props
+    return (
+        <ViewChatDate>
+            <TextChatDate>{mensagem.date}</TextChatDate>
+        </ViewChatDate>
+    )
+}
+
+function ChateItem(props) {
+    const { mensagem } = props
+    const { userType } = props
+    return (
+        <ViewChatItem justifyContent={mensagem.msg_from === userType ? 'flex-end' : 'flex-start'}>
+            <ViewChatText backColor={mensagem.msg_from === userType ? '#D3D4FE' : '#EAEAEA'} >
+                {mensagem.msg_from === userType &&
+                    <ViewRow>
+                        <TextTime marginRight={10} marginLeft={0}>
+                            {mensagem.time.substring(0, 5)}
+                        </TextTime>
+                        <TextMessage>
+                            {mensagem.message}
+                        </TextMessage>
+                    </ViewRow>}
+                {mensagem.msg_from !== userType &&
+                    <ViewRow>
+                        <TextMessage>
+                            {mensagem.message}
+                        </TextMessage>
+                        <TextTime marginRight={0} marginLeft={10}>
+                            {mensagem.time.substring(0, 5)}
+                        </TextTime>
+                    </ViewRow>}
+            </ViewChatText>
+        </ViewChatItem>
+    )
+}
 
 function ChatMessages(props) {
     const { messages } = props
@@ -74,50 +115,6 @@ function ChatMessages(props) {
                 }
             </ScrollViewContainerMessages>
         </React.Fragment>
-
-    )
-}
-
-function ChatTextDate(props) {
-    const { mensagem } = props
-    return (
-        <ViewChatDate>
-            <TextChatDate>{mensagem.date}</TextChatDate>
-        </ViewChatDate>
-    )
-}
-
-function ChateItem(props) {
-    const { mensagem } = props
-    const { userType } = props
-    return (
-        <ViewChatItem justifyContent={mensagem.msg_from === userType ? 'flex-end' : 'flex-start'}>
-            <ViewChatText
-                backColor={mensagem.msg_from === userType ? '#D3D4FE' : '#EAEAEA'}
-                marginRight={mensagem.msg_from === userType ? 0 : 50}
-                marginLeft={mensagem.msg_from === userType ? 50 : 0}
-            >
-                {mensagem.msg_from === userType &&
-                    <React.Fragment>
-                        <TextTime marginRight={10} marginLeft={0}>
-                            {mensagem.time.substring(0, 5)}
-                        </TextTime>
-                        <TextMessage style={{ marginRight: 20 }}>
-                            {mensagem.message}
-                        </TextMessage>
-                    </React.Fragment>}
-                {mensagem.msg_from !== userType &&
-                    <React.Fragment>
-                        <TextMessage>
-                            {mensagem.message}
-                        </TextMessage>
-                        <TextTime marginRight={0} marginLeft={10}>
-                            {mensagem.time.substring(0, 5)}
-                        </TextTime>
-                    </React.Fragment>}
-
-            </ViewChatText>
-        </ViewChatItem>
     )
 }
 
@@ -175,34 +172,61 @@ function ProfessionalChatScreen(props) {
                     time: Moment().format('HH:mm:ss')
                 }
 
-                if (props.userType !== messageObj.msg_from) {
-                    setMensagens([...messagesRef.current, messageObj])
-                }
-
                 if (props.professionalSelected.id) {
-                    const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-                    AsyncStorage.getItem(storageName, (err, result) => {
-                        const newMessage = [messageObj]
-                        if (result !== null) {
-                            const arrayMessages = JSON.parse(result).concat(newMessage)
-                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
-                        } else {
-                            AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                    if (messageObj.professional_id == props.professionalSelected.id && messageObj.client_id == props.user.id) {
+                        if (props.userType !== messageObj.msg_from) {
+                            setMensagens([...messagesRef.current, messageObj])
                         }
-                    })
+                    }
+                    else {
+                        //gerar badge e push local da msg de outra pessoa
+                        console.log('messageObj => ', JSON.stringify(messageObj))
+                        const msgBadge = {
+                            ...messageObj,
+                            type: 'chat',
+                        }
+                        const notification = {
+                            title: messageObj.title,
+                            body: messageObj.message,
+                            data: messageObj,
+                        }
+                        updateBadge(msgBadge)
+                        showNotification(notification)
+                    }
                 }
                 else {
-                    const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
-                    AsyncStorage.getItem(storageName, (err, result) => {
-                        const newMessage = [messageObj]
-                        if (result !== null) {
-                            const arrayMessages = JSON.parse(result).concat(newMessage)
-                            AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
-                        } else {
-                            AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                    if (messageObj.professional_id == props.user.id && messageObj.client_id == props.clientSelected.id) {
+                        if (props.userType !== messageObj.msg_from) {
+                            setMensagens([...messagesRef.current, messageObj])
                         }
-                    })
+                    }
+                    else {
+                        //gerar badge e push local da msg de outra pessoa
+                        console.log('messageObj => ', JSON.stringify(messageObj))
+                        const msgBadge = {
+                            ...messageObj,
+                            type: 'chat',
+                        }
+                        const notification = {
+                            title: messageObj.title,
+                            body: messageObj.message,
+                            data: messageObj,
+                        }
+                        updateBadge(msgBadge)
+                        showNotification(notification)
+                    }
                 }
+
+                const storageName = `@msg_c_${messageObj.client_id}_p_${messageObj.professional_id}`
+                AsyncStorage.getItem(storageName, (err, result) => {
+                    const newMessage = [messageObj]
+                    if (result !== null) {
+                        const arrayMessages = JSON.parse(result).concat(newMessage)
+                        AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                    } else {
+                        AsyncStorage.setItem(storageName, JSON.stringify(newMessage))
+                    }
+                })
             } catch (ex) {
                 console.log(ex)
             }
@@ -431,7 +455,7 @@ function ProfessionalChatScreen(props) {
         }
     }
 
-    const toggleOverlay = () => { 
+    const toggleOverlay = () => {
         setAddressVisible(!addressVisible)
     }
 

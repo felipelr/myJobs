@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, KeyboardAvoidingView, Platform, Keyboard, BackHandler } from 'react-native'
+import { View, KeyboardAvoidingView, Platform, BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 import { CheckBox } from 'react-native-elements'
 
@@ -23,8 +23,7 @@ import Loading from '../../components/Loading/index'
 import TextError from '../../components/TextError/index'
 import ButtonPurple from '../../components/ButtonPurple/index'
 
-function ServiceHireScreen(props) {
-    const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
+const ServiceHireScreen = (props) => {
     const [invalidField, setInvalidField] = useState('')
     const [requisitou, setRequisitou] = useState(false)
     const [form, setForm] = useState({
@@ -35,24 +34,19 @@ function ServiceHireScreen(props) {
         description: "",
     })
 
-    const scrollViewContainer = useRef(null);
+    const scrollViewRef = useRef()
+    const descriptionRef = useRef()
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {
-            props.navigation.navigate('CategoriesSearch')
+            props.navigation.navigate('CategoriesSearch', {
+                previewScreen: props.route.name,
+            })
             return true
-        })
-        const kbShow = Keyboard.addListener('keyboardDidShow', () => {
-            setKeyboardIsVisible(true)
-        })
-        const knHide = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardIsVisible(false)
         })
 
         return () => {
             backHandler.remove()
-            kbShow.remove()
-            knHide.remove()
         }
     }, [])
 
@@ -60,10 +54,12 @@ function ServiceHireScreen(props) {
         if (requisitou && !props.clientCtr.isUpdating) {
             if (props.clientCtr.errorUpdating) {
                 setRequisitou(false)
-                scrollViewContainer.scrollTo({ x: 0, y: 0, animated: true })
+                scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
             }
             else {
-                props.navigation.navigate('CategoriesSearch')
+                props.navigation.navigate('CategoriesSearch', {
+                    previewScreen: props.route.name,
+                })
             }
         }
     }, [props.clientCtr.isUpdating])
@@ -109,8 +105,10 @@ function ServiceHireScreen(props) {
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
-                <ScrollViewContainer ref={scrollViewContainer}>
+            <KeyboardAvoidingView behavior={behavior}>
+                <ScrollViewContainer
+                    ref={current => scrollViewRef.current = current}
+                    keyboardShouldPersistTaps='always'>
                     <View style={{ flex: 1 }}>
                         <ViewCardContainer>
                             {props.clientCtr.isUpdating && <Loading size='large' color={purple} height='330' error={props.clientCtr.errorUpdating} />}
@@ -148,9 +146,13 @@ function ServiceHireScreen(props) {
                                                 value={form.quantity}
                                                 onChangeText={handleOnChange}
                                                 invalidValue={invalidField === 'quantity'}
-                                                keyboardType='phone-pad' />
+                                                keyboardType='phone-pad'
+                                                returnKeyType="next"
+                                                blurOnSubmit={false}
+                                                onSubmitEditing={() => descriptionRef.current.focus()} />
 
                                             <TextInputJobs
+                                                ref={input => { descriptionRef.current = input; }}
                                                 name='description'
                                                 placeholder='Descreva brevemente o serviço desejado.'
                                                 value={form.description}

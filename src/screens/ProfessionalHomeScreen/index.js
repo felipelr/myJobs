@@ -46,9 +46,10 @@ import {
     ViewIcon,
     TouchConfigServices,
     TxtConfigServices,
+    TouchEdit,
 } from './styles'
 
-import { white, lightgray, purple } from '../../components/common/util/colors'
+import { white, lightgray, purple, black } from '../../components/common/util/colors'
 
 import RatingJobs from '../../components/RatingJobs/index'
 import HeaderJobs from '../../components/HeaderJobs/index'
@@ -168,14 +169,14 @@ function ProfessionalHomeScreen(props) {
     }, [storiesCarouselOpened])
 
     useEffect(() => {
-        if (props.instaToken.length > 0) {
-            loadProfessionalInstaStories()
+        if (props.instaToken) {
+            loadProfessionalInstaStories(professionalData)
         }
     }, [props.instaToken])
 
     useEffect(() => {
         const arrayFull = storiesMyJobs.concat(storiesInstagram)
-        const arrayOrdered = arrayFull.sort((a, b) => a.created.getTime() > b.created.getTime() ? -1 : a.created.getTime() < b.created.getTime() ? 1 : 0)
+        const arrayOrdered = arrayFull.sort((a, b) => b.created.getTime() - a.created.getTime())
         setStoriesComplete(arrayOrdered)
     }, [storiesMyJobs, storiesInstagram])
 
@@ -183,10 +184,6 @@ function ProfessionalHomeScreen(props) {
         setStoriesPage(1)
         setStories(arrayPaginate(storiesComplete, 5, 1))
     }, [storiesComplete])
-
-    useEffect(() => {
-        reloadProfessionalInstaStories()
-    }, [props.storiesInstagram])
 
     useEffect(() => {
         if (props.servicesUpdated) {
@@ -229,16 +226,12 @@ function ProfessionalHomeScreen(props) {
 
     //START - FUNCTIONS SECTION
     const loadInfoProfessional = async (item) => {
-        setStoriesPage(1)
-        setStories([])
-        setStoriesInstagram([])
-        setStoriesMyJobs([])
         loadProfessionalDataImages(item)
 
         await loadProfessionalServices(item)
         await loadProfessionalRate(item)
         await loadProfessionalStories(item)
-        await reloadProfessionalInstaStories()
+        await loadProfessionalInstaStories(item)
     }
 
     const loadProfessionalServices = async (professional) => {
@@ -291,18 +284,65 @@ function ProfessionalHomeScreen(props) {
         }
     }
 
-    const loadProfessionalInstaStories = async () => {
-        const data = await getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
-        if (data && data.data) {
-            if (props.storiesInstagram && props.storiesInstagram.length === 0) {
-                //salvar dados do instagram
-                props.storiesSaveIntragramData({
-                    professional_id: professionalData.id,
-                    json: data.data,
+    const loadProfessionalInstaStories = async (professional) => {
+        console.log('loadProfessionalInstaStories =============')
+        let arrayComplete = []
+        const dataSaved = await getInstaStoriesSaved.refetch(`/instagram/view/${professional.id}.json`)
+        if (dataSaved && dataSaved.story && dataSaved.story.json) {
+            const arrayInstaSaved = dataSaved.story.json.map(item => {
+                return {
+                    ...item,
+                    created: item.timestamp ? new Date(item.timestamp.substr(0, 19)) : new Date('1970-01-01'),
+                }
+            })
+            arrayComplete = arrayComplete.concat(arrayInstaSaved)
+        }
+        if (props.instaToken) {
+            const data = await getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
+            if (data && data.data) {
+                const arrayInsta = data.data.map(item => {
+                    return {
+                        ...item,
+                        created: item.timestamp ? new Date(item.timestamp.substr(0, 19)) : new Date('1970-01-01'),
+                    }
                 })
 
-                props.storiesSetInstagramData(data.data)
+                if (arrayComplete && arrayComplete.length > 0) {
+                    const sorteredData = arrayComplete.sort((a, b) => b.created.getTime() - a.created.getTime())
+                    const filteredData = arrayInsta.filter(item => item.created.getTime() > sorteredData[0].created.getTime())
+                    arrayComplete = arrayComplete.concat(filteredData)
+                }
+                else {
+                    arrayComplete = arrayComplete.concat(arrayInsta)
+                }
             }
+        }
+
+        const sorteredStories = arrayComplete.sort((a, b) => b.created.getTime() - a.created.getTime())
+
+        //salvar dados do instagram
+        props.storiesSaveIntragramData({
+            professional_id: professionalData.id,
+            json: sorteredStories,
+        })
+        //colocar dados na store
+        props.storiesSetInstagramData(sorteredStories)
+
+        if (sorteredStories && sorteredStories.length > 0) {
+            let serializedArray = sorteredStories.map(item => {
+                return {
+                    id: item.id,
+                    photo: item.media_url,
+                    description: item.caption,
+                    created: item.timestamp ? new Date(item.timestamp.substr(0, 19)) : new Date('1970-01-01'),
+                    media_type: item.media_type,
+                }
+            })
+            serializedArray = serializedArray.filter(item => item.media_type === 'IMAGE' || item.media_type === 'CAROUSEL_ALBUM')
+            setStoriesInstagram(serializedArray)
+        }
+        else {
+            setStoriesInstagram([])
         }
     }
 
@@ -324,25 +364,6 @@ function ProfessionalHomeScreen(props) {
             else {
                 setComments([])
             }
-        }
-    }
-
-    const reloadProfessionalInstaStories = async () => {
-        if (props.storiesInstagram && props.storiesInstagram.length > 0) {
-            let arrayInsta = props.storiesInstagram.map(item => {
-                return {
-                    id: item.id,
-                    photo: item.media_url,
-                    description: item.caption,
-                    created: new Date(item.timestamp.substr(0, 19)),
-                    media_type: item.media_type,
-                }
-            })
-            arrayInsta = arrayInsta.filter(item => item.media_type === 'IMAGE' || item.media_type === 'CAROUSEL_ALBUM')
-            setStoriesInstagram(arrayInsta)
-        }
-        else {
-            setStoriesInstagram([])
         }
     }
 
@@ -435,7 +456,7 @@ function ProfessionalHomeScreen(props) {
         if (props.instaToken.length > 0) {
             props.storiesSetInstagramData([])
             setTimeout(() => {
-                loadProfessionalInstaStories()
+                loadProfessionalInstaStories(professionalData)
             }, 1000)
         }
     }
@@ -766,7 +787,7 @@ function ProfessionalHomeScreen(props) {
                             <VwContainerContent>
                                 <VwContainerStories>
                                     {
-                                        props.instaToken.length == 0 &&
+                                        !props.instaToken &&
                                         <RectButton
                                             onPress={handleClickInstagram}
                                             style={{
@@ -925,18 +946,38 @@ function ProfessionalHomeScreen(props) {
                             <Overlay isVisible={moreInfoVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
                                 <React.Fragment>
                                     <ViewInfo>
-                                        <Avatar
-                                            containerStyle={{ alignSelf: 'center' }}
-                                            size={50}
-                                            source={{ uri: professionalData.photo, }}
-                                            rounded={true}
-                                        />
+                                        {(images && images.image.uri.length > 0) &&
+                                            <Avatar
+                                                containerStyle={{ alignSelf: 'center' }}
+                                                size={50}
+                                                source={{ uri: images.image.uri }}
+                                                rounded
+                                            />}
+
+                                        {(images && images.image.uri.length <= 0) &&
+                                            <Avatar
+                                                containerStyle={{ alignSelf: 'center' }}
+                                                size={50}
+                                                icon={{ name: 'image' }}
+                                                rounded
+                                            />
+                                        }
+
                                         <TextInfo>{professionalData.name}</TextInfo>
                                     </ViewInfo>
                                     <TxtProfessionalDescrption>{professionalData.description}</TxtProfessionalDescrption>
                                     {professionalData.professionalsAddresses &&
                                         <React.Fragment>
-                                            <TextAddress>Endereço</TextAddress>
+                                            <TouchEdit onPress={() => {
+                                                toggleOverlay()
+                                                props.navigation.navigate('Perfil', {
+                                                    previewScreen: props.route.name,
+                                                    gotoMyAddress: true
+                                                })
+                                            }}>
+                                                <TextAddress>Endereço</TextAddress>
+                                                <IconFont name="pencil" size={20} color={black} style={{ paddingLeft: 5 }} />
+                                            </TouchEdit>
                                             <TxtProfessionalDescrption>
                                                 {professionalData.professionalsAddresses.map(address => `${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
                                             </TxtProfessionalDescrption>

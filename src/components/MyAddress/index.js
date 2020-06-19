@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { View, TouchableOpacity, Alert, Animated, Dimensions } from 'react-native'
+import { View, TouchableOpacity, Alert, Animated, Dimensions, Platform, KeyboardAvoidingView } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 
 import ActionCreators from '../../store/actionCreators'
@@ -21,7 +21,7 @@ import TextError from '../TextError/index'
 import Loading from '../Loading/index'
 import ButtonPurple from '../ButtonPurple'
 
-function MyAddress(props) {
+const MyAddress = (props) => {
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
     const [slideRight] = useState(new Animated.ValueXY())
     const [alterar, setAlterar] = useState(false)
@@ -46,6 +46,10 @@ function MyAddress(props) {
             street_number: '',
             neighborhood: ''
         })
+
+    const streetNumberRef = useRef()
+    const neighborhoodRef = useRef()
+
     const getStates = useGet(`/states/index.json`, props.token)
     const getCities = useGet(`/cities/index/${selectedState}.json`, props.token)
 
@@ -223,6 +227,7 @@ function MyAddress(props) {
         )
     }
 
+    const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
             {
@@ -286,56 +291,67 @@ function MyAddress(props) {
 
                         {(!props.isUpdating && showForm) && (
                             <Animated.View style={slideLeft.getLayout()}>
-                                <ContainerLista>
-                                    {props.errorUpdating && <TextError>{props.errorMessage}</TextError>}
+                                <KeyboardAvoidingView behavior={behavior}>
+                                    <ContainerLista>
+                                        {props.errorUpdating && <TextError>{props.errorMessage}</TextError>}
 
-                                    <TextInputJobs
-                                        value={form.street}
-                                        name='street'
-                                        onChangeText={handleOnChange}
-                                        placeholder='Rua, Av, etc'
-                                        invalidValue={invalidField === 'street'} />
+                                        <TextInputJobs
+                                            value={form.street}
+                                            name='street'
+                                            onChangeText={handleOnChange}
+                                            placeholder='Rua, Av, etc'
+                                            invalidValue={invalidField === 'street'}
+                                            returnKeyType="next"
+                                            blurOnSubmit={false}
+                                            onSubmitEditing={() => streetNumberRef.current.focus()} />
 
-                                    <TextInputJobs
-                                        value={form.street_number}
-                                        name='street_number'
-                                        onChangeText={handleOnChange}
-                                        placeholder='Número'
-                                        keyboardType='phone-pad'
-                                        invalidValue={invalidField === 'street_number'} />
+                                        <TextInputJobs
+                                            ref={input => streetNumberRef.current = input}
+                                            value={form.street_number}
+                                            name='street_number'
+                                            onChangeText={handleOnChange}
+                                            placeholder='Número'
+                                            keyboardType='phone-pad'
+                                            invalidValue={invalidField === 'street_number'}
+                                            returnKeyType="next"
+                                            blurOnSubmit={false}
+                                            onSubmitEditing={() => neighborhoodRef.current.focus()} />
 
-                                    <TextInputJobs
-                                        value={form.neighborhood}
-                                        name='neighborhood'
-                                        onChangeText={handleOnChange}
-                                        placeholder='Bairro'
-                                        invalidValue={invalidField === 'neighborhood'} />
+                                        <TextInputJobs
+                                            ref={input => neighborhoodRef.current = input}
+                                            value={form.neighborhood}
+                                            name='neighborhood'
+                                            onChangeText={handleOnChange}
+                                            placeholder='Bairro'
+                                            invalidValue={invalidField === 'neighborhood'}
+                                            returnKeyType="next" />
 
-                                    <PickerJobs
-                                        selectedValue={selectedState}
-                                        onValueChange={(state, itemIndex) => {
-                                            if (state) {
-                                                setSelectedState(state)
-                                            }
-                                        }}
-                                        itemsList={getStates.data.states ? getStates.data.states : []} />
+                                        <PickerJobs
+                                            selectedValue={selectedState}
+                                            onValueChange={(state, itemIndex) => {
+                                                if (state) {
+                                                    setSelectedState(state)
+                                                }
+                                            }}
+                                            itemsList={getStates.data.states ? getStates.data.states : []} />
 
-                                    <PickerJobs
-                                        selectedValue={form.city_id}
-                                        onValueChange={(city, itemIndex) => {
-                                            if (city) {
-                                                setForm({
-                                                    ...form,
-                                                    city_id: city
-                                                })
-                                            }
-                                        }}
-                                        itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
+                                        <PickerJobs
+                                            selectedValue={form.city_id}
+                                            onValueChange={(city, itemIndex) => {
+                                                if (city) {
+                                                    setForm({
+                                                        ...form,
+                                                        city_id: city
+                                                    })
+                                                }
+                                            }}
+                                            itemsList={getCities.data.cities ? [{ id: 0, name: 'SELECIONE' }, ...getCities.data.cities] : [{ id: 0, name: 'SELECIONE' }]} />
 
-                                    <View style={{ width: 170, alignSelf: 'center' }}>
-                                        <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
-                                    </View>
-                                </ContainerLista>
+                                        <View style={{ width: 170, alignSelf: 'center' }}>
+                                            <ButtonPurple onPress={handleClickConfimar} icon="check">Confirmar</ButtonPurple>
+                                        </View>
+                                    </ContainerLista>
+                                </KeyboardAvoidingView>
                             </Animated.View>
                         )}
 

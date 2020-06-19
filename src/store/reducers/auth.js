@@ -122,6 +122,7 @@ export const authSetUserType = (state = INITIAL_STATE, action) => {
 }
 
 export const authSetInstaTokenLong = (state = INITIAL_STATE, action) => {
+    console.log('INSTA TOKEN ATUALIZADO => ', action.token)
     return {
         ...state,
         instaTokenLong: action.token

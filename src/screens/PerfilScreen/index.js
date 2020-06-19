@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { View, BackHandler, Animated, Dimensions, Linking } from 'react-native'
+import { View, BackHandler, Animated, Dimensions, Linking, Alert } from 'react-native'
 import { ListItem, Avatar, Slider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import IconFont from 'react-native-vector-icons/FontAwesome'
@@ -24,6 +24,7 @@ import {
     ContainerAvatar,
     ViewSlider,
     TxtSlider,
+    TouchHabilitarProfessional,
     styles
 } from './styles'
 
@@ -42,7 +43,7 @@ import { getParameterByName } from '../../components/common/util/functions'
 import { saveInstaAcessTokenLong, saveInstaUserID } from '../../components/common/util/localStorage'
 
 function PerfilScreen(props) {
-    const [doubleUser] = useState(props.client.id && props.professional.id)
+    const [doubleUser, setDoubleUser] = useState(props.client.id && props.professional.id ? true : false)
     const [user, setUser] = useState(props.userType === 'client' ? props.client : props.professional)
     const [selectUserType, setSelectedUserType] = useState(props.userType === 'client' ? 0 : 1)
     const [slideLeft] = useState(new Animated.ValueXY({ x: Dimensions.get('screen').width, y: 0 }))
@@ -51,7 +52,7 @@ function PerfilScreen(props) {
     const [title, setTitle] = useState('Perfil')
     const [image, setImage] = useState((user.photo && user.photo.length > 0) ? { uri: user.photo } : { uri: '' })
     const [show, setShow] = useState('menu')
-    const [listClient] = useState([
+    const [listClient, setListClient] = useState([
         {
             title: 'Dados', //mvp -> alterar info do usuario
             icon: 'account-circle'
@@ -115,11 +116,51 @@ function PerfilScreen(props) {
 
         Linking.addEventListener('url', handleOpenURL)
 
+        if (!doubleUser && selectUserType === 0 && listClient.length === 5) {
+            setListClient([
+                ...listClient,
+                {
+                    title: 'Oferecer serviços no MyJobs',
+                    icon: 'handshake-o'
+                }
+            ])
+        }
+
         return () => {
             backHandler.remove()
             Linking.removeEventListener('url', handleOpenURL)
         }
     }, [])
+
+    useEffect(() => {
+        if (props.professional && props.professional.id) {
+            if (!doubleUser && selectUserType === 0) {
+                setDoubleUser(true)
+                setListClient([
+                    {
+                        title: 'Dados', //mvp -> alterar info do usuario
+                        icon: 'account-circle'
+                    },
+                    {
+                        title: 'Meus Endereços', //mvp -> alterar endereço
+                        icon: 'room'
+                    },
+                    {
+                        title: 'Segurança', //mvp -> alteração de senha
+                        icon: 'lock'
+                    },
+                    {
+                        title: 'Sugerir Profissionais/Empresas', //mvp -> colher dados de contato do indicado
+                        icon: 'thumb-up'
+                    },
+                    {
+                        title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
+                        icon: 'share'
+                    }
+                ])
+            }
+        }
+    }, [props.professional])
 
     useEffect(() => {
         if (props.userType === 'client') {
@@ -176,6 +217,9 @@ function PerfilScreen(props) {
         if (props.route.params.gotoMyServices) {
             handleClickMenu('Meus Serviços')
         }
+        else if (props.route.params.gotoMyAddress) {
+            handleClickMenu('Meus Endereços')
+        }
     }, [props.route.params])
 
     const handleBackPress = async () => {
@@ -225,6 +269,9 @@ function PerfilScreen(props) {
             case 'Habilitar Instagram':
                 handleClickInstagram()
                 break
+            case 'Oferecer serviços no MyJobs':
+                handleClickOferecerServicos()
+                break
             default:
                 setShow('menu')
                 pageRef.current = 'menu'
@@ -242,6 +289,36 @@ function PerfilScreen(props) {
                 delay: 0
             }).start()
         }
+    }
+
+    const handleClickOferecerServicos = () => {
+        Alert.alert(
+            "Olá",
+            "Confirma o desejo de oferece seus serviços no MyJobs?",
+            [
+                {
+                    text: "NÃO",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "SIM", onPress: () => {
+                        const newProfessional = {
+                            user_id: props.client.user_id,
+                            name: props.client.name,
+                            description: '',
+                            phone: props.client.phone,
+                            document: props.client.document,
+                            date_birth: props.client.date_birth.substring(0, 10),
+                            photo: props.client.photo,
+                            backImage: '',
+                        }
+                        props.professionalAddRequest(props.token, newProfessional)
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
     }
 
     const handleClickBack = () => {
@@ -429,7 +506,7 @@ function PerfilScreen(props) {
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, margin: 0 }}
                                                         title={item.title}
                                                         rightIcon={<Icon name="chevron-right" size={25} color={purple} />}
-                                                        leftIcon={<Icon name={item.icon} size={25} color={purple} />}
+                                                        leftIcon={item.icon === 'handshake-o' ? <IconFont name={item.icon} size={25} color={purple} /> : <Icon name={item.icon} size={25} color={purple} />}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
                                                         bottomDivider
@@ -502,11 +579,15 @@ PerfilScreen.navigationOptions = {
 
 const mapStateToProps = (state, ownProps) => {
     return {
+        ownProps: ownProps,
         client: state.client.client,
         professional: state.professional.professional,
         userType: state.auth.userType,
         user: state.auth.user,
-        ownProps: ownProps,
+        token: state.auth.token,
+        loading: state.professional.loading,
+        error: state.professional.error,
+        errorMessage: state.professional.errorMessage,
     }
 }
 
@@ -519,6 +600,7 @@ const mapDispatchToProps = dispatch => {
         professionalSelectedRequest: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
         authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
         authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
+        professionalAddRequest: (token, professional) => dispatch(ActionCreators.professionalAddRequest(token, professional)),
     }
 }
 

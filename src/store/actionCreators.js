@@ -67,6 +67,9 @@ export const { Types, Creators } = createActions({
     professionalNewCallClearMsg: null,
     professionalSetRatingUpdated: ['updated'],
     professionalSetProfessionalView: ['professional'],
+    professionalAddRequest: ['token', 'professional'],
+    professionalAddSuccess: ['professional'],
+    professionalAddError: ['error'],
 
     //Highlights
     highlightsLoadRequest: ['token'],

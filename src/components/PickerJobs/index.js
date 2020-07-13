@@ -5,7 +5,7 @@ import { ViewContainer, PickerCustom } from './styles'
 export default function PickerJobs({ onValueChange, selectedValue, itemsList, style }) {
     return (
 
-        <ViewContainer> 
+        <ViewContainer>
             <PickerCustom
                 selectedValue={selectedValue}
                 style={style}
@@ -15,8 +15,10 @@ export default function PickerJobs({ onValueChange, selectedValue, itemsList, st
                     itemsList.map((item, index) => {
                         if (item.value)
                             return <Picker.Item key={index} label={item.label} value={item.value} />
-                        else
+                        else if (item.name)
                             return <Picker.Item key={index} label={item.name} value={item.id} />
+                        else
+                            return <Picker.Item key={index} label={item.description} value={item.id} />
                     })
                 }
             </PickerCustom>

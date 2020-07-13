@@ -111,6 +111,8 @@ function ProfessionalHomeScreen(props) {
     const postInstaAcessToken = usePost('', {})
     const getInstaAcessTokenLong = useGet('')
 
+    const getFavorities = useGetMyJobs('', props.token); // Lista os Favoritos
+
     //START - USE EFFECTS SECTION
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
@@ -123,11 +125,20 @@ function ProfessionalHomeScreen(props) {
 
         Linking.addEventListener('url', handleOpenURL)
 
+        loadFavorities()
+
         return () => {
             backHandler.remove()
             Linking.removeEventListener('url', handleOpenURL)
         }
     }, [])
+
+    const loadFavorities = async () => {
+        const response = await getFavorities.refetch(`/favoriteProfessionals/user/${props.user.sub}.json`)
+        if (response.favorities) {
+            props.favoriteSetFavorities(response.favorities)
+        }
+    }
 
     useEffect(() => {
         setProfessionalData(props.professionalData)
@@ -478,10 +489,29 @@ function ProfessionalHomeScreen(props) {
     }
 
     const handleCameraModalConfirm = () => {
-        if (newStory !== '') {
-            //finalizar o cadastro da new story
-            setNewStoryVisible(true)
+        if (typeImageHandle === 'stories') {
+            if (newStory !== '') {
+                //finalizar o cadastro da new story
+                setNewStoryVisible(true)
+            }
         }
+        else if (typeImageHandle === 'perfil') {
+            console.log('Teste')
+            setMenuOpened(true)
+            setCameraOpened(false)
+            setFolderImagesOpened(false)
+            setModalOpened(false)
+
+            //salvar imagem
+            let professionalData_ = {
+                ...professionalData,
+                image: typeImage === 'photo' ? image.base64 : '',
+                imageBackground: typeImage === 'backImage' ? backImage.base64 : ''
+            }
+            setRequisitou(true)
+            props.professionalUpdateRequest(professionalData_, props.token)
+        }
+
     }
 
     const handleShowCamera = () => {
@@ -523,7 +553,7 @@ function ProfessionalHomeScreen(props) {
 
                         })
                 }
-                else {
+                else if (typeImageHandle === 'perfil') {
                     ImageResizer.createResizedImage(data.uri, 250, 250, 'JPEG', 100)
                         .then(({ uri }) => {
                             RNFetchBlob.fs.readFile(uri, 'base64')
@@ -584,8 +614,6 @@ function ProfessionalHomeScreen(props) {
                             setCameraOpened(false)
                             setFolderImagesOpened(false)
                             setModalOpened(false)
-
-                            console.log('requisitou => SIM')
 
                             //salvar imagem
                             let professionalData_ = {
@@ -979,7 +1007,7 @@ function ProfessionalHomeScreen(props) {
                                                 <IconFont name="pencil" size={20} color={black} style={{ paddingLeft: 5 }} />
                                             </TouchEdit>
                                             <TxtProfessionalDescrption>
-                                                {professionalData.professionalsAddresses.map(address => `${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
+                                                {professionalData.professionalsAddresses.map(address => `${address.street}, ${address.street_number}, ${address.complement} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
                                             </TxtProfessionalDescrption>
                                         </React.Fragment>
                                     }
@@ -994,6 +1022,7 @@ function ProfessionalHomeScreen(props) {
                         callsOnPress={() => handleFooterPress('CallsList')}
                         chatOnPress={() => handleFooterPress('ChatList')}
                         perfilOnPress={() => handleFooterPress('Perfil')}
+                        favoriteOnPress={() => handleFooterPress('Favorite')}
                     />
                 </React.Fragment>
             }
@@ -1032,7 +1061,8 @@ const mapDispatchToProps = dispatch => {
         storiesSetInstagramData: (stories) => dispatch(ActionCreators.storiesSetInstagramData(stories)),
         authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
         professionalSetRatingUpdated: (updated) => dispatch(ActionCreators.professionalSetRatingUpdated(updated)),
-        professionalUpdateRequest: (professional, token) => dispatch(ActionCreators.professionalUpdateRequest(professional, token))
+        professionalUpdateRequest: (professional, token) => dispatch(ActionCreators.professionalUpdateRequest(professional, token)),
+        favoriteSetFavorities: (favorities) => dispatch(ActionCreators.favoriteSetFavorities(favorities)),
     }
 }
 

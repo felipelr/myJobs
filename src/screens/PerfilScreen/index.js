@@ -563,18 +563,15 @@ function PerfilScreen(props) {
                 callsOnPress={() => props.navigation.navigate('CallsList', {
                     previewScreen: props.route.name,
                 })}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
+                chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
-                }) : props.navigation.navigate('ProfessionalListChat', {
+                })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
                     previewScreen: props.route.name,
                 })}
             />
         </React.Fragment>
     )
-}
-
-PerfilScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {

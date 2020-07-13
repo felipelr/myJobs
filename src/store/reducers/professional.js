@@ -13,6 +13,7 @@ export const INITIAL_STATE = {
     selected: {},
     newServicesConfig: {},
     newCallMsg: {},
+    newCall: {},
     servicesUpdated: false,
     ratingUpdated: false,
     professionalView: {},
@@ -192,6 +193,7 @@ export const newProfessionalCallRequest = (state = INITIAL_STATE, action) => {
 export const newProfessionalCallSuccess = (state = INITIAL_STATE, action) => {
     return {
         ...state,
+        newCall: action.call,
         loading: false,
         error: false,
         errorMessage: ''
@@ -244,7 +246,8 @@ export const professionalNewCallRegistered = (state = INITIAL_STATE, action) => 
 export const professionalNewCallClearMsg = (state = INITIAL_STATE, action) => {
     return {
         ...state,
-        newCallMsg: {}
+        newCallMsg: {},
+        newCall: {},
     }
 }
 

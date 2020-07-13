@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { BackHandler, Animated, Dimensions, View } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar, Badge } from 'react-native-elements'
@@ -52,20 +52,54 @@ function CallsListScreen(props) {
             id: 1, name: 'Finalizados'
         }
     ])
+    const [callChat, setCallChat] = useState(0)
+
+    const routeRef = useRef()
 
     const getCalls = useGet(`/calls/professional/${props.professionalData.id}.json`, props.token)
     const getFinishedCalls = useGet('', props.token)
     const getCallsClient = useGet('', props.token)
     const getFinishedCallsClient = useGet('', props.token)
+    const getCallById = useGet('', props.token)
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {
-            props.navigation.goBack()
+            if (routeRef.current
+                && routeRef.current.params
+                && routeRef.current.params.previewScreen === 'ProfessionalChat') {
+                if (props.userType === 'client') {
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'CategoriesSearch',
+                            },
+                        ],
+                    })
+                }
+                else {
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'ProfessionalHome',
+                            },
+                        ],
+                    })
+                }
+            }
+            else {
+                props.navigation.goBack()
+            }
             return true
         })
 
         if (tabSelected === 1 && callsClient.length === 0) {
             getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
+        }
+
+        if (props.route.params && props.route.params.callId) {
+            setCallChat(props.route.params.callId)
         }
 
         return () => {
@@ -74,36 +108,44 @@ function CallsListScreen(props) {
     }, [])
 
     useEffect(() => {
+        if (callChat && callChat > 0) {
+            getCallByIdFunc()
+        }
+    }, [callChat])
+
+    useEffect(() => {
+        if (props.route) {
+            routeRef.current = props.route
+        }
+    }, [props.route])
+
+    useEffect(() => {
         if (getCalls.data && getCalls.data.calls) {
-            //setCalls(getCalls.data.calls)
-            loadCallsWithBadge(getCalls.data.calls)
+            loadCallsWithBadge(getCalls.data.calls, 'calls')
         }
     }, [getCalls.data])
 
     useEffect(() => {
         if (getFinishedCalls.data && getFinishedCalls.data.calls) {
-            setFinishedCalls(getFinishedCalls.data.calls)
+            loadCallsWithBadge(getFinishedCalls.data.calls, 'finished_calls')
             //verificar se não há calls presentes em finalizados na lista de abertos
             const difference = calls.filter(x => !getFinishedCalls.data.calls.some(y => y.id === x.id));
-            //setCalls(difference)
-            loadCallsWithBadge(difference)
+            loadCallsWithBadge(difference, 'calls')
         }
     }, [getFinishedCalls.data])
 
     useEffect(() => {
-        if (getCallsClient.data && getCallsClient.data.calls) {
-            //setCallsClient(getCallsClient.data.calls)
-            loadClientCallsWithBadge(getCallsClient.data.calls)
+        if (getCallsClient.data && getCallsClient.data.calls) {            
+            loadCallsWithBadge(getCallsClient.data.calls, 'client_calls')
         }
     }, [getCallsClient.data])
 
     useEffect(() => {
         if (getFinishedCallsClient.data && getFinishedCallsClient.data.calls) {
-            setFinishedCallsClient(getFinishedCallsClient.data.calls)
+            loadCallsWithBadge(getFinishedCallsClient.data.calls, 'finished_client_calls')
             //verificar se não há calls presentes em finalizados na lista de abertos
-            const difference = callsClient.filter(x => !getFinishedCallsClient.data.calls.some(y => y.id === x.id));
-            //setCallsClient(difference)
-            loadClientCallsWithBadge(difference)
+            const difference = callsClient.filter(x => !getFinishedCallsClient.data.calls.some(y => y.id === x.id));            
+            loadCallsWithBadge(difference, 'client_calls')
         }
     }, [getFinishedCallsClient.data])
 
@@ -128,7 +170,19 @@ function CallsListScreen(props) {
         }
     }, [props.updateCallBadge])
 
-    const loadCallsWithBadge = (arrayCalls) => {
+    const getCallByIdFunc = async () => {
+        try {
+            const response = await getCallById.refetch(`/calls/view/${callChat}.json`)
+            if (response.call) {
+                handleClickItem(response.call)
+            }
+        }
+        catch (ex) {
+            console.log('ERROR => ', ex.message)
+        }
+    }
+
+    const loadCallsWithBadge = (arrayCalls, type) => {
         const results = arrayCalls.map(async (item) => {
             let badge = 0;
             try {
@@ -136,8 +190,14 @@ function CallsListScreen(props) {
                 const strBadge = await AsyncStorage.getItem(storageName)
                 const arrayBadge = JSON.parse(strBadge)
                 if (arrayBadge != null) {
-                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.call_id == item.id)
+                    console.log('badge ', arrayBadge)
+                    const jsonBadge = arrayBadge.find(itemBadge => {
+                        console.log('itemBadge', itemBadge)
+                        console.log('item', item)
+                        return itemBadge.call_id == item.id
+                    })
                     if (jsonBadge) {
+                        console.log('jsonBadge ', jsonBadge)
                         badge = jsonBadge.badge
                     }
                 }
@@ -147,29 +207,23 @@ function CallsListScreen(props) {
             return { ...item, badgeValue: badge }
         });
 
-        Promise.all(results).then((arrayCompleted) => setCalls(arrayCompleted))
-    }
+        Promise.all(results).then((arrayCompleted) => {
 
-    const loadClientCallsWithBadge = (arrayCallsClient) => {
-        const results = arrayCallsClient.map(async (item) => {
-            let badge = 0;
-            try {
-                const storageName = `@badgeCall`
-                const strBadge = await AsyncStorage.getItem(storageName)
-                const arrayBadge = JSON.parse(strBadge)
-                if (arrayBadge != null) {
-                    const jsonBadge = arrayBadge.find(itemBadge => itemBadge.call_id == item.id)
-                    if (jsonBadge) {
-                        badge = jsonBadge.badge
-                    }
-                }
-            } catch (ex) {
-                console.log('loadClientCallsWithBadge MAP => ', ex)
+            console.log('arrayCompleted', arrayCompleted)
+            console.log('type => ', type)
+            if (type === 'calls') {
+                setCalls(arrayCompleted)
             }
-            return { ...item, badgeValue: badge }
-        });
-
-        Promise.all(results).then((arrayCompleted) => setCallsClient(arrayCompleted))
+            else if (type === 'finished_calls') {
+                setFinishedCalls(arrayCompleted)
+            }
+            else if (type === 'client_calls') {
+                setCallsClient(arrayCompleted)
+            }
+            else if (type === 'finished_client_calls') {
+                setFinishedCallsClient(arrayCompleted)
+            }
+        })
     }
 
     const inAnimation = () => {
@@ -290,13 +344,11 @@ function CallsListScreen(props) {
 
     const handleCallFinished = (call) => {
         if (tabSelected === 0) {
-            //setCalls(calls.filter(item => item.id !== call.id))
-            loadCallsWithBadge(calls.filter(item => item.id !== call.id))
+            loadCallsWithBadge(calls.filter(item => item.id !== call.id), 'calls')
             getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
         }
         else {
-            //setCallsClient(callsClient.filter(item => item.id !== call.id))
-            loadClientCallsWithBadge(callsClient.filter(item => item.id !== call.id))
+            loadCallsWithBadge(callsClient.filter(item => item.id !== call.id), 'client_calls')
             getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
         }
 
@@ -382,7 +434,10 @@ function CallsListScreen(props) {
                                                             <TxtCallService>{item.service.title}</TxtCallService>
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
-                                                        <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                                        <ViewListItem>
+                                                            <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                                            {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
+                                                        </ViewListItem>
                                                     </React.Fragment>
                                                 }
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
@@ -452,7 +507,10 @@ function CallsListScreen(props) {
                                                             <TxtCallService>{item.service.title}</TxtCallService>
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
-                                                        <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                                        <ViewListItem>
+                                                            <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                                            {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
+                                                        </ViewListItem>
                                                     </React.Fragment>
                                                 }
                                                 rightIcon={<Icon name="chevron-right" size={20} color={purple} />}
@@ -491,13 +549,12 @@ function CallsListScreen(props) {
                 chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
                 })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
+                    previewScreen: props.route.name,
+                })}
             />
         </React.Fragment>
     )
-}
-
-CallsListScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -507,7 +564,7 @@ const mapStateToProps = (state, ownProps) => {
         token: state.auth.token,
         professionalData: state.professional.professional,
         clientData: state.client.client,
-        updateChatBadge: state.client.updateCallBadge,
+        updateCallBadge: state.client.updateCallBadge,
     }
 }
 

@@ -4,7 +4,31 @@ import { heightPercentageToDP, widthPercentageToDP } from '../../components/comm
 import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
-    elevation: 2
+    shadow: {
+        elevation: 2,
+    },
+    button: {
+        backgroundColor: lightgray,
+        height: 30,
+        flexDirection: 'row',
+        borderRadius: 5,
+        overflow: 'hidden',
+        alignItems: 'center',
+    },
+    buttonIcon: {
+        height: 30,
+        width: 30,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    buttonText: {
+        justifyContent: 'center',
+        textAlign: 'center',
+        color: '#303030',
+        fontSize: 14,
+        paddingLeft: 8,
+        paddingRight: 12,
+    }
 })
 
 export const Capa = styled.Image`
@@ -234,4 +258,24 @@ export const ViewIcon = styled.View`
     border-radius: 50px;
     align-items: center;
     justify-content: center;
+`
+
+export const ViewRow = styled.View`
+    flex-direction: row;
+    width: 100%;
+`
+
+export const ViewRight = styled.View`
+    align-items: flex-end;
+    flex: 1;
+`
+
+export const ViewLeft = styled.View`
+    align-items: flex-start;
+    flex: 1;
+`
+
+export const ViewFavoritar = styled.View`
+    margin-top: 20px;
+    margin-right: 5px;
 `

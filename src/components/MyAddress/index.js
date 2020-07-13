@@ -36,7 +36,8 @@ const MyAddress = (props) => {
             city_id: 0,
             street: '',
             street_number: '',
-            neighborhood: ''
+            neighborhood: '',
+            complement: '',
         }
         :
         {
@@ -44,11 +45,13 @@ const MyAddress = (props) => {
             city_id: 0,
             street: '',
             street_number: '',
-            neighborhood: ''
+            neighborhood: '',
+            complement: '',
         })
 
     const streetNumberRef = useRef()
     const neighborhoodRef = useRef()
+    const complementRef = useRef()
 
     const getStates = useGet(`/states/index.json`, props.token)
     const getCities = useGet(`/cities/index/${selectedState}.json`, props.token)
@@ -80,7 +83,8 @@ const MyAddress = (props) => {
                 city_id: 0,
                 street: '',
                 street_number: '',
-                neighborhood: ''
+                neighborhood: '',
+                complement: '',
             })
         }
         else {
@@ -89,7 +93,8 @@ const MyAddress = (props) => {
                 city_id: 0,
                 street: '',
                 street_number: '',
-                neighborhood: ''
+                neighborhood: '',
+                complement: '',
             })
         }
         setSelectedState(25)
@@ -324,6 +329,17 @@ const MyAddress = (props) => {
                                             onChangeText={handleOnChange}
                                             placeholder='Bairro'
                                             invalidValue={invalidField === 'neighborhood'}
+                                            returnKeyType="next"
+                                            blurOnSubmit={false}
+                                            onSubmitEditing={() => complementRef.current.focus()} />
+
+                                        <TextInputJobs
+                                            ref={input => complementRef.current = input}
+                                            value={form.complement}
+                                            name='complement'
+                                            onChangeText={handleOnChange}
+                                            placeholder='Complemento'
+                                            invalidValue={invalidField === 'complement'}
                                             returnKeyType="next" />
 
                                         <PickerJobs

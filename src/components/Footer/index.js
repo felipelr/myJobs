@@ -37,11 +37,20 @@ function Footer({ type, selected, ...props }) {
         }
     }, [props.updateCallBadge])
 
+    useEffect(() => {
+        console.log('badgeChat', badgeChat)
+    }, [badgeChat])
+
+    useEffect(() => {
+        console.log('badgeCall', badgeCall)
+    }, [badgeCall])
+
     const itemSelected = selected ? selected : 'home'
     const typeFooter = type ? type : 'client'
 
     const loadChatBadges = async () => {
-        let badge = 0;
+        let badgeClient = 0;
+        let badgeProfessional = 0;
         try {
             const storageName = `@badgeChat`
             const strBadge = await AsyncStorage.getItem(storageName)
@@ -49,25 +58,26 @@ function Footer({ type, selected, ...props }) {
             if (arrayBadge != null) {
                 if (props.professionalData.id) {
                     const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.professional_id == props.professionalData.id && itemBadge.badge > 0)
-                    if (arrayFiltered) {
-                        badge = arrayFiltered.length
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        badgeProfessional = arrayFiltered[0].badge
                     }
                 }
-                else if (props.clientData.id) {
+                if (props.clientData.id) {
                     const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.client_id == props.clientData.id && itemBadge.badge > 0)
-                    if (arrayFiltered) {
-                        badge = arrayFiltered.length
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        badgeClient = arrayFiltered[0].badge
                     }
                 }
             }
         } catch (ex) {
             console.log('loadChatBadges => ', ex)
         }
-        setBadgeChat(badge)
+        setBadgeChat(badgeClient + badgeProfessional)
     }
 
     const loadCallBadges = async () => {
-        let badge = 0;
+        let badgeClient = 0;
+        let badgeProfessional = 0;
         try {
             const storageName = `@badgeCall`
             const strBadge = await AsyncStorage.getItem(storageName)
@@ -75,21 +85,21 @@ function Footer({ type, selected, ...props }) {
             if (arrayBadge != null) {
                 if (props.professionalData.id) {
                     const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.professional_id == props.professionalData.id && itemBadge.badge > 0)
-                    if (arrayFiltered) {
-                        badge = arrayFiltered.length
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        badgeProfessional = arrayFiltered[0].badge
                     }
                 }
-                else if (props.clientData.id) {
+                if (props.clientData.id) {
                     const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.client_id == props.clientData.id && itemBadge.badge > 0)
-                    if (arrayFiltered) {
-                        badge = arrayFiltered.length
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        badgeClient = arrayFiltered[0].badge
                     }
                 }
             }
         } catch (ex) {
             console.log('loadCallBadges => ', ex)
         }
-        setBadgeCall(badge)
+        setBadgeCall(badgeClient + badgeProfessional)
     }
 
     if (typeFooter === 'client') {
@@ -126,6 +136,11 @@ function Footer({ type, selected, ...props }) {
             <ContainerFooter>
                 <FooterButton onPress={props.homeOnPress}>
                     <Icon name="home" size={25} color={itemSelected === 'home' ? gold : white} />
+                </FooterButton>
+                <FooterButton onPress={props.favoriteOnPress}>
+                    <ItemRounded backColor={itemSelected === 'favorite' ? gold : white}>
+                        <Icon name="favorite" style={{ alignSelf: 'center' }} size={15} color={purple} />
+                    </ItemRounded>
                 </FooterButton>
                 <FooterButton onPress={props.callsOnPress}>
                     <React.Fragment>

@@ -8,11 +8,11 @@ export const showNotification = (notification) => {
         largeIcon: "ic_myjobs", // (optional) default: "ic_launcher"
         smallIcon: "ic_myjobs", // (optional) default: "ic_notification" with fallback for "ic_launcher"
         color: purple, // (optional) default: system default
-        vibrate: true, // (optional) default: true
+        vibrate: false, // (optional) default: true
         vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-        priority: "high", // (optional) set notification priority, default: high
+        priority: "max", // (optional) set notification priority, default: high
         visibility: "private", // (optional) set notification visibility, default: private
-        importance: "high", // (optional) set notification importance, default: high
+        importance: "max", // (optional) set notification importance, default: high
         ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear)
 
         /* iOS and Android properties */

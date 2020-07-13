@@ -39,6 +39,7 @@ function NewCallScreen(props) {
         description: "",
         subcategory_id: 0,
     })
+    const [selectedCategorie, setSelectedCategorie] = useState(0)
 
     const getCategory = useGet(`/categories/getByIdProfessional/${props.professional.id}.json`, props.token)
     const getSubcategories = useGet('', props.token);
@@ -88,15 +89,18 @@ function NewCallScreen(props) {
     }, [props.professionalCtr.loading])
 
     useEffect(() => {
-        if (getCategory.data && getCategory.data.categories && getCategory.data.categories[0].id > 0) {
+        if (getCategory.data
+            && getCategory.data.categories
+            && getCategory.data.categories.length > 0) {
             setCategories(getCategory.data.categories)
-            getSubcategories.refetch(`/subcategories/getByCategory/${getCategory.data.categories[0].id}.json?professional_id=${props.professional.id}`);
+            setSelectedCategorie(getCategory.data.categories[0].id)
         }
     }, [getCategory.data]) //Quando trocar a categoria selecionada
 
     useEffect(() => {
+        console.log('getSubcategories.data', JSON.stringify(getSubcategories.data))
         if (getSubcategories.data) {
-            if (getSubcategories.data.subcategories) {
+            if (getSubcategories.data.subcategories && getSubcategories.data.subcategories.length > 0) {
                 setSubcategories(getSubcategories.data.subcategories.map(item => {
                     return {
                         id: item.id,
@@ -136,6 +140,12 @@ function NewCallScreen(props) {
         }
     }, [form.subcategory_id])
 
+    useEffect(() => {
+        if (selectedCategorie != 0) {
+            console.log(`/subcategories/getByCategory/${selectedCategorie}.json?professional_id=${props.professional.id}`)
+            getSubcategories.refetch(`/subcategories/getByCategory/${selectedCategorie}.json?professional_id=${props.professional.id}`);
+        }
+    }, [selectedCategorie])
 
     const handleOnChange = (name, text) => {
         setForm({
@@ -143,12 +153,29 @@ function NewCallScreen(props) {
             [name]: text
         })
 
-        setInvalidField('')
+        if (!validateField(name, text))
+            setInvalidField(name)
+        else
+            setInvalidField('')
+    }
+
+    const validateField = (field, value) => {
+        switch (field) {
+            case 'description':
+                if (value.length <= 0)
+                    return false
+                break
+            default:
+                break
+        }
+        return true
     }
 
     const handleClickConfimar = () => {
-        setRequisitou(true)
-        props.newProfessionalCallRequest(props.token, form)
+        if (invalidField === '') {
+            setRequisitou(true)
+            props.newProfessionalCallRequest(props.token, form)
+        }
     }
 
 
@@ -171,7 +198,14 @@ function NewCallScreen(props) {
                                             <TexService>Profissional</TexService>
                                             <TextName>{props.professional.name}</TextName>
                                             <TexService>Categoria</TexService>
-                                            <TextName>{categories.length > 0 ? getCategory.data.categories[0].description : ''}</TextName>
+                                            <PickerJobs
+                                                onValueChange={(item, index) => {
+                                                    if (item) {
+                                                        setSelectedCategorie(item)
+                                                    }
+                                                }}
+                                                selectedValue={selectedCategorie}
+                                                itemsList={categories} />
                                             <TexService>Subcategoria</TexService>
                                             <PickerJobs
                                                 onValueChange={(item, index) => {
@@ -223,14 +257,16 @@ function NewCallScreen(props) {
                 callsOnPress={() => props.navigation.navigate('CallsList', {
                     previewScreen: props.route.name,
                 })}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
-                    previewScreen: props.route.name,
-                }) : props.navigation.navigate('ProfessionalListChat', {
+                chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
                 })}
                 perfilOnPress={() => props.navigation.navigate('Perfil', {
                     previewScreen: props.route.name,
-                })} />
+                })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
+                    previewScreen: props.route.name,
+                })}
+            />
         </React.Fragment>
     )
 }

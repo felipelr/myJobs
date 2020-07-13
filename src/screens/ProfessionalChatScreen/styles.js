@@ -75,7 +75,7 @@ export const ViewChatItem = styled.View`
     justify-content: ${props => `${props.justifyContent}`};
 `
 
-export const ViewChatText = styled.View`
+export const ViewChatText = styled.TouchableOpacity`
     padding: 8px;
     border-radius: 5px;
     background-color: ${props => `${props.backColor}`};
@@ -91,6 +91,7 @@ export const TextMessage = styled.Text`
     font-size: 12px;
     color: ${black};
     max-width: ${width - 85};
+    text-decoration-line: ${props => props.decoration};
 `
 
 export const TextTime = styled.Text`
@@ -129,6 +130,7 @@ export const TouchAddress = styled.TouchableOpacity`
     border-top-color: ${lightgray};
     border-top-width: 1px;
     flex-direction: row;
+    width: 90%;
 `
 
 export const ViewTitleAddress = styled.View`

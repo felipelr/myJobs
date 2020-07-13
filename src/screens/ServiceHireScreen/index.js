@@ -82,6 +82,10 @@ const ServiceHireScreen = (props) => {
                 if (value <= 0)
                     return false
                 break
+            case 'description':
+                if (value.length <= 0)
+                    return false
+                break
             default:
                 break
         }
@@ -181,20 +185,18 @@ const ServiceHireScreen = (props) => {
                 callsOnPress={() => props.navigation.navigate('CallsList', {
                     previewScreen: props.route.name,
                 })}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
-                    previewScreen: props.route.name,
-                }) : props.navigation.navigate('ProfessionalListChat', {
+                chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
                 })}
                 perfilOnPress={() => props.navigation.navigate('Perfil', {
                     previewScreen: props.route.name,
-                })} />
+                })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
+                    previewScreen: props.route.name,
+                })}
+            />
         </React.Fragment>
     )
-}
-
-ServiceHireScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {

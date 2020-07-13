@@ -17,6 +17,7 @@ import ClientListChatScreen from './screens/ClientListChatScreen'
 import CallsListScreen from './screens/CallsListScreen'
 import ChatListScreen from './screens/ChatListScreen'
 import ProfessionalViewScreen from './screens/ProfessionalViewScreen'
+import FavoritiesScreen from './screens/FavoritiesScreen'
 
 const Stack = createStackNavigator()
 
@@ -45,6 +46,7 @@ const Routes = () => {
                 <Stack.Screen name="CallsList" component={CallsListScreen} />
                 <Stack.Screen name="ChatList" component={ChatListScreen} />
                 <Stack.Screen name="ProfessionalView" component={ProfessionalViewScreen} />
+                <Stack.Screen name="Favorite" component={FavoritiesScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     )

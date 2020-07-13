@@ -94,20 +94,18 @@ function ProfessionalsScreen(props) {
                 callsOnPress={() => props.navigation.navigate('CallsList', {
                     previewScreen: props.route.name,
                 })}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
-                    previewScreen: props.route.name,
-                }) : props.navigation.navigate('ProfessionalListChat', {
+                chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
                 })}
                 perfilOnPress={() => props.navigation.navigate('Perfil', {
                     previewScreen: props.route.name,
-                })} />
+                })} 
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
+                    previewScreen: props.route.name,
+                })}
+                />
         </KeyboardAvoidingView>
     )
-}
-
-ProfessionalsScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -117,6 +115,7 @@ const mapStateToProps = (state, ownProps) => {
         userType: state.auth.userType,
         selectedCategorie: state.categoria.selected,
         serviceSelected: state.service.selected,
+        professional: state.professional.professional,
         ownProps: ownProps
     }
 };
@@ -125,7 +124,6 @@ const mapDispatchToProps = dispatch => {
     return {
 
     }
-}
-
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfessionalsScreen);

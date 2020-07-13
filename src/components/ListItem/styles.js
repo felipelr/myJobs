@@ -6,7 +6,6 @@ export const ContainerListItem = styled.TouchableOpacity`
     padding: 5px;
     border-bottom-color: ${lightgray};
     border-bottom-width: 1px;
-    flex: 1;
     flex-direction: row;
 `
 

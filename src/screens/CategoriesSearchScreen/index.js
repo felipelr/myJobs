@@ -29,6 +29,7 @@ function CategoriesSearchScreen(props) {
     const getCategories = useGet('/categories/all.json', props.token); //Carrega as categorias do sistema
     const getSubcategories = useGet('', props.token); //Passa o parametro URL como vazio para que não seja feita nenhuma requisição porém gera os Hooks normalmente
     const highlights = useGet('/highlights/all.json', props.token); // Lista os Highliths gerais
+    const getFavorities = useGet('', props.token); // Lista os Favoritos
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -39,10 +40,19 @@ function CategoriesSearchScreen(props) {
             props.chatUpdateUserFcmToken(props.token, props.user.sub, props.fcmToken)
         }
 
+        loadFavorities();
+
         return () => {
             backHandler.remove()
         }
     }, [])
+
+    const loadFavorities = async () => {
+        const response = await getFavorities.refetch(`/favoriteProfessionals/user/${props.user.sub}.json`)
+        if (response.favorities) {
+            props.favoriteSetFavorities(response.favorities)
+        }
+    }
 
     useEffect(() => {
         if (getCategories.data && getCategories.data.categories) {
@@ -183,12 +193,13 @@ function CategoriesSearchScreen(props) {
                 callsOnPress={() => props.navigation.navigate('CallsList', {
                     previewScreen: props.route.name,
                 })}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
-                    previewScreen: props.route.name,
-                }) : props.navigation.navigate('ProfessionalListChat', {
+                chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
                 })}
                 perfilOnPress={() => props.navigation.navigate('Perfil', {
+                    previewScreen: props.route.name,
+                })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
                     previewScreen: props.route.name,
                 })}
             />
@@ -214,12 +225,8 @@ const mapDispatchToProps = dispatch => {
         logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
         categoriaSelected: (categorie) => dispatch(ActionCreators.categoriasSelected(categorie)),
         chatUpdateUserFcmToken: (token, userId, fcmToken) => dispatch(ActionCreators.chatUpdateUserFcmToken(token, userId, fcmToken)),
+        favoriteSetFavorities: (favorities) => dispatch(ActionCreators.favoriteSetFavorities(favorities)),
     }
 };
-
-CategoriesSearchScreen.navigationOptions = {
-    header: null
-};
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(CategoriesSearchScreen);

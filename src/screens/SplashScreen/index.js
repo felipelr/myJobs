@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
 import messaging, { AuthorizationStatus } from '@react-native-firebase/messaging'
@@ -24,6 +24,7 @@ function SplashScreen(props) {
     const getRefreshInstaToken = useGet('')
 
     const chatVisibleRef = useRef()
+    const openedFromNotificationRef = useRef()
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
         console.log('Splash => Message handled in the background!', remoteMessage);
@@ -45,17 +46,19 @@ function SplashScreen(props) {
         onNotification: function (notification) {
             console.log("NOTIFICATION:", notification);
             // process the notification
-            
-            if(chatVisibleRef.current){
-                props.navigation.goBack()
-            }
-            handleAppOpenedByNotification(notification, { message: JSON.stringify(notification.data) })
-            props.navigation.navigate('ProfessionalChat', {
-                previewScreen: 'Splash',
-            })
 
-            // (required) Called when a remote is received or opened, or local notification is opened
-            notification.finish(PushNotificationIOS.FetchResult.NoData);
+            if (notification.foreground) {
+                if (chatVisibleRef.current) {
+                    props.navigation.goBack()
+                }
+                handleAppOpenedByNotification(notification, { message: JSON.stringify(notification.data) })
+                props.navigation.navigate('ProfessionalChat', {
+                    previewScreen: 'Splash',
+                })
+
+                // (required) Called when a remote is received or opened, or local notification is opened
+                notification.finish(PushNotificationIOS.FetchResult.NoData);
+            }
         },
         // IOS ONLY (optional): default: all - Permissions to register.
         permissions: {
@@ -69,10 +72,18 @@ function SplashScreen(props) {
 
     useEffect(() => {
         loginFromLocalStorage().then(route => {
-            setInitialRoute(route)
+            if (openedFromNotificationRef.current && openedFromNotificationRef.current.notification) {
+                handleAppOpenedByNotification(openedFromNotificationRef.current.notification, openedFromNotificationRef.current.data)
+                setInitialRoute('NotificationStart')
+            }
+            else {
+                setInitialRoute(route)
+            }
         })
 
-        firebaseRequestUserPermission()
+        if (Platform.OS === 'ios') {
+            firebaseRequestUserPermission()
+        }
 
         //new methods
         const _onMessage = messaging().onMessage(async remoteMessage => {
@@ -122,10 +133,10 @@ function SplashScreen(props) {
             .then(remoteMessage => {
                 if (remoteMessage) {
                     console.log('Notification caused app to open from quit state => ', remoteMessage);
-                    loginFromLocalStorage().then(route => {
-                        handleAppOpenedByNotification(remoteMessage.notification, remoteMessage.data)
-                        setInitialRoute('NotificationStart')
-                    })
+                    openedFromNotificationRef.current = {
+                        notification: remoteMessage.notification,
+                        data: remoteMessage.data,
+                    };
                 }
             });
 
@@ -216,11 +227,13 @@ function SplashScreen(props) {
                 const { professional } = responseUser.data.user
 
                 if (client) {
+                    console.log('LOCAL CLIENT => ', JSON.stringify(client))
                     await AsyncStorage.setItem('@clientData', JSON.stringify(client))
                     props.clientUpdateSuccess(client)
                 }
 
                 if (professional) {
+                    console.log('LOCAL PROFESSIONAL => ', JSON.stringify(professional))
                     await AsyncStorage.setItem('@professionalData', JSON.stringify(professional))
                     props.professionalUpdateSuccess(professional)
                 }
@@ -290,6 +303,9 @@ function SplashScreen(props) {
             const enabled = authStatus === AuthorizationStatus.AUTHORIZED || authStatus === AuthorizationStatus.PROVISIONAL;
             if (enabled) {
                 console.log('Authorization status:', authStatus);
+            }
+            else {
+                console.log('NotAuthorization status:', authStatus);
             }
         } catch (error) {
             // User has rejected permissions

@@ -129,7 +129,9 @@ function ChatListScreen(props) {
             props.professionalSelectedRequest(item.professional)
         }
 
-        props.navigation.navigate('ProfessionalChat')
+        props.navigation.navigate('ProfessionalChat', {
+            previewScreen: props.route.name,
+        })
     }
 
     const loadProfessionalsWithBadge = (arrayProfessinals) => {
@@ -273,13 +275,12 @@ function ChatListScreen(props) {
                 perfilOnPress={() => props.navigation.navigate('Perfil', {
                     previewScreen: props.route.name,
                 })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
+                    previewScreen: props.route.name,
+                })}
             />
         </React.Fragment>
     )
-}
-
-ChatListScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {

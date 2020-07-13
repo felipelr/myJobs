@@ -8,7 +8,6 @@ import Routes from './src/routes'
 import { purple } from './src/components/common/util/colors'
 
 export default function App() {
-
   return (
     <Provider store={store}>
       <StatusBar

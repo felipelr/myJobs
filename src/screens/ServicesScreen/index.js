@@ -107,20 +107,18 @@ function ServicesScreen(props) {
                 callsOnPress={() => props.navigation.navigate('CallsList', {
                     previewScreen: props.route.name,
                 })}
-                chatOnPress={() => props.userType === 'client' ? props.navigation.navigate('ClientListChat', {
-                    previewScreen: props.route.name,
-                }) : props.navigation.navigate('ProfessionalListChat', {
+                chatOnPress={() => props.navigation.navigate('ChatList', {
                     previewScreen: props.route.name,
                 })}
                 perfilOnPress={() => props.navigation.navigate('Perfil', {
                     previewScreen: props.route.name,
-                })} />
+                })}
+                favoriteOnPress={() => props.navigation.navigate('Favorite', {
+                    previewScreen: props.route.name,
+                })}
+            />
         </KeyboardAvoidingView>
     )
-}
-
-ServicesScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -138,6 +136,5 @@ const mapDispatchToProps = dispatch => {
         selectSubcategory: (subcategory) => dispatch(ActionCreators.subcategoriesSelected(subcategory))
     }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen)

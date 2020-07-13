@@ -132,6 +132,15 @@ export const { Types, Creators } = createActions({
     chatCleanSendedMessage: null,
     chatSetScreenChatVisible: ['visible'],
     chatSetUpdateChatBadge: ['updateChatbadge'],
+
+    //Favorite    
+    favoriteAdd: ['token', 'favorite'],
+    favoriteAddSuccess: ['favorite'],
+    favoriteAddError: ['error'],
+    favoriteSetFavorities: ['favorities'],
+    favoriteRemove: ['token', 'favorite'],
+    favoriteRemoveSuccess: ['favorite'],
+    favoriteRemoveError: ['error'],
 })
 
 export default Creators

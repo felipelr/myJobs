@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { showNotification } from '../../components/common/util/localNotification'
 import { updateBadge } from '../../components/common/util/badgeNotification'
 
-import { gray, white, lightpurple, black, purple } from '../../components/common/util/colors'
+import { gray, white, lightpurple, black } from '../../components/common/util/colors'
 import {
     ViewContainerChat,
     ViewContainerNewMessage,
@@ -46,21 +46,34 @@ function ChatTextDate(props) {
 function ChateItem(props) {
     const { mensagem } = props
     const { userType } = props
+
+    const onPressChatText = (text) => {
+        if (text.indexOf("#") === 0) {
+            const indexCode = text.indexOf("#") + 1;
+            const indexEnd = text.indexOf(" ");
+            const callId = text.substring(indexCode, indexEnd);
+            props.navigation.navigate('CallsList', {
+                previewScreen: 'ProfessionalChat',
+                callId: callId,
+            })
+        }
+    }
+
     return (
         <ViewChatItem justifyContent={mensagem.msg_from === userType ? 'flex-end' : 'flex-start'}>
-            <ViewChatText backColor={mensagem.msg_from === userType ? '#D3D4FE' : '#EAEAEA'} >
+            <ViewChatText onPress={() => onPressChatText(mensagem.message)} backColor={mensagem.msg_from === userType ? '#D3D4FE' : '#EAEAEA'} >
                 {mensagem.msg_from === userType &&
                     <ViewRow>
                         <TextTime marginRight={10} marginLeft={0}>
                             {mensagem.time.substring(0, 5)}
                         </TextTime>
-                        <TextMessage>
+                        <TextMessage decoration={mensagem.message.indexOf("#") === 0 ? 'underline' : 'none'}>
                             {mensagem.message}
                         </TextMessage>
                     </ViewRow>}
                 {mensagem.msg_from !== userType &&
                     <ViewRow>
-                        <TextMessage>
+                        <TextMessage decoration={mensagem.message.indexOf("#") === 0 ? 'underline' : 'none'}>
                             {mensagem.message}
                         </TextMessage>
                         <TextTime marginRight={0} marginLeft={10}>
@@ -93,7 +106,7 @@ function ChatMessages(props) {
                             return (
                                 <React.Fragment key={index} >
                                     <ChatTextDate mensagem={item} />
-                                    <ChateItem mensagem={item} userType={userType} />
+                                    <ChateItem navigation={props.navigation} mensagem={item} userType={userType} />
                                 </React.Fragment>
                             )
                         }
@@ -103,12 +116,12 @@ function ChatMessages(props) {
                                 return (
                                     <React.Fragment key={index} >
                                         <ChatTextDate mensagem={item} />
-                                        <ChateItem mensagem={item} userType={userType} />
+                                        <ChateItem navigation={props.navigation} mensagem={item} userType={userType} />
                                     </React.Fragment>
                                 )
                             }
                             else {
-                                return <ChateItem key={index} mensagem={item} userType={userType} />
+                                return <ChateItem navigation={props.navigation} key={index} mensagem={item} userType={userType} />
                             }
                         }
                     })
@@ -127,11 +140,16 @@ function ProfessionalChatScreen(props) {
     const appStateRef = useRef()
     const wsRef = useRef()
     const messagesRef = useRef()
+    const routeRef = useRef()
 
     const getMessages = useGet('', props.token)
 
     useEffect(() => {
         appStateRef.current = 'active'
+
+        console.log('props.professionalSelected.id', props.professionalSelected.id)
+        console.log('props.clientSelected.id', props.clientSelected.id)
+        console.log('props.user.id', props.user.id)
 
         props.chatSetScreenChatVisible(true)
 
@@ -157,11 +175,19 @@ function ProfessionalChatScreen(props) {
         wsRef.current = new WebSocket(`ws://67.205.160.187:8080?type=${type_}&from=${from_}&to=${to_}&token=${token_}`);
 
         wsRef.current.onopen = (e) => {
-            console.log('Socket Opened')
+            console.log('Socket Opened', JSON.stringify(e))
         };
 
         wsRef.current.onclose = (e) => {
-            console.log('Socket Closed')
+            console.log('Socket Closed', JSON.stringify(e))
+            if (e.message && e.message === 'Connection reset') {
+                //tentar reconectar
+                wsRef.current = new WebSocket(`ws://67.205.160.187:8080?type=${type_}&from=${from_}&to=${to_}&token=${token_}`);
+            }
+        };
+
+        wsRef.current.onerror = (e) => {
+            console.log('Socket Error', JSON.stringify(e))
         };
 
         wsRef.current.onmessage = (e) => {
@@ -285,11 +311,16 @@ function ProfessionalChatScreen(props) {
     useEffect(() => {
         if (props.newCallMsg.data) {
             //enviar msg
-            sendMessageSocket(props.newCallMsg.data.message)
-            //sendMessageSocket(props.newCallMsg.data.link)
+            sendMessageSocket(`#${props.newCall.id} - ${props.newCallMsg.data.message}`)
             props.professionalNewCallClearMsg()
         }
     }, [props.newCallMsg])
+
+    useEffect(() => {
+        if (props.route) {
+            routeRef.current = props.route
+        }
+    }, [props.route])
 
     const cleanBadge = async () => {
         try {
@@ -380,7 +411,32 @@ function ProfessionalChatScreen(props) {
     }
 
     const handleBackPress = async () => {
-        props.navigation.goBack()
+        if (routeRef.current && routeRef.current.params && routeRef.current.params.previewScreen === 'Splash') {
+            if (props.userType === 'client') {
+                props.navigation.reset({
+                    index: 0,
+                    routes: [
+                        {
+                            name: 'CategoriesSearch',
+                        },
+                    ],
+                })
+            }
+            else {
+                props.navigation.reset({
+                    index: 0,
+                    routes: [
+                        {
+                            name: 'ProfessionalHome',
+                        },
+                    ],
+                })
+            }
+        }
+        else {
+            props.navigation.goBack()
+        }
+
         return true
     }
 
@@ -442,7 +498,9 @@ function ProfessionalChatScreen(props) {
     }
 
     const handlePressNewCall = () => {
-        props.navigation.navigate('NewCall')
+        props.navigation.navigate('NewCall', {
+            previewScreen: 'ProfessionalChat',
+        })
     }
 
     const handleTitlePress = () => {
@@ -463,7 +521,7 @@ function ProfessionalChatScreen(props) {
         //enviar endereço no chat
         if (address) {
             setAddressVisible(false)
-            sendMessageSocket(`${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials}`)
+            sendMessageSocket(`${address.street}, ${address.street_number}, ${address.complement} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials}`)
         }
     }
 
@@ -479,7 +537,7 @@ function ProfessionalChatScreen(props) {
                 addressPress={() => toggleOverlay()}
             />
             <ViewContainerChat>
-                <ChatMessages messages={mensagens} userType={props.userType} />
+                <ChatMessages navigation={props.navigation} messages={mensagens} userType={props.userType} />
             </ViewContainerChat>
             <ViewContainerNewMessage style={{ marginBottom: keyboardIsVisible ? 35 : 0 }}>
                 <Input
@@ -503,17 +561,13 @@ function ProfessionalChatScreen(props) {
                     {props.user.professionalsAddresses && props.user.professionalsAddresses.map(address =>
                         <TouchAddress key={address.id} onPress={() => handlePressSendAddress(address)}>
                             <Icon name='radio-button-unchecked' size={25} color={black} />
-                            <TxtAddress>{`${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials}`}</TxtAddress>
+                            <TxtAddress>{`${address.street}, ${address.street_number}, ${address.complement} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials}`}</TxtAddress>
                         </TouchAddress>
                     )}
                 </React.Fragment>
             </Overlay>
         </KeyboardAvoidingView>
     )
-}
-
-ProfessionalChatScreen.navigationOptions = {
-    header: null
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -532,6 +586,7 @@ const mapStateToProps = (state, ownProps) => {
         sendedMessage: state.chat.sendedMessage,
         screenChatVisible: state.chat.screenChatVisible,
         newCallMsg: state.professional.newCallMsg,
+        newCall: state.professional.newCall,
     }
 }
 

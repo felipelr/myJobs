@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Platform, BackHandler, ScrollView, View, Alert } from 'react-native'
+import { Platform, BackHandler, ScrollView, View, Text, ActivityIndicator } from 'react-native'
 import { Overlay } from 'react-native-elements';
 import { connect } from 'react-redux'
 import { Avatar } from 'react-native-elements'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import { RectButton } from 'react-native-gesture-handler'
 
 import useGetMyJobs from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
-import { useGet, usePost } from '../../services/useRequest'
 
 import {
     styles,
@@ -26,6 +27,10 @@ import {
     ViewInfo,
     TextInfo,
     TextAddress,
+    ViewRow,
+    ViewRight,
+    ViewLeft,
+    ViewFavoritar,
 } from './styles'
 
 import RatingJobs from '../../components/RatingJobs/index'
@@ -37,6 +42,7 @@ import Footer from '../../components/Footer/index'
 import StoriesCarousel from '../../components/StoriesCarousel'
 
 import { heightPercentageToDP } from '../../components/common/util/dimensions'
+import { white, boldred, black, purple } from '../../components/common/util/colors'
 
 function ProfessionalViewScreen(props) {
     const [professionalData, setProfessionalData] = useState(props.professionalSelected)
@@ -346,6 +352,22 @@ function ProfessionalViewScreen(props) {
     const toggleOverlay = () => {
         setMoreInfoVisible(!moreInfoVisible)
     }
+
+    const onPressFavorite = () => {
+        const favorite = props.favorities.find(item => item.professional_id == professionalData.id)
+        if (favorite) {
+            //remover
+            props.favoriteRemove(props.token, favorite);
+        }
+        else {
+            //adicionar
+            const newFavorite = {
+                user_id: props.user.sub,
+                professional_id: professionalData.id,
+            }
+            props.favoriteAdd(props.token, newFavorite);
+        }
+    }
     //END - FUNCTIONS SECTION
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
@@ -380,9 +402,31 @@ function ProfessionalViewScreen(props) {
                             {images.backImage.uri.length <= 0 && <CapaEmpty />}
 
                             <VwContainerTitle>
-                                <VwContainerRating>
-                                    <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
-                                </VwContainerRating>
+                                <ViewRow>
+                                    <ViewLeft>
+                                        <VwContainerRating>
+                                            <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
+                                        </VwContainerRating>
+                                    </ViewLeft>
+                                    <ViewRight>
+                                        <ViewFavoritar>
+                                            <RectButton
+                                                style={styles.button}
+                                                onPress={onPressFavorite}>
+                                                <View style={styles.buttonIcon}>
+                                                    {props.loadingFavorite && <ActivityIndicator size="small" color={purple} />}
+                                                    {!props.loadingFavorite && <Icon
+                                                        name='favorite'
+                                                        size={24}
+                                                        color={props.favorities.find(item => item.professional_id == professionalData.id) ? boldred : white} />
+                                                    }
+                                                </View>
+                                                <Text style={styles.buttonText}>Favorito</Text>
+                                            </RectButton>
+                                        </ViewFavoritar>
+                                    </ViewRight>
+                                </ViewRow>
+
                                 <TxtTitle size={24}>
                                     {professionalData.name}
                                 </TxtTitle>
@@ -417,7 +461,7 @@ function ProfessionalViewScreen(props) {
                                 {(images && images.image.uri.length > 0) &&
                                     <Avatar
                                         rounded
-                                        containerStyle={styles}
+                                        containerStyle={styles.shadow}
                                         size={heightPercentageToDP('20%')}
                                         source={{ uri: images.image.uri }}
                                     />
@@ -426,7 +470,7 @@ function ProfessionalViewScreen(props) {
                                 {(images && images.image.uri.length <= 0) &&
                                     <Avatar
                                         rounded
-                                        containerStyle={styles}
+                                        containerStyle={styles.shadow}
                                         size={heightPercentageToDP('20%')}
                                         icon={{ name: 'image' }}
                                     />
@@ -466,6 +510,7 @@ function ProfessionalViewScreen(props) {
                         chatOnPress={() => handleFooterPress('ChatList')}
                         perfilOnPress={() => handleFooterPress('Perfil')}
                         professionalProfileOnPress={() => handleFooterPress('ProfessionalHome')}
+                        favoriteOnPress={() => handleFooterPress('Favorite')}
                     />
                 </React.Fragment>
             }
@@ -483,6 +528,8 @@ const mapStateToProps = (state, ownProps) => {
         professionalSelected: state.professional.professionalView,
         selectedService: state.professionalHome.selectedService,
         user: state.auth.user,
+        favorities: state.favorite.favorities,
+        loadingFavorite: state.favorite.loading,
     }
 }
 
@@ -499,7 +546,9 @@ const mapDispatchToProps = dispatch => {
         authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
         professionalSetRatingUpdated: (updated) => dispatch(ActionCreators.professionalSetRatingUpdated(updated)),
         professionalUpdateRequest: (professional, token) => dispatch(ActionCreators.professionalUpdateRequest(professional, token)),
-        setProfessionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional))
+        setProfessionalSelected: (professional) => dispatch(ActionCreators.professionalSelected(professional)),
+        favoriteAdd: (token, favorite) => dispatch(ActionCreators.favoriteAdd(token, favorite)),
+        favoriteRemove: (token, favorite) => dispatch(ActionCreators.favoriteRemove(token, favorite)),
     }
 }
 

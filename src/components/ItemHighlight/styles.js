@@ -65,13 +65,13 @@ export const ServicesAmount = styled.Text`
 `
 export const TextoVazio = styled.View`
     background-color: ${disabled};
-    height: 20;  
+    height: 15;  
     border-radius: 5;
 `
 
 export const DescricaoVazia = styled.View`
     background-color: ${disabled};
-    height: 35;  
+    height: 30;  
     border-radius: 5;
     margin-top:10;
 `

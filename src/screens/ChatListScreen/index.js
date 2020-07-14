@@ -30,6 +30,8 @@ function ChatListScreen(props) {
     const [professionalChats, setProfessionalChats] = useState([])
     const [clientChats, setClientChats] = useState([])
     const [tabSelected, setTabSelected] = useState(doubleUser ? 0 : props.userType === 'client' ? 1 : 0) // 0 -> professional; 1 -> client
+    const [badgeClient, setBadgeClient] = useState(0)
+    const [badgeProfessional, setBadgeProfessional] = useState(0)
 
     const getChatsClient = useGet(``, props.token)
     const getChatsProfessional = useGet(`/chatMessages/professionalChats.json?professional_id=${props.professionalData.id}`, props.token)
@@ -40,6 +42,8 @@ function ChatListScreen(props) {
         if (tabSelected === 1 && clientChats.length === 0) {
             getChatsClient.refetch(`/chatMessages/clientChats.json?client_id=${props.clientData.id}`)
         }
+
+        loadChatBadges()
 
         return () => {
             backHandler.remove()
@@ -63,6 +67,7 @@ function ChatListScreen(props) {
             props.chatSetUpdateChatBadge(false)
             loadProfessionalsWithBadge(professionalChats)
             loadClientsWithBadge(clientChats)
+            loadChatBadges()
         }
     }, [props.updateChatBadge])
 
@@ -178,6 +183,34 @@ function ChatListScreen(props) {
         Promise.all(results).then((arrayCompleted) => setClientChats(arrayCompleted))
     }
 
+    const loadChatBadges = async () => {
+        let tempClient = 0;
+        let tempProfessional = 0;
+        try {
+            const storageName = `@badgeChat`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            const arrayBadge = JSON.parse(strBadge)
+            if (arrayBadge != null) {
+                if (props.professionalData.id) {
+                    const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.professional_id == props.professionalData.id && itemBadge.badge > 0)
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        tempClient = arrayFiltered[0].badge
+                    }
+                }
+                if (props.clientData.id) {
+                    const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.client_id == props.clientData.id && itemBadge.badge > 0)
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        tempProfessional = arrayFiltered[0].badge
+                    }
+                }
+            }
+        } catch (ex) {
+            console.log('loadChatBadges => ', ex)
+        }
+        setBadgeClient(tempClient)
+        setBadgeProfessional(tempProfessional)
+    }
+
     return (
         <React.Fragment>
             <HeaderJobs
@@ -191,14 +224,20 @@ function ChatListScreen(props) {
                         onPress={() => hadleClickTab(0)}
                         borderColor={tabSelected === 0 ? gold : purple}
                     >
-                        <TxtTab>Meus Clientes</TxtTab>
+                        <React.Fragment>
+                            <TxtTab>Meus Clientes</TxtTab>
+                            {badgeClient > 0 && <Badge value={badgeClient} status="success" containerStyle={{ position: 'absolute', top: -4, right: 8 }} />}
+                        </React.Fragment>
                     </TouchTab>
                     <TouchTab
                         activeOpacity={1}
                         onPress={() => hadleClickTab(1)}
                         borderColor={tabSelected === 1 ? gold : purple}
                     >
-                        <TxtTab>Meus Profissionais</TxtTab>
+                        <React.Fragment>
+                            <TxtTab>Meus Profissionais</TxtTab>
+                            {badgeProfessional > 0 && <Badge value={badgeProfessional} status="success" containerStyle={{ position: 'absolute', top: -4, right: 8 }} />}
+                        </React.Fragment>
                     </TouchTab>
                 </ViewTabControl>
             }
@@ -213,7 +252,7 @@ function ChatListScreen(props) {
                                     containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
                                     title={
                                         <ViewListItem>
-                                            <Text>{item.client.name}</Text>
+                                            <Text style={{ fontWeight: item.badgeValue ? "bold" : "normal" }}>{item.client.name}</Text>
                                             {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                         </ViewListItem>
                                     }
@@ -241,7 +280,7 @@ function ChatListScreen(props) {
                                     containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, padding: 10 }}
                                     title={
                                         <ViewListItem>
-                                            <Text>{item.professional.name}</Text>
+                                            <Text style={{ fontWeight: item.badgeValue ? "bold" : "normal" }}>{item.professional.name}</Text>
                                             {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                         </ViewListItem>
                                     }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { BackHandler, Animated, Dimensions, View } from 'react-native'
+import { BackHandler, Animated, Dimensions, View, Text } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, Avatar, Badge } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -53,6 +53,8 @@ function CallsListScreen(props) {
         }
     ])
     const [callChat, setCallChat] = useState(0)
+    const [badgeClient, setBadgeClient] = useState(0)
+    const [badgeProfessional, setBadgeProfessional] = useState(0)
 
     const routeRef = useRef()
 
@@ -102,6 +104,8 @@ function CallsListScreen(props) {
             setCallChat(props.route.params.callId)
         }
 
+        loadCallBadges()
+
         return () => {
             backHandler.remove()
         }
@@ -135,7 +139,7 @@ function CallsListScreen(props) {
     }, [getFinishedCalls.data])
 
     useEffect(() => {
-        if (getCallsClient.data && getCallsClient.data.calls) {            
+        if (getCallsClient.data && getCallsClient.data.calls) {
             loadCallsWithBadge(getCallsClient.data.calls, 'client_calls')
         }
     }, [getCallsClient.data])
@@ -144,7 +148,7 @@ function CallsListScreen(props) {
         if (getFinishedCallsClient.data && getFinishedCallsClient.data.calls) {
             loadCallsWithBadge(getFinishedCallsClient.data.calls, 'finished_client_calls')
             //verificar se não há calls presentes em finalizados na lista de abertos
-            const difference = callsClient.filter(x => !getFinishedCallsClient.data.calls.some(y => y.id === x.id));            
+            const difference = callsClient.filter(x => !getFinishedCallsClient.data.calls.some(y => y.id === x.id));
             loadCallsWithBadge(difference, 'client_calls')
         }
     }, [getFinishedCallsClient.data])
@@ -167,6 +171,8 @@ function CallsListScreen(props) {
                 getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
                 getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
             }
+
+            loadCallBadges()
         }
     }, [props.updateCallBadge])
 
@@ -355,6 +361,34 @@ function CallsListScreen(props) {
         handleBackPress()
     }
 
+    const loadCallBadges = async () => {
+        let tempClient = 0;
+        let tempProfessional = 0;
+        try {
+            const storageName = `@badgeCall`
+            const strBadge = await AsyncStorage.getItem(storageName)
+            const arrayBadge = JSON.parse(strBadge)
+            if (arrayBadge != null) {
+                if (props.professionalData.id) {
+                    const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.professional_id == props.professionalData.id && itemBadge.badge > 0)
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        tempClient = arrayFiltered[0].badge
+                    }
+                }
+                if (props.clientData.id) {
+                    const arrayFiltered = arrayBadge.filter(itemBadge => itemBadge.client_id == props.clientData.id && itemBadge.badge > 0)
+                    if (arrayFiltered && arrayFiltered.length > 0) {
+                        tempProfessional = arrayFiltered[0].badge
+                    }
+                }
+            }
+        } catch (ex) {
+            console.log('loadChatBadges => ', ex)
+        }
+        setBadgeClient(tempClient)
+        setBadgeProfessional(tempProfessional)
+    }
+
     return (
         <React.Fragment>
             <HeaderJobs
@@ -370,14 +404,20 @@ function CallsListScreen(props) {
                                 onPress={() => handleClickTab(0)}
                                 borderColor={tabSelected === 0 ? gold : purple}
                             >
-                                <TxtTab>Meus Clientes</TxtTab>
+                                <React.Fragment>
+                                    <TxtTab>Meus Clientes</TxtTab>
+                                    {badgeClient > 0 && <Badge value={badgeClient} status="success" containerStyle={{ position: 'absolute', top: -4, right: 8 }} />}
+                                </React.Fragment>
                             </TouchTab>
                             <TouchTab
                                 activeOpacity={1}
                                 onPress={() => handleClickTab(1)}
                                 borderColor={tabSelected === 1 ? gold : purple}
                             >
-                                <TxtTab>Meus Profissionais</TxtTab>
+                                <React.Fragment>
+                                    <TxtTab>Meus Profissionais</TxtTab>
+                                    {badgeProfessional > 0 && <Badge value={badgeProfessional} status="success" containerStyle={{ position: 'absolute', top: -4, right: 8 }} />}
+                                </React.Fragment>
                             </TouchTab>
                         </ViewTabControl>
                     }
@@ -405,7 +445,7 @@ function CallsListScreen(props) {
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
                                                         <ViewListItem>
-                                                            <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                                            <Text style={{ fontWeight: item.badgeValue ? "bold" : "normal" }}>{item.client.name}</Text>
                                                             {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                                         </ViewListItem>
                                                     </React.Fragment>
@@ -435,7 +475,7 @@ function CallsListScreen(props) {
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
                                                         <ViewListItem>
-                                                            <TxtCallProfessional>{item.client.name}</TxtCallProfessional>
+                                                            <Text style={{ fontWeight: item.badgeValue ? "bold" : "normal" }}>{item.client.name}</Text>
                                                             {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                                         </ViewListItem>
                                                     </React.Fragment>
@@ -478,7 +518,7 @@ function CallsListScreen(props) {
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
                                                         <ViewListItem>
-                                                            <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                                            <Text style={{ fontWeight: item.badgeValue ? "bold" : "normal" }}>{item.professional.name}</Text>
                                                             {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                                         </ViewListItem>
                                                     </React.Fragment>
@@ -508,7 +548,7 @@ function CallsListScreen(props) {
                                                             <TxtCallDate>{Moment(item.created).format('DD/MM/YYYY')}</TxtCallDate>
                                                         </ViewCallDate>
                                                         <ViewListItem>
-                                                            <TxtCallProfessional>{item.professional.name}</TxtCallProfessional>
+                                                            <Text style={{ fontWeight: item.badgeValue ? "bold" : "normal" }}>{item.professional.name}</Text>
                                                             {item.badgeValue > 0 && <Badge value={item.badgeValue} status="success" />}
                                                         </ViewListItem>
                                                     </React.Fragment>

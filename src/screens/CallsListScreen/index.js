@@ -55,6 +55,10 @@ function CallsListScreen(props) {
     const [callChat, setCallChat] = useState(0)
     const [badgeClient, setBadgeClient] = useState(0)
     const [badgeProfessional, setBadgeProfessional] = useState(0)
+    const [badgeClientAbertos, setBadgeClientAbertos] = useState(0)
+    const [badgeClientFechados, setBadgeClientFechados] = useState(0)
+    const [badgeProfessionalAbertos, setBadgeProfessionalAbertos] = useState(0)
+    const [badgeProfessionalFechados, setBadgeProfessionalFechados] = useState(0)
 
     const routeRef = useRef()
 
@@ -214,20 +218,22 @@ function CallsListScreen(props) {
         });
 
         Promise.all(results).then((arrayCompleted) => {
-
-            console.log('arrayCompleted', arrayCompleted)
-            console.log('type => ', type)
+            const arrayWhithBadge = arrayCompleted.filter(item => item.badgeValue > 0);
             if (type === 'calls') {
                 setCalls(arrayCompleted)
+                setBadgeProfessionalAbertos(arrayWhithBadge.length)
             }
             else if (type === 'finished_calls') {
                 setFinishedCalls(arrayCompleted)
+                setBadgeProfessionalFechados(arrayWhithBadge.length)
             }
             else if (type === 'client_calls') {
                 setCallsClient(arrayCompleted)
+                setBadgeClientAbertos(arrayWhithBadge.length)
             }
             else if (type === 'finished_client_calls') {
                 setFinishedCallsClient(arrayCompleted)
+                setBadgeClientFechados(arrayWhithBadge.length)
             }
         })
     }
@@ -428,7 +434,11 @@ function CallsListScreen(props) {
                                 <ScrollViewHorizontal>
                                     {listStatus.map((item, i) => (
                                         <TouchTabStatus key={i} onPress={() => handleClickItemStatus(i)} backgroundColor={i === statusSelected ? black : lightgray}>
-                                            <TxtTabStatus color={i === statusSelected ? white : black}>{item.name}</TxtTabStatus>
+                                            <React.Fragment>
+                                                <TxtTabStatus color={i === statusSelected ? white : black}>{item.name}</TxtTabStatus>
+                                                {(i === 0 && badgeProfessionalAbertos > 0) && <Badge value={badgeProfessionalAbertos} status="success" containerStyle={{ position: 'absolute', top: 4, right: 8 }} />}
+                                                {(i === 1 && badgeProfessionalFechados > 0) && <Badge value={badgeProfessionalFechados} status="success" containerStyle={{ position: 'absolute', top: 4, right: 8 }} />}
+                                            </React.Fragment>
                                         </TouchTabStatus>
                                     ))}
                                 </ScrollViewHorizontal>
@@ -501,7 +511,11 @@ function CallsListScreen(props) {
                                 <ScrollViewHorizontal>
                                     {listStatus.map((item, i) => (
                                         <TouchTabStatus key={i} onPress={() => handleClickItemStatus(i)} backgroundColor={i === statusSelected ? black : lightgray}>
-                                            <TxtTabStatus color={i === statusSelected ? white : black}>{item.name}</TxtTabStatus>
+                                            <React.Fragment>
+                                                <TxtTabStatus color={i === statusSelected ? white : black}>{item.name}</TxtTabStatus>
+                                                {(i === 0 && badgeClientAbertos > 0) && <Badge value={badgeClientAbertos} status="success" containerStyle={{ position: 'absolute', top: 4, right: 8 }} />}
+                                                {(i === 1 && badgeClientFechados > 0) && <Badge value={badgeClientFechados} status="success" containerStyle={{ position: 'absolute', top: 4, right: 8 }} />}
+                                            </React.Fragment>
                                         </TouchTabStatus>
                                     ))}
                                 </ScrollViewHorizontal>

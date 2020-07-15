@@ -121,7 +121,7 @@ function CategoriesSearchScreen(props) {
                         viewProfile: false,
                     })
                 }
-                else {
+                else if (props.route.params.previewScreen) {
                     props.navigation.navigate(props.route.params.previewScreen, {
                         previewScreen: props.route.name,
                         viewProfile: false,

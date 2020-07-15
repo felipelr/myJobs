@@ -305,7 +305,7 @@ function ProfessionalViewScreen(props) {
             setStories([])
             setStoriesInstagram([])
             setStoriesMyJobs([])
-            props.professionalSetProfessionalView({})
+            props.professionalSetProfessionalView({})            
             props.navigation.navigate(routeRef.current.params.previewScreen, {
                 previewScreen: props.route.name,
             })

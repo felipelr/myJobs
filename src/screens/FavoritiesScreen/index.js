@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { BackHandler, View } from 'react-native'
 import { Avatar } from 'react-native-elements'
@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import ActionCreators from '../../store/actionCreators'
 
-import { purple, lightgray } from '../../components/common/util/colors'
+import { purple } from '../../components/common/util/colors'
 
 import {
     ScrollViewContainer,
@@ -23,6 +23,8 @@ import ListItem from '../../components/ListItem/index'
 function FavoritiesScreen(props) {
     const [favoriteList, setFavoriteList] = useState([])
 
+    const routeRef = useRef()
+
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
@@ -35,8 +37,27 @@ function FavoritiesScreen(props) {
         setFavoriteList(props.favorities)
     }, [props.favorities])
 
+    useEffect(() => {
+        if (props.route) {
+            routeRef.current = props.route
+        }
+    }, [props.route])
+
     const handleBackPress = async () => {
-        props.navigation.goBack()
+        if (routeRef.current.params && routeRef.current.params.previewScreen) {
+            if (routeRef.current.params.previewScreen === 'ProfessionalView') {
+                props.navigation.navigate('CategoriesSearch', {
+                    previewScreen: props.route.name,
+                })
+            }
+            else {
+                props.navigation.goBack()
+            }
+        }
+        else {
+            props.navigation.goBack()
+        }
+
         return true
     }
 

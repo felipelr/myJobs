@@ -24,7 +24,6 @@ import {
     ContainerAvatar,
     ViewSlider,
     TxtSlider,
-    TouchHabilitarProfessional,
     styles
 } from './styles'
 
@@ -72,6 +71,10 @@ function PerfilScreen(props) {
         {
             title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
             icon: 'share'
+        },
+        {
+            title: 'Sair', //logout
+            icon: 'sign-out'
         }
     ])
     const [listProfessional] = useState([
@@ -102,6 +105,10 @@ function PerfilScreen(props) {
         {
             title: 'Habilitar Instagram',
             icon: 'instagram'
+        },
+        {
+            title: 'Sair', //logout
+            icon: 'sign-out'
         }
     ])
 
@@ -156,6 +163,10 @@ function PerfilScreen(props) {
                     {
                         title: 'Convidar Amigos', //mvp -> compartilhar app via redes sociais
                         icon: 'share'
+                    },
+                    {
+                        title: 'Sair', //logout
+                        icon: 'sign-out'
                     }
                 ])
             }
@@ -272,6 +283,9 @@ function PerfilScreen(props) {
             case 'Oferecer serviços no MyJobs':
                 handleClickOferecerServicos()
                 break
+            case 'Sair':
+                logout()
+                break;
             default:
                 setShow('menu')
                 pageRef.current = 'menu'
@@ -289,6 +303,22 @@ function PerfilScreen(props) {
                 delay: 0
             }).start()
         }
+    }
+
+    const logout = () => {
+        Alert.alert(
+            "Atenção",
+            "Deseja sair do aplicativo?",
+            [
+                {
+                    text: "NÃO",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "SIM", onPress: () => props.logoutRequest() }
+            ],
+            { cancelable: false }
+        );
     }
 
     const handleClickOferecerServicos = () => {
@@ -440,6 +470,17 @@ function PerfilScreen(props) {
         }
     }
 
+    const renderIcon = (item) => {
+        if (item.icon === 'instagram')
+            return <IconFont name={item.icon} size={25} color={purple} />
+        else if (item.icon === 'sign-out')
+            return <IconFont name={item.icon} size={25} color={purple} />
+        else if (item.icon === 'handshake-o')
+            return <IconFont name={item.icon} size={25} color={purple} />
+        else
+            return <Icon name={item.icon} size={25} color={purple} />
+    }
+
     return (
         <React.Fragment>
             {
@@ -506,7 +547,7 @@ function PerfilScreen(props) {
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray, margin: 0 }}
                                                         title={item.title}
                                                         rightIcon={<Icon name="chevron-right" size={25} color={purple} />}
-                                                        leftIcon={item.icon === 'handshake-o' ? <IconFont name={item.icon} size={25} color={purple} /> : <Icon name={item.icon} size={25} color={purple} />}
+                                                        leftIcon={renderIcon(item)}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
                                                         bottomDivider
@@ -520,7 +561,7 @@ function PerfilScreen(props) {
                                                         containerStyle={{ borderBottomWidth: 1, borderBottomColor: lightgray }}
                                                         title={item.title}
                                                         rightIcon={<Icon name="chevron-right" size={25} color={purple} />}
-                                                        leftIcon={item.icon === 'instagram' ? <IconFont name={item.icon} size={25} color={purple} /> : <Icon name={item.icon} size={25} color={purple} />}
+                                                        leftIcon={renderIcon(item)}
                                                         onPress={() => { handleClickMenu(item.title) }}
                                                         onLongPress={() => { handleClickMenu(item.title) }}
                                                     />
@@ -598,6 +639,7 @@ const mapDispatchToProps = dispatch => {
         authSetInstaTokenLong: (token) => dispatch(ActionCreators.authSetInstaTokenLong(token)),
         authSetInstaUserId: (id) => dispatch(ActionCreators.authSetInstaUserId(id)),
         professionalAddRequest: (token, professional) => dispatch(ActionCreators.professionalAddRequest(token, professional)),
+        logoutRequest: () => dispatch(ActionCreators.logoutRequest()),
     }
 }
 

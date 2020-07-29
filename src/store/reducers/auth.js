@@ -1,5 +1,6 @@
 import { createReducer } from 'reduxsauce'
 import { Types } from '../actionCreators'
+import messaging from '@react-native-firebase/messaging'
 
 export const INITIAL_STATE = {
     isAuth: false,
@@ -59,6 +60,9 @@ export const logoutRequest = (state = INITIAL_STATE, action) => {
 }
 
 export const logoutSuccess = (state = INITIAL_STATE, action) => {
+    messaging().deleteToken().then(removedToken => {
+        console.log('FCM Token Removed => ', removedToken)
+    })
     return {
         ...state,
         isAuth: false,

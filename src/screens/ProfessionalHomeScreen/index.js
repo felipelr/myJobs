@@ -9,6 +9,7 @@ import ImageResizer from 'react-native-image-resizer'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import IconFont from 'react-native-vector-icons/FontAwesome'
 import { RectButton } from 'react-native-gesture-handler'
+import { StackActions } from '@react-navigation/native'
 
 import useGetMyJobs from '../../services/restServices'
 import ActionCreators from '../../store/actionCreators'
@@ -68,6 +69,7 @@ import { saveInstaAcessTokenLong, saveInstaUserID } from '../../components/commo
 import { instagramAppID, instagramAppSecret, instagramRedirectUrl } from '../../config/config'
 
 function ProfessionalHomeScreen(props) {
+    const [cancelUpdates, setCancelUpdate] = useState(false)
     const [professionalData, setProfessionalData] = useState(props.professionalData)
     const [images, setImages] = useState({
         image: { uri: '' },
@@ -96,6 +98,7 @@ function ProfessionalHomeScreen(props) {
     const [image, setImage] = useState({ uri: '' })
     const [backImage, setBackImage] = useState({ uri: '' })
     const [requisitou, setRequisitou] = useState(false)
+    const [commentsSize, setCommentsSize] = useState(10)
 
     const pageRef = useRef()
     const cameraRef = useRef()
@@ -113,6 +116,8 @@ function ProfessionalHomeScreen(props) {
 
     const getFavorities = useGetMyJobs('', props.token); // Lista os Favoritos
 
+    const commentsPageSize = 10;
+
     //START - USE EFFECTS SECTION
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
@@ -128,6 +133,7 @@ function ProfessionalHomeScreen(props) {
         loadFavorities()
 
         return () => {
+            setCancelUpdate(true)
             backHandler.remove()
             Linking.removeEventListener('url', handleOpenURL)
         }
@@ -164,6 +170,7 @@ function ProfessionalHomeScreen(props) {
         }
         else {
             setComments([])
+            setCommentsSize(commentsPageSize)
         }
     }, [props.selectedService])
 
@@ -309,7 +316,7 @@ function ProfessionalHomeScreen(props) {
             arrayComplete = arrayComplete.concat(arrayInstaSaved)
         }
         if (props.instaToken) {
-            const data = await getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=${props.instaToken}`)
+            const data = await getInstaStories.refetch(`https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp,permalink&access_token=${props.instaToken}`)
             if (data && data.data) {
                 const arrayInsta = data.data.map(item => {
                     return {
@@ -318,14 +325,16 @@ function ProfessionalHomeScreen(props) {
                     }
                 })
 
-                if (arrayComplete && arrayComplete.length > 0) {
+                /* if (arrayComplete && arrayComplete.length > 0) {
                     const sorteredData = arrayComplete.sort((a, b) => b.created.getTime() - a.created.getTime())
                     const filteredData = arrayInsta.filter(item => item.created.getTime() > sorteredData[0].created.getTime())
                     arrayComplete = arrayComplete.concat(filteredData)
                 }
                 else {
                     arrayComplete = arrayComplete.concat(arrayInsta)
-                }
+                } */
+
+                arrayComplete = arrayInsta
             }
         }
 
@@ -350,6 +359,7 @@ function ProfessionalHomeScreen(props) {
                 }
             })
             serializedArray = serializedArray.filter(item => item.media_type === 'IMAGE' || item.media_type === 'CAROUSEL_ALBUM')
+            console.log('arrayInstagram => ', serializedArray)
             setStoriesInstagram(serializedArray)
         }
         else {
@@ -361,7 +371,7 @@ function ProfessionalHomeScreen(props) {
         if (professional && professional.id && service && service.id) {
             const data = await getRatings.refetch(`/ratings/comments/${professional.id}/${service.id}.json`)
             if (data && data.comments) {
-                setComments(data.comments.map(item => {
+                const arr = data.comments.map(item => {
                     return {
                         id: item.id,
                         comment: item.description,
@@ -370,11 +380,13 @@ function ProfessionalHomeScreen(props) {
                         photo: item.client.photo,
                         client_name: item.client.name,
                     }
-                }))
+                })
+                setComments(arr)
             }
             else {
                 setComments([])
             }
+            setCommentsSize(commentsPageSize)
         }
     }
 
@@ -407,18 +419,11 @@ function ProfessionalHomeScreen(props) {
             return true
         }
 
-        Alert.alert(
-            "Atenção",
-            "Deseja sair do aplicativo?",
-            [
-                {
-                    text: "NÃO",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                },
-                { text: "SIM", onPress: () => props.logoutRequest() }
-            ],
-            { cancelable: false }
+        props.navigation.dispatch(
+            StackActions.replace('Splash', {
+                previewScreen: props.route.name,
+                closeApp: true
+            })
         );
 
         return true
@@ -767,265 +772,279 @@ function ProfessionalHomeScreen(props) {
             requestCameraPermission()
         }
     }
+
+    const onScrollView = (event) => {
+        const offset = Math.round(event.nativeEvent.contentOffset.y + event.nativeEvent.layoutMeasurement.height)
+        const height = Math.round(event.nativeEvent.contentSize.height)
+        if (offset >= height) {
+            setCommentsSize(commentsSize + commentsPageSize)
+        }
+    }
     //END - FUNCTIONS SECTION
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            {storiesCarouselOpened &&
-                <StoriesCarousel
-                    firstItem={firstImageCarousel}
-                    onFinishPresentation={handleFinishPresentitionCarousel}
-                    storiesMyJobs={storiesMyJobs}
-                    storiesInstagram={storiesInstagram}
-                    professional={professionalData} />
-            }
-
-            {!storiesCarouselOpened &&
+            {!cancelUpdates &&
                 <React.Fragment>
-                    <HeaderJobs title='Home' />
+                    {storiesCarouselOpened &&
+                        <StoriesCarousel
+                            firstItem={firstImageCarousel}
+                            onFinishPresentation={handleFinishPresentitionCarousel}
+                            storiesMyJobs={storiesMyJobs}
+                            storiesInstagram={storiesInstagram}
+                            professional={professionalData} />
+                    }
 
-                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}>
-                        <View style={{ flex: 1 }} behavior={behavior}>
-                            <TouchCapa onPress={() => handleAvatarClick('backImage')}>
-                                <React.Fragment>
-                                    {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
-                                    {images.backImage.uri.length <= 0 && <CapaEmpty />}
-                                    <ViewIcon>
-                                        <Icon name="edit" size={32} color={lightgray} />
-                                    </ViewIcon>
-                                </React.Fragment>
+                    {!storiesCarouselOpened &&
+                        <React.Fragment>
+                            <HeaderJobs title='Home' />
 
-                            </TouchCapa>
+                            <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+                                showsHorizontalScrollIndicator={false}
+                                showsVerticalScrollIndicator={false}
+                                onScroll={onScrollView}>
+                                <View>
+                                    <TouchCapa onPress={() => handleAvatarClick('backImage')}>
+                                        <React.Fragment>
+                                            {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
+                                            {images.backImage.uri.length <= 0 && <CapaEmpty />}
+                                            <ViewIcon>
+                                                <Icon name="edit" size={32} color={lightgray} />
+                                            </ViewIcon>
+                                        </React.Fragment>
 
-                            <VwContainerTitle>
-                                <VwContainerRating>
-                                    <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
-                                </VwContainerRating>
-                                <TxtTitle size={24}>
-                                    {professionalData.name}
-                                </TxtTitle>
-                            </VwContainerTitle>
-                            <TouchMaisInfo onPress={toggleOverlay}>
-                                <TxtMaisInfo>Mais informações</TxtMaisInfo>
-                            </TouchMaisInfo>
+                                    </TouchCapa>
 
-                            <VwContainerContent>
-                                <VwContainerStories>
-                                    {
-                                        !props.instaToken &&
-                                        <RectButton
-                                            onPress={handleClickInstagram}
-                                            style={{
-                                                width: 300,
-                                                backgroundColor: purple,
-                                                flexDirection: 'row',
-                                                borderRadius: 50,
-                                                overflow: 'hidden',
-                                                left: -50,
-                                                padding: 10,
-                                                paddingLeft: 60,
-                                            }}>
-                                            <IconFont name="instagram" size={25} color={white} style={{ padding: 5 }} />
-                                            <TxtHabilitarInstagram>Habilitar feed do Instagram</TxtHabilitarInstagram>
-                                        </RectButton>
-                                    }
+                                    <VwContainerTitle>
+                                        <VwContainerRating>
+                                            <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
+                                        </VwContainerRating>
+                                        <TxtTitle size={24}>
+                                            {professionalData.name}
+                                        </TxtTitle>
+                                    </VwContainerTitle>
+                                    <TouchMaisInfo onPress={toggleOverlay}>
+                                        <TxtMaisInfo>Mais informações</TxtMaisInfo>
+                                    </TouchMaisInfo>
 
-                                    <TxtTitle size={14}>Stories</TxtTitle>
-                                    <Stories
-                                        loading={getStories.loading || getInstaStoriesSaved.loading || getInstaStories.loading}
-                                        novaImagem={true}
-                                        stories={stories}
-                                        onPressNewStory={handleNewStoryClick}
-                                        onPressStory={item => handleOpenCarousel(item)}
-                                        onCloseToEnd={() => handleCloseToEndStories()} />
-                                </VwContainerStories>
+                                    <VwContainerContent>
+                                        <VwContainerStories>
+                                            {
+                                                !props.instaToken &&
+                                                <RectButton
+                                                    onPress={handleClickInstagram}
+                                                    style={{
+                                                        width: 300,
+                                                        backgroundColor: purple,
+                                                        flexDirection: 'row',
+                                                        borderRadius: 50,
+                                                        overflow: 'hidden',
+                                                        left: -50,
+                                                        padding: 10,
+                                                        paddingLeft: 60,
+                                                    }}>
+                                                    <IconFont name="instagram" size={25} color={white} style={{ padding: 5 }} />
+                                                    <TxtHabilitarInstagram>Habilitar feed do Instagram</TxtHabilitarInstagram>
+                                                </RectButton>
+                                            }
 
-                                <VwContainerServices>
-                                    <View style={{ flexDirection: "row" }}>
-                                        <TxtTitle size={14}>Serviços</TxtTitle>
-                                        {services.length == 0 &&
-                                            <TouchConfigServices onPress={() => {
-                                                props.navigation.navigate('Perfil', {
-                                                    previewScreen: props.route.name,
-                                                    gotoMyServices: true
-                                                })
-                                            }}>
-                                                <TxtConfigServices>Configurar Meus Serviços</TxtConfigServices>
-                                            </TouchConfigServices>}
-                                    </View>
-                                    <CardsServices services={services} loading={getProfessionalServices.loading} emptyMsg="Você não possui serviços configurado..." />
-                                </VwContainerServices>
+                                            <TxtTitle size={14}>Stories</TxtTitle>
+                                            <Stories
+                                                loading={getStories.loading || getInstaStoriesSaved.loading || getInstaStories.loading}
+                                                novaImagem={true}
+                                                stories={stories}
+                                                onPressNewStory={handleNewStoryClick}
+                                                onPressStory={item => handleOpenCarousel(item)}
+                                                onCloseToEnd={() => handleCloseToEndStories()} />
+                                        </VwContainerStories>
 
-                                <ContentComentarios>
-                                    <TxtTitle size={14}>Comentários do Serviço: {props.selectedService.title}</TxtTitle>
-                                    <ComentariosList comments={comments} loading={getRatings.loading} />
-                                </ContentComentarios>
-                            </VwContainerContent>
+                                        <VwContainerServices>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <TxtTitle size={14}>Serviços</TxtTitle>
+                                                {services.length == 0 &&
+                                                    <TouchConfigServices onPress={() => {
+                                                        props.navigation.navigate('Perfil', {
+                                                            previewScreen: props.route.name,
+                                                            gotoMyServices: true
+                                                        })
+                                                    }}>
+                                                        <TxtConfigServices>Configurar Meus Serviços</TxtConfigServices>
+                                                    </TouchConfigServices>}
+                                            </View>
+                                            <CardsServices services={services} loading={getProfessionalServices.loading} emptyMsg="Você não possui serviços configurado..." />
+                                        </VwContainerServices>
 
-                            <ContainerAvatar>
-                                {(images && images.image.uri.length > 0) &&
-                                    <Avatar
-                                        rounded
-                                        containerStyle={styles}
-                                        size={heightPercentageToDP('20%')}
-                                        source={{ uri: images.image.uri }}
-                                        onPress={() => handleAvatarClick('photo')}
-                                        showEditButton={true}
-                                        editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
-                                        onEditPress={() => handleAvatarClick('photo')}
-                                    />
-                                }
+                                        <ContentComentarios>
+                                            <TxtTitle size={14}>Comentários do Serviço: {props.selectedService.title}</TxtTitle>
+                                            <ComentariosList comments={comments} loading={getRatings.loading} contentSize={commentsSize} />
+                                        </ContentComentarios>
+                                    </VwContainerContent>
 
-                                {(images && images.image.uri.length <= 0) &&
-                                    <Avatar
-                                        rounded
-                                        containerStyle={styles}
-                                        size={heightPercentageToDP('20%')}
-                                        icon={{ name: 'image' }}
-                                        onPress={() => handleAvatarClick('photo')}
-                                        showEditButton={true}
-                                        editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
-                                        onEditPress={() => handleAvatarClick('photo')}
-                                    />
-                                }
-                            </ContainerAvatar>
-
-                            <Modal
-                                visible={modalOpened}
-                                transparent={menuOpened}
-                                animationType="fade"
-                                onRequestClose={handleModalClose}>
-
-                                {menuOpened &&
-                                    <MenuPicture
-                                        onCameraPress={handleShowCamera}
-                                        onGaleryPress={handleShowFolder}
-                                        onCancelPress={handleModalClose} />}
-
-                                {(cameraOpened && !newStoryVisible) && (
-                                    <ModalContainer>
-                                        <ModalContainer>
-                                            <RNCamera
-                                                ref={camera => { cameraRef.current = camera; }}
-                                                style={{ flex: 1 }}
-                                                type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
-                                                autoFocus={RNCamera.Constants.AutoFocus.on}
-                                                flashMode={RNCamera.Constants.FlashMode.off}
-                                                androidCameraPermissionOptions={{
-                                                    title: 'Permissão para usar a câmera',
-                                                    message: 'Nós precisamos da sua permissão para usar a câmera',
-                                                    buttonPositive: 'Ok',
-                                                    buttonNegative: 'Cancel',
-                                                }}
-                                                androidRecordAudioPermissionOptions={{
-                                                    title: 'Permissão para gravar audio',
-                                                    message: 'Nós precisamos da sua permissão para usar o seu audio',
-                                                    buttonPositive: 'Ok',
-                                                    buttonNegative: 'Cancel',
-                                                }}
-                                            />
-                                            {newStory !== '' && (
-                                                <ImageNewStory
-                                                    source={{ uri: newStory.uri }}
-                                                    resizeMode='center'
-                                                />
-                                            )}
-                                            {newStory === '' && (
-                                                <React.Fragment>
-                                                    <TakePictureButtonContainer onPress={handleTakePicture}>
-                                                        <TakePictureButtonLabel />
-                                                    </TakePictureButtonContainer>
-                                                    <FlipCameraButtonContainer onPress={handleFlipCamera}>
-                                                        <Icon name="switch-camera" size={40} color={white} />
-                                                    </FlipCameraButtonContainer>
-                                                </React.Fragment>
-                                            )}
-                                        </ModalContainer>
-                                        <ModalButtons>
-                                            <CameraButtonContainer onPress={handleModalClose}>
-                                                <CancelButtonText>Cancelar</CancelButtonText>
-                                            </CameraButtonContainer>
-                                            <CameraButtonContainer onPress={handleCameraModalConfirm}>
-                                                <ContinueButtonText>Continuar</ContinueButtonText>
-                                            </CameraButtonContainer>
-                                        </ModalButtons>
-                                    </ModalContainer>
-                                )}
-
-                                {newStoryVisible &&
-                                    <NewStoryForm
-                                        image={newStory}
-                                        onSuccess={handleNewStorySuccess} />}
-
-                                {folderImagesOpened &&
-                                    <ModalContainer>
-                                        <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
-                                        <ModalButtons>
-                                            <CameraButtonContainer onPress={handleModalClose}>
-                                                <CancelButtonText>Cancelar</CancelButtonText>
-                                            </CameraButtonContainer>
-                                        </ModalButtons>
-                                    </ModalContainer>}
-                            </Modal>
-
-                            <Overlay isVisible={moreInfoVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
-                                <React.Fragment>
-                                    <ViewInfo>
+                                    <ContainerAvatar>
                                         {(images && images.image.uri.length > 0) &&
                                             <Avatar
-                                                containerStyle={{ alignSelf: 'center' }}
-                                                size={50}
+                                                rounded
+                                                containerStyle={styles}
+                                                size={heightPercentageToDP('20%')}
                                                 source={{ uri: images.image.uri }}
-                                                rounded
-                                            />}
-
-                                        {(images && images.image.uri.length <= 0) &&
-                                            <Avatar
-                                                containerStyle={{ alignSelf: 'center' }}
-                                                size={50}
-                                                icon={{ name: 'image' }}
-                                                rounded
+                                                onPress={() => handleAvatarClick('photo')}
+                                                showEditButton={true}
+                                                editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                                onEditPress={() => handleAvatarClick('photo')}
                                             />
                                         }
 
-                                        <TextInfo>{professionalData.name}</TextInfo>
-                                    </ViewInfo>
-                                    <TxtProfessionalDescrption>{professionalData.description}</TxtProfessionalDescrption>
-                                    {professionalData.professionalsAddresses &&
+                                        {(images && images.image.uri.length <= 0) &&
+                                            <Avatar
+                                                rounded
+                                                containerStyle={styles}
+                                                size={heightPercentageToDP('20%')}
+                                                icon={{ name: 'image' }}
+                                                onPress={() => handleAvatarClick('photo')}
+                                                showEditButton={true}
+                                                editButton={{ name: 'mode-edit', type: 'material', color: '#fff', underlayColor: '#000' }}
+                                                onEditPress={() => handleAvatarClick('photo')}
+                                            />
+                                        }
+                                    </ContainerAvatar>
+
+                                    <Modal
+                                        visible={modalOpened}
+                                        transparent={menuOpened}
+                                        animationType="fade"
+                                        onRequestClose={handleModalClose}>
+
+                                        {menuOpened &&
+                                            <MenuPicture
+                                                onCameraPress={handleShowCamera}
+                                                onGaleryPress={handleShowFolder}
+                                                onCancelPress={handleModalClose} />}
+
+                                        {(cameraOpened && !newStoryVisible) && (
+                                            <ModalContainer>
+                                                <ModalContainer>
+                                                    <RNCamera
+                                                        ref={camera => { cameraRef.current = camera; }}
+                                                        style={{ flex: 1 }}
+                                                        type={cameraType === 'front' ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
+                                                        autoFocus={RNCamera.Constants.AutoFocus.on}
+                                                        flashMode={RNCamera.Constants.FlashMode.off}
+                                                        androidCameraPermissionOptions={{
+                                                            title: 'Permissão para usar a câmera',
+                                                            message: 'Nós precisamos da sua permissão para usar a câmera',
+                                                            buttonPositive: 'Ok',
+                                                            buttonNegative: 'Cancel',
+                                                        }}
+                                                        androidRecordAudioPermissionOptions={{
+                                                            title: 'Permissão para gravar audio',
+                                                            message: 'Nós precisamos da sua permissão para usar o seu audio',
+                                                            buttonPositive: 'Ok',
+                                                            buttonNegative: 'Cancel',
+                                                        }}
+                                                    />
+                                                    {newStory !== '' && (
+                                                        <ImageNewStory
+                                                            source={{ uri: newStory.uri }}
+                                                            resizeMode='center'
+                                                        />
+                                                    )}
+                                                    {newStory === '' && (
+                                                        <React.Fragment>
+                                                            <TakePictureButtonContainer onPress={handleTakePicture}>
+                                                                <TakePictureButtonLabel />
+                                                            </TakePictureButtonContainer>
+                                                            <FlipCameraButtonContainer onPress={handleFlipCamera}>
+                                                                <Icon name="switch-camera" size={40} color={white} />
+                                                            </FlipCameraButtonContainer>
+                                                        </React.Fragment>
+                                                    )}
+                                                </ModalContainer>
+                                                <ModalButtons>
+                                                    <CameraButtonContainer onPress={handleModalClose}>
+                                                        <CancelButtonText>Cancelar</CancelButtonText>
+                                                    </CameraButtonContainer>
+                                                    <CameraButtonContainer onPress={handleCameraModalConfirm}>
+                                                        <ContinueButtonText>Continuar</ContinueButtonText>
+                                                    </CameraButtonContainer>
+                                                </ModalButtons>
+                                            </ModalContainer>
+                                        )}
+
+                                        {newStoryVisible &&
+                                            <NewStoryForm
+                                                image={newStory}
+                                                onSuccess={handleNewStorySuccess} />}
+
+                                        {folderImagesOpened &&
+                                            <ModalContainer>
+                                                <GaleryMyJobs onItemPress={(item) => handleSelectPicture(item)} />
+                                                <ModalButtons>
+                                                    <CameraButtonContainer onPress={handleModalClose}>
+                                                        <CancelButtonText>Cancelar</CancelButtonText>
+                                                    </CameraButtonContainer>
+                                                </ModalButtons>
+                                            </ModalContainer>}
+                                    </Modal>
+
+                                    <Overlay isVisible={moreInfoVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
                                         <React.Fragment>
-                                            <TouchEdit onPress={() => {
-                                                toggleOverlay()
-                                                props.navigation.navigate('Perfil', {
-                                                    previewScreen: props.route.name,
-                                                    gotoMyAddress: true
-                                                })
-                                            }}>
-                                                <TextAddress>Endereço</TextAddress>
-                                                <IconFont name="pencil" size={20} color={black} style={{ paddingLeft: 5 }} />
-                                            </TouchEdit>
-                                            <TxtProfessionalDescrption>
-                                                {professionalData.professionalsAddresses.map(address => `${address.street}, ${address.street_number}, ${address.complement} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
-                                            </TxtProfessionalDescrption>
+                                            <ViewInfo>
+                                                {(images && images.image.uri.length > 0) &&
+                                                    <Avatar
+                                                        containerStyle={{ alignSelf: 'center' }}
+                                                        size={50}
+                                                        source={{ uri: images.image.uri }}
+                                                        rounded
+                                                    />}
+
+                                                {(images && images.image.uri.length <= 0) &&
+                                                    <Avatar
+                                                        containerStyle={{ alignSelf: 'center' }}
+                                                        size={50}
+                                                        icon={{ name: 'image' }}
+                                                        rounded
+                                                    />
+                                                }
+
+                                                <TextInfo>{professionalData.name}</TextInfo>
+                                            </ViewInfo>
+                                            <TxtProfessionalDescrption>{professionalData.description}</TxtProfessionalDescrption>
+                                            {professionalData.professionalsAddresses &&
+                                                <React.Fragment>
+                                                    <TouchEdit onPress={() => {
+                                                        toggleOverlay()
+                                                        props.navigation.navigate('Perfil', {
+                                                            previewScreen: props.route.name,
+                                                            gotoMyAddress: true
+                                                        })
+                                                    }}>
+                                                        <TextAddress>Endereço</TextAddress>
+                                                        <IconFont name="pencil" size={20} color={black} style={{ paddingLeft: 5 }} />
+                                                    </TouchEdit>
+                                                    <TxtProfessionalDescrption>
+                                                        {professionalData.professionalsAddresses.map(address => `${address.street}, ${address.street_number}, ${address.complement} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
+                                                    </TxtProfessionalDescrption>
+                                                </React.Fragment>
+                                            }
                                         </React.Fragment>
-                                    }
-                                </React.Fragment>
-                            </Overlay>
-                        </View>
-                    </ScrollView>
-                    <Footer
-                        type={props.userType}
-                        selected={'professional-profile'}
-                        homeOnPress={() => handleFooterPress('CategoriesSearch')}
-                        callsOnPress={() => handleFooterPress('CallsList')}
-                        chatOnPress={() => handleFooterPress('ChatList')}
-                        perfilOnPress={() => handleFooterPress('Perfil')}
-                        favoriteOnPress={() => handleFooterPress('Favorite')}
-                    />
+                                    </Overlay>
+                                </View>
+                            </ScrollView>
+                            <Footer
+                                type={props.userType}
+                                selected={'professional-profile'}
+                                homeOnPress={() => handleFooterPress('CategoriesSearch')}
+                                callsOnPress={() => handleFooterPress('CallsList')}
+                                chatOnPress={() => handleFooterPress('ChatList')}
+                                perfilOnPress={() => handleFooterPress('Perfil')}
+                                favoriteOnPress={() => handleFooterPress('Favorite')}
+                            />
+                        </React.Fragment>
+                    }
                 </React.Fragment>
             }
+
         </React.Fragment>
     )
 }

@@ -13,10 +13,11 @@ import HeaderJobs from '../../components/HeaderJobs/index'
 import Footer from '../../components/Footer/index'
 import Call from '../../components/Call/index'
 
-import { purple, lightgray, white, gold, black } from '../../components/common/util/colors'
+import { purple, lightgray, white, gold, black, red } from '../../components/common/util/colors'
 
 import {
     styles,
+    ScrollViewContainer,
     ViewTabControl,
     TouchTab,
     TxtTab,
@@ -26,7 +27,6 @@ import {
     ViewCallDate,
     TxtCallService,
     TxtCallDate,
-    TxtCallProfessional,
     ViewListItem,
 } from './styles'
 
@@ -160,25 +160,27 @@ function CallsListScreen(props) {
     useEffect(() => {
         if (props.updateCallBadge) {
             props.clientSetUpdateCallBadge(false)
-
-            if (doubleUser) {
-                getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
-                getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
-                getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
-                getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
-            }
-            else if (props.userType === 'client') {
-                getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
-                getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
-            }
-            else {
-                getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
-                getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
-            }
-
-            loadCallBadges()
+            loadAllLists()
         }
     }, [props.updateCallBadge])
+
+    const loadAllLists = async () => {
+        if (doubleUser) {
+            await getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
+            await getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
+            await getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
+            await getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
+        }
+        else if (props.userType === 'client') {
+            await getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
+            await getFinishedCallsClient.refetch(`/calls/client/${props.clientData.id}.json?type=2`)
+        }
+        else {
+            await getCalls.refetch(`/calls/professional/${props.professionalData.id}.json`)
+            await getFinishedCalls.refetch(`/calls/professional/${props.professionalData.id}.json?type=2`)
+        }
+        loadCallBadges()
+    }
 
     const getCallByIdFunc = async () => {
         try {
@@ -315,6 +317,7 @@ function CallsListScreen(props) {
     const handleClickTab = (index) => {
         setTabSelected(index)
         setStatusSelected(0)
+        outAnimationStatus()
         if (index === 1 && callsClient.length === 0) {
             getCallsClient.refetch(`/calls/client/${props.clientData.id}.json`)
         }
@@ -428,8 +431,8 @@ function CallsListScreen(props) {
                         </ViewTabControl>
                     }
 
-                    <Animated.View style={slideLeft.getLayout()}>
-                        {tabSelected === 0 &&
+                    {tabSelected === 0 &&
+                        <Animated.View style={{ ...slideLeft.getLayout(), flex: 1 }}>
                             <View>
                                 <ScrollViewHorizontal>
                                     {listStatus.map((item, i) => (
@@ -442,8 +445,8 @@ function CallsListScreen(props) {
                                         </TouchTabStatus>
                                     ))}
                                 </ScrollViewHorizontal>
-                                <Animated.View style={slideStatusLeft.getLayout()}>
-                                    <React.Fragment>
+                                <ScrollViewContainer>
+                                    <Animated.View style={slideStatusLeft.getLayout()}>
                                         {statusSelected === 0 && calls.map((item, i) => (
                                             <ListItem
                                                 key={i}
@@ -470,10 +473,8 @@ function CallsListScreen(props) {
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
-                                    </React.Fragment>
-                                </Animated.View>
-                                <Animated.View style={slideStatusRight.getLayout()}>
-                                    <React.Fragment>
+                                    </Animated.View>
+                                    <Animated.View style={slideStatusRight.getLayout()}>
                                         {statusSelected === 1 && finishedCalls.map((item, i) => (
                                             <ListItem
                                                 key={i}
@@ -500,13 +501,13 @@ function CallsListScreen(props) {
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
-                                    </React.Fragment>
-                                </Animated.View>
+                                    </Animated.View>
+                                </ScrollViewContainer>
                             </View>
-                        }
-                    </Animated.View>
-                    <Animated.View style={slideRight.getLayout()}>
-                        {tabSelected === 1 &&
+                        </Animated.View>
+                    }
+                    {tabSelected === 1 &&
+                        <Animated.View style={{ ...slideRight.getLayout(), flex: 1 }}>
                             <View>
                                 <ScrollViewHorizontal>
                                     {listStatus.map((item, i) => (
@@ -519,8 +520,8 @@ function CallsListScreen(props) {
                                         </TouchTabStatus>
                                     ))}
                                 </ScrollViewHorizontal>
-                                <Animated.View style={slideStatusLeft.getLayout()}>
-                                    <React.Fragment>
+                                <ScrollViewContainer>
+                                    <Animated.View style={slideStatusLeft.getLayout()}>
                                         {statusSelected === 0 && callsClient.map((item, i) => (
                                             <ListItem
                                                 key={i}
@@ -547,10 +548,8 @@ function CallsListScreen(props) {
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
-                                    </React.Fragment>
-                                </Animated.View>
-                                <Animated.View style={slideStatusRight.getLayout()}>
-                                    <React.Fragment>
+                                    </Animated.View>
+                                    <Animated.View style={slideStatusRight.getLayout()}>
                                         {statusSelected === 1 && finishedCallsClient.map((item, i) => (
                                             <ListItem
                                                 key={i}
@@ -577,11 +576,11 @@ function CallsListScreen(props) {
                                                 onPress={() => { handleClickItem(item) }}
                                             />
                                         ))}
-                                    </React.Fragment>
-                                </Animated.View>
+                                    </Animated.View>
+                                </ScrollViewContainer>
                             </View>
-                        }
-                    </Animated.View>
+                        </Animated.View>
+                    }
                 </View>
             }
             {showCall &&

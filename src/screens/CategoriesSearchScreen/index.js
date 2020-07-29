@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Platform, BackHandler, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { StackActions } from '@react-navigation/native';
 
 import ActionCreators from '../../store/actionCreators';
 import Footer from '../../components/Footer/index';
@@ -90,18 +91,11 @@ function CategoriesSearchScreen(props) {
 
     const handleBackPress = async () => {
         if (props.userType == 'client') {
-            Alert.alert(
-                "Atenção",
-                "Deseja sair do aplicativo?",
-                [
-                    {
-                        text: "NÃO",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    },
-                    { text: "SIM", onPress: () => props.logoutRequest() }
-                ],
-                { cancelable: false }
+            props.navigation.dispatch(
+                StackActions.replace('Splash', {
+                    previewScreen: props.route.name,
+                    closeApp: true
+                })
             );
         }
         else {

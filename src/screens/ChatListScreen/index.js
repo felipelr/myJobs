@@ -71,10 +71,7 @@ function ChatListScreen(props) {
         }
     }, [props.updateChatBadge])
 
-    const handleBackPress = async () => {
-        if (props.professionalSelected.id) {
-            props.professionalSelectedRequest({})
-        }
+    const handleBackPress = async () => {        
         props.navigation.goBack()
         return true
     }

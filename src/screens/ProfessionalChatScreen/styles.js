@@ -1,7 +1,5 @@
 import styled from 'styled-components'
-import { Dimensions } from 'react-native'
-import { white, purple, lightpurple, black, lightgray } from '../../components/common/util/colors'
-const { height, width } = Dimensions.get('window')
+import { white, purple, black, lightgray } from '../../components/common/util/colors'
 
 export const ViewContainerInfo = styled.View`
     padding: 5px;
@@ -32,75 +30,6 @@ export const ViewContainerNewMessage = styled.View`
 
 export const TouchIcon = styled.TouchableOpacity`
     padding: 5px;
-`
-
-///////
-export const ScrollViewContainerMessages = styled.ScrollView.attrs({
-    horizontal: false,
-    showsHorizontalScrollIndicator: false,
-    showsVerticalScrollIndicator: false,
-    contentContainerStyle: { paddingLeft: 2, paddingRight: 2, flexGrow: 1 },
-    keyboardShouldPersistTaps: 'always'
-})`
-    flex: 1;
-`
-
-
-/////////////
-export const ViewChatDate = styled.View`
-    width: 100%;
-    padding: 2px;
-    justify-content: space-evenly;
-    align-items: center;
-`
-
-export const TextChatDate = styled.Text`
-    border-radius: 2px;
-    padding-top: 3px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 3px;
-    background-color: ${lightpurple};
-    color: ${white};
-    font-size: 12px;
-    text-align: center;
-    elevation: 1;
-`
-
-/////////
-export const ViewChatItem = styled.View`
-    margin: 2px;
-    width: 100%;
-    flex-direction: row;
-    justify-content: ${props => `${props.justifyContent}`};
-`
-
-export const ViewChatText = styled.TouchableOpacity`
-    padding: 8px;
-    border-radius: 5px;
-    background-color: ${props => `${props.backColor}`};
-    margin-bottom: 5px;
-    elevation: 1;    
-`
-
-export const ViewRow = styled.View`
-    flex-direction: row; 
-`
-
-export const TextMessage = styled.Text`
-    font-size: 12px;
-    color: ${black};
-    max-width: ${width - 85};
-    text-decoration-line: ${props => props.decoration};
-`
-
-export const TextTime = styled.Text`
-    font-size: 9px;
-    font-weight: bold;
-    color: ${black};
-    align-self: center;
-    margin-left: ${props => `${props.marginLeft}`};
-    margin-right: ${props => `${props.marginRight}`};
 `
 
 export const ViewLoading = styled.View`

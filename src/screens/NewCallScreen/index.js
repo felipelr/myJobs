@@ -173,8 +173,13 @@ function NewCallScreen(props) {
 
     const handleClickConfimar = () => {
         if (invalidField === '') {
-            setRequisitou(true)
-            props.newProfessionalCallRequest(props.token, form)
+            if (form.description.length > 0) {
+                setRequisitou(true)
+                props.newProfessionalCallRequest(props.token, form)
+            }
+            else {
+                setInvalidField('description')
+            }
         }
     }
 
@@ -234,8 +239,7 @@ function NewCallScreen(props) {
                                                 value={form.description}
                                                 onChangeText={handleOnChange}
                                                 invalidValue={invalidField === 'description'}
-                                                multiline={true}
-                                                numberOfLines={2} />
+                                                returnKeyType="done" />
 
                                             <ViewContainerConfirmar>
                                                 <ButtonPurple onPress={() => handleClickConfimar()}>Concluir</ButtonPurple>

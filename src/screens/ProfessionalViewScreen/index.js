@@ -45,6 +45,7 @@ import { heightPercentageToDP } from '../../components/common/util/dimensions'
 import { white, boldred, black, purple } from '../../components/common/util/colors'
 
 function ProfessionalViewScreen(props) {
+    const [cancelUpdates, setCancelUpdate] = useState(false)
     const [professionalData, setProfessionalData] = useState(props.professionalSelected)
     const [images, setImages] = useState({
         image: { uri: '' },
@@ -63,6 +64,7 @@ function ProfessionalViewScreen(props) {
     const [storiesComplete, setStoriesComplete] = useState([])
     const [moreInfoVisible, setMoreInfoVisible] = useState(false)
     const [loadingProfessional, setLoadingProfessional] = useState(false)
+    const [commentsSize, setCommentsSize] = useState(10)
 
     const pageRef = useRef()
     const routeRef = useRef()
@@ -76,11 +78,14 @@ function ProfessionalViewScreen(props) {
     const getStories = useGetMyJobs('', props.token)
     const getInstaStoriesSaved = useGetMyJobs('', props.token)
 
+    const commentsPageSize = 10;
+
     //START - USE EFFECTS SECTION
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress)
 
         return () => {
+            setCancelUpdate(true)
             backHandler.remove()
             props.professionalSetProfessionalView({})
         }
@@ -116,6 +121,7 @@ function ProfessionalViewScreen(props) {
         }
         else {
             setComments([])
+            setCommentsSize(commentsPageSize)
         }
     }, [props.selectedService])
 
@@ -225,8 +231,6 @@ function ProfessionalViewScreen(props) {
         if (props.professionalSelected.id) {
             const data = await getInstaStoriesSaved.refetch(`/instagram/view/${props.professionalSelected.id}.json`)
             if (data && data.story && data.story.json) {
-                console.log('getInstaStoriesSaved =======================')
-
                 let arrayInsta = data.story.json.map(item => {
                     return {
                         id: item.id,
@@ -237,6 +241,7 @@ function ProfessionalViewScreen(props) {
                     }
                 })
                 arrayInsta = arrayInsta.filter(item => item.media_type === 'IMAGE' || item.media_type === 'CAROUSEL_ALBUM')
+                console.log('arrayInstagram => ', arrayInsta)
                 setStoriesInstagram(arrayInsta)
             }
             else {
@@ -249,7 +254,7 @@ function ProfessionalViewScreen(props) {
         if (professional.id && service.id) {
             const data = await getRatings.refetch(`/ratings/comments/${professional.id}/${service.id}.json`)
             if (data && data.comments) {
-                setComments(data.comments.map(item => {
+                const arr = data.comments.map(item => {
                     return {
                         id: item.id,
                         comment: item.description,
@@ -258,11 +263,13 @@ function ProfessionalViewScreen(props) {
                         photo: item.client.photo,
                         client_name: item.client.name,
                     }
-                }))
+                })
+                setComments(arr)
             }
             else {
                 setComments([])
             }
+            setCommentsSize(commentsPageSize)
         }
     }
 
@@ -305,7 +312,8 @@ function ProfessionalViewScreen(props) {
             setStories([])
             setStoriesInstagram([])
             setStoriesMyJobs([])
-            props.professionalSetProfessionalView({})            
+            setCommentsSize(commentsPageSize)
+            props.professionalSetProfessionalView({})
             props.navigation.navigate(routeRef.current.params.previewScreen, {
                 previewScreen: props.route.name,
             })
@@ -342,6 +350,7 @@ function ProfessionalViewScreen(props) {
         setStories([])
         setStoriesInstagram([])
         setStoriesMyJobs([])
+        setCommentsSize(commentsPageSize)
         props.professionalSetProfessionalView({})
 
         props.navigation.navigate(view, {
@@ -368,150 +377,163 @@ function ProfessionalViewScreen(props) {
             props.favoriteAdd(props.token, newFavorite);
         }
     }
+
+    const onScrollView = (event) => {
+        const offset = Math.round(event.nativeEvent.contentOffset.y + event.nativeEvent.layoutMeasurement.height)
+        const height = Math.round(event.nativeEvent.contentSize.height)
+        if (offset >= height) {
+            setCommentsSize(commentsSize + commentsPageSize)
+        }
+    }
     //END - FUNCTIONS SECTION
 
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
         <React.Fragment>
-            {storiesCarouselOpened &&
-                <StoriesCarousel
-                    firstItem={firstImageCarousel}
-                    onFinishPresentation={handleFinishPresentitionCarousel}
-                    storiesMyJobs={storiesMyJobs}
-                    storiesInstagram={storiesInstagram}
-                    professional={professionalData} />
-            }
-
-            {!storiesCarouselOpened &&
+            {!cancelUpdates &&
                 <React.Fragment>
-                    <HeaderJobs title='Profissional'
-                        professional={professionalData}
-                        chat={() => {
-                            props.clientSelectedRequest({})
-                            props.setProfessionalSelected(professionalData)
-                            props.navigation.navigate('ProfessionalChat', {
-                                previewScreen: props.route.name,
-                            })
-                        }} />
+                    {storiesCarouselOpened &&
+                        <StoriesCarousel
+                            firstItem={firstImageCarousel}
+                            onFinishPresentation={handleFinishPresentitionCarousel}
+                            storiesMyJobs={storiesMyJobs}
+                            storiesInstagram={storiesInstagram}
+                            professional={professionalData} />
+                    }
 
-                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}>
-                        <View style={{ flex: 1 }} behavior={behavior}>
-                            {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
-                            {images.backImage.uri.length <= 0 && <CapaEmpty />}
+                    {!storiesCarouselOpened &&
+                        <React.Fragment>
+                            <HeaderJobs title='Profissional'
+                                professional={professionalData}
+                                chat={() => {
+                                    props.clientSelectedRequest({})
+                                    props.setProfessionalSelected(professionalData)
+                                    props.navigation.navigate('ProfessionalChat', {
+                                        previewScreen: props.route.name,
+                                    })
+                                }} />
 
-                            <VwContainerTitle>
-                                <ViewRow>
-                                    <ViewLeft>
-                                        <VwContainerRating>
-                                            <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
-                                        </VwContainerRating>
-                                    </ViewLeft>
-                                    <ViewRight>
-                                        <ViewFavoritar>
-                                            <RectButton
-                                                style={styles.button}
-                                                onPress={onPressFavorite}>
-                                                <View style={styles.buttonIcon}>
-                                                    {props.loadingFavorite && <ActivityIndicator size="small" color={purple} />}
-                                                    {!props.loadingFavorite && <Icon
-                                                        name='favorite'
-                                                        size={24}
-                                                        color={props.favorities.find(item => item.professional_id == professionalData.id) ? boldred : white} />
-                                                    }
-                                                </View>
-                                                <Text style={styles.buttonText}>Favorito</Text>
-                                            </RectButton>
-                                        </ViewFavoritar>
-                                    </ViewRight>
-                                </ViewRow>
+                            <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+                                showsHorizontalScrollIndicator={false}
+                                showsVerticalScrollIndicator={false}
+                                onScroll={onScrollView}>
+                                <View style={{ flex: 1 }} behavior={behavior}>
+                                    {images.backImage.uri.length > 0 && <Capa source={{ uri: images.backImage.uri }} />}
+                                    {images.backImage.uri.length <= 0 && <CapaEmpty />}
 
-                                <TxtTitle size={24}>
-                                    {professionalData.name}
-                                </TxtTitle>
-                            </VwContainerTitle>
-                            <TouchMaisInfo onPress={toggleOverlay}>
-                                <TxtMaisInfo>Mais informações</TxtMaisInfo>
-                            </TouchMaisInfo>
+                                    <VwContainerTitle>
+                                        <ViewRow>
+                                            <ViewLeft>
+                                                <VwContainerRating>
+                                                    <RatingJobs avaliacao={professionalRate.avg} qtdeAvaliacoes={professionalRate.count} />
+                                                </VwContainerRating>
+                                            </ViewLeft>
+                                            <ViewRight>
+                                                <ViewFavoritar>
+                                                    <RectButton
+                                                        style={styles.button}
+                                                        onPress={onPressFavorite}>
+                                                        <View style={styles.buttonIcon}>
+                                                            {props.loadingFavorite && <ActivityIndicator size="small" color={purple} />}
+                                                            {!props.loadingFavorite && <Icon
+                                                                name='favorite'
+                                                                size={24}
+                                                                color={props.favorities.find(item => item.professional_id == professionalData.id) ? boldred : white} />
+                                                            }
+                                                        </View>
+                                                        <Text style={styles.buttonText}>Favorito</Text>
+                                                    </RectButton>
+                                                </ViewFavoritar>
+                                            </ViewRight>
+                                        </ViewRow>
 
-                            <VwContainerContent>
-                                <VwContainerStories>
-                                    <TxtTitle size={14}>Stories</TxtTitle>
-                                    <Stories
-                                        loading={getStories.loading || getInstaStoriesSaved.loading || loadingProfessional}
-                                        novaImagem={false}
-                                        stories={stories}
-                                        onPressStory={item => handleOpenCarousel(item)}
-                                        onCloseToEnd={() => handleCloseToEndStories()} />
-                                </VwContainerStories>
+                                        <TxtTitle size={24}>
+                                            {professionalData.name}
+                                        </TxtTitle>
+                                    </VwContainerTitle>
+                                    <TouchMaisInfo onPress={toggleOverlay}>
+                                        <TxtMaisInfo>Mais informações</TxtMaisInfo>
+                                    </TouchMaisInfo>
 
-                                <VwContainerServices>
-                                    <TxtTitle size={14}>Serviços</TxtTitle>
-                                    <CardsServices services={services} loading={getProfessionalServices.loading || loadingProfessional} />
-                                </VwContainerServices>
+                                    <VwContainerContent>
+                                        <VwContainerStories>
+                                            <TxtTitle size={14}>Stories</TxtTitle>
+                                            <Stories
+                                                loading={getStories.loading || getInstaStoriesSaved.loading || loadingProfessional}
+                                                novaImagem={false}
+                                                stories={stories}
+                                                onPressStory={item => handleOpenCarousel(item)}
+                                                onCloseToEnd={() => handleCloseToEndStories()} />
+                                        </VwContainerStories>
 
-                                <ContentComentarios>
-                                    <TxtTitle size={14}>Comentários do Serviço: {props.selectedService.title}</TxtTitle>
-                                    <ComentariosList comments={comments} loading={getRatings.loading || loadingProfessional} />
-                                </ContentComentarios>
-                            </VwContainerContent>
+                                        <VwContainerServices>
+                                            <TxtTitle size={14}>Serviços</TxtTitle>
+                                            <CardsServices services={services} loading={getProfessionalServices.loading || loadingProfessional} />
+                                        </VwContainerServices>
 
-                            <ContainerAvatar>
-                                {(images && images.image.uri.length > 0) &&
-                                    <Avatar
-                                        rounded
-                                        containerStyle={styles.shadow}
-                                        size={heightPercentageToDP('20%')}
-                                        source={{ uri: images.image.uri }}
-                                    />
-                                }
+                                        <ContentComentarios>
+                                            <TxtTitle size={14}>Comentários do Serviço: {props.selectedService.title}</TxtTitle>
+                                            <ComentariosList comments={comments} loading={getRatings.loading || loadingProfessional} />
+                                        </ContentComentarios>
+                                    </VwContainerContent>
 
-                                {(images && images.image.uri.length <= 0) &&
-                                    <Avatar
-                                        rounded
-                                        containerStyle={styles.shadow}
-                                        size={heightPercentageToDP('20%')}
-                                        icon={{ name: 'image' }}
-                                    />
-                                }
-                            </ContainerAvatar>
+                                    <ContainerAvatar>
+                                        {(images && images.image.uri.length > 0) &&
+                                            <Avatar
+                                                rounded
+                                                containerStyle={styles.shadow}
+                                                size={heightPercentageToDP('20%')}
+                                                source={{ uri: images.image.uri }}
+                                            />
+                                        }
 
-                            <Overlay isVisible={moreInfoVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
-                                <React.Fragment>
-                                    <ViewInfo>
-                                        <Avatar
-                                            containerStyle={{ alignSelf: 'center' }}
-                                            size={50}
-                                            source={{ uri: professionalData.photo, }}
-                                            rounded={true}
-                                        />
-                                        <TextInfo>{professionalData.name}</TextInfo>
-                                    </ViewInfo>
-                                    <TxtProfessionalDescrption>{professionalData.description}</TxtProfessionalDescrption>
-                                    {addresses &&
+                                        {(images && images.image.uri.length <= 0) &&
+                                            <Avatar
+                                                rounded
+                                                containerStyle={styles.shadow}
+                                                size={heightPercentageToDP('20%')}
+                                                icon={{ name: 'image' }}
+                                            />
+                                        }
+                                    </ContainerAvatar>
+
+                                    <Overlay isVisible={moreInfoVisible} onBackdropPress={toggleOverlay} overlayStyle={{ height: 'auto' }}>
                                         <React.Fragment>
-                                            <TextAddress>Endereço</TextAddress>
-                                            <TxtProfessionalDescrption>
-                                                {addresses.map(address => `${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
-                                            </TxtProfessionalDescrption>
+                                            <ViewInfo>
+                                                <Avatar
+                                                    containerStyle={{ alignSelf: 'center' }}
+                                                    size={50}
+                                                    source={{ uri: professionalData.photo, }}
+                                                    rounded={true}
+                                                />
+                                                <TextInfo>{professionalData.name}</TextInfo>
+                                            </ViewInfo>
+                                            <TxtProfessionalDescrption>{professionalData.description}</TxtProfessionalDescrption>
+                                            {addresses &&
+                                                <React.Fragment>
+                                                    <TextAddress>Endereço</TextAddress>
+                                                    <TxtProfessionalDescrption>
+                                                        {addresses.map(address => `${address.street}, ${address.street_number} - ${address.neighborhood} - ${address.city.name}/${address.city.state.initials} \n\n`)}
+                                                    </TxtProfessionalDescrption>
+                                                </React.Fragment>
+                                            }
                                         </React.Fragment>
-                                    }
-                                </React.Fragment>
-                            </Overlay>
-                        </View>
-                    </ScrollView>
-                    <Footer
-                        type={props.userType}
-                        selected={'professional-profile'}
-                        professionalSelected={props.professionalSelected}
-                        homeOnPress={() => handleFooterPress('CategoriesSearch')}
-                        callsOnPress={() => handleFooterPress('CallsList')}
-                        chatOnPress={() => handleFooterPress('ChatList')}
-                        perfilOnPress={() => handleFooterPress('Perfil')}
-                        professionalProfileOnPress={() => handleFooterPress('ProfessionalHome')}
-                        favoriteOnPress={() => handleFooterPress('Favorite')}
-                    />
+                                    </Overlay>
+                                </View>
+                            </ScrollView>
+                            <Footer
+                                type={props.userType}
+                                selected={'professional-profile'}
+                                professionalSelected={props.professionalSelected}
+                                homeOnPress={() => handleFooterPress('CategoriesSearch')}
+                                callsOnPress={() => handleFooterPress('CallsList')}
+                                chatOnPress={() => handleFooterPress('ChatList')}
+                                perfilOnPress={() => handleFooterPress('Perfil')}
+                                professionalProfileOnPress={() => handleFooterPress('ProfessionalHome')}
+                                favoriteOnPress={() => handleFooterPress('Favorite')}
+                            />
+                        </React.Fragment>
+                    }
                 </React.Fragment>
             }
         </React.Fragment>

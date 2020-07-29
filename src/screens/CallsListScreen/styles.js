@@ -7,8 +7,8 @@ export const styles = StyleSheet.create({
 })
 
 export const ScrollViewContainer = styled.ScrollView.attrs({
-    showsHorizontalScrollIndicator: false,
-    showsVerticalScrollIndicator: false,
+    showsHorizontalScrollIndicator: true,
+    showsVerticalScrollIndicator: true,
 })``
 
 export const ViewContainer = styled.View`

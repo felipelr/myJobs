@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { KeyboardAvoidingView, Platform, BackHandler, Keyboard, AppState } from 'react-native'
+import { Platform, BackHandler, Keyboard, AppState, ActivityIndicator } from 'react-native'
 import { Input, Overlay } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { showNotification } from '../../components/common/util/localNotification'
 import { updateBadge } from '../../components/common/util/badgeNotification'
 
-import { gray, white, lightpurple, black } from '../../components/common/util/colors'
+import { gray, white, lightpurple, black, purple } from '../../components/common/util/colors'
 import {
     ViewContainerChat,
     ViewContainerNewMessage,
@@ -19,123 +19,22 @@ import {
     TouchAddress,
     ViewTitleAddress,
 } from './styles'
-import Container from '../../components/Container/index'
-import HeaderJobs from '../../components/HeaderJobs/index'
+
+import Container from '../../components/Container'
+import HeaderJobs from '../../components/HeaderJobs'
+import ChatMessages from '../../components/ChatMessages'
+
 import useGet from '../../services/restServices'
 
 import ActionCreators from '../../store/actionCreators'
-
-///////ChatMessages
-import { ScrollViewContainerMessages } from './styles'
-
-///////ChatTextDate
-import { ViewChatDate, TextChatDate } from './styles'
-
-///////ChatItem
-import { ViewChatItem, ViewChatText, TextMessage, TextTime, ViewRow } from './styles'
-
-function ChatTextDate(props) {
-    const { mensagem } = props
-    return (
-        <ViewChatDate>
-            <TextChatDate>{mensagem.date}</TextChatDate>
-        </ViewChatDate>
-    )
-}
-
-function ChateItem(props) {
-    const { mensagem } = props
-    const { userType } = props
-
-    const onPressChatText = (text) => {
-        if (text.indexOf("#") === 0) {
-            const indexCode = text.indexOf("#") + 1;
-            const indexEnd = text.indexOf(" ");
-            const callId = text.substring(indexCode, indexEnd);
-            props.navigation.navigate('CallsList', {
-                previewScreen: 'ProfessionalChat',
-                callId: callId,
-            })
-        }
-    }
-
-    return (
-        <ViewChatItem justifyContent={mensagem.msg_from === userType ? 'flex-end' : 'flex-start'}>
-            <ViewChatText onPress={() => onPressChatText(mensagem.message)} backColor={mensagem.msg_from === userType ? '#D3D4FE' : '#EAEAEA'} >
-                {mensagem.msg_from === userType &&
-                    <ViewRow>
-                        <TextTime marginRight={10} marginLeft={0}>
-                            {mensagem.time.substring(0, 5)}
-                        </TextTime>
-                        <TextMessage decoration={mensagem.message.indexOf("#") === 0 ? 'underline' : 'none'}>
-                            {mensagem.message}
-                        </TextMessage>
-                    </ViewRow>}
-                {mensagem.msg_from !== userType &&
-                    <ViewRow>
-                        <TextMessage decoration={mensagem.message.indexOf("#") === 0 ? 'underline' : 'none'}>
-                            {mensagem.message}
-                        </TextMessage>
-                        <TextTime marginRight={0} marginLeft={10}>
-                            {mensagem.time.substring(0, 5)}
-                        </TextTime>
-                    </ViewRow>}
-            </ViewChatText>
-        </ViewChatItem>
-    )
-}
-
-function ChatMessages(props) {
-    const { messages } = props
-    const { userType } = props
-
-    const scrollViewRef = useRef()
-
-    const handleContentSizeChange = (contentWidth, contentHeight) => {
-        scrollViewRef.current.scrollTo({ x: 0, y: contentHeight, animated: true })
-    }
-
-    return (
-        <React.Fragment>
-            <ScrollViewContainerMessages
-                ref={(c) => scrollViewRef.current = c}
-                onContentSizeChange={handleContentSizeChange}>
-                {
-                    messages && messages.map((item, index) => {
-                        if (index === 0) {
-                            return (
-                                <React.Fragment key={index} >
-                                    <ChatTextDate mensagem={item} />
-                                    <ChateItem navigation={props.navigation} mensagem={item} userType={userType} />
-                                </React.Fragment>
-                            )
-                        }
-                        else {
-                            const previousItem = messages[index - 1]
-                            if (previousItem.date != item.date) {
-                                return (
-                                    <React.Fragment key={index} >
-                                        <ChatTextDate mensagem={item} />
-                                        <ChateItem navigation={props.navigation} mensagem={item} userType={userType} />
-                                    </React.Fragment>
-                                )
-                            }
-                            else {
-                                return <ChateItem navigation={props.navigation} key={index} mensagem={item} userType={userType} />
-                            }
-                        }
-                    })
-                }
-            </ScrollViewContainerMessages>
-        </React.Fragment>
-    )
-}
 
 function ProfessionalChatScreen(props) {
     const [keyboardIsVisible, setKeyboardIsVisible] = useState(false)
     const [mensagens, setMensagens] = useState([])
     const [addressVisible, setAddressVisible] = useState(false)
     const [lastMessage, setLastMessage] = useState('')
+    const [contentSize, setContentSize] = useState(50)
+    const [loadingMoreMessages, setLoadingMoreMessages] = useState(false)
 
     const inputMsgRef = useRef()
     const appStateRef = useRef()
@@ -163,7 +62,6 @@ function ProfessionalChatScreen(props) {
         })
 
         cleanBadge()
-
         carregarMensagens(true)
 
         socketConnect()
@@ -181,42 +79,6 @@ function ProfessionalChatScreen(props) {
     useEffect(() => {
         messagesRef.current = mensagens
     }, [mensagens])
-
-    useEffect(() => {
-        if (getMessages.data && getMessages.data.chatMessages) {
-            console.log('New messages => ', getMessages.data.chatMessages.length)
-            setMensagens(mensagens.concat(getMessages.data.chatMessages))
-
-            if (getMessages.data.chatMessages.length > 0) {
-                try {
-                    if (props.professionalSelected.id) {
-                        const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
-                        AsyncStorage.getItem(storageName, (err, result) => {
-                            if (result !== null) {
-                                const arrayMessages = JSON.parse(result).concat(getMessages.data.chatMessages)
-                                AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
-                            } else {
-                                AsyncStorage.setItem(storageName, JSON.stringify(getMessages.data.chatMessages))
-                            }
-                        })
-                    }
-                    else {
-                        const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
-                        AsyncStorage.getItem(storageName, (err, result) => {
-                            if (result !== null) {
-                                const arrayMessages = JSON.parse(result).concat(getMessages.data.chatMessages)
-                                AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
-                            } else {
-                                AsyncStorage.setItem(storageName, JSON.stringify(getMessages.data.chatMessages))
-                            }
-                        })
-                    }
-                } catch (ex) {
-                    console.log(ex)
-                }
-            }
-        }
-    }, [getMessages.data]);
 
     useEffect(() => {
         if (props.newCallMsg.data) {
@@ -240,6 +102,12 @@ function ProfessionalChatScreen(props) {
             }
         }
     }, [socketResetRef.current])
+
+    useEffect(() => {
+        if (contentSize > 50) {
+            loadMoreMessages()
+        }
+    }, [contentSize])
 
     const socketConnect = (message = '') => {
         const type_ = props.userType;
@@ -277,6 +145,8 @@ function ProfessionalChatScreen(props) {
                     date: Moment().format('DD/MM/YYYY'),
                     time: Moment().format('HH:mm:ss')
                 }
+
+                console.log('newMessage!: ', messageObj)
 
                 if (props.professionalSelected.id) {
                     if (messageObj.professional_id == props.professionalSelected.id && messageObj.client_id == props.user.id) {
@@ -389,42 +259,122 @@ function ProfessionalChatScreen(props) {
             if (props.professionalSelected.id) {
                 const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
                 const messagesStr = await AsyncStorage.getItem(storageName)
-                let _last = 0;
+                let lastId = 0;
                 if (messagesStr != null) {
-                    const messages_ = JSON.parse(messagesStr)
-                    if (messages_ && messages_.length) {
-                        if (changeState) {
-                            setMensagens(messages_)
+                    const allMessages = JSON.parse(messagesStr)
+                    if (allMessages && allMessages.length) {
+                        console.log('contentSize => ', contentSize)
+                        console.log('allMessages.length => ', allMessages.length)
+                        if (allMessages.length < (contentSize - 50)) {
+                            return;
                         }
-                        if (messages_.length > 0) {
-                            const lastIndex = messages_.length - 1;
-                            _last = messages_[lastIndex].id
+
+                        const filteredMessages = allMessages.filter(filterMessages)
+                        filteredMessages.sort((a, b) => sortMessages(a, b))
+                        if (changeState) {
+                            setMensagens(filteredMessages)
+                        }
+                        if (filteredMessages.length > 0) {
+                            const lastIndex = filteredMessages.length - 1;
+                            lastId = filteredMessages[lastIndex].id
                         }
                     }
                 }
-                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${_last}`)
+                const response = await getMessages.refetch(`/chatMessages/messages.json?client_id=${props.user.id}&professional_id=${props.professionalSelected.id}&last_id=${lastId}`)
+                if (response.chatMessages.length > 0) {
+                    saveNewMessages(response)
+                }
             }
             else {
                 const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
                 const messagesStr = await AsyncStorage.getItem(storageName)
-                let _last = 0;
+                let lastId = 0;
                 if (messagesStr != null) {
-                    const messages_ = JSON.parse(messagesStr)
-                    if (messages_ && messages_.length) {
-                        if (changeState) {
-                            setMensagens(messages_)
+                    const allMessages = JSON.parse(messagesStr)
+                    if (allMessages && allMessages.length) {
+                        console.log('contentSize => ', contentSize)
+                        console.log('allMessages.length => ', allMessages.length)
+                        if (allMessages.length < (contentSize - 50)) {
+                            return;
                         }
-                        if (messages_.length > 0) {
-                            const lastIndex = messages_.length - 1;
-                            _last = messages_[lastIndex].id
+
+                        const filteredMessages = allMessages.filter(filterMessages)
+                        filteredMessages.sort((a, b) => sortMessages(a, b))
+                        if (changeState) {
+                            setMensagens(filteredMessages)
+                        }
+                        if (filteredMessages.length > 0) {
+                            const lastIndex = filteredMessages.length - 1;
+                            lastId = filteredMessages[lastIndex].id
                         }
                     }
                 }
-                getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${_last}`)
+                const response = await getMessages.refetch(`/chatMessages/messages.json?client_id=${props.clientSelected.id}&professional_id=${props.user.id}&last_id=${lastId}`)
+                if (response.chatMessages.length > 0) {
+                    saveNewMessages(response)
+                }
             }
         } catch (e) {
             console.log(e)
         }
+    }
+
+    const saveNewMessages = (response) => {
+        setMensagens(mensagens.concat(response.chatMessages))
+        try {
+            if (props.professionalSelected.id) {
+                const storageName = `@msg_c_${props.user.id}_p_${props.professionalSelected.id}`
+                AsyncStorage.getItem(storageName, (err, result) => {
+                    if (result !== null) {
+                        const arrayMessages = JSON.parse(result).concat(response.chatMessages)
+                        AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                    } else {
+                        AsyncStorage.setItem(storageName, JSON.stringify(response.chatMessages))
+                    }
+                })
+            }
+            else {
+                const storageName = `@msg_c_${props.clientSelected.id}_p_${props.user.id}`
+                AsyncStorage.getItem(storageName, (err, result) => {
+                    if (result !== null) {
+                        const arrayMessages = JSON.parse(result).concat(response.chatMessages)
+                        AsyncStorage.setItem(storageName, JSON.stringify(arrayMessages))
+                    } else {
+                        AsyncStorage.setItem(storageName, JSON.stringify(response.chatMessages))
+                    }
+                })
+            }
+        } catch (ex) {
+            console.log(ex)
+        }
+    }
+
+    const filterMessages = (item, index, arr) => {
+        if (!item.id)
+            return false
+
+        if (index < (arr.length - contentSize))
+            return false
+
+        return true
+    }
+
+    const sortMessages = (itemA, itemB) => {
+        const splitA = itemA.date.split("/")
+        const splitB = itemB.date.split("/")
+        const dateA = {
+            day: parseInt(splitA[0]),
+            month: parseInt(splitA[1]) - 1,
+            year: parseInt(splitA[2]),
+        }
+        const dateB = {
+            day: parseInt(splitB[0]),
+            month: parseInt(splitB[1]) - 1,
+            year: parseInt(splitB[2]),
+        }
+        const valueA = new Date(dateA.year, dateA.month, dateA.day)
+        const valueB = new Date(dateB.year, dateB.month, dateB.day)
+        return valueA.getTime() - valueB.getTime()
     }
 
     const handleBackPress = async () => {
@@ -543,9 +493,21 @@ function ProfessionalChatScreen(props) {
         }
     }
 
+    const onScrollMessages = (event) => {
+        if (event.nativeEvent.contentOffset.y == 0) {
+            setContentSize(contentSize + 50)
+        }
+    }
+
+    const loadMoreMessages = async () => {        
+        setLoadingMoreMessages(true)
+        await carregarMensagens(true)
+        setLoadingMoreMessages(false)
+    }
+
     const behavior = Platform.OS === 'ios' ? 'padding' : 'height'
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+        <React.Fragment>
             <Container />
             <HeaderJobs
                 title={props.professionalSelected.id ? props.professionalSelected.name : props.clientSelected.name}
@@ -555,9 +517,14 @@ function ProfessionalChatScreen(props) {
                 addressPress={() => toggleOverlay()}
             />
             <ViewContainerChat>
-                <ChatMessages navigation={props.navigation} messages={mensagens} userType={props.userType} />
+                {loadingMoreMessages && <ActivityIndicator size="small" color={purple} style={{ alignSelf: "center" }} />}
+                <ChatMessages
+                    messages={mensagens}
+                    userType={props.userType}
+                    navigation={props.navigation}
+                    onScroll={onScrollMessages} />
             </ViewContainerChat>
-            <ViewContainerNewMessage style={{ marginBottom: keyboardIsVisible ? 35 : 0 }}>
+            <ViewContainerNewMessage>
                 <Input
                     ref={inputMsgRef}
                     placeholder='Digite sua mensagem'
@@ -584,7 +551,7 @@ function ProfessionalChatScreen(props) {
                     )}
                 </React.Fragment>
             </Overlay>
-        </KeyboardAvoidingView>
+        </React.Fragment>
     )
 }
 

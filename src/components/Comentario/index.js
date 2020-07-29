@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { View } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
@@ -18,7 +18,7 @@ const Comentario = ({ comment, ...props }) => {
     return (
         <VwContainerComentario>
             <VwContainerWhite>
-                <View>
+                <React.Fragment>
                     {image.uri.length > 0 &&
                         <Avatar
                             rounded
@@ -34,7 +34,7 @@ const Comentario = ({ comment, ...props }) => {
                             overlayContainerStyle={styles.overlayContainerStyle}
                             size={60}
                             icon={{ name: 'image' }} />}
-                </View>
+                </React.Fragment>
                 <View style={{ flex: 1 }}>
                     <TxtTitle size={10} color={black}>
                         {comment.comment.length ? `"${comment.comment}"` : '...'}
@@ -44,11 +44,10 @@ const Comentario = ({ comment, ...props }) => {
                     </VwContentComentario>
                 </View>
             </VwContainerWhite>
-
         </VwContainerComentario>
     )
 }
 
-export default Comentario
+export default memo(Comentario)
 
 

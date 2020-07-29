@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Platform } from 'react-native'
+import { ActivityIndicator, Platform, BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
 import messaging, { AuthorizationStatus } from '@react-native-firebase/messaging'
 import axios from 'axios'
 import PushNotificationIOS from "@react-native-community/push-notification-ios"
 var PushNotification = require("react-native-push-notification")
+import { useFocusEffect } from '@react-navigation/native';
 
 import { urlMyJobsAPI } from '../../config/config'
 
@@ -181,6 +182,14 @@ function SplashScreen(props) {
             })
         }
     }, [initialRoute])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (props.route.params && props.route.params.closeApp) {
+                BackHandler.exitApp()
+            }
+        }, [])
+    );
 
     const handleAppOpenedByNotification = (notification, data) => {
         if (data.message) {
